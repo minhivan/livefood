@@ -1,0 +1,29 @@
+.header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 935px;
+    margin: auto;
+    height: 80px;
+}
+
+.header .header__image{
+    display: flex;
+}
+.header .header__imageLogo{
+    object-fit: contain;
+    height: 100%;
+}
+
+.header .header__loginContainer button{
+    padding: 15px;
+    width: 100px;
+    background-color: #1a90da;
+    color: #fff;
+    border: none;
+    border-radius: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+

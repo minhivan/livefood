@@ -1,0 +1,128 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
+/*@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200&family=Roboto+Condensed:wght@300&display=swap');*/
+/*@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap');*/
+
+*{
+    margin: 0;
+    /*font-family: 'Rubik', sans-serif;*/
+    font-family: 'Quicksand', sans-serif;
+    box-sizing: border-box;
+}
+a{
+    color: #262626;
+    text-decoration: none;
+}
+
+html{
+    overflow-y: scroll;
+    overscroll-behavior-y: none;
+    scroll-behavior: smooth;
+}
+.bottomDivider{
+    border-bottom: 1px solid rgb(235, 238, 240);
+}
+.topDivider{
+    border-top: 1px solid rgb(235, 238, 240);
+}
+.padding-10-20{
+    padding: 10px 20px;
+}
+
+.padding-20{
+    padding: 20px;
+}
+
+
+
+.app{
+    min-height: 100vh;
+    position: relative;
+    background-color: #f0f2f5;
+}
+.app__header{
+    position: fixed;
+    top: 0;
+    background-color: #ffffff;
+    z-index: 999;
+    width: 100%;
+}
+
+
+.app__body{
+    background-color: #f0f2f5;
+    position: relative;
+    min-height: calc(100vh - 80px);
+    top: 80px;
+}
+
+.app__bodyContainer{
+    padding-top: 20px;
+    max-width: 935px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    min-height: calc(100vh - 80px);
+}
+
+.app__body .app__post{
+    flex: 0.7;
+    margin: 0 auto;
+    z-index: 1;
+    padding: 0 20px;
+}
+
+.app__body .app__rightSideBar{
+    flex: 0.3;
+    position: sticky;
+    top: 100px;
+    align-self: flex-start
+}
+
+
+/* Override css setting */
+input:focus{
+    outline: unset;
+}
+
+.login__container{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.login__block{
+    margin: 0 auto;
+    padding: 20px 0;
+    position: relative;
+    width: 980px;
+    height: 700px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.login__article{
+    flex: 0 0 50%;
+}
+
+.login__background{
+    background-image: url("images/Background/undraw_cookie_love_ulvn.svg");
+    height: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.login__holder{
+    display: flex;
+    align-items: center;
+}
+
+.login__authForm{
+    padding: 30px;
+    background: #fafcff;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .1), 0 8px 16px rgba(0, 0, 0, .1);
+    margin: 40px 0 0;
+}
