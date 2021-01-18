@@ -46,6 +46,7 @@ html{
     background-color: #ffffff;
     z-index: 999;
     width: 100%;
+    border-bottom: 1px solid #00000014;
 }
 
 
@@ -125,4 +126,16 @@ input:focus{
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, .1), 0 8px 16px rgba(0, 0, 0, .1);
     margin: 40px 0 0;
+}
+
+/* Page not found */
+.page404{
+    min-height: calc(100vh - 100px);
+    min-width: 100%;
+    background-image: url("./images/Background/undraw_bug_fixing_oc7a.svg");
+    background-position: center bottom;
+    background-size: 55%;
+    background-repeat: no-repeat;
+    padding-bottom: 40px;
+    background-origin: content-box;
 }

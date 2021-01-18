@@ -2,6 +2,7 @@
     background-color: #fff;
     border-radius: max(0px, min(8px, calc((100vw - 4px - 100%) * 9999))) / 8px;
     margin-bottom: 20px;
+    border: 1px solid #00000014;
 }
 .upload .upload__container{
     padding: 20px;

@@ -5,6 +5,7 @@ import Chat from "../Components/Messenger/Chat";
 import IconButton from "@material-ui/core/IconButton";
 import ControlPointOutlinedIcon from "@material-ui/icons/ControlPointOutlined";
 import {makeStyles} from "@material-ui/core/styles";
+import {useParams} from "react-router";
 
 const useStyles = makeStyles((theme) => ({
     header:{
@@ -13,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function PageMessenger() {
+    let { id } = useParams();
     const classes = useStyles();
     return(
         <div className="app__bodyContainer">

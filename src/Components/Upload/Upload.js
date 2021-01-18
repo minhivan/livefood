@@ -1,12 +1,23 @@
 import React, {useState} from "react";
 import './Upload.css';
-import {Avatar, Button, IconButton, TextField} from "@material-ui/core";
-import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
+import {Avatar, Button, IconButton, Modal, TextField} from "@material-ui/core";
 import {storage, db } from "../../firebase";
 import firebase from "firebase";
 import {makeStyles} from "@material-ui/core/styles";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import {PhotoCamera} from "@material-ui/icons";
+
+function getModalStyle() {
+    const top = 50 ;
+    const left = 50;
+
+    return {
+        top: `${top}%`,
+        left: `${left}%`,
+        transform: `translate(-${top}%, -${left}%)`,
+    };
+}
+
 
 const useStyles = makeStyles((theme) => ({
     divider: {
@@ -20,17 +31,35 @@ const useStyles = makeStyles((theme) => ({
     },
     label: {
 
-    }
+    },
+    paper: {
+        position: 'absolute',
+        width: 600,
+        backgroundColor: theme.palette.background.paper,
+        boxShadow: theme.shadows[5],
+        padding: theme.spacing(2, 4, 3),
+        borderRadius: "8px",
+        minHeight: "500px"
+    },
 }));
 
 
-
 function Upload({username}) {
+    const [open, setOpen] = useState(false);
     const classes = useStyles();
     const [caption, setCaption] = useState('');
     const [image, setImage] = useState('');
     const [progress, setProgress] = useState('');
     let letter = username.toString().charAt(0).toUpperCase();
+    const [modalStyle] = useState(getModalStyle);
+    const handleOpen = () => {
+        setOpen(true);
+    }
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
     const handleChange = (event) => {
         if(event.target.files[0]){
             setImage(event.target.files[0]);
@@ -99,13 +128,27 @@ function Upload({username}) {
                             <span className={classes.label}>Image</span>
                         </label>
                     </div>
+                    <Button onClick={handleOpen}>Open Modal</Button>
                     <Button onClick={handleUpload}>Create</Button>
                 </div>
                 <div className="">
                     <CircularProgress variant="determinate" value={Number(progress)} />
                 </div>
             </div>
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="simple-modal-title"
+                aria-describedby="simple-modal-description"
+            >
+                <div style={modalStyle} className={classes.paper}>
+                    <div className="upload__header">
+                        <h2></h2>
 
+                    </div>
+
+                </div>
+            </Modal>
         </div>
     )
 }

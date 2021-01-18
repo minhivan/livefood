@@ -4,11 +4,13 @@ import avt1 from '../../images/Avatar/avatar1.png';
 import Avatar from "@material-ui/core/Avatar";
 import {Badge, MenuItem, MenuList, Popover} from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
-import DraftsRoundedIcon from '@material-ui/icons/DraftsRounded';
+import DraftsTwoToneIcon from '@material-ui/icons/DraftsTwoTone';
 import {Link} from "react-router-dom";
-import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
-import NotificationsActiveRoundedIcon from '@material-ui/icons/NotificationsActiveRounded';
+import ExploreTwoToneIcon from '@material-ui/icons/ExploreTwoTone';
+import NotificationsActiveTwoToneIcon from '@material-ui/icons/NotificationsActiveTwoTone';
+import CloudDoneTwoToneIcon from '@material-ui/icons/CloudDoneTwoTone';
 import { makeStyles} from "@material-ui/core/styles";
+
 
 const useStyles = makeStyles((theme) => ({
     icon: {
@@ -27,6 +29,8 @@ function MenuHeader({auth}) {
         setAnchorEl(event.currentTarget);
     };
 
+    const [active, setActive] = useState(false);
+
     const handleClose = () => {
         setAnchorEl(null);
     };
@@ -34,36 +38,51 @@ function MenuHeader({auth}) {
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
 
+    const handleChangeEndpoint = () => {
+        setActive(true);
+    }
+
+
 
     return(
         <div className="menuHeader">
             <div className="menuIcon">
-                <Link to="/">
-                    <IconButton aria-label="show 4 new mails" color="inherit" >
+                <IconButton aria-label="show 4 new mails" color="inherit" onClick={handleChangeEndpoint}>
+                    <Link to="/">
                         <Badge color="secondary">
-                            <HomeRoundedIcon className={classes.icon} />
+                            <ExploreTwoToneIcon className={classes.icon} />
                         </Badge>
-                    </IconButton>
-                </Link>
-
-                <Link to="/messenger">
-                    <IconButton aria-label="show 4 new mails" color="inherit" >
-                        <Badge badgeContent={4} color="secondary">
-                            <DraftsRoundedIcon className={classes.icon}/>
-                        </Badge>
-                    </IconButton>
-                </Link>
-
-                <Link to="/">
-                <IconButton aria-label="show 11 new notifications" color="inherit">
-                    <Badge badgeContent={11} color="secondary">
-                        <NotificationsActiveRoundedIcon className={classes.icon}/>
-                    </Badge>
+                    </Link>
                 </IconButton>
-                </Link>
+
+                <IconButton aria-label="show 11 new notifications" color="inherit">
+                    <Link to="/">
+                        <Badge color="secondary">
+                            <CloudDoneTwoToneIcon className={classes.icon}/>
+                        </Badge>
+                    </Link>
+                </IconButton>
+
+                <IconButton aria-label="show 4 new mails" color="inherit" >
+                    <Link to="/messenger">
+                        <Badge badgeContent={4} color="secondary">
+                            <DraftsTwoToneIcon className={classes.icon}/>
+                        </Badge>
+                    </Link>
+                </IconButton>
+
+                <IconButton aria-label="show 11 new notifications" color="inherit">
+                    <Link to="/">
+                        <Badge badgeContent={11} color="secondary">
+                            <NotificationsActiveTwoToneIcon className={classes.icon}/>
+                        </Badge>
+                    </Link>
+                </IconButton>
+
                 <IconButton onClick={handleClick}>
                     <Avatar alt="Remy Sharp" src={avt1} />
                 </IconButton>
+
                 <Popover
                     id={id}
                     open={open}
