@@ -2,19 +2,20 @@ import React, {useState} from "react";
 import './Upload.css';
 
 
-import {Avatar, Button, IconButton, Modal, TextField} from "@material-ui/core";
+import {Avatar, Badge, Button, IconButton, Modal, TextField} from "@material-ui/core";
 import {storage, db } from "../../firebase";
 import firebase from "firebase";
 import {makeStyles} from "@material-ui/core/styles";
 import CircularProgress from '@material-ui/core/CircularProgress';
-import {PhotoCamera} from "@material-ui/icons";
+import PhotoCameraTwoToneIcon from '@material-ui/icons/PhotoCameraTwoTone';
 import CancelTwoToneIcon from '@material-ui/icons/CancelTwoTone';
-import {Link} from "react-router-dom";
-import DraftsTwoToneIcon from "@material-ui/icons/DraftsTwoTone";
 import CreateTwoToneIcon from '@material-ui/icons/CreateTwoTone';
-import dayjs from "dayjs";
 import CardHeader from "@material-ui/core/CardHeader";
 import avt1 from "../../images/Avatar/avatar1.png";
+import VideoCallTwoToneIcon from '@material-ui/icons/VideoCallTwoTone';
+import GroupAddTwoToneIcon from '@material-ui/icons/GroupAddTwoTone';
+import CloudDoneTwoToneIcon from "@material-ui/icons/CloudDoneTwoTone";
+
 
 
 function getModalStyle() {
@@ -86,9 +87,17 @@ const useStyles = makeStyles((theme) => ({
     inputText: {
         width: "100%",
         padding: "10px 0",
-        minHeight: "200px",
-        maxHeight: "400px",
-    }
+        minHeight: "120px",
+        maxHeight: "300px",
+        overflow: "auto",
+        fontSize: "16px"
+    },
+    popIcon: {
+        height: "28px",
+        width: "28px",
+        color: "#00000099"
+    },
+
 }));
 
 
@@ -169,8 +178,8 @@ function Upload({username}) {
                     <div className="upload__pickerImage">
                         <input accept="image/*" type="file" onChange={handleChange} id="icon-button-file" className={classes.input}/>
                         <label htmlFor="icon-button-file" className="upload__pickerButton">
-                            <Button variant="contained" color="primary" component="span">
-                                <PhotoCamera /> <span className={classes.label}>Image</span>
+                            <Button variant="contained" component="span">
+                                <PhotoCameraTwoToneIcon /> <span className={classes.label}>Image</span>
                             </Button>
                         </label>
                     </div>
@@ -201,7 +210,7 @@ function Upload({username}) {
                             </IconButton>
                         </div>
                     </div>
-                    <div className="upload__caption">
+                    <div className="popup__caption">
                         <CardHeader
                             avatar={
                                 <Avatar aria-label="recipe" className={classes.avatar} src={avt1}/>
@@ -215,20 +224,20 @@ function Upload({username}) {
                             className={classes.cardHeader}
                         />
 
-                        <div className="caption__text">
+                        <div className="popup__text">
                                 <TextField
                                     className={classes.inputText}
                                     multiline
                                     placeholder="What's on your mind ... "
                                     value={caption}
                                     onChange={event => setCaption(event.target.value)}
-                                    InputProps={{ disableUnderline: true }}
+                                    InputProps={{ disableUnderline: true, style : {fontSize: "18px"}}}
                                 />
                         </div>
 
                         {
                             image ? (
-                                <div className="upload__review">
+                                <div className="popup__review">
                                     <img className={classes.reviewImg} src={URL.createObjectURL(image)} alt="Picture" />
                                     {/*<div className={classes.buttonClose}>*/}
                                     {/*    <IconButton aria-label="Cancel" color="inherit" onClick={handleClose} >*/}
@@ -239,6 +248,34 @@ function Upload({username}) {
                             ) : null
                         }
 
+                        <div className="popup__picker">
+                            <h3>Add to this post </h3>
+                            <div className="popup__iconPicker">
+                                <div>
+                                    <label htmlFor="icon-button-file" className="upload__pickerButton">
+                                        <IconButton color="inherit" component="span" >
+                                            <Badge color="secondary">
+                                                <PhotoCameraTwoToneIcon className={classes.popIcon}/>
+                                            </Badge>
+                                        </IconButton>
+                                    </label>
+                                </div>
+                                <div>
+                                    <IconButton color="inherit" component="span" >
+                                        <Badge color="secondary">
+                                            <VideoCallTwoToneIcon className={classes.popIcon}/>
+                                        </Badge>
+                                    </IconButton>
+                                </div>
+                                <div>
+                                    <IconButton color="inherit" component="span" >
+                                        <Badge color="secondary">
+                                            <GroupAddTwoToneIcon className={classes.popIcon}/>
+                                        </Badge>
+                                    </IconButton>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div className="upload__button">

@@ -47,38 +47,37 @@ function MenuHeader({auth}) {
     return(
         <div className="menuHeader">
             <div className="menuIcon">
-                <IconButton aria-label="show 4 new mails" color="inherit" onClick={handleChangeEndpoint}>
-                    <Link to="/">
+                <Link to="/">
+                    <IconButton aria-label="show 4 new mails" color="inherit" onClick={handleChangeEndpoint}>
                         <Badge color="secondary">
                             <ExploreTwoToneIcon className={classes.icon} />
                         </Badge>
-                    </Link>
-                </IconButton>
+                    </IconButton>
+                </Link>
 
-                <IconButton aria-label="show 11 new notifications" color="inherit">
-                    <Link to="/">
+                <Link to="/">
+                    <IconButton aria-label="show 11 new notifications" color="inherit">
                         <Badge color="secondary">
                             <CloudDoneTwoToneIcon className={classes.icon}/>
                         </Badge>
-                    </Link>
-                </IconButton>
+                    </IconButton>
+                </Link>
 
-                <IconButton aria-label="show 4 new mails" color="inherit" >
-                    <Link to="/messenger">
+                <Link to="/messenger">
+                    <IconButton aria-label="show 4 new mails" color="inherit" >
                         <Badge badgeContent={4} color="secondary">
                             <DraftsTwoToneIcon className={classes.icon}/>
                         </Badge>
-                    </Link>
-                </IconButton>
+                    </IconButton>
+                </Link>
 
-                <IconButton aria-label="show 11 new notifications" color="inherit">
-                    <Link to="/">
+                <Link to="/">
+                    <IconButton aria-label="show 11 new notifications" color="inherit">
                         <Badge badgeContent={11} color="secondary">
                             <NotificationsActiveTwoToneIcon className={classes.icon}/>
                         </Badge>
-                    </Link>
-                </IconButton>
-
+                    </IconButton>
+                </Link>
                 <IconButton onClick={handleClick}>
                     <Avatar alt="Remy Sharp" src={avt1} />
                 </IconButton>
