@@ -7,10 +7,8 @@
 .upload .upload__container{
     padding: 20px;
 }
-.upload .upload__container .upload__caption{
-    display: flex;
-    align-items: center;
-    width: 100%;
+.upload__caption{
+    flex: 1;
 }
 .upload .upload__container .upload__caption .upload__input{
     padding: 15px;
@@ -44,16 +42,19 @@
     font: 400 16px Arial;
     color: #65676b;
     word-spacing: normal;
-    padding: 0 20px;
     background: #f2f2f2;
     border-radius: 0.5rem;
     height: 100%;
     text-transform: uppercase;
 }
 
+.upload .upload__container .upload__picker .upload__pickButton{
+    width: calc(100% / 3 - 10px);
+}
+
 .upload .upload__container .upload__picker button{
     padding: 15px;
-    width: calc(100% / 3 - 10px);
+    width: 100%;
     background-color: #1a90da;
     color: #fff;
     border: none;
@@ -61,11 +62,42 @@
     text-transform: uppercase;
     letter-spacing: 1px;
 }
-.upload .upload__container .upload__picker button:hover{
+.upload .upload__container .upload__picker button:hover,
+.upload__button button:hover{
     background-color: #0074D9;
     transition: 0.3s all ease;
 }
 
+.caption__holder{
+    padding: 20px 10px;
+    display: flex;
+    background-color: #f2f2f2;
+    align-content: center;
+    border-radius: 8px;
+}
+
+.caption__holder svg{
+    margin: 0 10px;
+}
+
+.upload__button{
+    align-items: flex-end;
+    justify-content: center;
+    display: flex;
+    padding-top: 15px;
+    border-top: 1px solid #39CCCC;
+}
+
+.upload__button button{
+    padding: 15px;
+    width: calc(100% - 10px);
+    background-color: #1a90da;
+    color: #fff;
+    border: none;
+    border-radius: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
 
 @media (min-width: 481px) and (max-width: 767px) {
     .upload{
@@ -74,6 +106,7 @@
     }
 
 }
+
 
 
 /* Mobile */
