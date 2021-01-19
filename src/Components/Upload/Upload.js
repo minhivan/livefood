@@ -15,6 +15,8 @@ import CreateTwoToneIcon from '@material-ui/icons/CreateTwoTone';
 import dayjs from "dayjs";
 import CardHeader from "@material-ui/core/CardHeader";
 import avt1 from "../../images/Avatar/avatar1.png";
+
+
 function getModalStyle() {
     const top = 50 ;
     const left = 50;
@@ -38,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
         display: "none"
     },
     label: {
-
+        paddingLeft: "10px"
     },
     paper: {
         position: 'absolute',
@@ -97,7 +99,7 @@ function Upload({username}) {
     const [image, setImage] = useState('');
     const [progress, setProgress] = useState('');
     const [modalStyle] = useState(getModalStyle);
-    
+
     const handleOpen = () => {
         setOpen(true);
     }
@@ -167,7 +169,7 @@ function Upload({username}) {
                     <div className="upload__pickerImage">
                         <input accept="image/*" type="file" onChange={handleChange} id="icon-button-file" className={classes.input}/>
                         <label htmlFor="icon-button-file" className="upload__pickerButton">
-                            <Button aria-label="upload picture" component="span">
+                            <Button variant="contained" color="primary" component="span">
                                 <PhotoCamera /> <span className={classes.label}>Image</span>
                             </Button>
                         </label>
@@ -184,9 +186,9 @@ function Upload({username}) {
                     <CircularProgress variant="determinate" value={Number(progress)} />
                 </div>
             </div>
+
             <Modal
                 open={open}
-
                 aria-labelledby="simple-modal-title"
                 aria-describedby="simple-modal-description"
             >
