@@ -19,19 +19,22 @@ function App() {
 	return (
 		<div className="app">
 			<Router>
-				<Route exact path="/login" component={PageLogin}/>
-			</Router>
-			<Router>
-				<Header />
-				<div className="app__body">
-					<Switch>
-						<Route exact path="/" component={Feed} />
-						<Route path="/messenger" component={PageMessenger} />
-						<Route path="/messenger/:id" component={PageMessenger} />
-						<Route path="/profile/:id" component={PageProfile}/>
-						<Route component={PageNotFound}/>
-					</Switch>
-				</div>
+				<Switch>
+					<Route exact path="/login" component={PageLogin}/>
+					<Route>
+						<Header />
+						<div className="app__body">
+							<Switch>
+								<Route exact path="/" component={Feed} />
+								<Route path="/messenger" component={PageMessenger} />
+								<Route path="/messenger/:id" component={PageMessenger} />
+								<Route path="/profile/:id" component={PageProfile}/>
+								<Route component={PageNotFound}/>
+							</Switch>
+						</div>
+					</Route>
+				</Switch>
+
 			</Router>
 		</div>
 

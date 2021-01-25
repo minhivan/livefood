@@ -14,9 +14,9 @@ import CardHeader from "@material-ui/core/CardHeader";
 import avt1 from "../../images/Avatar/avatar1.png";
 import VideoCallTwoToneIcon from '@material-ui/icons/VideoCallTwoTone';
 import GroupAddTwoToneIcon from '@material-ui/icons/GroupAddTwoTone';
-import CloudDoneTwoToneIcon from "@material-ui/icons/CloudDoneTwoTone";
-
-
+import InsertPhotoTwoToneIcon from '@material-ui/icons/InsertPhotoTwoTone';
+import SentimentSatisfiedTwoToneIcon from '@material-ui/icons/SentimentSatisfiedTwoTone';
+import EmojiObjectsTwoToneIcon from '@material-ui/icons/EmojiObjectsTwoTone';
 
 function getModalStyle() {
     const top = 50 ;
@@ -120,6 +120,7 @@ function Upload({username}) {
     const handleChange = (event) => {
         if(event.target.files[0]){
             setImage(event.target.files[0]);
+            setOpen(true);
         }
     }
 
@@ -178,17 +179,24 @@ function Upload({username}) {
                     <div className="upload__pickerImage">
                         <input accept="image/*" type="file" onChange={handleChange} id="icon-button-file" className={classes.input}/>
                         <label htmlFor="icon-button-file" className="upload__pickerButton">
-                            <Button variant="contained" component="span">
-                                <PhotoCameraTwoToneIcon /> <span className={classes.label}>Image</span>
-                            </Button>
+                            <InsertPhotoTwoToneIcon />
+                            <span className={classes.label}>Photo</span>
                         </label>
                     </div>
                     <div className="upload__pickButton">
-                        <Button onClick={handleOpen}>Open Modal</Button>
+                        <Button onClick={handleOpen}>
+                            <SentimentSatisfiedTwoToneIcon />
+                            <span className={classes.label}>Felling</span>
+                        </Button>
                     </div>
                     <div className="upload__pickButton">
-                        <Button onClick={handleUpload}>Create</Button>
+                        <Button onClick={handleOpen}>
+                            <EmojiObjectsTwoToneIcon />
+                            <span className={classes.label}>Idea</span>
+                        </Button>
+
                     </div>
+
 
                 </div>
                 <div className="">

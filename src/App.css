@@ -41,7 +41,7 @@ html{
     background-color: #f0f2f5;
 }
 .app__header{
-    position: fixed;
+    position: sticky;
     top: 0;
     background-color: #ffffff;
     z-index: 999;
@@ -54,7 +54,7 @@ html{
     background-color: #f0f2f5;
     position: relative;
     min-height: calc(100vh - 80px);
-    top: 80px;
+    top: 0;
 }
 
 .app__bodyContainer{
@@ -133,9 +133,9 @@ input:focus{
     min-height: calc(100vh - 100px);
     min-width: 100%;
     background-image: url("./images/Background/undraw_bug_fixing_oc7a.svg");
-    background-position: center bottom;
+    background-position: 50%;
+    background-position-y: 30%;
     background-size: 55%;
     background-repeat: no-repeat;
-    padding-bottom: 40px;
     background-origin: content-box;
 }

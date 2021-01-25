@@ -6,9 +6,14 @@ function PageProfile(){
     return (
         <div className="app__bodyContainer">
             <div className="profile">
-                <div>
-                    {id}
+                <div className="profile__header">
+
                 </div>
+
+                <div className="profile__body">
+
+                </div>
+
             </div>
         </div>
     )

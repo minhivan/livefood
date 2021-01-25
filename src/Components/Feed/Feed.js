@@ -27,7 +27,10 @@ function Feed(){
     return(
 
         <div className="app__bodyContainer">
-            <RightSideBar />
+
+            {/* Left sidebar */}
+
+            {/* Main */}
             <div className="app__post">
                 {
                     authUser?.displayName ? (
@@ -41,6 +44,8 @@ function Feed(){
                 }
             </div>
 
+            {/* Right sidebar */}
+            <RightSideBar />
         </div>
     )
 }

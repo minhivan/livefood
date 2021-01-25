@@ -21,6 +21,7 @@ import {db} from "../../firebase";
 import firebase from "firebase";
 import clsx from "clsx";
 import {Link} from "react-router-dom";
+import Comment from "./Comment";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -99,8 +100,7 @@ function Post({ postId, user, username, caption, imageUrl, timestamp}) {
 					)
 				})
 		}
-		// snapshot.docs.map((doc) =>
-		// 	doc.data())
+
 		return () => {
 			unsubscribe();
 		}
@@ -190,49 +190,7 @@ function Post({ postId, user, username, caption, imageUrl, timestamp}) {
 
 					{/* Comments */}
 					<div className={classes.comment}>
-						<div className="listComments">
-							{
-								comments.map((comment) => (
-									<div className="commentDetails" key={comment.id}>
-										<Avatar aria-label="recipe" className={classes.avatar}>
-											{comment.comment.username.toString().charAt(0).toUpperCase()}
-										</Avatar>
-										<div className="comment__content">
-											<div className="comment__block">
-												<div className="comment__sub">
-													<a href="#" className="post__user">{comment.comment.username}</a>
-													{
-														comment.comment.timestamp ? (
-															<span>{
-																dayjs(new Date(comment.comment.timestamp.seconds * 1000).toLocaleString()).fromNow()}</span>
-														) : null
-													}
-
-													<p>{comment.comment.text}</p>
-												</div>
-												<div className="comment__action">
-													<div className="action__like">
-														<IconButton aria-label="add to favorites">
-															<FavoriteBorderIcon />
-														</IconButton>
-														<span>123 likes</span>
-													</div>
-
-													<div className="action__reply">
-														<IconButton aria-label="comment">
-															<SwapVertIcon />
-														</IconButton>
-														<span>4 replies</span>
-													</div>
-												</div>
-
-											</div>
-										</div>
-
-									</div>
-								))
-							}
-						</div>
+						<Comment comments={comments} />
 						{
 							user &&  (
 								<div className="commentContainer">
