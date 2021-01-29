@@ -1,8 +1,17 @@
 import React from "react";
 
-function Profile() {
+function Profile({id}) {
     return(
-        <h3>Profile</h3>
+        <div className="profile">
+            <div className="profile__header">
+
+            </div>
+
+            <div className="profile__body">
+                
+            </div>
+
+        </div>
     )
 }
 
