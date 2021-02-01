@@ -10,6 +10,8 @@ import ExploreTwoToneIcon from '@material-ui/icons/ExploreTwoTone';
 import NotificationsActiveTwoToneIcon from '@material-ui/icons/NotificationsActiveTwoTone';
 import CloudDoneTwoToneIcon from '@material-ui/icons/CloudDoneTwoTone';
 import { makeStyles} from "@material-ui/core/styles";
+import EmailTwoToneIcon from '@material-ui/icons/EmailTwoTone';
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -66,7 +68,7 @@ function MenuHeader({auth}) {
                 <Link to="/messenger">
                     <IconButton aria-label="show 4 new mails" color="inherit" >
                         <Badge badgeContent={4} color="secondary">
-                            <DraftsTwoToneIcon className={classes.icon}/>
+                            <EmailTwoToneIcon className={classes.icon}/>
                         </Badge>
                     </IconButton>
                 </Link>
