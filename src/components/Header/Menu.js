@@ -4,13 +4,13 @@ import avt1 from '../../images/Avatar/avatar1.png';
 import Avatar from "@material-ui/core/Avatar";
 import {Badge, MenuItem, MenuList, Popover} from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
-import DraftsTwoToneIcon from '@material-ui/icons/DraftsTwoTone';
 import {Link} from "react-router-dom";
 import ExploreTwoToneIcon from '@material-ui/icons/ExploreTwoTone';
 import NotificationsActiveTwoToneIcon from '@material-ui/icons/NotificationsActiveTwoTone';
-import CloudDoneTwoToneIcon from '@material-ui/icons/CloudDoneTwoTone';
 import { makeStyles} from "@material-ui/core/styles";
 import EmailTwoToneIcon from '@material-ui/icons/EmailTwoTone';
+import {useAuthState} from "react-firebase-hooks/auth";
+import {auth} from "../../firebase";
 
 
 
@@ -23,7 +23,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function MenuHeader({auth}) {
+function MenuHeader({user}) {
+
     const classes = useStyles();
 
     const [anchorEl, setAnchorEl] = useState(null);
@@ -36,15 +37,14 @@ function MenuHeader({auth}) {
     const handleClose = () => {
         setAnchorEl(null);
     };
-    console.log(auth.currentUser.uid);
+
+    console.log(user.uid);
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
 
     const handleChangeEndpoint = () => {
         setActive(true);
     }
-
-
 
     return(
         <div className="menuHeader">
@@ -57,7 +57,10 @@ function MenuHeader({auth}) {
                     </IconButton>
                 </Link>
 
-                <Link to="/messenger">
+                <Link to={{
+                    pathname: `/messenger/${user.uid}`,
+                    state: { users: user }
+                }}>
                     <IconButton aria-label="show 4 new mails" color="inherit" >
                         <Badge badgeContent={4} color="secondary">
                             <EmailTwoToneIcon className={classes.icon}/>
@@ -91,7 +94,7 @@ function MenuHeader({auth}) {
                     }}
                 >
                     <MenuList autoFocusItem={open} id="menu-list-grow" >
-                        <Link to={{pathname:`profile/${auth.currentUser.uid}`}} ><MenuItem onClick={handleClose}>Profile</MenuItem></Link>
+                        <Link to={{pathname:`profile/${user.uid}`}} ><MenuItem onClick={handleClose}>Profile</MenuItem></Link>
                         <Link to={{pathname:`save`}} ><MenuItem onClick={handleClose}>Save</MenuItem></Link>
                         <MenuItem onClick={handleClose}>My account</MenuItem>
                         <MenuItem onClick={() => auth.signOut()}>Logout</MenuItem>

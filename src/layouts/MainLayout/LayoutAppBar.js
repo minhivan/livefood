@@ -1,48 +1,30 @@
-import React, {useEffect, useState} from "react";
-import logo from "../../images/brand.png";
-import './Header.css';
+import React from "react";
+import "../../components/Header/Header.css";
+import {Link as RouterLink, Navigate} from "react-router-dom";
 import {Button} from "@material-ui/core";
 import {auth} from "../../firebase";
-import HeaderSearch from "./Search";
-import MenuHeader from "./Menu";
-import {Link} from "react-router-dom";
+import HeaderSearch from "../../components/Header/Search";
+import MenuHeader from "../../components/Header/Menu";
+import {useAuthState} from "react-firebase-hooks/auth";
 
-
-function Header() {
-
-    const [user, setUser] = useState(null);
-
-    useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged((authUser) => {
-            if(authUser){
-                setUser(authUser);
-            }else{
-                setUser(null);
-            }
-        })
-
-        return () => {
-            unsubscribe();
-        }
-    }, [user])
-
+function LayoutAppBar() {
+    const [user] = useAuthState(auth);
 
     return(
         <div className="app__header">
             <div className="header">
                 <div className="header__image">
-                    <Link to="/">
+                    <RouterLink to="/">
                         <img className="header__imageLogo" alt="Live Food"
-                             src={logo}
+                             src="/static/images/brand.png"
                         />
-                    </Link>
-
+                    </RouterLink>
                 </div>
                 <HeaderSearch />
                 <div className="header__auth">
                     {
                         user ? (
-                            <MenuHeader auth={auth}/>
+                            <MenuHeader user={user}/>
                         ) : (
                             <div className="header__loginContainer">
                                 <Button variant="contained" color="primary" href="/login">
@@ -57,4 +39,4 @@ function Header() {
     )
 }
 
-export default Header
+export default LayoutAppBar

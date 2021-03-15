@@ -101,10 +101,21 @@ input:focus{
     height: 700px;
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .login__article{
     flex: 0 0 50%;
+}
+
+.login__container input{
+    font-family: 'Quicksand', sans-serif !important;
+    font-size: 16px;
+}
+
+.login__container input::-webkit-input-placeholder{
+    font-family: 'Quicksand', sans-serif !important;
+    font-size: 15px;
 }
 
 .login__background{

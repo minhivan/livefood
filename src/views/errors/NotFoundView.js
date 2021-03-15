@@ -1,10 +1,7 @@
 import React from "react";
 
-import pic_404 from "../images/Icon/404_failed_loading_gray_wash.svg"
 import {makeStyles} from "@material-ui/core/styles";
-import {Button} from "@material-ui/core";
-import {Link} from "react-router-dom";
-import pic from "../images/Background/undraw_page_not_found_su7k.svg";
+import pic from "../../images/Background/undraw_page_not_found_su7k.svg";
 
 const useStyles = makeStyles((theme) => ({
     redirect: {

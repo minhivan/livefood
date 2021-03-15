@@ -1,7 +1,7 @@
 import React from "react";
-import "../Components/Messenger/Messenger.css";
-import SidebarChat from "../Components/Messenger/SidebarChat";
-import Chat from "../Components/Messenger/Chat";
+import "../../components/Messenger/Messenger.css";
+import SidebarChat from "../../components/Messenger/SidebarChat";
+import Chat from "../../components/Messenger/Chat";
 import IconButton from "@material-ui/core/IconButton";
 import ControlPointOutlinedIcon from "@material-ui/icons/ControlPointOutlined";
 import {makeStyles} from "@material-ui/core/styles";
