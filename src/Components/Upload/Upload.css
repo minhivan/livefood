@@ -18,18 +18,13 @@
     font-size: 16px;
 }
 
-.upload .upload__container .upload__caption .upload__input:hover,
-.upload .upload__container .upload__picker .upload__pickerButton:hover{
-    background-color: #ded9d9;
-    transition: 0.3s all ease;
-}
-
 .upload .upload__container .upload__picker{
     padding-top: 20px;
     display: flex;
     justify-content: space-around;
 }
-.upload .upload__container .upload__picker .upload__pickerImage{
+.upload .upload__container .upload__picker .upload__pickerImage,
+.upload .upload__container .upload__picker .upload__pickButton{
     width: calc(100% /3 - 10px);
 }
 
@@ -37,34 +32,37 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    font: 400 16px Arial;
-    color: #65676b;
+    color: #e3606b;
     word-spacing: normal;
-    background: #f2f2f2;
     border-radius: 0.5rem;
     height: 100%;
     text-transform: uppercase;
+    cursor: pointer;
 }
-
-.upload .upload__container .upload__picker .upload__pickButton{
-    width: calc(100% / 3 - 10px);
+.upload .upload__container .upload__picker .upload__pickerButton:hover{
+    background-color: #f2f2f2;
+    transition: 0.3s all ease;
 }
 
 .upload .upload__container .upload__picker button{
     padding: 15px;
     width: 100%;
-    background-color: #1a90da;
-    color: #fff;
+    color: #65676B;
     border: none;
     border-radius: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
-.upload .upload__container .upload__picker button:hover,
-.upload__button button:hover{
-    background-color: #0074D9;
+
+.upload .upload__container .upload__picker .upload__pickButton button:hover {
+    background-color: #f2f2f2;
     transition: 0.3s all ease;
 }
+.upload .upload__container .upload__picker .upload__buttonLabel{
+    padding-left: 10px;
+    font-weight: 600;
+}
+
 
 /* Popup */
 .popup__caption{
@@ -113,6 +111,41 @@
 
 .popup__picker .popup__iconPicker{
     display: flex;
+}
+
+.handle__button{
+    display: flex;
+    padding: 10px 0;
+    justify-content: space-between;
+}
+.handle__button div{
+    flex-grow: 1;
+}
+
+.handle__reset button{
+    padding: 15px;
+    width: calc(100% - 10px);
+    border: none;
+    border-radius: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background-color: #f2f2f2;
+}
+
+.handle__upload button{
+    padding: 15px;
+    width: calc(100% - 10px);
+    background-color: #1a90da;
+    color: #fff;
+    border: none;
+    border-radius: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.handle__button .handle__upload button:hover{
+    background-color: #0679ba;
+    transition: 0.3s all ease;
 }
 
 @media (min-width: 481px) and (max-width: 767px) {

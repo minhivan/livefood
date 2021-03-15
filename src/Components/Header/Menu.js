@@ -57,14 +57,6 @@ function MenuHeader({auth}) {
                     </IconButton>
                 </Link>
 
-                <Link to="/">
-                    <IconButton aria-label="show 11 new notifications" color="inherit">
-                        <Badge color="secondary">
-                            <CloudDoneTwoToneIcon className={classes.icon}/>
-                        </Badge>
-                    </IconButton>
-                </Link>
-
                 <Link to="/messenger">
                     <IconButton aria-label="show 4 new mails" color="inherit" >
                         <Badge badgeContent={4} color="secondary">
@@ -100,8 +92,10 @@ function MenuHeader({auth}) {
                 >
                     <MenuList autoFocusItem={open} id="menu-list-grow" >
                         <Link to={{pathname:`profile/${auth.currentUser.uid}`}} ><MenuItem onClick={handleClose}>Profile</MenuItem></Link>
+                        <Link to={{pathname:`save`}} ><MenuItem onClick={handleClose}>Save</MenuItem></Link>
                         <MenuItem onClick={handleClose}>My account</MenuItem>
                         <MenuItem onClick={() => auth.signOut()}>Logout</MenuItem>
+
                     </MenuList>
                 </Popover>
             </div>

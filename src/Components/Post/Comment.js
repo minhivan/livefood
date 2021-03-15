@@ -55,21 +55,21 @@ function Comment({comments}){
 
                                     <p>{comment.comment.text}</p>
                                 </div>
-                                <div className="comment__action">
-                                    <div className="action__like">
-                                        <IconButton aria-label="add to favorites">
-                                            <FavoriteBorderIcon />
-                                        </IconButton>
-                                        <span>123 likes</span>
-                                    </div>
+                                {/*<div className="comment__action">*/}
+                                {/*    <div className="action__like">*/}
+                                {/*        <IconButton aria-label="add to favorites">*/}
+                                {/*            <FavoriteBorderIcon />*/}
+                                {/*        </IconButton>*/}
+                                {/*        <span>123 likes</span>*/}
+                                {/*    </div>*/}
 
-                                    <div className="action__reply">
-                                        <IconButton aria-label="comment">
-                                            <SwapVertIcon />
-                                        </IconButton>
-                                        <span>4 replies</span>
-                                    </div>
-                                </div>
+                                {/*    <div className="action__reply">*/}
+                                {/*        <IconButton aria-label="comment">*/}
+                                {/*            <SwapVertIcon />*/}
+                                {/*        </IconButton>*/}
+                                {/*        <span>4 replies</span>*/}
+                                {/*    </div>*/}
+                                {/*</div>*/}
                             </div>
                         </div>
 

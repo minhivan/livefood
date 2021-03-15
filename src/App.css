@@ -128,14 +128,11 @@ input:focus{
     margin: 40px 0 0;
 }
 
-/* Page not found */
+/*!* Page not found *!*/
 .page404{
     min-height: calc(100vh - 100px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     min-width: 100%;
-    background-image: url("./images/Background/undraw_bug_fixing_oc7a.svg");
-    background-position: 50%;
-    background-position-y: 30%;
-    background-size: 55%;
-    background-repeat: no-repeat;
-    background-origin: content-box;
 }

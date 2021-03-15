@@ -3,7 +3,7 @@ const useFirebaseAuthentication = (auth) => {
     const [authUser, setAuthUser] = useState(null);
 
     useEffect(() =>{
-        const unlisten = auth.onAuthStateChanged(
+        const unsubscribe = auth.onAuthStateChanged(
             authUser => {
                 authUser
                     ? setAuthUser(authUser)
@@ -11,7 +11,7 @@ const useFirebaseAuthentication = (auth) => {
             },
         );
         return () => {
-            unlisten();
+            unsubscribe();
         }
     });
     return authUser

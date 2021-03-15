@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import logo from "../../images/logo_brand.png";
+import logo from "../../images/brand.png";
 import './Header.css';
 import {Button} from "@material-ui/core";
 import {auth} from "../../firebase";

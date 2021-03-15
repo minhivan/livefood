@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import useFirebaseAuthentication from "../CustomHook/FirebaseAuth";
 import {auth} from "../firebase";
 import {Button, Modal, TextField} from "@material-ui/core";
 import logo from "../images/logo_brand.png";

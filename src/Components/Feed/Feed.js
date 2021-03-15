@@ -9,6 +9,8 @@ function Feed(){
 
     const [posts, setPosts] = useState([]);
     const authUser = useFirebaseAuthentication(auth);
+    //const authUser = auth;
+
     useEffect(() => {
         db.collection('post')
             .orderBy('timestamp', "desc")
@@ -21,8 +23,6 @@ function Feed(){
             })
 
     }, []);
-
-
 
     return(
 

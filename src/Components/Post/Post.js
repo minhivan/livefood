@@ -14,7 +14,6 @@ import ModeCommentOutlinedIcon from '@material-ui/icons/ModeCommentOutlined';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import SwapVertIcon from '@material-ui/icons/SwapVert';
 import { red } from '@material-ui/core/colors';
 import {Button, Collapse, TextField} from "@material-ui/core";
 import {db} from "../../firebase";
@@ -185,7 +184,7 @@ function Post({ postId, user, username, caption, imageUrl, timestamp}) {
 					</CardActions>
 
 					<div className={classes.displayLike}>
-						<span><b>512 Likes</b></span>
+						<span><b>0 Likes</b></span>
 					</div>
 
 					{/* Comments */}

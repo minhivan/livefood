@@ -8,13 +8,86 @@ import MoreHorizOutlinedIcon from '@material-ui/icons/MoreHorizOutlined';
 import Avatar from "@material-ui/core/Avatar";
 // import dayjs from "dayjs";
 import CardHeader from "@material-ui/core/CardHeader";
-import {Button} from "@material-ui/core";
+import {Button, Collapse, makeStyles} from "@material-ui/core";
+import ListSubheader from '@material-ui/core/ListSubheader';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import DraftsIcon from '@material-ui/icons/Drafts';
+import SendIcon from '@material-ui/icons/Send';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
+import StarBorder from '@material-ui/icons/StarBorder';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        width: '100%',
+        maxWidth: 360,
+        backgroundColor: theme.palette.background.paper,
+    },
+    nested: {
+        paddingLeft: theme.spacing(4),
+    },
+}));
 
 
 function RightSideBar() {
+    const classes = useStyles();
+    const [open, setOpen] = React.useState(true);
+    const handleClick = () => {
+        setOpen(!open);
+    };
     return(
         <div className="app__rightSideBar">
             <div className="sideBar__container">
+
+                <div className="until__container sideBar__containerBlock">
+                    <div className="until__item  bottomDivider">
+                        <List
+                            component="nav"
+                            aria-labelledby="nested-list-subheader"
+                            subheader={
+                                <ListSubheader component="div" id="nested-list-subheader">
+                                    Nested List Items
+                                </ListSubheader>
+                            }
+                            className={classes.root}
+                        >
+                            <ListItem button>
+                                <ListItemIcon>
+                                    <SendIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Sent mail" />
+                            </ListItem>
+                            <ListItem button>
+                                <ListItemIcon>
+                                    <DraftsIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Drafts" />
+                            </ListItem>
+                            <ListItem button onClick={handleClick}>
+                                <ListItemIcon>
+                                    <InboxIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Inbox" />
+                                {open ? <ExpandLess /> : <ExpandMore />}
+                            </ListItem>
+                            <Collapse in={open} timeout="auto" unmountOnExit>
+                                <List component="div" disablePadding>
+                                    <ListItem button className={classes.nested}>
+                                        <ListItemIcon>
+                                            <StarBorder />
+                                        </ListItemIcon>
+                                        <ListItemText primary="Starred" />
+                                    </ListItem>
+                                </List>
+                            </Collapse>
+                        </List>
+                    </div>
+                </div>
+
                 <div className="trending__container sideBar__containerBlock">
                     <div className="trending__header bottomDivider padding-10-20">
                         <h2>What's fresh?</h2>

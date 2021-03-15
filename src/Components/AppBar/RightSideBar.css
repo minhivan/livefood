@@ -53,3 +53,8 @@
 .suggest__user{
     padding: 10px 0;
 }
+
+
+.until__container.sideBar__containerBlock{
+    background-color: unset;
+}
