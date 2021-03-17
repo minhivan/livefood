@@ -1,10 +1,10 @@
 import React from "react";
-import "../../components/Header/Header.css";
-import {Link as RouterLink, Navigate} from "react-router-dom";
+import "../../../components/Header/Header.css";
+import {Link as RouterLink} from "react-router-dom";
 import {Button} from "@material-ui/core";
-import {auth} from "../../firebase";
-import HeaderSearch from "../../components/Header/Search";
-import MenuHeader from "../../components/Header/Menu";
+import {auth} from "../../../firebase";
+import HeaderSearch from "../../../components/Header/Search";
+import MenuHeader from "../../../components/Header/Menu";
 import {useAuthState} from "react-firebase-hooks/auth";
 
 function LayoutAppBar() {

@@ -25,7 +25,6 @@ function Chat(){
 
             <div className="chat__container">
                 <div className="chat__content">
-
                 </div>
             </div>
             <div className="chat__input">

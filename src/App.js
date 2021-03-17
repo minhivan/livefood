@@ -2,7 +2,7 @@ import './App.css';
 import React from "react";
 import { useRoutes } from 'react-router-dom';
 import { ThemeProvider } from '@material-ui/core';
-import {auth, db} from "./firebase";
+// import {auth, db} from "./firebase";
 import GlobalStyles from "./components/GlobalStyle";
 
 

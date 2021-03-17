@@ -89,7 +89,6 @@ function Popup(props){
     const classes = useStyles();
     const [modalStyle] = useState(getModalStyle);
     const [caption, setCaption] = useState('');
-
     return (
         <Modal
             open={props.open}
@@ -136,7 +135,7 @@ function Popup(props){
                             <div className="popup__review">
                                 <img className={classes.reviewImg} src={URL.createObjectURL(props.image)} alt="Picture" />
                                 {/*<div className={classes.buttonClose}>*/}
-                                {/*    <IconButton aria-label="Cancel" color="inherit" onClick={handleClose} >*/}
+                                {/*    <IconButton aria-label="Cancel" color="inherit" >*/}
                                 {/*        <CancelTwoToneIcon />*/}
                                 {/*    </IconButton>*/}
                                 {/*</div>*/}

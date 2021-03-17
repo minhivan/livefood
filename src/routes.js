@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import MainLayout from "./layouts/MainLayout";
 import DefaultLayout from "./layouts/DefaultLayout";
 import Login from "./views/auth/SignIn";
-import HomePage from "./views/home/HomePage";
+import HomePage from "./views/home/HomepageView";
 import NotFoundView from "./views/errors/NotFoundView"
 import Messenger from "./views/messenger/MessengerPage";
 import SignUp from "./views/auth/SignUp";

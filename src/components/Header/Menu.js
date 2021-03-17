@@ -9,7 +9,7 @@ import ExploreTwoToneIcon from '@material-ui/icons/ExploreTwoTone';
 import NotificationsActiveTwoToneIcon from '@material-ui/icons/NotificationsActiveTwoTone';
 import { makeStyles} from "@material-ui/core/styles";
 import EmailTwoToneIcon from '@material-ui/icons/EmailTwoTone';
-import {useAuthState} from "react-firebase-hooks/auth";
+// import {useAuthState} from "react-firebase-hooks/auth";
 import {auth} from "../../firebase";
 
 
@@ -31,14 +31,12 @@ function MenuHeader({user}) {
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
-
     const [active, setActive] = useState(false);
 
     const handleClose = () => {
         setAnchorEl(null);
     };
 
-    console.log(user.uid);
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
 
@@ -76,9 +74,8 @@ function MenuHeader({user}) {
                     </IconButton>
                 </Link>
                 <IconButton onClick={handleClick}>
-                    <Avatar alt="Remy Sharp" src={avt1} />
+                    <Avatar alt={user?.displayName} src={user?.photoURL} />
                 </IconButton>
-
                 <Popover
                     id={id}
                     open={open}
@@ -92,6 +89,7 @@ function MenuHeader({user}) {
                         vertical: 'top',
                         horizontal: 'center',
                     }}
+
                 >
                     <MenuList autoFocusItem={open} id="menu-list-grow" >
                         <Link to={{pathname:`profile/${user.uid}`}} ><MenuItem onClick={handleClose}>Profile</MenuItem></Link>

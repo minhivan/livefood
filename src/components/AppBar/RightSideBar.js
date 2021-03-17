@@ -36,58 +36,10 @@ const useStyles = makeStyles((theme) => ({
 function RightSideBar() {
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
-    const handleClick = () => {
-        setOpen(!open);
-    };
+
     return(
         <div className="app__rightSideBar">
             <div className="sideBar__container">
-
-                <div className="until__container sideBar__containerBlock">
-                    <div className="until__item  bottomDivider">
-                        <List
-                            component="nav"
-                            aria-labelledby="nested-list-subheader"
-                            subheader={
-                                <ListSubheader component="div" id="nested-list-subheader">
-                                    Nested List Items
-                                </ListSubheader>
-                            }
-                            className={classes.root}
-                        >
-                            <ListItem button>
-                                <ListItemIcon>
-                                    <SendIcon />
-                                </ListItemIcon>
-                                <ListItemText primary="Sent mail" />
-                            </ListItem>
-                            <ListItem button>
-                                <ListItemIcon>
-                                    <DraftsIcon />
-                                </ListItemIcon>
-                                <ListItemText primary="Drafts" />
-                            </ListItem>
-                            <ListItem button onClick={handleClick}>
-                                <ListItemIcon>
-                                    <InboxIcon />
-                                </ListItemIcon>
-                                <ListItemText primary="Inbox" />
-                                {open ? <ExpandLess /> : <ExpandMore />}
-                            </ListItem>
-                            <Collapse in={open} timeout="auto" unmountOnExit>
-                                <List component="div" disablePadding>
-                                    <ListItem button className={classes.nested}>
-                                        <ListItemIcon>
-                                            <StarBorder />
-                                        </ListItemIcon>
-                                        <ListItemText primary="Starred" />
-                                    </ListItem>
-                                </List>
-                            </Collapse>
-                        </List>
-                    </div>
-                </div>
-
                 <div className="trending__container sideBar__containerBlock">
                     <div className="trending__header bottomDivider padding-10-20">
                         <h2>What's fresh?</h2>

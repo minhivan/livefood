@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import './Upload.css';
 
 import {Button} from "@material-ui/core";
-import {storage, db } from "../../firebase";
+import { storage, db } from "../../firebase";
 import firebase from "firebase";
 import {makeStyles} from "@material-ui/core/styles";
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -50,13 +50,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function Upload({username}) {
+function    Upload({username}) {
     const [open, setOpen] = useState(false);
     const classes = useStyles();
     const [caption, setCaption] = useState('');
     const [image, setImage] = useState('');
     const [progress, setProgress] = useState('');
-    const [modalStyle] = useState(getModalStyle);
     const [openStep, setOpenStep] = useState(false);
 
 
@@ -158,6 +157,7 @@ function Upload({username}) {
             {/*<div className="">*/}
             {/*    <CircularProgress variant="determinate" value={Number(progress)} />*/}
             {/*</div>*/}
+
             <Popup open={open} username={username} image={image} handleUpload={handleUpload} handleClose={handleClose}/>
             <VerticalLinearStepper open={openStep} username={username} image={image} handleUpload={handleUpload} handleClose={handleCloseStep}/>
 

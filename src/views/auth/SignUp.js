@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {auth} from "../../firebase";
+import {auth, provider} from "../../firebase";
 import {Button, TextField} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import {Link, Navigate} from "react-router-dom"; //import Redirect first
@@ -12,10 +12,10 @@ const useStyles = makeStyles((theme) => ({
         fontSize: "18px",
         fontWeight: "bold",
         margin: "16px 0",
-        backgroundColor: "#d26551",
+        backgroundColor: "#006eb1",
         textTransform: "capitalize",
         '&:hover': {
-            backgroundColor: "#d73620",
+            backgroundColor: "#015081",
         },
     },
     divider: {
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     },
     logo: {
         textAlign: "center",
-        paddingTop: 10,
+        padding: "10px 0",
     },
     SignUpHolder: {
         display: "flex",
@@ -38,7 +38,27 @@ const useStyles = makeStyles((theme) => ({
         padding: "0 10px",
         fontWeight: "bold",
         color: "#0095f6"
+    },
+    slogan: {
+        color: "#8e8e8e",
+        fontSize: "17px",
+        fontWeight: "600",
+        lineHeight: "20px",
+        margin: "0 40px 10px",
+        textAlign: "center"
+    },
+    googleSignin: {
+        padding: "13px",
+        fontSize: "18px",
+        fontWeight: "bold",
+        margin: "16px 0",
+        backgroundColor: "#0095f6",
+        textTransform: "capitalize",
+        '&:hover': {
+            backgroundColor: "#0171b8",
+        },
     }
+
 }));
 
 
@@ -58,6 +78,14 @@ function PageLogin() {
             })
             .catch((error) => alert(error.message));
     }
+
+    const signUpGoogle = (event) => {
+        event.preventDefault();
+        auth.signInWithPopup(provider).catch((error) =>{
+            alert(error.message)
+        })
+    }
+
 
 
     useEffect( () => {
@@ -87,7 +115,22 @@ function PageLogin() {
                                  src="/static/images/brand.png"
                             />
                         </div>
+                        <h2 className={classes.slogan}>Sign up to see photos and videos from your friends.</h2>
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            className={classes.googleSignin}
+                            onClick={signUpGoogle}
+                        >
+                            Sign up with Google
+                        </Button>
+
+                        <div className={classes.divider} />
+
                         <div className={classes.form}>
+
                             <TextField
                                 variant="outlined"
                                 margin="normal"

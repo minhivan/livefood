@@ -16,11 +16,12 @@ import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutline
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { red } from '@material-ui/core/colors';
 import {Button, Collapse, TextField} from "@material-ui/core";
-import {db} from "../../firebase";
+import {db, auth} from "../../firebase";
 import firebase from "firebase";
 import clsx from "clsx";
 import {Link} from "react-router-dom";
 import Comment from "./Comment";
+import {useAuthState} from "react-firebase-hooks/auth";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -53,9 +54,11 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-function Post({ postId, user, username, caption, imageUrl, timestamp}) {
+function Post({ postId, username, caption, imageUrl, timestamp}) {
 	dayjs.extend(relativeTime)
 	let letter = username.toString().charAt(0).toUpperCase();
+	const user = useAuthState(auth);
+	console.log()
 	let postCreated  = null;
 	let cmtLetter = null;
 	if(timestamp){
@@ -123,9 +126,7 @@ function Post({ postId, user, username, caption, imageUrl, timestamp}) {
 				<Card className={classes.root}>
 					<CardHeader
 						avatar={
-							<Avatar aria-label="recipe" className={classes.avatar}>
-								{letter}
-							</Avatar>
+							<Avatar className={classes.avatar} alt={user?.displayName} src={user?.photoURL}/>
 						}
 						title={
 							<Link to={{pathname:`profile/`}}>{username}</Link>
