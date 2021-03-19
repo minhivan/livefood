@@ -1,5 +1,5 @@
 import React, { useState} from "react";
-import avt1 from '../../images/Avatar/avatar1.png';
+import avt1 from '../../../images/Avatar/avatar1.png';
 
 import Avatar from "@material-ui/core/Avatar";
 import {Badge, MenuItem, MenuList, Popover} from "@material-ui/core";
@@ -10,8 +10,9 @@ import NotificationsActiveTwoToneIcon from '@material-ui/icons/NotificationsActi
 import { makeStyles} from "@material-ui/core/styles";
 import EmailTwoToneIcon from '@material-ui/icons/EmailTwoTone';
 // import {useAuthState} from "react-firebase-hooks/auth";
-import {auth} from "../../firebase";
+import {auth} from "../../../firebase";
 import HomeTwoToneIcon from '@material-ui/icons/HomeTwoTone';
+import Button from "@material-ui/core/Button";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -19,6 +20,9 @@ const useStyles = makeStyles((theme) => ({
         height: "28px",
         width: "28px",
         color: "#00000099"
+    },
+    active: {
+        color: "#3f51b5",
     }
 }));
 
@@ -31,7 +35,6 @@ function MenuHeader({user}) {
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
-    const [active, setActive] = useState(false);
 
     const handleClose = () => {
         setAnchorEl(null);
@@ -40,23 +43,20 @@ function MenuHeader({user}) {
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
 
-    const handleChangeEndpoint = () => {
-        setActive(true);
-    }
 
     return(
         <div className="menuHeader">
             <div className="menuIcon">
                 <Link to="/">
-                    <IconButton color="inherit" onClick={handleChangeEndpoint}>
+                    <IconButton activeClassName={classes.active} color="inherit">
                         <Badge color="secondary">
                             <HomeTwoToneIcon className={classes.icon} />
                         </Badge>
                     </IconButton>
                 </Link>
 
-                <Link to="/">
-                    <IconButton color="inherit" onClick={handleChangeEndpoint}>
+                <Link to="/explore">
+                    <IconButton color="inherit" >
                         <Badge color="secondary">
                             <ExploreTwoToneIcon className={classes.icon} />
                         </Badge>

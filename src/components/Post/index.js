@@ -34,7 +34,15 @@ function NewFeed(){
             }
             {
                 posts.map(({id, post}) => (
-                    <Post key={id} caption={post.caption} postId={id} username={post.username} imageUrl={post.imageUrl} timestamp={post.timestamp}/>
+                    <Post
+                        key={id}
+                        caption={post.caption}
+                        postId={id}
+                        user={post.username}
+                        imageUrl={post.imageUrl}
+                        timestamp={post.timestamp}
+
+                    />
                 ))
             }
         </div>

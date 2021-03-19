@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import './Upload.css';
 
 import {Button} from "@material-ui/core";
-import { storage, db } from "../../firebase";
+import {storage, db, auth} from "../../firebase";
 import firebase from "firebase";
 import {makeStyles} from "@material-ui/core/styles";
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -50,13 +50,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function    Upload({username}) {
+function Upload({username}) {
     const [open, setOpen] = useState(false);
     const classes = useStyles();
-    const [caption, setCaption] = useState('');
+    // const [caption, setCaption] = useState('');
     const [image, setImage] = useState('');
-    const [progress, setProgress] = useState('');
+    // const [progress, setProgress] = useState('');
     const [openStep, setOpenStep] = useState(false);
+
 
 
     const handleOpen = () => {
@@ -80,45 +81,45 @@ function    Upload({username}) {
         }
     }
 
-    const handleUpload = () => {
-        const uploadTask = storage.ref(`images/${image.name}`).put(image);
-        uploadTask.on(
-            "state_changed",
-            (snapshot => {
-                const progress = Math.round(
-                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-                );
-                setProgress(progress);
-            }),
-            (error => {
-                console.log(error);
-            }),
-            () => {
-                storage
-                    .ref("images")
-                    .child(image.name)
-                    .getDownloadURL()
-                    .then(url => {
-                        db.collection("post").add({
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                            caption: caption,
-                            imageUrl: url,
-                            username: username
-                        })
-                            .then(function(docRef) {
-                                console.log("Document written with ID: ", docRef.id);
-                            })
-                            .catch(function(error) {
-                                console.error("Error adding document: ", error);
-                            });
-                        setProgress('0');
-                        setCaption("");
-                        setImage(null);
-                        setOpen(false);
-                    })
-            }
-        )
-    }
+    // const handleUpload = () => {
+    //     const uploadTask = storage.ref(`images/${image.name}`).put(image);
+    //     uploadTask.on(
+    //         "state_changed",
+    //         (snapshot => {
+    //             const progress = Math.round(
+    //                 (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+    //             );
+    //             setProgress(progress);
+    //         }),
+    //         (error => {
+    //             console.log(error);
+    //         }),
+    //         () => {
+    //             storage
+    //                 .ref("images")
+    //                 .child(image.name)
+    //                 .getDownloadURL()
+    //                 .then(url => {
+    //                     db.collection("post").add({
+    //                         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    //                         caption: caption,
+    //                         imageUrl: url,
+    //                         username: username
+    //                     })
+    //                         .then(function(docRef) {
+    //                             console.log("Document written with ID: ", docRef.id);
+    //                         })
+    //                         .catch(function(error) {
+    //                             console.error("Error adding document: ", error);
+    //                         });
+    //                     setProgress('0');
+    //                     setCaption("");
+    //                     setImage(null);
+    //                     setOpen(false);
+    //                 })
+    //         }
+    //     )
+    // }
     return(
         <div className="upload">
             <div className="upload__container">
@@ -158,8 +159,8 @@ function    Upload({username}) {
             {/*    <CircularProgress variant="determinate" value={Number(progress)} />*/}
             {/*</div>*/}
 
-            <Popup open={open} username={username} image={image} handleUpload={handleUpload} handleClose={handleClose}/>
-            <VerticalLinearStepper open={openStep} username={username} image={image} handleUpload={handleUpload} handleClose={handleCloseStep}/>
+            <Popup open={open} image={image}  handleClose={handleClose} setImage={setImage}/>
+            <VerticalLinearStepper open={openStep} image={image} setImage={setImage} handleClose={handleCloseStep}/>
 
         </div>
     )

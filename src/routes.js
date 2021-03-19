@@ -7,6 +7,7 @@ import HomePage from "./views/home/HomepageView";
 import NotFoundView from "./views/errors/NotFoundView"
 import Messenger from "./views/messenger/MessengerPage";
 import SignUp from "./views/auth/SignUp";
+import Explore from "./views/explores/ExploreView";
 
 
 const routes = [
@@ -16,6 +17,7 @@ const routes = [
         children: [
             { path: 'messenger/:id', element: <Messenger /> },
             { path: 'profile/:id', element: <HomePage />},
+            { path: 'explore', element: <Explore />},
             { path: '/', element: <HomePage />},
             { path: '404', element: <NotFoundView /> },
             { path: '*', element: <Navigate to="/404" /> }

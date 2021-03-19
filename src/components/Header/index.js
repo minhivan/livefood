@@ -1,17 +1,14 @@
 import React, {useEffect, useState} from "react";
-import logo from "../../images/brand.png";
-import './Header.css';
 import {Button} from "@material-ui/core";
 import {auth} from "../../firebase";
 import HeaderSearch from "./Search";
-import MenuHeader from "./Menu";
-import {Navigate} from "react-router-dom";
+import MenuHeader from "./Item";
+import AppLogo from "./Logo";
 
 
 function Header() {
 
     const [user, setUser] = useState(null);
-    console.log(user);
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((authUser) => {
             if(authUser){
@@ -30,14 +27,7 @@ function Header() {
     return(
         <div className="app__header">
             <div className="header">
-                <div className="header__image">
-                    <Navigate to="/">
-                        <img className="header__imageLogo" alt="Live Food"
-                             src="/static/images/brand.png"
-                        />
-                    </Navigate>
-
-                </div>
+                <AppLogo />
                 <HeaderSearch />
                 <div className="header__auth">
                     {

@@ -151,7 +151,6 @@
 
 @media (min-width: 481px) and (max-width: 767px) {
     .upload{
-        max-width: calc(100% - 20px);
         margin: 20px auto;
     }
 
@@ -162,7 +161,6 @@
 /* Mobile */
 @media (min-width: 320px) and (max-width: 480px) {
     .upload{
-        max-width: calc(100% - 20px);
         margin: 20px auto;
     }
 }

@@ -114,7 +114,6 @@
 
 @media (min-width: 481px) and (max-width: 767px) {
     .post{
-        max-width: calc(100% - 20px);
         margin: 20px auto;
     }
 

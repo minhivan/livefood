@@ -154,15 +154,53 @@ input:focus{
 
 /*}*/
 
-@media (min-width: 1281px) {
-    .app__bodyContainer{
+/* Header */
+.header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: auto;
+    height: 80px;
+    padding: 0 20px;
+    max-width: 1464px;
+}
 
+.header .header__image{
+    display: flex;
+}
+.header .header__imageLogo{
+    object-fit: contain;
+    height: 66px;
+}
+
+.header .header__loginContainer button{
+    padding: 15px;
+    width: 100px;
+    background-color: #1a90da;
+    color: #fff;
+    border: none;
+    border-radius: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+@media (max-width: 767px) {
+    .header{
+        max-width: 100%;
     }
-}
-
-@media (min-width: 1025px) and (max-width: 1280px) {
-
-    /* CSS */
-
 
 }
+
+@media (min-width: 481px) and (max-width: 767px) {
+    .post{
+        margin: 20px auto;
+    }
+    .app__bodyContainer{
+        padding: 0 0;
+    }
+    .app__body .app__post {
+        margin: 0;
+    }
+
+}
+

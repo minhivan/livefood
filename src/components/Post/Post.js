@@ -61,17 +61,17 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-
-
-function Post({ postId, username, caption, imageUrl, timestamp}) {
+// postId, user, caption, imageUrl, timestamp
+//
+function Post(props) {
 	dayjs.extend(relativeTime)
-	let letter = username.toString().charAt(0).toUpperCase();
-	const user = useAuthState(auth);
+	const [user] = useAuthState(auth);
+
 	console.log()
 	let postCreated  = null;
 	let cmtLetter = null;
-	if(timestamp){
-		postCreated = new Date(timestamp.seconds * 1000).toLocaleString();
+	if(props.timestamp){
+		postCreated = new Date(props.timestamp.seconds * 1000).toLocaleString();
 	}
 	if(user){
 		if(user.displayName){
@@ -96,10 +96,10 @@ function Post({ postId, username, caption, imageUrl, timestamp}) {
 
 	useEffect(() => {
 		let unsubscribe;
-		if(postId) {
+		if(props.postId) {
 			unsubscribe = db
 				.collection("post")
-				.doc(postId)
+				.doc(props.postId)
 				.collection("comments")
 				.orderBy('timestamp')
 				.onSnapshot((snapshot ) => {
@@ -115,13 +115,13 @@ function Post({ postId, username, caption, imageUrl, timestamp}) {
 		return () => {
 			unsubscribe();
 		}
-	}, [postId])
+	}, [props.postId])
 
 
 	const postComment = (event) => {
 		event.preventDefault();
 		if(comment){
-			db.collection("post").doc(postId).collection("comments").add({
+			db.collection("post").doc(props.postId).collection("comments").add({
 				text: comment,
 				username: user.displayName,
 				timestamp: firebase.firestore.FieldValue.serverTimestamp(),
@@ -138,7 +138,7 @@ function Post({ postId, username, caption, imageUrl, timestamp}) {
 							<Avatar className={classes.avatar} alt={user?.displayName} src={user?.photoURL}/>
 						}
 						title={
-							<Link to={{pathname:`profile/`}}>{username}</Link>
+							<Link to={{pathname:`profile/`}}>{props.username}</Link>
 						}
 
 						subheader={dayjs(postCreated).fromNow()}
@@ -147,13 +147,13 @@ function Post({ postId, username, caption, imageUrl, timestamp}) {
 						<img
 							alt=""
 							className="post__contentImage"
-							src={imageUrl}
+							src={props.imageUrl}
 						/>
 					</div>
 
 					<div className="post__caption">
-						<a href="#" className="post__user">{username}</a>
-						<span>{caption}</span>
+						<a href="#" className="post__user">{props.username}</a>
+						<span>{props.caption}</span>
 					</div>
 
 					{/* Button */}

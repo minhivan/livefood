@@ -26,7 +26,7 @@ import {auth} from "../../../firebase";
 
 const items = [
     {
-        href: '/notifications',
+        href: '/explore',
         icon: BellIcon,
         title: 'Notifications'
     },
@@ -146,23 +146,11 @@ const NavBar = ({ onMobileClose, openMobile }) => {
     );
 
     return (
-        <>
-            <Hidden smDown>
-                <div className={classes.desktopDrawer}>
-                    {content}
-                </div>
-            </Hidden>
-            {/*<Hidden mdDown>*/}
-            {/*    <Drawer*/}
-            {/*        anchor="left"*/}
-            {/*        classes={{ paper: classes.desktopDrawer }}*/}
-            {/*        open*/}
-            {/*        variant="persistent"*/}
-            {/*    >*/}
-            {/*        {content}*/}
-            {/*    </Drawer>*/}
-            {/*</Hidden>*/}
-        </>
+        <Hidden smDown>
+            <div className={classes.desktopDrawer}>
+                {content}
+            </div>
+        </Hidden>
     );
 };
 

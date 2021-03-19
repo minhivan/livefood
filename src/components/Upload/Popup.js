@@ -7,6 +7,9 @@ import {makeStyles} from "@material-ui/core/styles";
 import PhotoCameraTwoToneIcon from "@material-ui/icons/PhotoCameraTwoTone";
 import VideoCallTwoToneIcon from "@material-ui/icons/VideoCallTwoTone";
 import GroupAddTwoToneIcon from "@material-ui/icons/GroupAddTwoTone";
+import {auth, db, storage} from "../../firebase";
+import firebase from "firebase";
+import {useAuthState} from "react-firebase-hooks/auth";
 
 function getModalStyle() {
     const top = 50 ;
@@ -86,10 +89,52 @@ const useStyles = makeStyles((theme) => ({
 
 
 function Popup(props){
-
+    const [user] = useAuthState(auth);
     const classes = useStyles();
     const [modalStyle] = useState(getModalStyle);
     const [caption, setCaption] = useState('');
+    const [progress, setProgress] = useState('');
+    const handleUpload = () => {
+        const uploadTask = storage.ref(`images/${props.image.name}`).put(props.image);
+        uploadTask.on(
+            "state_changed",
+            (snapshot => {
+                const progress = Math.round(
+                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                );
+                setProgress(progress);
+            }),
+            (error => {
+                console.log(error);
+            }),
+            () => {
+                storage
+                    .ref("images")
+                    .child(props.image.name)
+                    .getDownloadURL()
+                    .then(url => {
+                        db.collection("post").add({
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                            caption: caption,
+                            imageUrl: url,
+                            uid: user.uid,
+                        })
+                            .then(function(docRef) {
+                                console.log("Document written with ID: ", docRef.id);
+                            })
+                            .catch(function(error) {
+                                console.error("Error adding document: ", error);
+                            });
+                        setProgress('0');
+                        setCaption("");
+                        props.setImage(null);
+                        // setOpen(false);
+                        props.handleClose(true);
+                    })
+            }
+        )
+    }
+
     return (
         <Modal
             open={props.open}
@@ -175,7 +220,7 @@ function Popup(props){
                 </div>
 
                 <div className="upload__button">
-                    <Button onClick={props.handleUpload}>Create</Button>
+                    <Button onClick={handleUpload}>Create</Button>
                 </div>
 
             </div>
