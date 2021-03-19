@@ -15,13 +15,14 @@ import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { red } from '@material-ui/core/colors';
-import {Button, Collapse, TextField} from "@material-ui/core";
+import {Button, CardContent, Collapse, TextField} from "@material-ui/core";
 import {db, auth} from "../../firebase";
 import firebase from "firebase";
 import clsx from "clsx";
 import {Link} from "react-router-dom";
 import Comment from "./Comment";
 import {useAuthState} from "react-firebase-hooks/auth";
+import Typography from "@material-ui/core/Typography";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -48,6 +49,14 @@ const useStyles = makeStyles((theme) => ({
 	},
 	action: {
 		borderTop: "1px solid rgba(var(--b6a,219,219,219),1)"
+	},
+	paragraph: {
+		fontFamily: "'Quicksand', sans-serif",
+	},
+	paragraphHead: {
+		fontFamily: "'Quicksand', sans-serif",
+		fontWeight: "600",
+		fontSize: "1rem"
 	}
 }));
 
@@ -187,7 +196,34 @@ function Post({ postId, username, caption, imageUrl, timestamp}) {
 					<div className={classes.displayLike}>
 						<span><b>0 Likes</b></span>
 					</div>
-
+					{/* Post */}
+					<Collapse in={expanded} timeout="auto" unmountOnExit>
+						<CardContent>
+							<Typography paragraph className={classes.paragraphHead}>Method:</Typography>
+							<Typography paragraph className={classes.paragraph}>
+								Heat 1/2 cup of the broth in a pot until simmering, add saffron and set aside for 10
+								minutes.
+							</Typography>
+							<Typography paragraph className={classes.paragraph}>
+								Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet over medium-high
+								heat. Add chicken, shrimp and chorizo, and cook, stirring occasionally until lightly
+								browned, 6 to 8 minutes. Transfer shrimp to a large plate and set aside, leaving chicken
+								and chorizo in the pan. Add pimentón, bay leaves, garlic, tomatoes, onion, salt and
+								pepper, and cook, stirring often until thickened and fragrant, about 10 minutes. Add
+								saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.
+							</Typography>
+							<Typography paragraph className={classes.paragraph}>
+								Add rice and stir very gently to distribute. Top with artichokes and peppers, and cook
+								without stirring, until most of the liquid is absorbed, 15 to 18 minutes. Reduce heat to
+								medium-low, add reserved shrimp and mussels, tucking them down into the rice, and cook
+								again without stirring, until mussels have opened and rice is just tender, 5 to 7
+								minutes more. (Discard any mussels that don’t open.)
+							</Typography>
+							<Typography paragraph className={classes.paragraph}>
+								Set aside off of the heat to let rest for 10 minutes, and then serve.
+							</Typography>
+						</CardContent>
+					</Collapse>
 					{/* Comments */}
 					<div className={classes.comment}>
 						<Comment comments={comments} />

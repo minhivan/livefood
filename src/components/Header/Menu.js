@@ -11,7 +11,7 @@ import { makeStyles} from "@material-ui/core/styles";
 import EmailTwoToneIcon from '@material-ui/icons/EmailTwoTone';
 // import {useAuthState} from "react-firebase-hooks/auth";
 import {auth} from "../../firebase";
-
+import HomeTwoToneIcon from '@material-ui/icons/HomeTwoTone';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -48,7 +48,15 @@ function MenuHeader({user}) {
         <div className="menuHeader">
             <div className="menuIcon">
                 <Link to="/">
-                    <IconButton aria-label="show 4 new mails" color="inherit" onClick={handleChangeEndpoint}>
+                    <IconButton color="inherit" onClick={handleChangeEndpoint}>
+                        <Badge color="secondary">
+                            <HomeTwoToneIcon className={classes.icon} />
+                        </Badge>
+                    </IconButton>
+                </Link>
+
+                <Link to="/">
+                    <IconButton color="inherit" onClick={handleChangeEndpoint}>
                         <Badge color="secondary">
                             <ExploreTwoToneIcon className={classes.icon} />
                         </Badge>
@@ -59,7 +67,7 @@ function MenuHeader({user}) {
                     pathname: `/messenger/${user.uid}`,
                     state: { users: user }
                 }}>
-                    <IconButton aria-label="show 4 new mails" color="inherit" >
+                    <IconButton aria-label="4 new messages" color="inherit" >
                         <Badge badgeContent={4} color="secondary">
                             <EmailTwoToneIcon className={classes.icon}/>
                         </Badge>
@@ -67,7 +75,7 @@ function MenuHeader({user}) {
                 </Link>
 
                 <Link to="/">
-                    <IconButton aria-label="show 11 new notifications" color="inherit">
+                    <IconButton aria-label="11 new notifications" color="inherit">
                         <Badge badgeContent={11} color="secondary">
                             <NotificationsActiveTwoToneIcon className={classes.icon}/>
                         </Badge>

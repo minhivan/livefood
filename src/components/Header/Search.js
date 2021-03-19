@@ -2,6 +2,7 @@ import React from "react";
 import InputBase from '@material-ui/core/InputBase';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
+import {Drawer, Hidden} from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
     search: {
@@ -50,21 +51,23 @@ const useStyles = makeStyles((theme) => ({
 function HeaderSearch() {
     const classes = useStyles();
     return (
-        <div className="header__search">
-            <div className={classes.search}>
-                <div className={classes.searchIcon}>
-                    <SearchIcon />
+        <Hidden smDown>
+            <div className="header__search">
+                <div className={classes.search}>
+                    <div className={classes.searchIcon}>
+                        <SearchIcon />
+                    </div>
+                    <InputBase
+                        placeholder="Search…"
+                        classes={{
+                            root: classes.inputRoot,
+                            input: classes.inputInput,
+                        }}
+                        inputProps={{ 'aria-label': 'search' }}
+                    />
                 </div>
-                <InputBase
-                    placeholder="Search…"
-                    classes={{
-                        root: classes.inputRoot,
-                        input: classes.inputInput,
-                    }}
-                    inputProps={{ 'aria-label': 'search' }}
-                />
             </div>
-        </div>
+        </Hidden>
     )
 }
 

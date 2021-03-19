@@ -3,7 +3,6 @@ import { NavLink as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import {
-    Box,
     Button,
     ListItem,
     makeStyles
@@ -26,12 +25,13 @@ const useStyles = makeStyles((theme) => ({
         width: '100%'
     },
     icon: {
-        marginRight: theme.spacing(1)
+        marginRight: theme.spacing(1),
+        color: "#050505"
     },
     title: {
         marginRight: 'auto',
         fontWeight: "500",
-        fontSize: "16px",
+        fontSize: "1.1rem",
         paddingLeft: "10px",
         color: "#050505"
     },
@@ -74,8 +74,8 @@ const NavItem = ({
                     />
                 )}
                 <span className={classes.title}>
-          {title}
-        </span>
+                    {title}
+                </span>
             </Button>
         </ListItem>
     );

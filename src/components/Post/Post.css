@@ -123,8 +123,12 @@
 
 /* Mobile */
 @media (min-width: 320px) and (max-width: 480px) {
+    .app__body .app__post, .app__bodyContainer{
+        margin: 0;
+        padding: 0;
+    }
+
     .post{
-        max-width: calc(100% - 20px);
         margin: 20px auto;
     }
 }

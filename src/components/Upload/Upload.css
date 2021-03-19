@@ -38,6 +38,7 @@
     height: 100%;
     text-transform: uppercase;
     cursor: pointer;
+    font-size: 14px;
 }
 .upload .upload__container .upload__picker .upload__pickerButton:hover{
     background-color: #f2f2f2;

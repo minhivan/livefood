@@ -58,27 +58,25 @@ html{
 }
 
 .app__bodyContainer{
-    padding-top: 20px;
-    /*max-width: 935px;*/
+    padding: 20px;
     margin: auto;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     flex-direction: row;
     min-height: calc(100vh - 80px);
 }
 
 .app__body .app__post{
-    flex: 0.7;
-    margin: 0 auto;
+    flex-basis: 766px;
+    margin: 0 32px;
     z-index: 1;
-    padding: 0 20px;
 }
 
 .app__body .app__rightSideBar{
-    flex: 0.3;
     position: sticky;
     top: 100px;
-    align-self: flex-start
+    align-self: flex-start;
+    width: 290px;
 }
 
 
@@ -146,4 +144,25 @@ input:focus{
     align-items: center;
     justify-content: center;
     min-width: 100%;
+}
+
+/*!*!* Responsive *!*!*/
+/*@media (max-width: 767px) {*/
+/*    .app__bodyContainer{*/
+/*        max-width: 100%;*/
+/*    }*/
+
+/*}*/
+
+@media (min-width: 1281px) {
+    .app__bodyContainer{
+
+    }
+}
+
+@media (min-width: 1025px) and (max-width: 1280px) {
+
+    /* CSS */
+
+
 }

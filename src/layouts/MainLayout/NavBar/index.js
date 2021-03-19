@@ -8,7 +8,7 @@ import {
     Hidden,
     List,
     Typography,
-    makeStyles
+    makeStyles, Button
 } from '@material-ui/core';
 import {
     Users as UsersIcon,
@@ -70,9 +70,9 @@ const useStyles = makeStyles(() => ({
         width: 256,
         position: "sticky",
         top: "100px",
-        height: "unset",
+        height: "calc(100% - 100px)",
         backgroundColor: "#f0f2f5",
-        border: "none"
+        border: "none",
     },
     avatar: {
         cursor: 'pointer',
@@ -82,7 +82,10 @@ const useStyles = makeStyles(() => ({
     },
     name: {
         fontWeight: "500",
-        fontSize: "16px"
+        fontSize: "1.1rem",
+        padding: "0 10px",
+        cursor: "pointer",
+        fontFamily: "'Quicksand', sans-serif"
     },
     util: {
         padding: "0 0 0 20px"
@@ -110,7 +113,7 @@ const NavBar = ({ onMobileClose, openMobile }) => {
             <Box
                 alignItems="center"
                 display="flex"
-                flexDirection="column"
+                flexDirection="row"
                 p={2}
             >
                 <Avatar
@@ -122,7 +125,7 @@ const NavBar = ({ onMobileClose, openMobile }) => {
                 <Typography
                     className={classes.name}
                     color="textPrimary"
-                    variant="span"
+                    variant="body1"
                 >
                     {user?.displayName}
                 </Typography>
@@ -144,27 +147,21 @@ const NavBar = ({ onMobileClose, openMobile }) => {
 
     return (
         <>
-            <Hidden lgUp>
-                <Drawer
-                    anchor="left"
-                    classes={{ paper: classes.mobileDrawer }}
-                    onClose={onMobileClose}
-                    open={openMobile}
-                    variant="temporary"
-                >
+            <Hidden smDown>
+                <div className={classes.desktopDrawer}>
                     {content}
-                </Drawer>
+                </div>
             </Hidden>
-            <Hidden mdDown>
-                <Drawer
-                    anchor="left"
-                    classes={{ paper: classes.desktopDrawer }}
-                    open
-                    variant="persistent"
-                >
-                    {content}
-                </Drawer>
-            </Hidden>
+            {/*<Hidden mdDown>*/}
+            {/*    <Drawer*/}
+            {/*        anchor="left"*/}
+            {/*        classes={{ paper: classes.desktopDrawer }}*/}
+            {/*        open*/}
+            {/*        variant="persistent"*/}
+            {/*    >*/}
+            {/*        {content}*/}
+            {/*    </Drawer>*/}
+            {/*</Hidden>*/}
         </>
     );
 };

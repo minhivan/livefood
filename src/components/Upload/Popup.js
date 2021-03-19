@@ -86,6 +86,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 function Popup(props){
+
     const classes = useStyles();
     const [modalStyle] = useState(getModalStyle);
     const [caption, setCaption] = useState('');
