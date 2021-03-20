@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
+import {Link, Link as RouterLink, useLocation} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
     Avatar,
@@ -121,13 +121,7 @@ const NavBar = ({ onMobileClose, openMobile }) => {
                     src={user?.photoURL}
                     to={`profile/${user?.uid}`}
                 />
-                <Typography
-                    className={classes.name}
-                    color="textPrimary"
-                    variant="body1"
-                >
-                    {user?.displayName}
-                </Typography>
+                <Link to={`profile/${user?.uid}`} className={classes.name}>{user?.displayName}</Link>
             </Box>
             <Box p={2} className={classes.util}>
                 <List>

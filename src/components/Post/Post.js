@@ -20,7 +20,7 @@ import {db, auth, database} from "../../firebase";
 import firebase from "firebase";
 import clsx from "clsx";
 import {Link} from "react-router-dom";
-import ListComment from "./Comment";
+import ListComment from "./Comments";
 import {useAuthState} from "react-firebase-hooks/auth";
 import Typography from "@material-ui/core/Typography";
 
@@ -88,7 +88,7 @@ function Post(props) {
 				.collection("post")
 				.doc(props.postId)
 				.collection("comments")
-				.orderBy('timestamp')
+				.orderBy('timestamp', "desc")
 				.onSnapshot((snapshot ) => {
 					setComments(
 						snapshot.docs.map((doc => ({
@@ -104,13 +104,8 @@ function Post(props) {
 					setPostAuthor(
 						doc.data()
 					)
-				} else {
-					// doc.data() will be undefined in this case
-					console.log("No such document!");
 				}
-			}).catch((error) => {
-				console.log("Error getting document:", error);
-			});
+			})
 		}
 		return () => {
 			unsubscribe();
@@ -123,7 +118,7 @@ function Post(props) {
 		if(comment){
 			db.collection("post").doc(props.postId).collection("comments").add({
 				text: comment,
-				username: user.displayName,
+				user: db.doc('users/' + user.uid),
 				timestamp: firebase.firestore.FieldValue.serverTimestamp(),
 			});
 		}
