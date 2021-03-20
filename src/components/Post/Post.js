@@ -16,14 +16,13 @@ import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutline
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { red } from '@material-ui/core/colors';
 import {Button, CardContent, Collapse, TextField} from "@material-ui/core";
-import {db, auth} from "../../firebase";
+import {db, auth, database} from "../../firebase";
 import firebase from "firebase";
 import clsx from "clsx";
 import {Link} from "react-router-dom";
-import Comment from "./Comment";
+import ListComment from "./Comment";
 import {useAuthState} from "react-firebase-hooks/auth";
 import Typography from "@material-ui/core/Typography";
-
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -64,35 +63,23 @@ const useStyles = makeStyles((theme) => ({
 // postId, user, caption, imageUrl, timestamp
 //
 function Post(props) {
-	dayjs.extend(relativeTime)
 	const [user] = useAuthState(auth);
-
-	console.log()
+	dayjs.extend(relativeTime)
 	let postCreated  = null;
-	let cmtLetter = null;
 	if(props.timestamp){
 		postCreated = new Date(props.timestamp.seconds * 1000).toLocaleString();
 	}
-	if(user){
-		if(user.displayName){
-			cmtLetter = user.displayName.toString().charAt(0).toUpperCase();
-		}
-	}
+
 	const classes = useStyles();
 	const [comments, setComments] = useState([]);
 	const [comment, setComment] = useState('');
-	//const [focusComment, setFocusComment] = useState(false);
 	const [expanded, setExpanded] = React.useState(false);
+	const [postAuthor, setPostAuthor] = useState([]);
 
 
 	const handleExpandClick = () => {
 		setExpanded(!expanded);
 	};
-
-	// const handleFocusComment = () => {
-	//
-	// }
-
 
 	useEffect(() => {
 		let unsubscribe;
@@ -110,12 +97,25 @@ function Post(props) {
 						})))
 					)
 				})
-		}
 
+			db.collection("users").doc(props.user)
+				.get().then((doc) => {
+				if (doc.exists) {
+					setPostAuthor(
+						doc.data()
+					)
+				} else {
+					// doc.data() will be undefined in this case
+					console.log("No such document!");
+				}
+			}).catch((error) => {
+				console.log("Error getting document:", error);
+			});
+		}
 		return () => {
 			unsubscribe();
 		}
-	}, [props.postId])
+	}, [props.postId, props.user])
 
 
 	const postComment = (event) => {
@@ -135,10 +135,10 @@ function Post(props) {
 				<Card className={classes.root}>
 					<CardHeader
 						avatar={
-							<Avatar className={classes.avatar} alt={user?.displayName} src={user?.photoURL}/>
+							<Avatar className={classes.avatar} alt={postAuthor.displayName} src={postAuthor.photoURL}/>
 						}
 						title={
-							<Link to={{pathname:`profile/`}}>{props.username}</Link>
+							<Link to={`profile/${props.user}`}>{postAuthor.displayName}</Link>
 						}
 
 						subheader={dayjs(postCreated).fromNow()}
@@ -152,7 +152,7 @@ function Post(props) {
 					</div>
 
 					<div className="post__caption">
-						<a href="#" className="post__user">{props.username}</a>
+						<Link to={`profile/${props.user}`} className="post__user">{postAuthor.displayName}</Link>
 						<span>{props.caption}</span>
 					</div>
 
@@ -226,13 +226,12 @@ function Post(props) {
 					</Collapse>
 					{/* Comments */}
 					<div className={classes.comment}>
-						<Comment comments={comments} />
+						<ListComment comments={comments} />
 						{
 							user &&  (
 								<div className="commentContainer">
-									<Avatar aria-label="recipe" className={classes.avatar}>
-										{cmtLetter}
-									</Avatar>
+									<Avatar className={classes.avatar} alt={user?.displayName} src={user?.photoURL} />
+
 									<form onSubmit={postComment}>
 										<TextField
 											className="comment__input"

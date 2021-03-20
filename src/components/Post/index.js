@@ -17,7 +17,6 @@ function NewFeed(){
                 setPosts(snapshot.docs.map(doc => ({
                     id: doc.id,
                     post: doc.data(),
-                    timestamp: doc.get('timestamp')
                 })));
             })
 
@@ -38,10 +37,9 @@ function NewFeed(){
                         key={id}
                         caption={post.caption}
                         postId={id}
-                        user={post.username}
+                        user={post.uid}
                         imageUrl={post.imageUrl}
                         timestamp={post.timestamp}
-
                     />
                 ))
             }

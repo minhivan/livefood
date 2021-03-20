@@ -2,7 +2,6 @@ import React, {useState} from "react";
 import {Avatar, Badge, Button, IconButton, Modal, TextField} from "@material-ui/core";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 import CardHeader from "@material-ui/core/CardHeader";
-import avt1 from "../../images/Avatar/avatar1.png";
 import {makeStyles} from "@material-ui/core/styles";
 import PhotoCameraTwoToneIcon from "@material-ui/icons/PhotoCameraTwoTone";
 import VideoCallTwoToneIcon from "@material-ui/icons/VideoCallTwoTone";
@@ -83,6 +82,7 @@ const useStyles = makeStyles((theme) => ({
         padding: "10px 0",
         minHeight: "200px",
         maxHeight: "400px",
+        fontFamily: "'Quicksand', sans-serif"
     }
 }));
 
@@ -154,13 +154,13 @@ function Popup(props){
                 <div className="popup__caption">
                     <CardHeader
                         avatar={
-                            <Avatar aria-label="recipe" className={classes.avatar} src={avt1}/>
+                            <Avatar aria-label="recipe" className={classes.avatar} src={user?.photoURL}/>
                         }
                         title={
-                            <span className={classes.username}>{props.username}</span>
+                            <span className={classes.username}>{user?.displayName}</span>
                         }
                         subheader={
-                            <span>Test</span>
+                            <span>Public</span>
                         }
                         className={classes.cardHeader}
                     />
@@ -172,14 +172,14 @@ function Popup(props){
                             placeholder="What's on your mind ... "
                             value={caption}
                             onChange={event => setCaption(event.target.value)}
-                            InputProps={{ disableUnderline: true, style : {fontSize: "18px"}}}
+                            InputProps={{ disableUnderline: true, style : {fontSize: "18px", fontFamily: "'Quicksand', sans-serif"}}}
                         />
                     </div>
 
                     {
                         props.image ? (
                             <div className="popup__review">
-                                <img className={classes.reviewImg} src={URL.createObjectURL(props.image)} alt="Picture" />
+                                <img className={classes.reviewImg} src={URL.createObjectURL(props.image)} alt="" />
                                 {/*<div className={classes.buttonClose}>*/}
                                 {/*    <IconButton aria-label="Cancel" color="inherit" >*/}
                                 {/*        <CancelTwoToneIcon />*/}

@@ -2,28 +2,16 @@ import React, {useState} from "react";
 import './Upload.css';
 
 import {Button} from "@material-ui/core";
-import {storage, db, auth} from "../../firebase";
-import firebase from "firebase";
+// import {storage, db, auth} from "../../firebase";
+// import firebase from "firebase";
 import {makeStyles} from "@material-ui/core/styles";
-import CircularProgress from '@material-ui/core/CircularProgress';
+// import CircularProgress from '@material-ui/core/CircularProgress';
 import CreateTwoToneIcon from '@material-ui/icons/CreateTwoTone';
 import PhotoSizeSelectActualIcon from '@material-ui/icons/PhotoSizeSelectActual';
 import SentimentSatisfiedTwoToneIcon from '@material-ui/icons/SentimentSatisfiedTwoTone';
 import EmojiObjectsTwoToneIcon from '@material-ui/icons/EmojiObjectsTwoTone';
 import Popup from "./Popup";
 import VerticalLinearStepper from "./Stepper";
-
-
-function getModalStyle() {
-    const top = 50 ;
-    const left = 50;
-
-    return {
-        top: `${top}%`,
-        left: `${left}%`,
-        transform: `translate(-${top}%, -${left}%)`,
-    };
-}
 
 
 const useStyles = makeStyles((theme) => ({

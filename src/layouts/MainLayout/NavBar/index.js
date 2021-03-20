@@ -4,11 +4,10 @@ import PropTypes from 'prop-types';
 import {
     Avatar,
     Box,
-    Drawer,
     Hidden,
     List,
     Typography,
-    makeStyles, Button
+    makeStyles
 } from '@material-ui/core';
 import {
     Users as UsersIcon,

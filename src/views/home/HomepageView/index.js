@@ -13,7 +13,6 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 const HomePage = () => {
-    const classes = useStyles();
     return (
         <Page
             title="LiveFood"

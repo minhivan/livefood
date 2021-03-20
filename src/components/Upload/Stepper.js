@@ -118,7 +118,12 @@ function GetStepContent(step: number) {
         case 0:
             return (
                 <div className="stepper__details">
-                    <TextField required placeholder="Recipe Title" fullWidth variant="outlined"/>
+                    <TextField
+                        required
+                        placeholder="Recipe Title"
+                        fullWidth variant="outlined"
+                        InputProps={{ disableUnderline: true, style : {fontFamily: "'Quicksand', sans-serif"}}}
+                    />
                     <TextField
                         variant="outlined"
                         // className={classes.inputText}
@@ -127,26 +132,30 @@ function GetStepContent(step: number) {
                         rows={4}
                         fullWidth
                         margin="normal"
+                        InputProps={{ disableUnderline: true, style : {fontFamily: "'Quicksand', sans-serif"}}}
                     />
 
                     <div className={classes.amount}>
                         <div className={classes.prepData}>
                             <TextField
                                 style = {{maxWidth: "100px"}}
-                                id="standard-number"
                                 type="number"
                                 label="Prep time"
                                 InputLabelProps={{
                                     shrink: true,
                                 }}
                                 variant="outlined"
+                                InputProps={{ disableUnderline: true, style : {fontFamily: "'Quicksand', sans-serif"}}}
+
                             />
                             <FormControl variant="outlined" className={classes.formControl}>
                                 <Select
                                     native
                                     inputProps={{
                                         id: 'prep-time',
+                                        style : {fontFamily: "'Quicksand', sans-serif"}
                                     }}
+
                                 >
                                     <option value={10}>Minute</option>
                                     <option value={20}>Hour</option>
@@ -157,19 +166,21 @@ function GetStepContent(step: number) {
                         <div className={classes.cookData}>
                             <TextField
                                 style = {{maxWidth: "100px"}}
-                                id="standard-number"
                                 label="Cook time"
                                 type="number"
                                 InputLabelProps={{
                                     shrink: true,
                                 }}
                                 variant="outlined"
+                                InputProps={{ disableUnderline: true, style : {fontFamily: "'Quicksand', sans-serif"}}}
+
                             />
                             <FormControl variant="outlined" className={classes.formControl}>
                                 <Select
                                     native
                                     inputProps={{
                                         id: 'cook-time',
+                                        style : {fontFamily: "'Quicksand', sans-serif"}
                                     }}
                                 >
                                     <option value={10}>Minute</option>
@@ -181,13 +192,13 @@ function GetStepContent(step: number) {
                         <div className={classes.serveYield}>
                             <TextField
                                 style = {{maxWidth: "100px"}}
-                                id="standard-number"
                                 label="Serves"
                                 type="number"
                                 InputLabelProps={{
                                     shrink: true,
                                 }}
                                 variant="outlined"
+                                InputProps={{ disableUnderline: true, style : {fontFamily: "'Quicksand', sans-serif"}}}
                             />
                         </div>
 
@@ -197,7 +208,15 @@ function GetStepContent(step: number) {
         case 1:
             return (
                 <div className="stepper__category">
-                    <Select native defaultValue="Category" fullWidth variant="outlined">
+                    <Select
+                        native
+                        defaultValue="Category"
+                        fullWidth variant="outlined"
+                        inputProps={{
+                            id: 'category',
+                            style : {fontFamily: "'Quicksand', sans-serif"}
+                        }}
+                    >
                         <option aria-label="None" value="" />
                         <optgroup label="Category 1">
                             <option value={1}>Option 1</option>
@@ -221,6 +240,7 @@ function GetStepContent(step: number) {
                         rows={10}
                         fullWidth
                         margin="normal"
+                        InputProps={{ disableUnderline: true, style : {fontFamily: "'Quicksand', sans-serif"}}}
                     />
                 </div>
             );
@@ -235,6 +255,7 @@ function GetStepContent(step: number) {
                         rows={10}
                         fullWidth
                         margin="normal"
+                        InputProps={{ disableUnderline: true, style : {fontFamily: "'Quicksand', sans-serif"}}}
                     />
                 </div>
             );

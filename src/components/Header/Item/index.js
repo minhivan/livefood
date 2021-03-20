@@ -1,5 +1,4 @@
 import React, { useState} from "react";
-import avt1 from '../../../images/Avatar/avatar1.png';
 
 import Avatar from "@material-ui/core/Avatar";
 import {Badge, MenuItem, MenuList, Popover} from "@material-ui/core";
@@ -12,7 +11,6 @@ import EmailTwoToneIcon from '@material-ui/icons/EmailTwoTone';
 // import {useAuthState} from "react-firebase-hooks/auth";
 import {auth} from "../../../firebase";
 import HomeTwoToneIcon from '@material-ui/icons/HomeTwoTone';
-import Button from "@material-ui/core/Button";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -48,7 +46,7 @@ function MenuHeader({user}) {
         <div className="menuHeader">
             <div className="menuIcon">
                 <Link to="/">
-                    <IconButton activeClassName={classes.active} color="inherit">
+                    <IconButton color="inherit">
                         <Badge color="secondary">
                             <HomeTwoToneIcon className={classes.icon} />
                         </Badge>

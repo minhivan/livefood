@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {auth, provider} from "../../firebase";
+import {auth, provider, db } from "../../firebase";
 import {Button, TextField} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import {Link, Navigate} from "react-router-dom"; //import Redirect first
@@ -75,6 +75,7 @@ function PageLogin() {
                 return authUser.user.updateProfile({
                     displayName: username
                 })
+
             })
             .catch((error) => alert(error.message));
     }
@@ -82,6 +83,7 @@ function PageLogin() {
     const signUpGoogle = (event) => {
         event.preventDefault();
         auth.signInWithPopup(provider).catch((error) =>{
+
             alert(error.message)
         })
     }
@@ -91,6 +93,39 @@ function PageLogin() {
     useEffect( () => {
         const unsubscribe = auth.onAuthStateChanged((authUser) => {
             if(authUser){
+                console.log(authUser.uid);
+                var docRef = db.collection("users").doc(authUser.uid);
+                docRef.get().then((doc) => {
+                    if(doc.exists){
+                        if(Object.keys(doc.data()).length === 0){
+                            docRef.set({
+                                email: authUser.email,
+                                emailVerified: authUser.emailVerified,
+                                phoneNumber: authUser.phoneNumber,
+                                displayName: authUser.displayName,
+                                photoURL: authUser.photoURL,
+                            }).then(()=> {
+                                console.log("Document successfully written!");
+                            }).catch((error) => {
+                                console.error("Error writing document: ", error);
+                            })
+                        }
+                    }else{
+                        docRef.set({
+                            email: authUser.email,
+                            emailVerified: authUser.emailVerified,
+                            phoneNumber: authUser.phoneNumber,
+                            displayName: authUser.displayName,
+                            photoURL: authUser.photoURL,
+                        }).then(()=> {
+                            console.log("Document successfully written!");
+                        }).catch((error) => {
+                            console.error("Error writing document: ", error);
+                        })
+                    }
+                }).catch((error) => {
+                    console.log("Error getting document:", error);
+                });
                 setUser(authUser);
             }else{
                 setUser(null);
