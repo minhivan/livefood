@@ -16,7 +16,7 @@ import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutline
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { red } from '@material-ui/core/colors';
 import {Button, CardContent, Collapse, TextField} from "@material-ui/core";
-import {db, auth, database} from "../../firebase";
+import {db, auth} from "../../firebase";
 import firebase from "firebase";
 import clsx from "clsx";
 import {Link} from "react-router-dom";
@@ -93,24 +93,25 @@ function Post(props) {
 					setComments(
 						snapshot.docs.map((doc => ({
 							id: doc.id,
-							comment: doc.data()
+							comment: doc.data(),
+							cmtAuthor: doc.data().user.get().then( user => {
+								return user.data();
+							})
 						})))
-					)
+					);
 				})
 
-			db.collection("users").doc(props.user)
-				.get().then((doc) => {
-				if (doc.exists) {
-					setPostAuthor(
-						doc.data()
-					)
-				}
+			props.author.then((item) => {
+				setPostAuthor(item);
+				console.log(item);
+				// console.log(item.uid)
 			})
+
 		}
 		return () => {
 			unsubscribe();
 		}
-	}, [props.postId, props.user])
+	}, [props.author, props.postId])
 
 
 	const postComment = (event) => {
@@ -133,7 +134,7 @@ function Post(props) {
 							<Avatar className={classes.avatar} alt={postAuthor.displayName} src={postAuthor.photoURL}/>
 						}
 						title={
-							<Link to={`profile/${props.user}`}>{postAuthor.displayName}</Link>
+							<Link to={`profile/${postAuthor.uid}`}>{postAuthor.displayName}</Link>
 						}
 
 						subheader={dayjs(postCreated).fromNow()}
@@ -233,6 +234,8 @@ function Post(props) {
 											placeholder="Leave a comment ... "
 											value={comment}
 											onChange={event => setComment(event.target.value)}
+											InputProps={{ disableUnderline: true, style : {fontFamily: "'Quicksand', sans-serif"}}}
+
 										/>
 										<Button variant="contained" disabled={!comment} onClick={postComment}>
 											Post

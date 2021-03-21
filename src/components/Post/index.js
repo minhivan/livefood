@@ -8,21 +8,21 @@ function NewFeed(){
 
     const [posts, setPosts] = useState([]);
     const [ authUser ] = useAuthState(auth);
-    //const authUser = auth;
 
     useEffect(() => {
-        db.collection('post')
+        db.collection('posts')
             .orderBy('timestamp', "desc")
             .onSnapshot(snapshot => {
                 setPosts(snapshot.docs.map(doc => ({
                     id: doc.id,
                     post: doc.data(),
+                    author: doc.data().user.get().then( author => {
+                        return author.data();
+                    })
                 })));
             })
-
     }, []);
 
-    console.log()
 
     return(
         <div className="app__post">
@@ -32,12 +32,12 @@ function NewFeed(){
                 ) : null
             }
             {
-                posts.map(({id, post}) => (
+                posts.map(({id, post, author}) => (
                     <Post
                         key={id}
                         caption={post.caption}
                         postId={id}
-                        user={post.uid}
+                        author={author}
                         imageUrl={post.imageUrl}
                         timestamp={post.timestamp}
                     />

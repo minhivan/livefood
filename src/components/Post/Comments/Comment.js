@@ -25,14 +25,12 @@ function PostComment (props) {
     const [commentAuthor, setCommentAuthor] = useState([]);
 
     useEffect(() => {
-        props.comment.user.onSnapshot((doc) => {
-            setCommentAuthor(
-                doc.data()
-            );
-            console.log("Current data: ", doc.data());
-        });
+        // fetch user
+        props.cmtAuthor.then((data) => {
+            setCommentAuthor(data);
+        })
 
-    }, [props.comment.user])
+    }, [props.cmtAuthor])
 
 
     return (
@@ -41,7 +39,7 @@ function PostComment (props) {
             <div className="comment__content">
                 <div className="comment__block">
                     <div className="comment__sub">
-                        <Link to={`profile/${props.user}`}>{commentAuthor.displayName}</Link>
+                        <Link to={`profile/${commentAuthor.uid}`}>{commentAuthor.displayName}</Link>
                         {
                             props.comment.timestamp ? (
                                 <span>{

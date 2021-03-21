@@ -33,10 +33,11 @@ function Comment(props){
                 )
             }
             {
-                props.comments.slice(0, 5).map(({id, comment}) => (
+                props.comments.slice(0, 5).map(({id, comment, cmtAuthor}) => (
                     <PostComment
                         key={id}
                         comment={comment}
+                        cmtAuthor={cmtAuthor}
                     />
                 ))
             }

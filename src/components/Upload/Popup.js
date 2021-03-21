@@ -113,11 +113,11 @@ function Popup(props){
                     .child(props.image.name)
                     .getDownloadURL()
                     .then(url => {
-                        db.collection("post").add({
+                        db.collection("posts").add({
                             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                             caption: caption,
                             imageUrl: url,
-                            uid: user.uid,
+                            user: db.doc('users/' + user.uid),
                         })
                             .then(function(docRef) {
                                 console.log("Document written with ID: ", docRef.id);
