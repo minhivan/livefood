@@ -1,9 +1,8 @@
-import React, {useEffect, useState} from "react";
+import React, { useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import dayjs from "dayjs";
 import {makeStyles} from "@material-ui/core/styles";
 import {red} from "@material-ui/core/colors";
-import {db} from "../../../firebase";
 import {Link} from "react-router-dom";
 
 
@@ -24,14 +23,9 @@ function PostComment (props) {
     const classes = useStyles();
     const [commentAuthor, setCommentAuthor] = useState([]);
 
-    useEffect(() => {
-        // fetch user
-        props.cmtAuthor.then((data) => {
-            setCommentAuthor(data);
-        })
-
-    }, [props.cmtAuthor])
-
+    props.cmtAuthor.then((data) => {
+        setCommentAuthor(data);
+    })
 
     return (
         <div className="commentDetails" key={props.comment.id}>

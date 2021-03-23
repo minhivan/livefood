@@ -23,6 +23,7 @@ import {Link} from "react-router-dom";
 import ListComment from "./Comments";
 import {useAuthState} from "react-firebase-hooks/auth";
 import Typography from "@material-ui/core/Typography";
+import Upload from "../Upload";
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -62,13 +63,17 @@ const useStyles = makeStyles((theme) => ({
 
 // postId, user, caption, imageUrl, timestamp
 //
-function Post(props) {
+function Post( props ) {
+
 	const [user] = useAuthState(auth);
-	dayjs.extend(relativeTime)
+	dayjs.extend(relativeTime);
 	let postCreated  = null;
-	if(props.timestamp){
-		postCreated = new Date(props.timestamp.seconds * 1000).toLocaleString();
+
+
+	if(props?.post?.timestamp){
+		postCreated = new Date(props?.post?.timestamp.seconds * 1000).toLocaleString();
 	}
+
 
 	const classes = useStyles();
 	const [comments, setComments] = useState([]);
@@ -76,48 +81,48 @@ function Post(props) {
 	const [expanded, setExpanded] = React.useState(false);
 	const [postAuthor, setPostAuthor] = useState([]);
 
-
 	const handleExpandClick = () => {
 		setExpanded(!expanded);
 	};
+
 
 	useEffect(() => {
 		let unsubscribe;
 		if(props.postId) {
 			unsubscribe = db
-				.collection("post")
+				.collection("posts")
 				.doc(props.postId)
 				.collection("comments")
 				.orderBy('timestamp', "desc")
 				.onSnapshot((snapshot ) => {
+					// var userProfile = {};
 					setComments(
 						snapshot.docs.map((doc => ({
 							id: doc.id,
 							comment: doc.data(),
-							cmtAuthor: doc.data().user.get().then( user => {
-								return user.data();
+							cmtAuthor: doc.data().user.get().then( author => {
+								return author.data();
+								// return Object.assign(userProfile, author.data());
 							})
 						})))
 					);
 				})
-
-			props.author.then((item) => {
-				setPostAuthor(item);
-				console.log(item);
-				// console.log(item.uid)
-			})
-
 		}
+		setPostAuthor(props.author);
+
 		return () => {
 			unsubscribe();
 		}
-	}, [props.author, props.postId])
+	}, [props.postId])
+
+
+
 
 
 	const postComment = (event) => {
 		event.preventDefault();
 		if(comment){
-			db.collection("post").doc(props.postId).collection("comments").add({
+			db.collection("posts").doc(props.postId).collection("comments").add({
 				text: comment,
 				user: db.doc('users/' + user.uid),
 				timestamp: firebase.firestore.FieldValue.serverTimestamp(),
@@ -126,127 +131,128 @@ function Post(props) {
 		setComment('');
 	}
 
+
 	return (
 		<div className="post">
-				<Card className={classes.root}>
-					<CardHeader
-						avatar={
-							<Avatar className={classes.avatar} alt={postAuthor.displayName} src={postAuthor.photoURL}/>
-						}
-						title={
-							<Link to={`profile/${postAuthor.uid}`}>{postAuthor.displayName}</Link>
-						}
+			<Card className={classes.root}>
+				<CardHeader
+					avatar={
+						<Avatar className={classes.avatar} alt={postAuthor.displayName} src={postAuthor.photoURL}/>
+					}
+					title={
+						<Link to={`profile/${postAuthor.uid}`}>{postAuthor.displayName}</Link>
+					}
 
-						subheader={dayjs(postCreated).fromNow()}
+					subheader={dayjs(postCreated).fromNow()}
+				/>
+				<div className="post__content">
+					<img
+						alt=""
+						className="post__contentImage"
+						src={props.post.imageUrl}
 					/>
-					<div className="post__content">
-						<img
-							alt=""
-							className="post__contentImage"
-							src={props.imageUrl}
-						/>
+				</div>
+
+				<div className="post__caption">
+					<Link to={`profile/${postAuthor.displayName}`} className="post__user">{postAuthor.displayName}</Link>
+					<span>{props.post.caption}</span>
+				</div>
+
+				{/* Button */}
+				<CardActions disableSpacing className={classes.action}>
+					<div className="action__like">
+						<IconButton aria-label="add to favorites">
+							<FavoriteBorderIcon />
+						</IconButton>
+					</div>
+					<div className="action__comment">
+						<IconButton aria-label="comment">
+							<ModeCommentOutlinedIcon/>
+						</IconButton>
+					</div>
+					<div className="action__share">
+						<IconButton aria-label="share">
+							<BookmarkBorderOutlinedIcon />
+						</IconButton>
+					</div>
+					<div className="action__share">
+						<IconButton aria-label="share">
+							<ShareIcon />
+						</IconButton>
 					</div>
 
-					<div className="post__caption">
-						<Link to={`profile/${props.user}`} className="post__user">{postAuthor.displayName}</Link>
-						<span>{props.caption}</span>
+					<div className="action__expand">
+						<IconButton
+							className={clsx(classes.expand, {
+								[classes.expandOpen]: expanded,
+							})}
+							onClick={handleExpandClick}
+							aria-expanded={expanded}
+							aria-label="show more"
+						>
+							<ExpandMoreIcon />
+						</IconButton>
 					</div>
+				</CardActions>
 
-					{/* Button */}
-					<CardActions disableSpacing className={classes.action}>
-						<div className="action__like">
-							<IconButton aria-label="add to favorites">
-								<FavoriteBorderIcon />
-							</IconButton>
-						</div>
-						<div className="action__comment">
-							<IconButton aria-label="comment">
-								<ModeCommentOutlinedIcon/>
-							</IconButton>
-						</div>
-						<div className="action__share">
-							<IconButton aria-label="share">
-								<BookmarkBorderOutlinedIcon />
-							</IconButton>
-						</div>
-						<div className="action__share">
-							<IconButton aria-label="share">
-								<ShareIcon />
-							</IconButton>
-						</div>
+				<div className={classes.displayLike}>
+					<span><b>0 Likes</b></span>
+				</div>
+				{/* Post */}
+				<Collapse in={expanded} timeout="auto" unmountOnExit>
+					<CardContent>
+						<Typography paragraph className={classes.paragraphHead}>Method:</Typography>
+						<Typography paragraph className={classes.paragraph}>
+							Heat 1/2 cup of the broth in a pot until simmering, add saffron and set aside for 10
+							minutes.
+						</Typography>
+						<Typography paragraph className={classes.paragraph}>
+							Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet over medium-high
+							heat. Add chicken, shrimp and chorizo, and cook, stirring occasionally until lightly
+							browned, 6 to 8 minutes. Transfer shrimp to a large plate and set aside, leaving chicken
+							and chorizo in the pan. Add pimentón, bay leaves, garlic, tomatoes, onion, salt and
+							pepper, and cook, stirring often until thickened and fragrant, about 10 minutes. Add
+							saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.
+						</Typography>
+						<Typography paragraph className={classes.paragraph}>
+							Add rice and stir very gently to distribute. Top with artichokes and peppers, and cook
+							without stirring, until most of the liquid is absorbed, 15 to 18 minutes. Reduce heat to
+							medium-low, add reserved shrimp and mussels, tucking them down into the rice, and cook
+							again without stirring, until mussels have opened and rice is just tender, 5 to 7
+							minutes more. (Discard any mussels that don’t open.)
+						</Typography>
+						<Typography paragraph className={classes.paragraph}>
+							Set aside off of the heat to let rest for 10 minutes, and then serve.
+						</Typography>
+					</CardContent>
+				</Collapse>
+				{/* Comments */}
+				<div className={classes.comment}>
+					<ListComment comments={comments} />
+					{
+						user &&  (
+							<div className="commentContainer">
+								<Avatar className={classes.avatar} alt={user?.displayName} src={user?.photoURL} />
 
-						<div className="action__expand">
-							<IconButton
-								className={clsx(classes.expand, {
-									[classes.expandOpen]: expanded,
-								})}
-								onClick={handleExpandClick}
-								aria-expanded={expanded}
-								aria-label="show more"
-							>
-								<ExpandMoreIcon />
-							</IconButton>
-						</div>
-					</CardActions>
+								<form onSubmit={postComment}>
+									<TextField
+										className="comment__input"
+										placeholder="Leave a comment ... "
+										value={comment}
+										onChange={event => setComment(event.target.value)}
+										InputProps={{ disableUnderline: true, style : {fontFamily: "'Quicksand', sans-serif"}}}
 
-					<div className={classes.displayLike}>
-						<span><b>0 Likes</b></span>
-					</div>
-					{/* Post */}
-					<Collapse in={expanded} timeout="auto" unmountOnExit>
-						<CardContent>
-							<Typography paragraph className={classes.paragraphHead}>Method:</Typography>
-							<Typography paragraph className={classes.paragraph}>
-								Heat 1/2 cup of the broth in a pot until simmering, add saffron and set aside for 10
-								minutes.
-							</Typography>
-							<Typography paragraph className={classes.paragraph}>
-								Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet over medium-high
-								heat. Add chicken, shrimp and chorizo, and cook, stirring occasionally until lightly
-								browned, 6 to 8 minutes. Transfer shrimp to a large plate and set aside, leaving chicken
-								and chorizo in the pan. Add pimentón, bay leaves, garlic, tomatoes, onion, salt and
-								pepper, and cook, stirring often until thickened and fragrant, about 10 minutes. Add
-								saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.
-							</Typography>
-							<Typography paragraph className={classes.paragraph}>
-								Add rice and stir very gently to distribute. Top with artichokes and peppers, and cook
-								without stirring, until most of the liquid is absorbed, 15 to 18 minutes. Reduce heat to
-								medium-low, add reserved shrimp and mussels, tucking them down into the rice, and cook
-								again without stirring, until mussels have opened and rice is just tender, 5 to 7
-								minutes more. (Discard any mussels that don’t open.)
-							</Typography>
-							<Typography paragraph className={classes.paragraph}>
-								Set aside off of the heat to let rest for 10 minutes, and then serve.
-							</Typography>
-						</CardContent>
-					</Collapse>
-					{/* Comments */}
-					<div className={classes.comment}>
-						<ListComment comments={comments} />
-						{
-							user &&  (
-								<div className="commentContainer">
-									<Avatar className={classes.avatar} alt={user?.displayName} src={user?.photoURL} />
-
-									<form onSubmit={postComment}>
-										<TextField
-											className="comment__input"
-											placeholder="Leave a comment ... "
-											value={comment}
-											onChange={event => setComment(event.target.value)}
-											InputProps={{ disableUnderline: true, style : {fontFamily: "'Quicksand', sans-serif"}}}
-
-										/>
-										<Button variant="contained" disabled={!comment} onClick={postComment}>
-											Post
-										</Button>
-									</form>
-								</div>
-							)
-						}
-					</div>
-				</Card>
-			</div>
+									/>
+									<Button variant="contained" disabled={!comment} onClick={postComment}>
+										Post
+									</Button>
+								</form>
+							</div>
+						)
+					}
+				</div>
+			</Card>
+		</div>
 	)
 }
 
