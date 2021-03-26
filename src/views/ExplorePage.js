@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
-import Page from "../../../components/Page";
-import ExploreItem from "./ExploreItem";
-import {db} from "../../../firebase";
-import Post from "../../../components/Post/Post";
+import Page from "../components/Page";
+import ExploreItem from "../components/Explore/ExploreItem";
+import {db} from "../firebase";
+import Post from "../components/Post/Post";
 
 const Explore = () => {
     const [explore, setExplore] = useState([]);
@@ -30,7 +30,7 @@ const Explore = () => {
                     data.data().user.get().then( author => {
                         Object.assign(userProfile, author.data());
                     })
-                    temp.push({id: data.id, post: data.data(), userProfile: userProfile })
+                    temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
                 })
                 setExplore(temp);
         })
@@ -40,13 +40,13 @@ const Explore = () => {
     // const classes = useStyles();
     return (
         <Page
-            title="LiveFood"
+            title="Explore | LiveFood"
             className="app__bodyContainer"
         >
             <div className="explore__root">
                 <div className="explore__container">
-                    {explore.map(({id, post, userProfile}) => (
-                        <ExploreItem key={id} post={post} author={userProfile} />
+                    {explore.map(({id, post, authorProfile}) => (
+                        <ExploreItem key={id} post={post} postAuthor={authorProfile} />
                         // <Post key={id} post={post} author={userProfile} />
                     ))}
                 </div>

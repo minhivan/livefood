@@ -8,7 +8,7 @@ import MoreHorizOutlinedIcon from '@material-ui/icons/MoreHorizOutlined';
 import Avatar from "@material-ui/core/Avatar";
 // import dayjs from "dayjs";
 import CardHeader from "@material-ui/core/CardHeader";
-import {Button, Drawer, Hidden, makeStyles} from "@material-ui/core";
+import {Button, Hidden, makeStyles} from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function RightSideBar() {
+function RightSideBar(props) {
     const classes = useStyles();
 
     return(

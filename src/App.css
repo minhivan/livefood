@@ -19,6 +19,29 @@ html{
     overscroll-behavior-y: none;
     scroll-behavior: smooth;
 }
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+
+
 .bottomDivider{
     border-bottom: 1px solid rgb(235, 238, 240);
 }
@@ -36,7 +59,7 @@ html{
 
 
 .app{
-    min-height: 100vh;
+    min-height: calc(100vh - 20px);
     position: relative;
     background-color: #f0f2f5;
 }
@@ -195,17 +218,96 @@ input:focus{
 
 .explore__root .explore__container{
     flex-direction: row;
-    max-width: 1464px;
+    max-width: 990px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
 }
 .explore__root .explore__container .explore__gridSmall{
-    width: calc(100% /3 - 15px);
-    padding: 10px 0;
+    width: calc(100% /3);
+    padding: 10px;
     height: 380px;
 }
 
+/* Profile page */
+.profile{
+    min-width: 990px;
+    min-height: calc(100vh - 80px);
+    flex-direction: column;
+    display: flex;
+}
+.profile__bio{
+    padding: 20px 0;
+    min-height: 200px;
+    display: flex;
+    justify-content: center;
+}
+.count-infos{
+    display: flex;
+    padding: 10px 0;
+}
+
+
+.count-infos .number:not(:last-child) {
+    margin-right: 20px;
+}
+
+.count-infos .number{
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 25px;
+    display: flex;
+    -webkit-box-align: baseline;
+    align-items: baseline;
+    direction: ltr;
+}
+.count-infos .unit{
+    display: inline-block;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    margin-left: 6px;
+}
+.share-follow-container{
+    display: flex;
+    padding: 15px 0;
+}
+.share-title{
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 38px;
+    padding-bottom: 4px;
+}
+.share-sub-title{
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 25px;
+    text-overflow: ellipsis;
+    height: 25px;
+    overflow: hidden;
+    max-width: 450px;
+    white-space: nowrap;
+}
+.share-desc {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    color: rgb(18, 18, 18);
+    white-space: pre-line;
+    padding: 10px 0;
+}
+.share-links a {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 18px;
+    height: 22px;
+    max-width: 236px;
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: rgb(22, 24, 35);
+}
 
 @media (max-width: 767px) {
     .header{

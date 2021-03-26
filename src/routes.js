@@ -2,12 +2,13 @@ import React from "react";
 import { Navigate } from 'react-router-dom';
 import MainLayout from "./layouts/MainLayout";
 import DefaultLayout from "./layouts/DefaultLayout";
-import Login from "./views/auth/SignIn";
-import HomePage from "./views/home/HomepageView";
-import NotFoundView from "./views/errors/NotFoundView"
-import Messenger from "./views/messenger/MessengerPage";
-import SignUp from "./views/auth/SignUp";
-import Explore from "./views/explores/ExploreView";
+import Login from "./views/SignInPage";
+import HomePage from "./views/HomePage";
+import NotFoundView from "./views/NotFoundPage"
+import Messenger from "./views/MessengerPage";
+import SignUp from "./views/SignUpPage";
+import Explore from "./views/ExplorePage";
+import UserProfilePage from "./views/UserProfilePage";
 
 
 const routes = [
@@ -16,7 +17,7 @@ const routes = [
         element: <MainLayout />,
         children: [
             { path: 'messenger/:id', element: <Messenger /> },
-            { path: 'profile/:id', element: <HomePage />},
+            { path: 'profile/:id', element: <UserProfilePage />},
             { path: 'explore', element: <Explore />},
             { path: '/', element: <HomePage />},
             { path: '404', element: <NotFoundView /> },

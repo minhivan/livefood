@@ -68,6 +68,7 @@
 /* Popup */
 .popup__caption{
     flex: 1;
+    overflow-y: scroll;
 }
 .caption__holder{
     padding: 20px 10px;
@@ -85,19 +86,23 @@
     align-items: flex-end;
     justify-content: center;
     display: flex;
-    padding-top: 15px;
-    border-top: 1px solid #39CCCC;
+    position: relative;
 }
 
 .upload__button button{
     padding: 15px;
-    width: calc(100% - 10px);
+    width: 100%;
     background-color: #1a90da;
     color: #fff;
     border: none;
     border-radius: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 1px;
+    font-weight: bold;
+}
+.upload__button button:hover{
+    background-color: #03649d;
+    transition: 0.3s all ease;
 }
 
 .popup__picker{
@@ -106,8 +111,8 @@
     display: flex;
     justify-content: space-between;
     border-radius: 8px;
-    margin-bottom: 10px;
     align-items: center;
+    margin: 15px 0;
 }
 
 .popup__picker .popup__iconPicker{
@@ -142,6 +147,11 @@
     border-radius: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 1px;
+}
+
+
+.popup__review{
+    margin-bottom: 15px;
 }
 
 .handle__button .handle__upload button:hover{

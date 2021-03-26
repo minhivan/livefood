@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Avatar, Badge, Button, IconButton, Modal, TextField} from "@material-ui/core";
+import {Avatar, Badge, Button, CircularProgress, IconButton, Modal, TextField} from "@material-ui/core";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 import CardHeader from "@material-ui/core/CardHeader";
 import {makeStyles} from "@material-ui/core/styles";
@@ -9,6 +9,7 @@ import GroupAddTwoToneIcon from "@material-ui/icons/GroupAddTwoTone";
 import {auth, db, storage} from "../../firebase";
 import firebase from "firebase";
 import {useAuthState} from "react-firebase-hooks/auth";
+import {green} from "@material-ui/core/colors";
 
 function getModalStyle() {
     const top = 50 ;
@@ -41,9 +42,9 @@ const useStyles = makeStyles((theme) => ({
         width: 600,
         backgroundColor: theme.palette.background.paper,
         boxShadow: theme.shadows[5],
-        padding: theme.spacing(2, 4, 3),
+        padding: theme.spacing(2, 3, 3),
         borderRadius: "8px",
-        minHeight: "500px",
+        maxHeight: "740px",
         "&:focus": {
             outline: "none"
         },
@@ -75,15 +76,24 @@ const useStyles = makeStyles((theme) => ({
     reviewImg: {
         width: "100%",
         objectFit: "contain",
-        padding: "15px 0"
+        borderRadius: "10px",
+        boxShadow: "0px 0px 2px 0px rgba(21,12,12,0.9)"
     },
     inputText: {
         width: "100%",
         padding: "10px 0",
-        minHeight: "200px",
-        maxHeight: "400px",
+        minHeight: "100px",
+        maxHeight: "250px",
         fontFamily: "'Quicksand', sans-serif"
-    }
+    },
+    buttonProgress: {
+        color: green[500],
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        marginTop: -12,
+        marginLeft: -12,
+    },
 }));
 
 
@@ -94,6 +104,7 @@ function Popup(props){
     const [modalStyle] = useState(getModalStyle);
     const [caption, setCaption] = useState('');
     const [progress, setProgress] = useState('');
+    const [loading, setLoading] = useState(false);
     const handleUpload = () => {
         const uploadTask = storage.ref(`images/${props.image.name}`).put(props.image);
         uploadTask.on(
@@ -103,6 +114,7 @@ function Popup(props){
                     (snapshot.bytesTransferred / snapshot.totalBytes) * 100
                 );
                 setProgress(progress);
+                setLoading(true);
             }),
             (error => {
                 console.log(error);
@@ -116,8 +128,10 @@ function Popup(props){
                         db.collection("posts").add({
                             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                             caption: caption,
-                            imageUrl: url,
+                            mediaUrl: url,
                             user: db.doc('users/' + user.uid),
+                            mediaType: props.image.type
+
                         })
                             .then(function(docRef) {
                                 console.log("Document written with ID: ", docRef.id);
@@ -130,6 +144,7 @@ function Popup(props){
                         props.setImage(null);
                         // setOpen(false);
                         props.handleClose(true);
+                        setLoading(false);
                     })
             }
         )
@@ -189,38 +204,44 @@ function Popup(props){
                         ) : null
                     }
 
-                    <div className="popup__picker">
-                        <h3>Add to this post </h3>
-                        <div className="popup__iconPicker">
-                            <div>
-                                <label htmlFor="icon-button-file" className="upload__pickerButton">
-                                    <IconButton color="inherit" component="span" >
-                                        <Badge color="secondary">
-                                            <PhotoCameraTwoToneIcon className={classes.popIcon}/>
-                                        </Badge>
-                                    </IconButton>
-                                </label>
-                            </div>
-                            <div>
+
+                </div>
+                <div className="popup__picker">
+                    <h3>Add to this post </h3>
+                    <div className="popup__iconPicker">
+                        <div>
+                            <label htmlFor="icon-button-file" className="upload__pickerButton">
                                 <IconButton color="inherit" component="span" >
                                     <Badge color="secondary">
-                                        <VideoCallTwoToneIcon className={classes.popIcon}/>
+                                        <PhotoCameraTwoToneIcon className={classes.popIcon}/>
                                     </Badge>
                                 </IconButton>
-                            </div>
-                            <div>
-                                <IconButton color="inherit" component="span" >
-                                    <Badge color="secondary">
-                                        <GroupAddTwoToneIcon className={classes.popIcon}/>
-                                    </Badge>
-                                </IconButton>
-                            </div>
+                            </label>
+                        </div>
+                        <div>
+                            <IconButton color="inherit" component="span" >
+                                <Badge color="secondary">
+                                    <VideoCallTwoToneIcon className={classes.popIcon}/>
+                                </Badge>
+                            </IconButton>
+                        </div>
+                        <div>
+                            <IconButton color="inherit" component="span" >
+                                <Badge color="secondary">
+                                    <GroupAddTwoToneIcon className={classes.popIcon}/>
+                                </Badge>
+                            </IconButton>
                         </div>
                     </div>
                 </div>
-
                 <div className="upload__button">
-                    <Button onClick={handleUpload}>Create</Button>
+                    <Button
+                        onClick={handleUpload}
+                        disabled={loading}
+                    >
+                        Create
+                    </Button>
+                    {loading && <CircularProgress size={24} value={progress} className={classes.buttonProgress} /> }
                 </div>
 
             </div>

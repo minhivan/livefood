@@ -1,8 +1,8 @@
 import React from "react";
 
 import {makeStyles} from "@material-ui/core/styles";
-import pic from "../../images/Background/undraw_page_not_found_su7k.svg";
-import Page from "../../components/Page";
+import pic from "../images/Background/undraw_page_not_found_su7k.svg";
+import Page from "../components/Page";
 
 const useStyles = makeStyles((theme) => ({
     redirect: {

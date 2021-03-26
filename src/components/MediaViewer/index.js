@@ -102,6 +102,24 @@ function MediaViewer(props){
     const classes = useStyles();
     const [modalStyle] = useState(getModalStyle);
 
+
+
+    let media;
+
+    if(props.post.mediaType === "video/mp4"){
+        media = <div className={classes.imgHolder}>
+            <video controls className={classes.img} muted="muted">
+                <source src={props.post.mediaUrl} type="video/mp4"/>
+            </video>
+        </div>
+    } else{
+        media = <div className={classes.imgHolder}>
+            <img src={props.post.mediaUrl} alt="" className={classes.img}/>
+        </div>
+    }
+
+
+
     return (
         <Modal
             open={props.open}
@@ -111,19 +129,17 @@ function MediaViewer(props){
         >
             <div style={modalStyle} className={classes.paper}>
                 <div className={classes.leftPanel}>
-                    <div className={classes.imgHolder}>
-                        <img src={props.post.imageUrl} alt="" className={classes.img}/>
-                    </div>
+                    {media}
                 </div>
                 <div className={classes.rightPanel}>
                     <div className="review__data">
                         <div className={classes.modalHeader}>
                             <CardHeader
                                 avatar={
-                                    <Avatar className={classes.avatar} alt={props.author.displayName} src={props.author.photoURL}/>
+                                    <Avatar className={classes.avatar} alt={props.postAuthor?.displayName} src={props.postAuthor.photoURL}/>
                                 }
                                 title={
-                                    <Link to={`/profile/${props.author.uid}`}>{props.author.displayName}</Link>
+                                    <Link to={`/profile/${props.postAuthor?.uid}`}>{props.postAuthor?.displayName}</Link>
                                 }
                                 subheader={dayjs(postCreated).fromNow()}
                             />
@@ -131,7 +147,7 @@ function MediaViewer(props){
                         <Divider />
                         <div className={classes.modalBody}>
                             <div className="post__caption">
-                                <Link to={`/profile/${props.author.uid}`} className="post__user">{props.author.displayName}</Link>
+                                <Link to={`/profile/${props.postAuthor?.uid}`} className="post__user">{props.postAuthor?.displayName}</Link>
                                 <span>{props.post.caption}</span>
                             </div>
                         </div>

@@ -1,12 +1,11 @@
-import React, { useEffect } from 'react';
-import {Link, Link as RouterLink, useLocation} from 'react-router-dom';
+import React  from 'react';
+import {Link, Link as RouterLink} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
     Avatar,
     Box,
     Hidden,
     List,
-    Typography,
     makeStyles
 } from '@material-ui/core';
 import {
@@ -20,8 +19,8 @@ import {
 } from 'react-feather';
 import NavItem from './NavItem';
 
-import {useAuthState} from "react-firebase-hooks/auth";
-import {auth} from "../../../firebase";
+// import {useAuthState} from "react-firebase-hooks/auth";
+// import {auth} from "../../../firebase";
 
 const items = [
     {
@@ -91,17 +90,8 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
-const NavBar = ({ onMobileClose, openMobile }) => {
+const NavBar = (props) => {
     const classes = useStyles();
-    const location = useLocation();
-    const [user] = useAuthState(auth);
-
-    useEffect(() => {
-        if (openMobile && onMobileClose) {
-            onMobileClose();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [location.pathname]);
 
     const content = (
         <Box
@@ -118,10 +108,10 @@ const NavBar = ({ onMobileClose, openMobile }) => {
                 <Avatar
                     className={classes.avatar}
                     component={RouterLink}
-                    src={user?.photoURL}
-                    to={`profile/${user?.uid}`}
+                    src={props.auth?.photoURL}
+                    to={`profile/${props.auth?.uid}`}
                 />
-                <Link to={`profile/${user?.uid}`} className={classes.name}>{user?.displayName}</Link>
+                <Link to={`profile/${props.auth?.uid}`} className={classes.name}>{props.auth?.displayName}</Link>
             </Box>
             <Box p={2} className={classes.util}>
                 <List>

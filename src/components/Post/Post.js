@@ -20,10 +20,11 @@ import {db, auth} from "../../firebase";
 import firebase from "firebase";
 import clsx from "clsx";
 import {Link} from "react-router-dom";
-import ListComment from "./Comments";
+import ListComment from "../Comments";
 import {useAuthState} from "react-firebase-hooks/auth";
 import Typography from "@material-ui/core/Typography";
-import Upload from "../Upload";
+// import Upload from "../Upload";
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -64,16 +65,29 @@ const useStyles = makeStyles((theme) => ({
 // postId, user, caption, imageUrl, timestamp
 //
 function Post( props ) {
-
 	const [user] = useAuthState(auth);
 	dayjs.extend(relativeTime);
 	let postCreated  = null;
-
-
 	if(props?.post?.timestamp){
 		postCreated = new Date(props?.post?.timestamp.seconds * 1000).toLocaleString();
 	}
 
+	let media;
+	if(props.post.mediaType === "video/mp4"){
+		media = <div className="post__content">
+			<video controls className="post__contentImage" muted="muted">
+				<source src={props.post.mediaUrl} type="video/mp4"/>
+			</video>
+		</div>
+	} else{
+		media = <div className="post__content">
+			<img
+				alt=""
+				className="post__contentImage"
+				src={props.post.mediaUrl}
+			/>
+		</div>
+	}
 
 	const classes = useStyles();
 	const [comments, setComments] = useState([]);
@@ -116,7 +130,7 @@ function Post( props ) {
 	}, [props.postId])
 
 
-
+	// console.log(props.post.mediaType);
 
 
 	const postComment = (event) => {
@@ -142,17 +156,14 @@ function Post( props ) {
 					title={
 						<Link to={`profile/${postAuthor.uid}`}>{postAuthor.displayName}</Link>
 					}
-
+					action={
+						<IconButton aria-label="settings">
+							<MoreVertIcon />
+						</IconButton>
+					}
 					subheader={dayjs(postCreated).fromNow()}
 				/>
-				<div className="post__content">
-					<img
-						alt=""
-						className="post__contentImage"
-						src={props.post.imageUrl}
-					/>
-				</div>
-
+				{media}
 				<div className="post__caption">
 					<Link to={`profile/${postAuthor.displayName}`} className="post__user">{postAuthor.displayName}</Link>
 					<span>{props.post.caption}</span>

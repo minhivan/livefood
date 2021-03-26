@@ -4,24 +4,25 @@ import {auth} from "../../firebase";
 import HeaderSearch from "./Search";
 import MenuHeader from "./Item";
 import AppLogo from "./Logo";
+import {useAuthState} from "react-firebase-hooks/auth";
 
 
 function Header() {
 
-    const [user, setUser] = useState(null);
-    useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged((authUser) => {
-            if(authUser){
-                setUser(authUser);
-            }else{
-                setUser(null);
-            }
-        })
-
-        return () => {
-            unsubscribe();
-        }
-    }, [user])
+    const [ user ] = useAuthState(auth);
+    // useEffect(() => {
+    //     const unsubscribe = auth.onAuthStateChanged((authUser) => {
+    //         if(authUser){
+    //             setUser(authUser);
+    //         }else{
+    //             setUser(null);
+    //         }
+    //     })
+    //
+    //     return () => {
+    //         unsubscribe();
+    //     }
+    // }, [user])
 
 
     return(

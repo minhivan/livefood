@@ -2,12 +2,12 @@ import React, {useEffect, useState} from "react";
 import Upload from "../Upload";
 import Post from "../Post/Post";
 import { db, auth } from "../../firebase";
-import {useAuthState} from "react-firebase-hooks/auth";
+// import {useAuthState} from "react-firebase-hooks/auth";
 
-export default function NewFeed(){
+export default function NewFeed(props){
 
     // const [posts, setPosts] = useState([]);
-    const [ authUser ] = useAuthState(auth);
+    // const [ authUser ] = useAuthState(auth);
     const [data, setData] = useState([]);
 
     //Get post
@@ -50,8 +50,8 @@ export default function NewFeed(){
     return(
         <div className="app__post">
             {
-                authUser?.displayName ? (
-                    <Upload username={authUser.userProfile} />
+                props.auth?.uid ? (
+                    <Upload username={props.auth?.userProfile} />
                 ) : null
             }
             {

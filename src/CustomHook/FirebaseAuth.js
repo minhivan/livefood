@@ -15,7 +15,8 @@ function checkFirebaseAuth(authUser){
                     uid: authUser.uid
                 })
             }
-        }else{
+        }
+        else{
             docRef.set({
                 email: authUser.email,
                 emailVerified: authUser.emailVerified,
