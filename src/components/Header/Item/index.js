@@ -62,7 +62,7 @@ function MenuHeader({user}) {
                 </Link>
 
                 <Link to={{
-                    pathname: `/messenger/${user.uid}`,
+                    pathname: `/messages`,
                     state: { users: user }
                 }}>
                     <IconButton aria-label="4 new messages" color="inherit" >
@@ -98,7 +98,7 @@ function MenuHeader({user}) {
 
                 >
                     <MenuList autoFocusItem={open} id="menu-list-grow" >
-                        <Link to={{pathname:`profile/${user.uid}`}} ><MenuItem onClick={handleClose}>Profile</MenuItem></Link>
+                        <Link to={{pathname:`/profile/${user.uid}`}} ><MenuItem onClick={handleClose}>Profile</MenuItem></Link>
                         <Link to={{pathname:`save`}} ><MenuItem onClick={handleClose}>Save</MenuItem></Link>
                         <MenuItem onClick={handleClose}>My account</MenuItem>
                         <MenuItem onClick={() => auth.signOut()}>Logout</MenuItem>

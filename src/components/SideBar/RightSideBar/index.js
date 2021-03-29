@@ -1,5 +1,5 @@
 import React from "react";
-import './RightSideBar.css';
+import '../RightSideBar.css';
 
 
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';

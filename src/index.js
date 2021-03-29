@@ -6,14 +6,13 @@ import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 import * as serviceWorker from './serviceWorker';
 
-ReactDOM.render(
+ReactDOM.render((
     <BrowserRouter>
         <Provider store={store}>
             <App />
-        </Provider>,
-    </BrowserRouter>,
-    document.getElementById('root')
-);
+        </Provider>
+    </BrowserRouter>
+    ), document.getElementById('root'));
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

@@ -125,7 +125,6 @@ function GetStepContent(step: number) {
                         InputProps={{ disableUnderline: true, style : {fontFamily: "'Quicksand', sans-serif"}}}
                     />
                     <TextField
-                        variant="outlined"
                         // className={classes.inputText}
                         placeholder="Description"
                         multiline

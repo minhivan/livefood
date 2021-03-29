@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {Button} from "@material-ui/core";
 import {auth} from "../../firebase";
 import HeaderSearch from "./Search";
@@ -10,20 +10,6 @@ import {useAuthState} from "react-firebase-hooks/auth";
 function Header() {
 
     const [ user ] = useAuthState(auth);
-    // useEffect(() => {
-    //     const unsubscribe = auth.onAuthStateChanged((authUser) => {
-    //         if(authUser){
-    //             setUser(authUser);
-    //         }else{
-    //             setUser(null);
-    //         }
-    //     })
-    //
-    //     return () => {
-    //         unsubscribe();
-    //     }
-    // }, [user])
-
 
     return(
         <div className="app__header">
@@ -33,7 +19,7 @@ function Header() {
                 <div className="header__auth">
                     {
                         user ? (
-                            <MenuHeader auth={auth}/>
+                            <MenuHeader user={user}/>
                         ) : (
                             <div className="header__loginContainer">
                                 <Button variant="contained" color="primary" href="/login">

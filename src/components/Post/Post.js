@@ -25,11 +25,16 @@ import {useAuthState} from "react-firebase-hooks/auth";
 import Typography from "@material-ui/core/Typography";
 // import Upload from "../Upload";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Skeleton from "@material-ui/lab/Skeleton";
 
 const useStyles = makeStyles((theme) => ({
+
 	root: {
 		maxWidth: "100%",
 		borderRadius: "max(0px, min(8px, calc((100vw - 4px - 100%) * 9999))) / 8px",
+	},
+	media: {
+		height: 400
 	},
 	expand: {
 		transform: 'rotate(0deg)',
@@ -64,19 +69,19 @@ const useStyles = makeStyles((theme) => ({
 
 // postId, user, caption, imageUrl, timestamp
 //
-function Post( props ) {
+function Post( {postId, post, author, ...rest} ) {
 	const [user] = useAuthState(auth);
 	dayjs.extend(relativeTime);
 	let postCreated  = null;
-	if(props?.post?.timestamp){
-		postCreated = new Date(props?.post?.timestamp.seconds * 1000).toLocaleString();
+	if(post?.timestamp){
+		postCreated = new Date(post.timestamp.seconds * 1000).toLocaleString();
 	}
 
 	let media;
-	if(props.post.mediaType === "video/mp4"){
+	if(post?.mediaType === "video/mp4"){
 		media = <div className="post__content">
 			<video controls className="post__contentImage" muted="muted">
-				<source src={props.post.mediaUrl} type="video/mp4"/>
+				<source src={post.mediaUrl} type="video/mp4"/>
 			</video>
 		</div>
 	} else{
@@ -84,7 +89,7 @@ function Post( props ) {
 			<img
 				alt=""
 				className="post__contentImage"
-				src={props.post.mediaUrl}
+				src={post.mediaUrl}
 			/>
 		</div>
 	}
@@ -93,7 +98,6 @@ function Post( props ) {
 	const [comments, setComments] = useState([]);
 	const [comment, setComment] = useState('');
 	const [expanded, setExpanded] = React.useState(false);
-	const [postAuthor, setPostAuthor] = useState([]);
 
 	const handleExpandClick = () => {
 		setExpanded(!expanded);
@@ -102,10 +106,10 @@ function Post( props ) {
 
 	useEffect(() => {
 		let unsubscribe;
-		if(props.postId) {
+		if(postId) {
 			unsubscribe = db
 				.collection("posts")
-				.doc(props.postId)
+				.doc(postId)
 				.collection("comments")
 				.orderBy('timestamp', "desc")
 				.onSnapshot((snapshot ) => {
@@ -114,29 +118,27 @@ function Post( props ) {
 						snapshot.docs.map((doc => ({
 							id: doc.id,
 							comment: doc.data(),
-							cmtAuthor: doc.data().user.get().then( author => {
-								return author.data();
+							cmtAuthor: doc.data().user.get().then( cmtAuthor => {
+								return cmtAuthor.data();
 								// return Object.assign(userProfile, author.data());
 							})
 						})))
 					);
 				})
 		}
-		setPostAuthor(props.author);
 
 		return () => {
 			unsubscribe();
 		}
-	}, [props.postId])
+	}, [postId])
 
 
 	// console.log(props.post.mediaType);
 
-
 	const postComment = (event) => {
 		event.preventDefault();
 		if(comment){
-			db.collection("posts").doc(props.postId).collection("comments").add({
+			db.collection("posts").doc(postId).collection("comments").add({
 				text: comment,
 				user: db.doc('users/' + user.uid),
 				timestamp: firebase.firestore.FieldValue.serverTimestamp(),
@@ -151,23 +153,57 @@ function Post( props ) {
 			<Card className={classes.root}>
 				<CardHeader
 					avatar={
-						<Avatar className={classes.avatar} alt={postAuthor.displayName} src={postAuthor.photoURL}/>
+						author?.uid ? (
+								<Avatar className={classes.avatar} alt={author.displayName} src={author.photoURL}/>
+							):(
+								<Skeleton animation="wave" variant="circle" width={40} height={40} />
+							)
 					}
 					title={
-						<Link to={`profile/${postAuthor.uid}`}>{postAuthor.displayName}</Link>
+						author?.uid ? (
+							<Link to={`profile/${author.uid}`}>{author.displayName}</Link>
+						) : (
+							<Skeleton animation="wave" height={10} width="30%" style={{ marginBottom: 6 }} />
+							)
 					}
 					action={
 						<IconButton aria-label="settings">
 							<MoreVertIcon />
 						</IconButton>
 					}
-					subheader={dayjs(postCreated).fromNow()}
+					subheader={
+						author?.uid ? (
+							dayjs(postCreated).fromNow()
+						) : (
+							<Skeleton animation="wave" height={10} width="10%" style={{ marginBottom: 6 }} />
+						)
+					}
 				/>
-				{media}
-				<div className="post__caption">
-					<Link to={`profile/${postAuthor.displayName}`} className="post__user">{postAuthor.displayName}</Link>
-					<span>{props.post.caption}</span>
-				</div>
+
+				{/* Media */}
+				{/*{*/}
+				{/*	post?.mediaUrl ? (*/}
+				{/*		media*/}
+				{/*	) : (*/}
+				{/*		<Skeleton animation="wave" variant="rect" className={classes.media} />*/}
+				{/*	)*/}
+				{/*}*/}
+
+				{/* Caption */}
+				{
+					post?.caption ? (
+							<div className="post__caption">
+								<Link to={`profile/${author?.uid}`} className="post__user">{author?.displayName}</Link>
+								<span style={{whiteSpace: 'pre-line'}}>{post.caption}</span>
+							</div>
+					) : (
+						<div className="post__caption">
+							<Skeleton animation="wave" height={10} width="80%" style={{ marginBottom: 6 }} />
+							<Skeleton animation="wave" height={10} width="80%" />
+						</div>
+					)
+				}
+
 
 				{/* Button */}
 				<CardActions disableSpacing className={classes.action}>

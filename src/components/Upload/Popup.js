@@ -10,6 +10,7 @@ import {auth, db, storage} from "../../firebase";
 import firebase from "firebase";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {green} from "@material-ui/core/colors";
+import {useCollection} from "react-firebase-hooks/firestore";
 
 function getModalStyle() {
     const top = 50 ;
@@ -105,15 +106,22 @@ function Popup(props){
     const [caption, setCaption] = useState('');
     const [progress, setProgress] = useState('');
     const [loading, setLoading] = useState(false);
+
+    // const handleUpload = () => {
+    //
+    // }
+
+    // const [post] = useCollection()
+
     const handleUpload = () => {
         const uploadTask = storage.ref(`images/${props.image.name}`).put(props.image);
         uploadTask.on(
             "state_changed",
             (snapshot => {
-                const progress = Math.round(
+                const progressData = Math.round(
                     (snapshot.bytesTransferred / snapshot.totalBytes) * 100
                 );
-                setProgress(progress);
+                setProgress(progressData);
                 setLoading(true);
             }),
             (error => {
@@ -127,23 +135,24 @@ function Popup(props){
                     .then(url => {
                         db.collection("posts").add({
                             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                            hasImage: true,
                             caption: caption,
                             mediaUrl: url,
-                            user: db.doc('users/' + user.uid),
-                            mediaType: props.image.type
-
+                            userRef: db.doc('users/' + user.uid),
+                            mediaType: props.image.type,
+                            uid: user.uid
                         })
                             .then(function(docRef) {
                                 console.log("Document written with ID: ", docRef.id);
+                                props.setOpenSnack(true);
+                                props.setImage(null);
+                                props.handleClose(true);
                             })
                             .catch(function(error) {
                                 console.error("Error adding document: ", error);
                             });
                         setProgress('0');
                         setCaption("");
-                        props.setImage(null);
-                        // setOpen(false);
-                        props.handleClose(true);
                         setLoading(false);
                     })
             }
@@ -190,7 +199,6 @@ function Popup(props){
                             InputProps={{ disableUnderline: true, style : {fontSize: "18px", fontFamily: "'Quicksand', sans-serif"}}}
                         />
                     </div>
-
                     {
                         props.image ? (
                             <div className="popup__review">
@@ -203,7 +211,6 @@ function Popup(props){
                             </div>
                         ) : null
                     }
-
 
                 </div>
                 <div className="popup__picker">
@@ -241,7 +248,7 @@ function Popup(props){
                     >
                         Create
                     </Button>
-                    {loading && <CircularProgress size={24} value={progress} className={classes.buttonProgress} /> }
+                    {loading && <CircularProgress size={24} value={parseInt(progress)} className={classes.buttonProgress} /> }
                 </div>
 
             </div>

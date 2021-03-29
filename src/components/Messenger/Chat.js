@@ -1,10 +1,10 @@
 import React from "react";
 import IconButton from "@material-ui/core/IconButton";
-import ControlPointOutlinedIcon from "@material-ui/icons/ControlPointOutlined";
 import {makeStyles} from "@material-ui/core/styles";
 import InfoRoundedIcon from '@material-ui/icons/InfoRounded';
 
 import SentimentSatisfiedRoundedIcon from '@material-ui/icons/SentimentSatisfiedRounded';
+import {db} from "../../firebase";
 const useStyles = makeStyles((theme) => ({
     header:{
         paddingLeft: "5px"
@@ -12,7 +12,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function Chat(){
+
+function Chat({chat, messages}){
     const classes = useStyles();
     return (
         <div className="messenger__chat">
@@ -38,7 +39,6 @@ function Chat(){
                     <SentimentSatisfiedRoundedIcon />
                 </form>
             </div>
-
         </div>
     )
 }

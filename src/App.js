@@ -1,10 +1,10 @@
 import './App.css';
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { useRoutes } from 'react-router-dom';
 import { ThemeProvider } from '@material-ui/core';
 // import {auth, db} from "./firebase";
 import GlobalStyles from "./components/GlobalStyle";
-
+import Spinner from 'react-spinkit'
 
 // import PageLogin from "./Template/PageLogin";
 // import PageMessenger from "./Template/PageMessenger";
@@ -16,39 +16,54 @@ import GlobalStyles from "./components/GlobalStyle";
 
 import theme from './theme';
 import routes from "./routes";
-
+import {useAuthState} from "react-firebase-hooks/auth";
+import {auth, db} from "./firebase";
+import styled from 'styled-components';
+import firebase from "firebase";
 
 function App() {
 	const routing = useRoutes(routes);
+	const [user, loading] = useAuthState(auth);
 
+	// useEffect(() => {
+	// 	if(user) {
+	// 		db.collection("users").doc(user.uid).set({
+	// 			lastActive: firebase.firestore.FieldValue.serverTimestamp()
+	// 		},{
+	// 			merge: true
+	// 		})
+	// 	}
+	// }, [user])
+
+
+	if(loading){
+		return(
+			<AppLoading />
+		)
+	}
 	return (
 		<ThemeProvider theme={theme}>
 			<GlobalStyles />
 			{routing}
 		</ThemeProvider>
-
-		// <div className="app">
-		// 	<Router>
-		// 		<Switch>
-		// 			<Route exact path="/login" component={PageLogin}/>
-		// 			<Route>
-		// 				<Header />
-		// 				<div className="app__body">
-		// 					<Switch>
-		// 						<Route exact path="/" component={Feed} />
-		// 						<Route path="/messenger" component={PageMessenger} />
-		// 						<Route path="/messenger/:id" component={PageMessenger} />
-		// 						<Route path="/profile/:id" component={PageProfile}/>
-		// 						<Route component={PageNotFound}/>
-		// 					</Switch>
-		// 				</div>
-		// 			</Route>
-		// 		</Switch>
-		//
-		// 	</Router>
-		// </div>
-
 	);
 }
 
 export default App;
+
+const AppLoading = () => {
+	return (
+		<div className="app__loading">
+			<img className="loading__logo" alt="LiveFood"
+				 src="/static/images/brand.png"
+			/>
+			<Spinner
+				name="ball-spin-fade-loader"
+				color="red"
+				fadeIn="none"
+			/>
+		</div>
+	)
+}
+
+

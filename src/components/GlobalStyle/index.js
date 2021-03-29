@@ -30,6 +30,7 @@ const useStyles = makeStyles(() => createStyles({
 
 const GlobalStyles = () => {
     useStyles();
+
     return null;
 };
 

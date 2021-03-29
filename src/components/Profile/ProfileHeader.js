@@ -2,6 +2,11 @@ import React from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import {makeStyles} from "@material-ui/core/styles";
+import Skeleton from '@material-ui/lab/Skeleton';
+import {Link} from "react-router-dom";
+import IconButton from "@material-ui/core/IconButton";
+import {Badge} from "@material-ui/core";
+import ExploreTwoToneIcon from "@material-ui/icons/ExploreTwoTone";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -42,15 +47,21 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const UserProfile = ({isAuthProfile,user, ...rest}) => {
+const ProfileHeader = ({isAuthProfile,user, ...rest}) => {
     const classes = useStyles();
-
 
     return (
         <div className="profile__header">
             <div className="profile__bio">
                 <div className={classes.bioAvt}>
-                    <Avatar alt="Remy Sharp" src={user?.photoURL} className={classes.userPhoto}/>
+                    {
+                        user? (
+                                <Avatar alt="Remy Sharp" src={user.photoURL} className={classes.userPhoto}/>
+                        ): (
+                            <Skeleton animation="wave" variant="circle" width={120} height={120} />
+                        )
+                    }
+
                 </div>
                 <div className={classes.bioDetails}>
                     <div className="share-title-container">
@@ -61,13 +72,15 @@ const UserProfile = ({isAuthProfile,user, ...rest}) => {
                             isAuthProfile ? (
                                 <div className="share-follow-container">
                                     {/* Checking if followed */}
+                                    <Link to="/account/edit">
+                                        <Button
+                                            variant="contained"
+                                            className={classes.button}
+                                        >
+                                            Edit profile
+                                        </Button>
+                                    </Link>
 
-                                    <Button
-                                        variant="contained"
-                                        className={classes.button}
-                                    >
-                                        Edit profile
-                                    </Button>
 
                                 </div>
                             ) : (
@@ -109,7 +122,6 @@ const UserProfile = ({isAuthProfile,user, ...rest}) => {
                                 className="unit">Following</span></div>
                             <div className="number"><strong title="Followers">4.9M</strong><span
                                 className="unit">Followers</span></div>
-
                         </h2>
                     </div>
                 </div>
@@ -120,4 +132,4 @@ const UserProfile = ({isAuthProfile,user, ...rest}) => {
     )
 }
 
-export default UserProfile
+export default ProfileHeader

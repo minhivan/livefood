@@ -2,11 +2,12 @@ import React, {useEffect, useState} from "react";
 import Page from "../components/Page";
 import ExploreItem from "../components/Explore/ExploreItem";
 import {db} from "../firebase";
-import Post from "../components/Post/Post";
 
 const Explore = () => {
     const [explore, setExplore] = useState([]);
     useEffect(() => {
+        window.scroll({top: 0, left: 0, behavior: 'smooth' });
+
         let postDoc = db.collection('posts');
         postDoc
             .orderBy('timestamp', "desc")
@@ -27,6 +28,7 @@ const Explore = () => {
                     //             Object.assign(comments, doc.data());
                     //         });
                     // })
+
                     data.data().user.get().then( author => {
                         Object.assign(userProfile, author.data());
                     })

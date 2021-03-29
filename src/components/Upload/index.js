@@ -12,6 +12,12 @@ import SentimentSatisfiedTwoToneIcon from '@material-ui/icons/SentimentSatisfied
 import EmojiObjectsTwoToneIcon from '@material-ui/icons/EmojiObjectsTwoTone';
 import Popup from "./Popup";
 import VerticalLinearStepper from "./Stepper";
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+
+function Alert(props) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 
 const useStyles = makeStyles((theme) => ({
@@ -45,7 +51,7 @@ function Upload({username}) {
     const [image, setImage] = useState('');
     // const [progress, setProgress] = useState('');
     const [openStep, setOpenStep] = useState(false);
-
+    const [openSnack, setOpenSnack] = useState(false);
 
 
     const handleOpen = () => {
@@ -63,52 +69,30 @@ function Upload({username}) {
     };
 
     const handleChange = (event) => {
-
         if(event.target.files[0]){
             setImage(event.target.files[0]);
             setOpen(true);
         }
+
+        // if(event.target.files[0]){
+        //     const reader = new FileReader();
+        //     reader.onload = _handlerReaderLoaded.bind(this);
+        //     reader.readAsBinaryString(event.target.files[0]);
+        // }
     }
 
-    // const handleUpload = () => {
-    //     const uploadTask = storage.ref(`images/${image.name}`).put(image);
-    //     uploadTask.on(
-    //         "state_changed",
-    //         (snapshot => {
-    //             const progress = Math.round(
-    //                 (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-    //             );
-    //             setProgress(progress);
-    //         }),
-    //         (error => {
-    //             console.log(error);
-    //         }),
-    //         () => {
-    //             storage
-    //                 .ref("images")
-    //                 .child(image.name)
-    //                 .getDownloadURL()
-    //                 .then(url => {
-    //                     db.collection("post").add({
-    //                         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    //                         caption: caption,
-    //                         imageUrl: url,
-    //                         username: username
-    //                     })
-    //                         .then(function(docRef) {
-    //                             console.log("Document written with ID: ", docRef.id);
-    //                         })
-    //                         .catch(function(error) {
-    //                             console.error("Error adding document: ", error);
-    //                         });
-    //                     setProgress('0');
-    //                     setCaption("");
-    //                     setImage(null);
-    //                     setOpen(false);
-    //                 })
-    //         }
-    //     )
+    // const _handlerReaderLoaded = (readerEvt) => {
+    //     let binaryString = readerEvt.target.result;
+    //     console.log(btoa(binaryString));
     // }
+
+    const handleCloseSnack = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSnack(false);
+    };
+
     return(
         <div className="upload">
             <div className="upload__container">
@@ -147,10 +131,22 @@ function Upload({username}) {
             {/*<div className="">*/}
             {/*    <CircularProgress variant="determinate" value={Number(progress)} />*/}
             {/*</div>*/}
-
-            <Popup open={open} image={image}  handleClose={handleClose} setImage={setImage}/>
+            <Popup open={open} image={image}  handleClose={handleClose} setImage={setImage} setOpenSnack={setOpenSnack} />
             <VerticalLinearStepper open={openStep} image={image} setImage={setImage} handleClose={handleCloseStep}/>
 
+            <Snackbar
+                open={openSnack}
+                autoHideDuration={6000}
+                onClose={handleCloseSnack}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+            >
+                <Alert onClose={handleCloseSnack} severity="success">
+                    Upload successfully !
+                </Alert>
+            </Snackbar>
         </div>
     )
 }
