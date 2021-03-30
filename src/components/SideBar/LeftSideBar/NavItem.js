@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
         marginRight: 'auto',
         fontWeight: "500",
         fontSize: "1.1rem",
-        paddingLeft: "10px",
+        paddingLeft: "15px",
         color: "#050505"
     },
     active: {

@@ -15,7 +15,6 @@ const EditAccountPage = (props) => {
     const [currentUser] = useAuthState(auth);
     const [userData] = useCollection(db.collection('users').where('uid', '==', currentUser.uid))
     const user = userData?.docs?.[0].data();
-    console.log(props.action)
 
     function content(action){
         switch (action){
@@ -37,7 +36,7 @@ const EditAccountPage = (props) => {
                 <section className="edit_account__navigation">
                     <AccountNavBar />
                 </section>
-                {content(props.action)}
+                {content(props.pagePath)}
             </div>
 
         </Page>

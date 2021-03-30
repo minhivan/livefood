@@ -21,7 +21,7 @@ const HomePage = () => {
             className="app__bodyContainer"
         >
             <NavBar auth={user}/>
-            <Post auth={user}/>
+            <Post/>
             <RightSideBar auth={user}/>
         </Page>
     )

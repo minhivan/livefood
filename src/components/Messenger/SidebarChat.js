@@ -16,7 +16,7 @@ function SidebarChat(props){
 
     return(
         <div className="user__inbox  bottomDivider" >
-            <Link to={`/messages/t/${props.id}`}>
+            <Link to={`/messages/t/${props.id}`} style={{width: "100%"}}>
                 <CardHeader
                     className="suggest__user"
                     avatar={

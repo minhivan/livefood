@@ -26,6 +26,7 @@ import Typography from "@material-ui/core/Typography";
 // import Upload from "../Upload";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Skeleton from "@material-ui/lab/Skeleton";
+import {useCollection} from "react-firebase-hooks/firestore";
 
 const useStyles = makeStyles((theme) => ({
 
@@ -71,6 +72,9 @@ const useStyles = makeStyles((theme) => ({
 //
 function Post( {postId, post, author, ...rest} ) {
 	const [user] = useAuthState(auth);
+	const [userData] = useCollection(db.collection('users').where('uid', '==', author))
+	const postAuthor = userData?.docs?.[0].data();
+
 	dayjs.extend(relativeTime);
 	let postCreated  = null;
 	if(post?.timestamp){
@@ -84,7 +88,8 @@ function Post( {postId, post, author, ...rest} ) {
 				<source src={post.mediaUrl} type="video/mp4"/>
 			</video>
 		</div>
-	} else{
+	}
+	else{
 		media = <div className="post__content">
 			<img
 				alt=""
@@ -102,7 +107,6 @@ function Post( {postId, post, author, ...rest} ) {
 	const handleExpandClick = () => {
 		setExpanded(!expanded);
 	};
-
 
 	useEffect(() => {
 		let unsubscribe;
@@ -150,18 +154,18 @@ function Post( {postId, post, author, ...rest} ) {
 
 	return (
 		<div className="post">
-			<Card className={classes.root}>
+			<Card className={classes.root} variant="outlined">
 				<CardHeader
 					avatar={
-						author?.uid ? (
-								<Avatar className={classes.avatar} alt={author.displayName} src={author.photoURL}/>
+						postAuthor?.uid ? (
+								<Avatar className={classes.avatar} alt={postAuthor?.displayName} src={postAuthor?.photoURL}/>
 							):(
 								<Skeleton animation="wave" variant="circle" width={40} height={40} />
 							)
 					}
 					title={
-						author?.uid ? (
-							<Link to={`profile/${author.uid}`}>{author.displayName}</Link>
+						postAuthor?.uid ? (
+							<Link to={`profile/${postAuthor.uid}`}>{postAuthor?.displayName}</Link>
 						) : (
 							<Skeleton animation="wave" height={10} width="30%" style={{ marginBottom: 6 }} />
 							)
@@ -172,7 +176,7 @@ function Post( {postId, post, author, ...rest} ) {
 						</IconButton>
 					}
 					subheader={
-						author?.uid ? (
+						postAuthor?.uid ? (
 							dayjs(postCreated).fromNow()
 						) : (
 							<Skeleton animation="wave" height={10} width="10%" style={{ marginBottom: 6 }} />
@@ -180,20 +184,20 @@ function Post( {postId, post, author, ...rest} ) {
 					}
 				/>
 
-				{/* Media */}
-				{/*{*/}
-				{/*	post?.mediaUrl ? (*/}
-				{/*		media*/}
-				{/*	) : (*/}
-				{/*		<Skeleton animation="wave" variant="rect" className={classes.media} />*/}
-				{/*	)*/}
-				{/*}*/}
+				 {/*Media*/}
+				{
+					post?.mediaUrl ? (
+						media
+					) : (
+						<Skeleton animation="wave" variant="rect" className={classes.media} />
+					)
+				}
 
 				{/* Caption */}
 				{
 					post?.caption ? (
 							<div className="post__caption">
-								<Link to={`profile/${author?.uid}`} className="post__user">{author?.displayName}</Link>
+								<Link to={`profile/${author?.uid}`} className="post__user">{postAuthor?.displayName}</Link>
 								<span style={{whiteSpace: 'pre-line'}}>{post.caption}</span>
 							</div>
 					) : (

@@ -148,8 +148,11 @@ const EditAccount = () => {
 
     const handleChange = event => {
         const fileUploaded = event.target.files[0];
+        // Change photoUrl here
+
         console.log(fileUploaded);
     };
+
 
 
     return(
@@ -166,7 +169,7 @@ const EditAccount = () => {
                     }
                     title={
                         user?.uid ? (
-                            <Link to={`profile/${user.uid}`} className={classes.displayName}>{user.displayName}</Link>
+                            <Link to={`/profile/${user.uid}`} className={classes.displayName}>{user.displayName}</Link>
                         ) : (
                             <Skeleton animation="wave" height={10} width="30%" style={{ marginBottom: 6 }} />
                         )

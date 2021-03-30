@@ -73,7 +73,7 @@ function PageMessenger() {
                     </div>
                 </section>
 
-                <Chat/>
+                <Chat />
             </div>
 
 

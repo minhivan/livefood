@@ -44,15 +44,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function Upload({username}) {
+function Upload() {
     const [open, setOpen] = useState(false);
     const classes = useStyles();
-    // const [caption, setCaption] = useState('');
     const [image, setImage] = useState('');
-    // const [progress, setProgress] = useState('');
     const [openStep, setOpenStep] = useState(false);
     const [openSnack, setOpenSnack] = useState(false);
-
 
     const handleOpen = () => {
         setOpen(true);
@@ -86,10 +83,7 @@ function Upload({username}) {
     //     console.log(btoa(binaryString));
     // }
 
-    const handleCloseSnack = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
+    const handleCloseSnack = (event) => {
         setOpenSnack(false);
     };
 

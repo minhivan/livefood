@@ -1,16 +1,19 @@
 import React from "react";
-import NavItem from "../SideBar/LeftSideBar/NavItem";
-import {Button, List, ListItem} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
+import clsx from "clsx";
+import {Button, List, ListItem} from "@material-ui/core";
 import {NavLink as RouterLink} from "react-router-dom";
-import {Users as UsersIcon} from "react-feather";
+import {
+    Grid as GridIcon,
+    Bookmark as BookmarkIcon,
+    Film as FilmIcon
+} from 'react-feather';
+
 
 
 const useStyles = makeStyles((theme) => ({
     list: {
-        display: "flex",
-        flexDirection: "column",
-        padding: "0"
+        display: "flex"
     },
     item: {
         display: 'flex',
@@ -20,11 +23,11 @@ const useStyles = makeStyles((theme) => ({
     button: {
         color: theme.palette.text.secondary,
         fontWeight: theme.typography.fontWeightMedium,
-        justifyContent: 'flex-start',
+        justifyContent: 'center',
         letterSpacing: 0,
-        padding: '15px',
+        padding: '10px 8px',
         textTransform: 'none',
-        width: '100%',
+        width: '100%'
     },
     icon: {
         marginRight: theme.spacing(1),
@@ -49,10 +52,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const AccountNavBar = () => {
+const ProfileNavBar = ({user}) => {
     const classes = useStyles();
 
-    return (
+
+    return(
         <List className={classes.list}>
             <ListItem
                 className={classes.item}
@@ -62,24 +66,14 @@ const AccountNavBar = () => {
                     activeClassName={classes.active}
                     className={classes.button}
                     component={RouterLink}
-                    to={`/account/edit`}
+                    to={`/profile/${user?.uid}/`}
                 >
-                    <span className={classes.title}>Post</span>
-                </Button>
-            </ListItem>
-
-            <ListItem
-                className={classes.item}
-                disableGutters
-            >
-                <Button
-                    activeClassName={classes.active}
-                    className={classes.button}
-                    component={RouterLink}
-                    to={`/account/password/change`}
-                >
+                    <GridIcon
+                        className={classes.icon}
+                        size="20"
+                    />
                     <span className={classes.title}>
-                    Change Password
+                    Post
                 </span>
                 </Button>
             </ListItem>
@@ -92,16 +86,40 @@ const AccountNavBar = () => {
                     activeClassName={classes.active}
                     className={classes.button}
                     component={RouterLink}
-                    to={`/account/setting/notifications`}
+                    to={`/profile/${user?.uid}/channel`}
                 >
+                    <FilmIcon
+                        className={classes.icon}
+                        size="20"
+                    />
                     <span className={classes.title}>
-                    Notifications
+                    Video
                 </span>
                 </Button>
             </ListItem>
 
+            <ListItem
+                className={classes.item}
+                disableGutters
+            >
+                <Button
+                    activeClassName={classes.active}
+                    className={classes.button}
+                    component={RouterLink}
+                    to={`/profile/${user?.uid}/saved`}
+                >
+                    <BookmarkIcon
+                        className={classes.icon}
+                        size="20"
+                    />
+                    <span className={classes.title}>
+                    Save
+                </span>
+                </Button>
+            </ListItem>
         </List>
+
     )
 }
 
-export default AccountNavBar
+export default ProfileNavBar

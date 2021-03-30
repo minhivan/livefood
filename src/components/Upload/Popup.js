@@ -138,19 +138,20 @@ function Popup(props){
                             hasImage: true,
                             caption: caption,
                             mediaUrl: url,
-                            userRef: db.doc('users/' + user.uid),
+                            user: db.doc('users/' + user.uid),
                             mediaType: props.image.type,
                             uid: user.uid
                         })
                             .then(function(docRef) {
                                 console.log("Document written with ID: ", docRef.id);
-                                props.setOpenSnack(true);
-                                props.setImage(null);
-                                props.handleClose(true);
+
                             })
                             .catch(function(error) {
                                 console.error("Error adding document: ", error);
                             });
+                        props.setOpenSnack(true);
+                        props.setImage(null);
+                        props.handleClose(true);
                         setProgress('0');
                         setCaption("");
                         setLoading(false);

@@ -20,20 +20,42 @@ import {useAuthState} from "react-firebase-hooks/auth";
 import {auth, db} from "./firebase";
 import styled from 'styled-components';
 import firebase from "firebase";
+import {useDispatch, useSelector} from "react-redux";
+import {login, logout, selectUser} from "./features/userSlice";
 
 function App() {
-	const routing = useRoutes(routes);
-	const [user, loading] = useAuthState(auth);
 
-	// useEffect(() => {
-	// 	if(user) {
-	// 		db.collection("users").doc(user.uid).set({
-	// 			lastActive: firebase.firestore.FieldValue.serverTimestamp()
-	// 		},{
-	// 			merge: true
-	// 		})
-	// 	}
-	// }, [user])
+	const [user, loading] = useAuthState(auth);
+	const routing = useRoutes(routes(user));
+	const u = useSelector(selectUser);
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		if(auth.onAuthStateChanged(author => {
+			if(author){
+				dispatch(
+					login({
+						uid: author.uid,
+						photoURL: author.photoURL,
+						email: author.email,
+						displayName: author.displayName
+					})
+				)
+			}else{
+				dispatch(logout())
+			}
+		}))
+
+		if(user) {
+			db.collection("users").doc(user.uid).set({
+				lastActive: firebase.firestore.FieldValue.serverTimestamp()
+			},{
+				merge: true
+			})
+		}
+
+	}, [user])
+
 
 
 	if(loading){
