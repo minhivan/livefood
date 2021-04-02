@@ -14,36 +14,8 @@ const useStyles = makeStyles((theme) => ({
         objectFit: "cover",
         width: "100%",
         height: "100%",
-        borderRadius: "10px",
         cursor: "pointer"
     },
-    paper: {
-        position: 'absolute',
-        maxWidth: 935,
-        backgroundColor: theme.palette.background.paper,
-        boxShadow: theme.shadows[5],
-        padding: theme.spacing(2, 4, 3),
-        borderRadius: "8px",
-        minHeight: "500px",
-        "&:focus": {
-            outline: "none"
-        },
-        display: "flex",
-        flexDirection: "column"
-    },
-    modalHeader: {
-        display: "flex",
-        justifyContent: "center",
-        padding: "10px 0 20px 0",
-        borderBottom: "1px solid #39CCCC"
-    },
-    buttonClose: {
-        position: "fixed",
-        right: "0",
-        top: "0"
-    },
-
-
 }));
 
 

@@ -26,7 +26,9 @@
     "react-scripts": "4.0.1",
     "react-spinkit": "^3.0.0",
     "redux": "^4.0.5",
+    "redux-persist": "^6.0.0",
     "styled-components": "^5.2.1",
+    "timeago-react": "^3.0.2",
     "web-vitals": "^0.2.4"
   },
   "scripts": {

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {IconButton, Modal, TextField} from "@material-ui/core";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 
@@ -6,8 +6,9 @@ import {makeStyles} from "@material-ui/core/styles";
 import {green} from "@material-ui/core/colors";
 import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
-import {db} from "../../firebase";
+import {db} from "../../../firebase";
 import {useCollection} from "react-firebase-hooks/firestore";
+import Avatar from "@material-ui/core/Avatar";
 
 
 
@@ -26,7 +27,7 @@ function getModalStyle() {
 const useStyles = makeStyles((theme) => ({
     paper: {
         position: 'absolute',
-        width: 600,
+        width: 500,
         backgroundColor: theme.palette.background.paper,
         boxShadow: theme.shadows[5],
         padding: theme.spacing(2, 3, 3),
@@ -68,6 +69,15 @@ const useStyles = makeStyles((theme) => ({
         display: "flex",
         padding: "20px 0",
         alignItems: "center"
+    },
+    suggest: {
+        padding: "20px 0"
+    },
+    userToChat: {
+        padding: "10px 0",
+        display: "flex",
+        alignItems: "center",
+        cursor: "pointer"
     }
 }));
 
@@ -75,8 +85,17 @@ const CreateNewChat = (props) => {
     const [email, setEmail] = useState('');
     const classes = useStyles();
     const [modalStyle] = useState(getModalStyle);
+
     const userChatRef = db.collection("conversations").where('users', 'array-contains', props.user.email);
     const [chatsSnapshot] = useCollection(userChatRef);
+
+    const userRef = db.collection("users").where('uid', '!=', props.user.uid);
+    const [usersSnapshot] = useCollection(userRef);
+
+
+    useEffect(()=> {
+
+    }, [])
 
     // perform add to database
     const handleAddChat = () => {
@@ -84,15 +103,22 @@ const CreateNewChat = (props) => {
             db.collection("conversations").add({
                 users: [props?.user.email, email]
             })
-            props.handleClose(true);
-            setEmail("");
         }
+
+        props.handleClose(true);
+        setEmail("");
         // console.log(conversationExists(email));
     }
     const conversationExists = (recipientEmail) =>
         !!chatsSnapshot?.docs.find((chat) =>
             chat.data().users.find((user) =>
                 user === recipientEmail)?.length > 0)
+
+
+    const handleClickAddChat = (email) => {
+        console.log(email);
+        setEmail(email);
+    }
 
     return (
         <Modal
@@ -111,6 +137,7 @@ const CreateNewChat = (props) => {
                     </div>
                 </div>
                 <Divider />
+
                 <div className={classes.input}>
                     <span style={{paddingRight: "20px"}}>To: </span>
                     <TextField
@@ -123,6 +150,21 @@ const CreateNewChat = (props) => {
                     <Button variant="contained" color="primary" onClick={handleAddChat}>
                         Next
                     </Button>
+                </div>
+                <Divider />
+                <div className={classes.suggest}>
+                    {
+                        usersSnapshot?.docs.map((data) => (
+                            <div
+                                className={classes.userToChat}
+                                key={data.id}
+                                onClick={() => handleClickAddChat(data.data().email)}
+                            >
+                                <Avatar alt={data.data()?.displayName} src={data.data()?.photoURL} />
+                                <h4 style={{padding: "0 10px"}}>{data.data()?.displayName}</h4>
+                            </div>
+                        ))
+                    }
                 </div>
             </div>
         </Modal>

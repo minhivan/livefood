@@ -39,6 +39,11 @@
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid rgb(235, 238, 240);
+    width: 100%;
+}
+.suggest__user{
+    font-size: 16px;
+    width: 100%;
 }
 
 .user__inbox:hover{
@@ -51,23 +56,49 @@
     display: flex;
     flex-direction: column;
 }
+
+
+
 .chat__container{
     /*height: 100%;*/
     /*width: 100%;*/
     flex: 1;
+    overflow-y: scroll;
 }
-
-
 .chat__content{
-    overflow-x: hidden;
-    overflow-y: auto;
-    padding: 20px 20px 0;
+    width: 100%;
+}
+.sender{
+    justify-content: flex-end;
+}
+.chat__message{
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
 }
 .chat__input{
     background-color: rgba(0,0,0,0.03);
     padding: 20px;
     border-top: 1px solid rgb(235, 238, 240);
 }
+.chat__details{
+    width: fit-content;
+    border: 1px solid #efefef;
+    padding: 16px;
+    min-height: 44px;
+    align-items: center;
+    margin-left: 10px;
+    border-radius: 22px;
+    max-width: 50%;
+    line-height: 22px;
+}
+
+.sender .chat__details{
+    background: #efefef;
+}
+
+
+
 
 .chat__input form{
     display: flex;
@@ -83,3 +114,4 @@
     width: 90%;
     font-size: 14px;
 }
+

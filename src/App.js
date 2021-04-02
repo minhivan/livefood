@@ -24,9 +24,8 @@ import {useDispatch, useSelector} from "react-redux";
 import {login, logout, selectUser} from "./features/userSlice";
 
 function App() {
-
-	const [user, loading] = useAuthState(auth);
-	const routing = useRoutes(routes(user));
+	const [userLogged, loading] = useAuthState(auth);
+	const routing = useRoutes(routes(userLogged));
 	const u = useSelector(selectUser);
 	const dispatch = useDispatch();
 
@@ -46,15 +45,15 @@ function App() {
 			}
 		}))
 
-		if(user) {
-			db.collection("users").doc(user.uid).set({
+		if(userLogged) {
+			db.collection("users").doc(userLogged.uid).set({
 				lastActive: firebase.firestore.FieldValue.serverTimestamp()
 			},{
 				merge: true
 			})
 		}
 
-	}, [user])
+	}, [userLogged])
 
 
 

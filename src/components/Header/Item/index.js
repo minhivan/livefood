@@ -1,7 +1,7 @@
 import React, { useState} from "react";
 
 import Avatar from "@material-ui/core/Avatar";
-import {Badge, MenuItem, MenuList, Popover} from "@material-ui/core";
+import {Badge, MenuItem, MenuList, Popover, Popper} from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import {Link} from "react-router-dom";
 import ExploreTwoToneIcon from '@material-ui/icons/ExploreTwoTone';
@@ -21,15 +21,24 @@ const useStyles = makeStyles((theme) => ({
     },
     active: {
         color: "#3f51b5",
+    },
+    popupNoti: {
+        minHeight: 300,
+        zIndex: 99999
     }
 }));
 
 
 function MenuHeader({user}) {
-
     const classes = useStyles();
-
     const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+    const id = open ? 'simple-popover' : undefined;
+
+    const [anchorElNoti, setAnchorElNoti] = useState(null);
+    const openNoti = Boolean(anchorElNoti);
+    const idNoti = open ? 'simple-popper' : undefined;
+
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -38,8 +47,13 @@ function MenuHeader({user}) {
         setAnchorEl(null);
     };
 
-    const open = Boolean(anchorEl);
-    const id = open ? 'simple-popover' : undefined;
+    const handleNoti = (event) => {
+        setAnchorElNoti(anchorElNoti ? null : event.currentTarget);
+    }
+    const handleCloseNoti = () => {
+        setAnchorElNoti(null);
+    };
+
 
 
     return(
@@ -66,23 +80,43 @@ function MenuHeader({user}) {
                     state: { users: user }
                 }}>
                     <IconButton aria-label="4 new messages" color="inherit" >
-                        <Badge badgeContent={4} color="secondary">
+                        <Badge badgeContent={4} max={20} color="secondary">
                             <EmailTwoToneIcon className={classes.icon}/>
                         </Badge>
                     </IconButton>
                 </Link>
 
-                <Link to="/">
-                    <IconButton aria-label="11 new notifications" color="inherit">
-                        <Badge badgeContent={11} color="secondary">
-                            <NotificationsActiveTwoToneIcon className={classes.icon}/>
-                        </Badge>
-                    </IconButton>
-                </Link>
+                <IconButton aria-label="11 new notifications" color="inherit" onClick={handleNoti}>
+                    <Badge badgeContent={24} max={20} color="secondary">
+                        <NotificationsActiveTwoToneIcon className={classes.icon}/>
+                    </Badge>
+                </IconButton>
+
+                <Popover
+                    disableScrollLock
+                    id={idNoti}
+                    open={openNoti}
+                    anchorEl={anchorElNoti}
+                    onClose={handleCloseNoti}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'center',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'center',
+                    }}
+
+                >
+
+                </Popover>
+
+
                 <IconButton onClick={handleClick}>
                     <Avatar alt={user?.displayName} src={user?.photoURL} />
                 </IconButton>
                 <Popover
+                    disableScrollLock
                     id={id}
                     open={open}
                     anchorEl={anchorEl}
@@ -102,7 +136,6 @@ function MenuHeader({user}) {
                         <Link to={{pathname:`save`}} ><MenuItem onClick={handleClose}>Save</MenuItem></Link>
                         <MenuItem onClick={handleClose}>My account</MenuItem>
                         <MenuItem onClick={() => auth.signOut()}>Logout</MenuItem>
-
                     </MenuList>
                 </Popover>
             </div>

@@ -17,13 +17,21 @@ const routes = (isLoggedIn)  => [
         path: '/',
         element: <MainLayout />,
         children: [
-            { path: 'messages', element: <Messenger /> },
-            { path: 'messages/t/:id', element: <Messenger /> },
+            // { path: 'messages', element: <Messenger /> },
+            // { path: 'messages/t/:id', element: <Messenger /> },
             // { path: 'explore', element: <Explore />},
             // { path: 'profile/:id', element: <UserProfilePage /> },
             { path: '/', element: <HomePage />},
             { path: '404', element: <NotFoundView /> },
             { path: '*', element: <Navigate to="/404" /> }
+        ]
+    },
+    {
+        path: '/messages',
+        element: isLoggedIn ? <MainLayout/> : <Navigate to="/login" />,
+        children: [
+            { path: '/', element: <Messenger /> },
+            { path: '/t/:id', element: <Messenger /> },
         ]
     },
     {
@@ -44,12 +52,12 @@ const routes = (isLoggedIn)  => [
         ]
     },
     {
-        path: '/profile/:id',
+        path: '/profile',
         element: <MainLayout pageProfile={true}/>,
         children: [
-            { path: '/', element: <UserProfilePage pagePath="profile_feed"/> },
-            { path: '/channel', element: <UserProfilePage  pagePath="profile_channel"/> },
-            { path: '/saved', element: <UserProfilePage  pagePath="profile_saved"/> }
+            { path: '/:id', element: <UserProfilePage pagePath="profile_feed"/> },
+            { path: '/channel/:id', element: <UserProfilePage  pagePath="profile_channel"/> },
+            { path: '/saved/:id', element: <UserProfilePage  pagePath="profile_saved"/> }
         ]
     },
 

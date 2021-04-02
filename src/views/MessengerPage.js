@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 
 import "../components/Messenger/Messenger.css";
-import SidebarChat from "../components/Messenger/SidebarChat";
+import SidebarChat from "../components/Messenger/Sidebar/SidebarChat";
 import Chat from "../components/Messenger/Chat";
 import Page from "../components/Page";
 import {useParams} from "react-router";
@@ -10,10 +10,13 @@ import {useParams} from "react-router";
 import IconButton from "@material-ui/core/IconButton";
 import ControlPointOutlinedIcon from "@material-ui/icons/ControlPointOutlined";
 import {makeStyles} from "@material-ui/core/styles";
-import CreateNewChat from "../components/Messenger/CreateNewChat";
+import CreateNewChat from "../components/Messenger/Sidebar/CreateNewChat";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {auth, db} from "../firebase";
 import {useCollection} from "react-firebase-hooks/firestore";
+import {List} from "@material-ui/core";
+import {useDispatch} from "react-redux";
+import {removeChat} from "../features/chatSlice";
 
 
 
@@ -28,16 +31,26 @@ const useStyles = makeStyles((theme) => ({
         overflow: 'hidden',
         width: '100%'
     },
+    list: {
+        padding: 0
+    }
 }));
 
 function PageMessenger() {
+    const dispatch = useDispatch();
+
+
     let { id } = useParams();
     const classes = useStyles();
     const [open, setOpen] = useState(false);
     const [user] = useAuthState(auth);
-
     const userChatRef = db.collection("conversations").where('users', 'array-contains', user.email);
     const [chatsSnapshot] = useCollection(userChatRef);
+
+
+    if(typeof id === 'undefined'){
+        dispatch(removeChat());
+    }
 
     const handleOpen = () => {
         setOpen(true);
@@ -49,7 +62,7 @@ function PageMessenger() {
 
     return(
         <Page
-            title="Messenger"
+            title="Messenger | LiveFood"
             className="app__bodyContainer"
         >
             <div className="messenger">
@@ -61,6 +74,7 @@ function PageMessenger() {
                         </IconButton>
                     </div>
                     <div className="messenger__inbox">
+                        <List className={classes.list}>
                         {
                             chatsSnapshot?.docs.map((chat) => (
                                 <SidebarChat
@@ -70,10 +84,11 @@ function PageMessenger() {
                                 />
                             ))
                         }
+                        </List>
                     </div>
                 </section>
 
-                <Chat />
+                <Chat id={id}/>
             </div>
 
 

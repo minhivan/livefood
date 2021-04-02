@@ -53,9 +53,11 @@ const useStyles = makeStyles((theme) => ({
         "&:focus": {
             outline: "none"
         },
-        minHeight: "600px",
+        maxHeight: "600px",
+        height: "100%",
         display: "flex",
-        justifyContent: "space-between"
+        justifyContent: "space-between",
+        overflow: "hidden"
     },
     modalHeader: {
         display: "flex",
@@ -85,7 +87,17 @@ const useStyles = makeStyles((theme) => ({
         maxWidth: "600px"
     },
     rightPanel: {
-        width: "335px"
+        width: "335px",
+        height: "100%",
+        overflowY: "scroll"
+    },
+    captionText: {
+        fontFamily: "'Quicksand', sans-serif",
+        whiteSpace: "pre-line",
+        lineHeight: "26px"
+    },
+    modalBody: {
+        height: "auto"
     }
 }));
 
@@ -143,23 +155,21 @@ function MediaViewer(props){
                                 }
                                 subheader={dayjs(postCreated).fromNow()}
                             />
+                            <div className={classes.buttonClose}>
+                                <IconButton aria-label="Cancel" color="inherit" onClick={props.handleClose} >
+                                    <CancelTwoToneIcon />
+                                </IconButton>
+                            </div>
                         </div>
                         <Divider />
                         <div className={classes.modalBody}>
                             <div className="post__caption">
                                 <Link to={`/profile/${props.postAuthor?.uid}`} className="post__user">{props.postAuthor?.displayName}</Link>
-                                <span>{props.post.caption}</span>
+                                <span className={classes.captionText}>{props.post.caption}</span>
                             </div>
                         </div>
                     </div>
-
-                    <div className={classes.buttonClose}>
-                        <IconButton aria-label="Cancel" color="inherit" onClick={props.handleClose} >
-                            <CancelTwoToneIcon />
-                        </IconButton>
-                    </div>
                 </div>
-
                 {/*<ListComment comments={comments} />*/}
             </div>
         </Modal>

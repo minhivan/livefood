@@ -84,7 +84,6 @@ const useStyles = makeStyles((theme) => ({
         width: "100%",
         padding: "10px 0",
         minHeight: "100px",
-        maxHeight: "250px",
         fontFamily: "'Quicksand', sans-serif"
     },
     buttonProgress: {

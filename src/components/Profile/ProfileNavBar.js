@@ -1,6 +1,5 @@
 import React from "react";
 import {makeStyles} from "@material-ui/core/styles";
-import clsx from "clsx";
 import {Button, List, ListItem} from "@material-ui/core";
 import {NavLink as RouterLink} from "react-router-dom";
 import {
@@ -66,7 +65,7 @@ const ProfileNavBar = ({user}) => {
                     activeClassName={classes.active}
                     className={classes.button}
                     component={RouterLink}
-                    to={`/profile/${user?.uid}/`}
+                    to={`/profile/${user?.uid}`}
                 >
                     <GridIcon
                         className={classes.icon}
@@ -86,7 +85,7 @@ const ProfileNavBar = ({user}) => {
                     activeClassName={classes.active}
                     className={classes.button}
                     component={RouterLink}
-                    to={`/profile/${user?.uid}/channel`}
+                    to={`/profile/channel/${user?.uid}`}
                 >
                     <FilmIcon
                         className={classes.icon}
@@ -106,7 +105,7 @@ const ProfileNavBar = ({user}) => {
                     activeClassName={classes.active}
                     className={classes.button}
                     component={RouterLink}
-                    to={`/profile/${user?.uid}/saved`}
+                    to={`/profile/saved/${user?.uid}`}
                 >
                     <BookmarkIcon
                         className={classes.icon}

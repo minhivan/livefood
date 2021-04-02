@@ -64,6 +64,11 @@ const useStyles = makeStyles((theme) => ({
 		fontFamily: "'Quicksand', sans-serif",
 		fontWeight: "600",
 		fontSize: "1rem"
+	},
+	captionText: {
+		fontFamily: "'Quicksand', sans-serif",
+		whiteSpace: "pre-line",
+		lineHeight: "26px"
 	}
 }));
 
@@ -197,8 +202,8 @@ function Post( {postId, post, author, ...rest} ) {
 				{
 					post?.caption ? (
 							<div className="post__caption">
-								<Link to={`profile/${author?.uid}`} className="post__user">{postAuthor?.displayName}</Link>
-								<span style={{whiteSpace: 'pre-line'}}>{post.caption}</span>
+								<Link to={`profile/${postAuthor?.uid}`} className="post__user">{postAuthor?.displayName}</Link>
+								<span className={classes.captionText} >{post.caption}</span>
 							</div>
 					) : (
 						<div className="post__caption">
