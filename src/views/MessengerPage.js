@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import "../components/Messenger/Messenger.css";
 import SidebarChat from "../components/Messenger/Sidebar/SidebarChat";
@@ -44,7 +44,7 @@ function PageMessenger() {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
     const [user] = useAuthState(auth);
-    const userChatRef = db.collection("conversations").where('users', 'array-contains', user.email);
+    const userChatRef = db.collection("conversations").where('users', 'array-contains', user.email).orderBy('lastUpdate', 'desc');
     const [chatsSnapshot] = useCollection(userChatRef);
 
 
@@ -81,6 +81,8 @@ function PageMessenger() {
                                     key={chat.id}
                                     id={chat.id}
                                     users={chat.data().users}
+                                    sender={chat.data().lastSend}
+                                    status={chat.data().isSeen}
                                 />
                             ))
                         }

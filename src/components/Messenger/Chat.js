@@ -4,12 +4,13 @@ import {makeStyles} from "@material-ui/core/styles";
 import InfoRoundedIcon from '@material-ui/icons/InfoRounded';
 
 import {MessageCircle as MessageIcon} from "react-feather";
-import { db} from "../../firebase";
+import {auth, db} from "../../firebase";
 import Message from "./Message";
 import {useSelector} from "react-redux";
 import {selectChatID, selectChatRecipient} from "../../features/chatSlice";
-import {useCollection} from "react-firebase-hooks/firestore";
+import {useCollection, useDocument} from "react-firebase-hooks/firestore";
 import ChatInput from "./ChatInput";
+import firebase from "firebase";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -66,15 +67,13 @@ const useStyles = makeStyles((theme) => ({
 
 
 function Chat({id}){
-
     const recipient = useSelector(selectChatRecipient);
     const classes = useStyles();
     const roomID =  useSelector(selectChatID);
     const chatRef = useRef(null);
 
-    const [recipientUserSnapshot] = useCollection(recipient && db.collection('users').where('uid' ,'==', recipient.uid));
-    const lastActive = recipientUserSnapshot?.docs?.[0]?.data()?.lastActive;
-
+    // const [recipientUserSnapshot] = useCollection(recipient && db.collection('users').where('uid' ,'==', recipient.uid));
+    // const lastActive = recipientUserSnapshot?.docs?.[0]?.data()?.lastActive;
 
     const [chatMessages, setChatMessage] = useState([]);
 
@@ -88,24 +87,25 @@ function Chat({id}){
 
 
     useEffect(() => {
-        if(id){
-            db.collection("chats")
-                .doc(id)
-                .collection("messages")
-                .orderBy("timestamp", "asc")
-                .onSnapshot((doc) => {
 
-                    chatRef?.current?.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start"
-                    });
+        id && db.collection("chats")
+            .doc(id)
+            .collection("messages")
+            .orderBy("timestamp", "asc")
+            .onSnapshot((doc) => {
 
-                    setChatMessage(doc.docs.map((doc) => ({
-                        id: doc.id,
-                        data: doc.data()
-                    })))
-                })
-        }
+                chatRef?.current?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+                setChatMessage(doc.docs.map((doc) => ({
+                    id: doc.id,
+                    data: doc.data()
+                })))
+            })
+        // realtime on page
+
 
         chatRef?.current?.scrollIntoView({
             behavior: "auto",
@@ -113,7 +113,7 @@ function Chat({id}){
         });
 
 
-    }, [id, loading])
+    }, [loading])
 
 
     if(!roomID ){

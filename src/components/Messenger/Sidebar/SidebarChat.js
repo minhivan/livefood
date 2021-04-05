@@ -30,7 +30,6 @@ const useStyles = makeStyles((theme) => ({
     title: {
         fontWeight: "500",
         fontSize: "1.1rem",
-        paddingLeft: "15px",
         color: "#050505"
     },
     active: {
@@ -38,14 +37,10 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: "#efefef",
         '& $title': {
             fontWeight: 600,
-            color: theme.palette.primary.main,
         },
         '& $icon': {
             color: theme.palette.primary.main,
         }
-    },
-    userInbox: {
-        fontSize: "1rem",
     },
     lastSeen: {
         overflow: "hidden",
@@ -58,9 +53,11 @@ const useStyles = makeStyles((theme) => ({
 
 
 function SidebarChat(props){
+
     const dispatch = useDispatch();
     const classes = useStyles();
     const [user] = useAuthState(auth);
+    // Get user recipient data
     const recipientUser = getRecipientUser(props.users, user);
     const [recipientUserSnapshot] = useCollection(db.collection('users').where('email' ,'==', recipientUser));
     const recipient = recipientUserSnapshot?.docs?.[0]?.data();
@@ -72,6 +69,13 @@ function SidebarChat(props){
             .collection("messages")
             .orderBy("timestamp", "asc")
     );
+
+    let checkRead = false;
+    if(props.sender === user.email ){
+        checkRead = true;
+    }else if(props.status === true){
+        checkRead = true;
+    }
 
     let isSender = false;
     if(test?.docs?.[test?.docs?.length -1]?.data()?.uid === user.uid){
@@ -113,19 +117,24 @@ function SidebarChat(props){
                             <Avatar aria-label="recipe" className="" src={recipient?.photoURL}/>
                         }
                         title={
-                            <span className={classes.userInbox}>{recipient?.displayName}</span>
+                            <span className={classes.title}>{recipient?.displayName}</span>
                         }
                         subheader={
                             <p className={classes.lastSeen}>{
                                 isSender ? (
                                      "You: " + test?.docs?.[test?.docs?.length -1]?.data().message
-                                 ): (
+                                ):(
                                     test?.docs?.[test?.docs?.length -1]?.data().message
                                 )
                             }</p>
-
                         }
                     />
+                    {
+                        checkRead ? null : (
+                            <div id="new" className="style-scope ytd-notification-renderer "/>
+                        )
+                    }
+
                 </div>
             </Button>
 

@@ -232,6 +232,7 @@ input:focus{
     width: 100%;
     display: flex;
     justify-content: center;
+    align-items: flex-start;
 }
 
 .explore__root .explore__container{
@@ -361,7 +362,16 @@ input:focus{
     overflow-y: scroll;
 }
 
+/* Notification unread */
+.ytd-notification-renderer{
+    background: linear-gradient(282.53deg, #fd3a84 8.76%, #ffa68d 100%);
+    width: 10px;
+    height: 10px;
+    border-radius: 100%;
+    position: absolute;
+    right: 1rem;
 
+}
 
 @media (max-width: 767px) {
     .header{

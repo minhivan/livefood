@@ -9,6 +9,7 @@ import Button from "@material-ui/core/Button";
 import {db} from "../../../firebase";
 import {useCollection} from "react-firebase-hooks/firestore";
 import Avatar from "@material-ui/core/Avatar";
+import firebase from "firebase";
 
 
 
@@ -101,7 +102,8 @@ const CreateNewChat = (props) => {
     const handleAddChat = () => {
         if(email && email!== props.user.email && !conversationExists(email)){
             db.collection("conversations").add({
-                users: [props?.user.email, email]
+                users: [props?.user.email, email],
+                lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
             })
         }
 

@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
         alignItems: "center",
         borderStyle: "solid",
         borderRadius: "50%",
-        marginBottom: 20
+        margin: "50px 0 20px 0"
     }
 
 }));

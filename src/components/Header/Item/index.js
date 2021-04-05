@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import Avatar from "@material-ui/core/Avatar";
 import {Badge, MenuItem, MenuList, Popover, Popper} from "@material-ui/core";
@@ -9,8 +9,9 @@ import NotificationsActiveTwoToneIcon from '@material-ui/icons/NotificationsActi
 import { makeStyles} from "@material-ui/core/styles";
 import EmailTwoToneIcon from '@material-ui/icons/EmailTwoTone';
 // import {useAuthState} from "react-firebase-hooks/auth";
-import {auth} from "../../../firebase";
+import {auth, db} from "../../../firebase";
 import HomeTwoToneIcon from '@material-ui/icons/HomeTwoTone';
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -30,6 +31,8 @@ const useStyles = makeStyles((theme) => ({
 
 
 function MenuHeader({user}) {
+    const [mess, setMess] = useState(0);
+
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -54,6 +57,25 @@ function MenuHeader({user}) {
         setAnchorElNoti(null);
     };
 
+
+    useEffect(() => {
+        var query = db.collection("conversations");
+
+        query
+            .where('users', 'array-contains', user.email)
+            .where('isSeen', '==', false)
+            .where('lastSend', '!=', user.email)
+            .onSnapshot((snapshot) => {
+                // ...
+                console.log(snapshot.size)
+                setMess(snapshot.size);
+
+
+            }, (error) => {
+                // ...
+                console.log(error)
+            });
+    }, [user.email])
 
 
     return(
@@ -80,7 +102,7 @@ function MenuHeader({user}) {
                     state: { users: user }
                 }}>
                     <IconButton aria-label="4 new messages" color="inherit" >
-                        <Badge badgeContent={4} max={20} color="secondary">
+                        <Badge badgeContent={mess} max={20} color="secondary">
                             <EmailTwoToneIcon className={classes.icon}/>
                         </Badge>
                     </IconButton>
