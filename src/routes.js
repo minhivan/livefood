@@ -17,10 +17,7 @@ const routes = (isLoggedIn)  => [
         path: '/',
         element: <MainLayout />,
         children: [
-            // { path: 'messages', element: <Messenger /> },
-            // { path: 'messages/t/:id', element: <Messenger /> },
-            // { path: 'explore', element: <Explore />},
-            // { path: 'profile/:id', element: <UserProfilePage /> },
+            { path: 'explore', element: <Explore />},
             { path: '/', element: <HomePage />},
             { path: '404', element: <NotFoundView /> },
             { path: '*', element: <Navigate to="/404" /> }

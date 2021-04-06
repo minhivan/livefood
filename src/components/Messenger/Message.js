@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     chat: {
         color: "#262626",
         overflowWrap: "break-word",
-        whiteSpace: "normal",
+        whiteSpace: "pre-wrap",
         fontSize: "14px",
     },
     chatTime: {

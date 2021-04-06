@@ -104,8 +104,8 @@
     display: flex;
     justify-content: space-between;
     padding: 10px;
-    border-radius: 20px;
-    border: 1px solid #ccc;
+    align-items: center;
+
 }
 
 .chat__text{
@@ -115,3 +115,16 @@
     font-size: 14px;
 }
 
+
+.chat__holder{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex: 1 0 0;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    padding: 10px 0;
+}
+.chat__button{
+    margin-left: 15px
+}

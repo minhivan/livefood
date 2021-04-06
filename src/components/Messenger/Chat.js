@@ -4,13 +4,12 @@ import {makeStyles} from "@material-ui/core/styles";
 import InfoRoundedIcon from '@material-ui/icons/InfoRounded';
 
 import {MessageCircle as MessageIcon} from "react-feather";
-import {auth, db} from "../../firebase";
+import {db} from "../../firebase";
 import Message from "./Message";
 import {useSelector} from "react-redux";
 import {selectChatID, selectChatRecipient} from "../../features/chatSlice";
-import {useCollection, useDocument} from "react-firebase-hooks/firestore";
+import {useCollection} from "react-firebase-hooks/firestore";
 import ChatInput from "./ChatInput";
-import firebase from "firebase";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -27,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: 20,
         fontSize: "12px",
         color: "#484848",
+        float: "right"
     },
     icon: {
         color: "#050505",
@@ -95,7 +95,7 @@ function Chat({id}){
             .onSnapshot((doc) => {
 
                 chatRef?.current?.scrollIntoView({
-                    behavior: "smooth",
+                    behavior: "auto",
                     block: "start"
                 });
 
