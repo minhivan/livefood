@@ -26,7 +26,7 @@ import {login, logout, selectUser} from "./features/userSlice";
 function App() {
 	const [userLogged, loading] = useAuthState(auth);
 	const routing = useRoutes(routes(userLogged));
-	const u = useSelector(selectUser);
+	// const u = useSelector(selectUser);
 	const dispatch = useDispatch();
 
 	useEffect(() => {

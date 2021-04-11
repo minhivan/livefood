@@ -18,47 +18,13 @@ import {
     MapPin as MapIcon
 } from 'react-feather';
 import NavItem from './NavItem';
+import {useAuthState} from "react-firebase-hooks/auth";
+import {auth} from "../../../firebase";
 
 // import {useAuthState} from "react-firebase-hooks/auth";
 // import {auth} from "../../../firebase";
 
-const items = [
-    {
-        href: '/explore',
-        icon: BellIcon,
-        title: 'Notifications'
-    },
-    {
-        href: '/friends',
-        icon: UsersIcon,
-        title: 'Followers'
-    },
-    {
-        href: '/saves',
-        icon: BookmarkIcon,
-        title: 'Saves'
-    },
-    {
-        href: '/watch',
-        icon: VideoIcon,
-        title: 'Watch'
-    },
-    {
-        href: '/recipe',
-        icon: BookOpenIcon,
-        title: 'Recipe'
-    },
-    {
-        href: '/trending',
-        icon: TrendingUpIcon,
-        title: 'Trending'
-    },
-    {
-        href: '/location',
-        icon: MapIcon,
-        title: 'Location'
-    },
-];
+
 
 const useStyles = makeStyles(() => ({
     mobileDrawer: {
@@ -83,7 +49,7 @@ const useStyles = makeStyles(() => ({
         fontSize: "1.1rem",
         padding: "0 10px",
         cursor: "pointer",
-        fontFamily: "'Quicksand', sans-serif"
+
     },
     util: {
         padding: "0 0 0 20px"
@@ -92,7 +58,43 @@ const useStyles = makeStyles(() => ({
 
 const NavBar = (props) => {
     const classes = useStyles();
-
+    const items = [
+        {
+            href: '/explore',
+            icon: BellIcon,
+            title: 'Notifications'
+        },
+        {
+            href: '/explore/people',
+            icon: UsersIcon,
+            title: 'Followers'
+        },
+        {
+            href: '/profile/saved/' + props.user.uid,
+            icon: BookmarkIcon,
+            title: 'Saves'
+        },
+        {
+            href: '/watch',
+            icon: VideoIcon,
+            title: 'Watch'
+        },
+        {
+            href: '/recipe',
+            icon: BookOpenIcon,
+            title: 'Recipe'
+        },
+        {
+            href: '/trending',
+            icon: TrendingUpIcon,
+            title: 'Trending'
+        },
+        {
+            href: '/location',
+            icon: MapIcon,
+            title: 'Location'
+        },
+    ];
     const content = (
         <Box
             height="100%"
@@ -108,10 +110,10 @@ const NavBar = (props) => {
                 <Avatar
                     className={classes.avatar}
                     component={RouterLink}
-                    src={props.auth?.photoURL}
-                    to={`profile/${props.auth?.uid}`}
+                    src={props.user?.photoURL}
+                    to={`profile/${props.user?.uid}`}
                 />
-                <Link to={`profile/${props.auth?.uid}`} className={classes.name}>{props.auth?.displayName}</Link>
+                <Link to={`profile/${props.user?.uid}`} className={classes.name}>{props.user?.displayName}</Link>
             </Box>
             <Box p={2} className={classes.util}>
                 <List>

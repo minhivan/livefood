@@ -1,15 +1,19 @@
 import React, {useState} from "react";
-import SentimentSatisfiedRoundedIcon from "@material-ui/icons/SentimentSatisfiedRounded";
 import {auth, db} from "../../firebase";
 import firebase from "firebase";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {useDocument} from "react-firebase-hooks/firestore";
-import {TextField} from "@material-ui/core";
-import SendRoundedIcon from '@material-ui/icons/SendRounded';
+
+import SentimentSatisfiedRoundedIcon from "@material-ui/icons/SentimentSatisfiedRounded";
+import {Popover, TextField} from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import AddCircleTwoToneIcon from '@material-ui/icons/AddCircleTwoTone';
 import AddPhotoAlternateTwoToneIcon from '@material-ui/icons/AddPhotoAlternateTwoTone';
 import RoomTwoToneIcon from '@material-ui/icons/RoomTwoTone';
+
+import 'emoji-mart/css/emoji-mart.css'
+import { Picker } from 'emoji-mart'
+
 
 
 const ChatInput = ({roomID, chatRef}) => {
@@ -19,6 +23,23 @@ const ChatInput = ({roomID, chatRef}) => {
     const conversationRef = db.collection("conversations").doc(roomID);
     const messageRef = db.collection("chats").doc(roomID).collection("messages")
     const [conversationData] = useDocument(conversationRef)
+
+    const [anchorElPicker, setAnchorElPicker] = useState(null);
+
+    const open = Boolean(anchorElPicker);
+    const id = open ? 'simple-popover-picker' : undefined;
+
+    const handleClick = (event) => {
+        setAnchorElPicker(event.currentTarget);
+    }
+    const handleClose = () => {
+        setAnchorElPicker(null);
+    };
+    const addEmoji = (event) => {
+        let emoji = event.native;
+        setInput(input + emoji);
+    }
+
 
     const checkingRead = () => {
         if(conversationData?.data()?.lastSend !== user.email && !conversationData?.data()?.isSeen){
@@ -62,10 +83,8 @@ const ChatInput = ({roomID, chatRef}) => {
                 behavior: "smooth",
                 block: "start"
             });
-
             setInput('')
         }
-
     }
 
     return(
@@ -92,18 +111,34 @@ const ChatInput = ({roomID, chatRef}) => {
                         onChange={event => setInput(event.target.value)}
                         onClick={checkingRead}
                         onKeyPress={checkingKeypress}
-                        InputProps={{ disableUnderline: true, style : { fontFamily: "'Quicksand', sans-serif"}}}
+                        InputProps={{ disableUnderline: true}}
                     />
-                    {/*<input*/}
-                    {/*    className="chat__text"*/}
-                    {/*    id="outlined-basic"*/}
-                    {/*    placeholder="Message ... "*/}
-                    {/*    type="text"*/}
-                    {/*    value={input}*/}
-                    {/*    onChange={event => setInput(event.target.value)}*/}
-                    {/*    onClick={event => checkingRead()}*/}
-                    {/*/>*/}
-                    <SentimentSatisfiedRoundedIcon />
+
+                    <IconButton className="chat__iconPicker" aria-label="Add " onClick={handleClick}>
+                        <SentimentSatisfiedRoundedIcon />
+                    </IconButton>
+                    <Popover
+                        disableScrollLock
+                        id={id}
+                        open={open}
+                        anchorEl={anchorElPicker}
+                        onClose={handleClose}
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'left',
+                        }}
+                        transformOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'center',
+                        }}
+                    >
+                        <Picker
+                            onSelect={addEmoji}
+                            title="Livefood"
+                        />
+                    </Popover>
+
+
                 </div>
             </form>
         </div>

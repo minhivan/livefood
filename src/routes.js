@@ -7,28 +7,24 @@ import HomePage from "./views/HomePage";
 import NotFoundView from "./views/NotFoundPage"
 import Messenger from "./views/MessengerPage";
 import SignUp from "./views/auth/SignUpPage";
-import Explore from "./views/ExplorePage";
+import Explore from "./views/Explore/ExplorePage";
 import UserProfilePage from "./views/account/UserProfilePage";
 import EditAccountPage from "./views/account/EditAccountPage";
+import SinglePage from "./views/SinglePage";
+import ExplorePeople from "./views/Explore/ExplorePeoplePage";
 
 
 const routes = (isLoggedIn)  => [
+
     {
         path: '/',
         element: <MainLayout />,
         children: [
-            { path: 'explore', element: <Explore />},
+            { path: 'p/:id', element: <SinglePage type="post" />},
+            // { path: 'explore', element: <Explore />},
             { path: '/', element: <HomePage />},
             { path: '404', element: <NotFoundView /> },
             { path: '*', element: <Navigate to="/404" /> }
-        ]
-    },
-    {
-        path: '/messages',
-        element: isLoggedIn ? <MainLayout/> : <Navigate to="/login" />,
-        children: [
-            { path: '/', element: <Messenger /> },
-            { path: '/t/:id', element: <Messenger /> },
         ]
     },
     {
@@ -37,6 +33,22 @@ const routes = (isLoggedIn)  => [
         children: [
             { path: 'login', element: <Login /> },
             { path: 'register', element: <SignUp /> }
+        ]
+    },
+    {
+        path: '/explore',
+        element: isLoggedIn ? <MainLayout/> : <Navigate to="/login" />,
+        children: [
+            // { path: '/', element: <Explore /> },
+            { path: '/people', element: <ExplorePeople /> },
+        ]
+    },
+    {
+        path: '/messages',
+        element: isLoggedIn ? <MainLayout/> : <Navigate to="/login" />,
+        children: [
+            { path: '/', element: <Messenger /> },
+            { path: '/t/:id', element: <Messenger /> },
         ]
     },
     {

@@ -78,7 +78,7 @@
 }
 .chat__input{
     background-color: rgba(0,0,0,0.03);
-    padding: 20px;
+    padding: 10px;
     border-top: 1px solid rgb(235, 238, 240);
 }
 .chat__details{
@@ -123,8 +123,11 @@
     flex: 1 0 0;
     border-radius: 20px;
     border: 1px solid #ccc;
-    padding: 10px 0;
+    padding: 5px 0 5px 5px;
 }
 .chat__button{
     margin-left: 15px
+}
+.chat__iconPicker {
+    padding: 5px !important;
 }

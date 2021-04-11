@@ -69,6 +69,7 @@
 .popup__caption{
     flex: 1;
     overflow-y: scroll;
+    padding: 5px;
 }
 .caption__holder{
     padding: 20px 10px;

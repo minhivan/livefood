@@ -6,9 +6,18 @@
     border: 1px solid rgb(235, 238, 240);
 }
 
+.post__content{
+    display: block;
+}
+
 .post__contentImage{
-    object-fit: contain;
+    height: 100%;
     width: 100%;
+    object-fit: contain;
+    max-height: 680px;
+    /*position: absolute;*/
+    /*top: 0;*/
+    /*left: 0;*/
     border-top: 1px solid rgb(235, 238, 240);
     border-bottom: 1px solid rgb(235, 238, 240);
 }

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import Upload from "../Upload";
-import Post from "../Post/Post";
+import Post from "./Post";
 import { db, auth } from "../../firebase";
 import {useAuthState} from "react-firebase-hooks/auth";
 
@@ -12,7 +12,8 @@ export default function NewFeed(){
 
     //Get post
     useEffect(() => {
-        db.collection('posts')
+        var postRef = db.collection('posts');
+        var unsubscribe = postRef
             .orderBy('timestamp', "desc")
             .onSnapshot(snapshot => {
                 setPosts(snapshot.docs.map(doc => ({
@@ -20,6 +21,10 @@ export default function NewFeed(){
                     post: doc.data(),
                 })));
             })
+
+        return () => {
+            unsubscribe()
+        }
     }, []);
 
     // useEffect(() => {
@@ -50,10 +55,10 @@ export default function NewFeed(){
                 ) : null
             }
             {
-                    posts.map(({id, post}) => (
+                posts.map(({id, post}) => (
                     <Post
                         key={id}
-                        postId={id}
+                        id={id}
                         post={post}
                         author={post.uid}
                     />

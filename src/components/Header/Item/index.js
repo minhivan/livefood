@@ -60,20 +60,12 @@ function MenuHeader({user}) {
 
     useEffect(() => {
         var query = db.collection("conversations");
-
         query
             .where('users', 'array-contains', user.email)
             .where('isSeen', '==', false)
             .where('lastSend', '!=', user.email)
             .onSnapshot((snapshot) => {
-                // ...
-                console.log(snapshot.size)
                 setMess(snapshot.size);
-
-
-            }, (error) => {
-                // ...
-                console.log(error)
             });
     }, [user.email])
 
@@ -128,9 +120,7 @@ function MenuHeader({user}) {
                         vertical: 'top',
                         horizontal: 'center',
                     }}
-
                 >
-
                 </Popover>
 
 

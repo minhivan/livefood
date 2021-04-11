@@ -7,6 +7,7 @@ import {Link, Navigate} from "react-router-dom";
 import GoogleIcon from '../../icons/Google';
 import Page from "../../components/Page";
 import checkFirebaseAuth from "../../CustomHook/FirebaseAuth";
+import {useAuthState} from "react-firebase-hooks/auth";
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -80,7 +81,7 @@ function PageLogin() {
     const classes = useStyles();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [user, setUser] = useState(null);
+    const [user] = useAuthState(auth);
 
     const signUpGoogle = (event) => {
         event.preventDefault();
@@ -97,16 +98,16 @@ function PageLogin() {
             });
     }
 
-    useEffect( () => {
-        return auth.onAuthStateChanged((authUser) => {
-            if (authUser) {
-                checkFirebaseAuth(authUser);
-                setUser(authUser);
-            } else {
-                setUser(null);
-            }
-        });
-    }, [user])
+    // useEffect( () => {
+    //     return auth.onAuthStateChanged((authUser) => {
+    //         if (authUser) {
+    //             checkFirebaseAuth(authUser);
+    //             setUser(authUser);
+    //         } else {
+    //             setUser(null);
+    //         }
+    //     });
+    // }, [user])
 
     if(user){
         return <Navigate to="/"/>

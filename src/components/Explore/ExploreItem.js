@@ -23,19 +23,14 @@ export default function ExploreItem(props) {
 
     const classes = useStyles();
     const [open, setOpen] = useState(false);
-    const [postPic, setPostPic] = useState([]);
+    // const [postPic, setPostPic] = useState([]);
 
     function handleOpen(post, id){
         setOpen(true);
-        setPostPic({
-            post: post,
-            id: id
-        })
     }
 
     const handleClose = () => {
         setOpen(false);
-        setPostPic([]);
     };
 
     let media;
@@ -43,7 +38,8 @@ export default function ExploreItem(props) {
         media = <video
                 controls className={classes.img}
                 muted="muted"
-                onClick={() => handleOpen(props.post, props.id)}>
+                onClick={() => handleOpen(props.post, props.id)}
+                >
                     <source src={props.post.mediaUrl} type="video/mp4"/>
                 </video>
     } else{

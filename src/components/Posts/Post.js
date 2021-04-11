@@ -11,7 +11,8 @@ import IconButton from '@material-ui/core/IconButton';
 import ShareIcon from '@material-ui/icons/Share';
 import {makeStyles} from "@material-ui/core/styles";
 import ModeCommentOutlinedIcon from '@material-ui/icons/ModeCommentOutlined';
-import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import FavoriteBorderTwoToneIcon from '@material-ui/icons/FavoriteBorderTwoTone';
+import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { red } from '@material-ui/core/colors';
@@ -26,10 +27,11 @@ import Typography from "@material-ui/core/Typography";
 // import Upload from "../Upload";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Skeleton from "@material-ui/lab/Skeleton";
-import {useCollection} from "react-firebase-hooks/firestore";
+import {useCollection, useDocument} from "react-firebase-hooks/firestore";
+import {ToggleButton, ToggleButtonGroup} from "@material-ui/lab";
+import Divider from "@material-ui/core/Divider";
 
 const useStyles = makeStyles((theme) => ({
-
 	root: {
 		maxWidth: "100%",
 		borderRadius: "max(0px, min(8px, calc((100vw - 4px - 100%) * 9999))) / 8px",
@@ -58,67 +60,111 @@ const useStyles = makeStyles((theme) => ({
 		borderTop: "1px solid rgba(var(--b6a,219,219,219),1)"
 	},
 	paragraph: {
-		fontFamily: "'Quicksand', sans-serif",
+		lineHeight: "26px",
+		textAlign: "justify"
 	},
 	paragraphHead: {
-		fontFamily: "'Quicksand', sans-serif",
 		fontWeight: "600",
 		fontSize: "1rem"
 	},
 	captionText: {
-		fontFamily: "'Quicksand', sans-serif",
 		whiteSpace: "pre-line",
 		lineHeight: "26px"
+	},
+	imgHolder: {
+		backgroundColor: "#efefef",
+		display: "block",
+		width: "100%",
+		position: "relative"
+	},
+	imgPlace: {
+		paddingBottom: "100%",
+		overflow: "hidden"
+	},
+	likeButton: {
+		border: "0",
+		backgroundColor: "none",
+		borderRadius: "50%",
+		'&:hover': {
+			color: 'red',
+		}
 	}
 }));
 
 
-// postId, user, caption, imageUrl, timestamp
+// id, user, caption, imageUrl, timestamp
 //
-function Post( {postId, post, author, ...rest} ) {
+function Post( {id, post, author, ...rest} ) {
+
+
+	const postData = db.collection('posts').doc(id);
+	const classes = useStyles();
+	const [comments, setComments] = useState([]);
+	const [comment, setComment] = useState('');
+	const [expanded, setExpanded] = useState(false);
 	const [user] = useAuthState(auth);
 	const [userData] = useCollection(db.collection('users').where('uid', '==', author))
 	const postAuthor = userData?.docs?.[0].data();
-
+	const [selected, setSelected] = useState(false);
+	// day ago
 	dayjs.extend(relativeTime);
 	let postCreated  = null;
 	if(post?.timestamp){
 		postCreated = new Date(post.timestamp.seconds * 1000).toLocaleString();
 	}
 
+	// Render media
 	let media;
 	if(post?.mediaType === "video/mp4"){
 		media = <div className="post__content">
-			<video controls className="post__contentImage" muted="muted">
-				<source src={post.mediaUrl} type="video/mp4"/>
+			<video controls className="post__contentImage" muted="muted" >
+				<source src={post?.mediaUrl} type="video/mp4"/>
 			</video>
 		</div>
-	}
-	else{
+	} else {
 		media = <div className="post__content">
 			<img
 				alt=""
 				className="post__contentImage"
-				src={post.mediaUrl}
+				src={post?.mediaUrl}
 			/>
 		</div>
 	}
-
-	const classes = useStyles();
-	const [comments, setComments] = useState([]);
-	const [comment, setComment] = useState('');
-	const [expanded, setExpanded] = React.useState(false);
 
 	const handleExpandClick = () => {
 		setExpanded(!expanded);
 	};
 
+	// Handle like and dislike action
+	const handleLikePost = () => {
+		setSelected(true);
+		postData.update({
+			likeBy: firebase.firestore.FieldValue.arrayUnion(user.uid)
+		});
+	}
+
+	const handleDislikePost = () => {
+		setSelected(false);
+		postData.update({
+			likeBy: firebase.firestore.FieldValue.arrayRemove(user.uid)
+		});
+	}
+
+	let likeCount = 0
+	if(typeof post.likeBy !== 'undefined'){
+		likeCount = post.likeBy.length;
+	}
+
+
+	// get comments
 	useEffect(() => {
 		let unsubscribe;
-		if(postId) {
-			unsubscribe = db
-				.collection("posts")
-				.doc(postId)
+		if(id) {
+			if(typeof post.likeBy !== 'undefined' && post.likeBy.includes(user.uid)){
+				setSelected(true);
+			}
+
+			unsubscribe = postData
 				.collection("comments")
 				.orderBy('timestamp', "desc")
 				.onSnapshot((snapshot ) => {
@@ -134,12 +180,13 @@ function Post( {postId, post, author, ...rest} ) {
 						})))
 					);
 				})
-		}
 
+
+		}
 		return () => {
 			unsubscribe();
 		}
-	}, [postId])
+	}, [id])
 
 
 	// console.log(props.post.mediaType);
@@ -147,9 +194,10 @@ function Post( {postId, post, author, ...rest} ) {
 	const postComment = (event) => {
 		event.preventDefault();
 		if(comment){
-			db.collection("posts").doc(postId).collection("comments").add({
+			db.collection("posts").doc(id).collection("comments").add({
 				text: comment,
 				user: db.doc('users/' + user.uid),
+				uid: user.uid,
 				timestamp: firebase.firestore.FieldValue.serverTimestamp(),
 			});
 		}
@@ -189,7 +237,7 @@ function Post( {postId, post, author, ...rest} ) {
 					}
 				/>
 
-				 {/*Media*/}
+				{/*Media*/}
 				{
 					post?.mediaUrl ? (
 						media
@@ -217,9 +265,20 @@ function Post( {postId, post, author, ...rest} ) {
 				{/* Button */}
 				<CardActions disableSpacing className={classes.action}>
 					<div className="action__like">
-						<IconButton aria-label="add to favorites">
-							<FavoriteBorderIcon />
-						</IconButton>
+						<ToggleButton
+							value="check"
+							selected={selected}
+							className={classes.likeButton}
+							onClick={() => {
+								if(!selected) handleLikePost();
+								else handleDislikePost();
+							}}
+						>
+							{
+								selected ? <FavoriteRoundedIcon style={{color: "red"}}/> : <FavoriteBorderTwoToneIcon />
+							}
+						</ToggleButton>
+
 					</div>
 					<div className="action__comment">
 						<IconButton aria-label="comment">
@@ -251,10 +310,15 @@ function Post( {postId, post, author, ...rest} ) {
 					</div>
 				</CardActions>
 
-				<div className={classes.displayLike}>
-					<span><b>0 Likes</b></span>
-				</div>
-				{/* Post */}
+				{
+					likeCount > 0 ? (
+							<div className={classes.displayLike}>
+								<span><b>{likeCount} Likes</b></span>
+							</div>
+					) : <Divider />
+				}
+
+				{/* Posts */}
 				<Collapse in={expanded} timeout="auto" unmountOnExit>
 					<CardContent>
 						<Typography paragraph className={classes.paragraphHead}>Method:</Typography>
@@ -296,7 +360,7 @@ function Post( {postId, post, author, ...rest} ) {
 										placeholder="Leave a comment ... "
 										value={comment}
 										onChange={event => setComment(event.target.value)}
-										InputProps={{ disableUnderline: true, style : {fontFamily: "'Quicksand', sans-serif"}}}
+										InputProps={{ disableUnderline: true}}
 
 									/>
 									<Button variant="contained" disabled={!comment} onClick={postComment}>

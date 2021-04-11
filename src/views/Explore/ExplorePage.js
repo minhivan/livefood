@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
-import Page from "../components/Page";
-import ExploreItem from "../components/Explore/ExploreItem";
-import {db} from "../firebase";
+import Page from "../../components/Page";
+import ExploreItem from "../../components/Explore/ExploreItem";
+import {db} from "../../firebase";
 
 const Explore = () => {
     const [explore, setExplore] = useState([]);
@@ -49,7 +49,7 @@ const Explore = () => {
                 <div className="explore__container">
                     {explore.map(({id, post, authorProfile}) => (
                         <ExploreItem key={id} post={post} postAuthor={authorProfile} />
-                        // <Post key={id} post={post} author={userProfile} />
+                        // <Posts key={id} post={post} author={userProfile} />
                     ))}
                 </div>
             </div>

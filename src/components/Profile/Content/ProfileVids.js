@@ -1,9 +1,11 @@
 import React, {useEffect, useState} from "react";
 // import {useAuthState} from "react-firebase-hooks/auth";
-import { db} from "../../../firebase";
+import {db} from "../../../firebase";
 import ExploreItem from "../../Explore/ExploreItem";
+import {Video as VideoIcon} from "react-feather";
 import {makeStyles} from "@material-ui/core/styles";
-import {Camera as CameraIcon} from "react-feather";
+import {useCollection} from "react-firebase-hooks/firestore";
+
 
 const useStyles = makeStyles((theme) => ({
     icon: {
@@ -32,54 +34,50 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-
-
-
-const ProfileFeed = ({uid}) => {
+const ProfileVids = ({uid}) => {
     const classes = useStyles();
-    const [feed, setFeed] = useState([]);
+    const [vid, setVid] = useState([]);
 
     useEffect(() => {
         window.scroll({top: 0, left: 0, behavior: 'smooth' });
 
         let postDoc = db.collection('posts');
-        var unsubscribe = postDoc
+        postDoc
             .where('uid', "==", uid)
+            .where('mediaType', '==', 'video/mp4')
             .limit(12)
             .onSnapshot(snapshot => {
-            let temp = []
-            snapshot.forEach(data => {
-                var userProfile = {};
-
-                data.data().user.get().then( author => {
-                    Object.assign(userProfile, author.data());
+                let temp = []
+                snapshot.forEach(data => {
+                    var authorVid = {};
+                    data.data().user.get().then( author => {
+                        Object.assign(authorVid, author.data());
+                    })
+                    temp.push({id: data.id, post: data.data(), authorVid: authorVid })
                 })
-                temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
+                setVid(temp);
             })
-            setFeed(temp);
-        })
-        return () => {
-            unsubscribe();
-        }
+
     }, [uid]);
 
     return(
         <div className="explore__root">
             <div className="explore__container">
                 {
-                    feed.length > 0 ? (
-                        feed.map(({id, post, authorProfile}) => (
-                            <ExploreItem key={id} post={post} postAuthor={authorProfile} />
+                    vid.length > 0 ? (
+                        vid.map(({id, post, authorVid}) => (
+                            <ExploreItem key={id} post={post} postAuthor={authorVid} />
                         ))
                     ) : (
                         <div className={classes.wrapper}>
                             <div className={classes.none}>
-                                <CameraIcon
+                                <VideoIcon
                                     className={classes.icon}
                                     size="40"
                                 />
                             </div>
-                            <h3>No Posts Yet</h3>
+                            <h2 style={{paddingBottom: "10px"}}>Start Record Video</h2>
+                            <p>Creating videos to your collection.</p>
                         </div>
                     )
                 }
@@ -89,4 +87,4 @@ const ProfileFeed = ({uid}) => {
     )
 }
 
-export default ProfileFeed
+export default ProfileVids

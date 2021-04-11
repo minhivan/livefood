@@ -5,19 +5,22 @@ import {auth, db} from "../../firebase";
 import ProfileHeader from "../../components/Profile/ProfileHeader";
 import {useParams} from "react-router";
 import { useCollection } from "react-firebase-hooks/firestore";
-import ProfileDetails from "../../components/Profile/Content/ProfileDetails";
+import ProfileVids from "../../components/Profile/Content/ProfileVids";
 import ProfileNavBar from "../../components/Profile/ProfileNavBar";
 import {Divider} from "@material-ui/core";
 
 import ProfileFeed from "../../components/Profile/Content/ProfileFeed";
+import ProfileSaved from "../../components/Profile/Content/ProfileSaved";
 
 
 function content(action, id){
     switch (action){
         case "profile_feed":
-            return <ProfileFeed uid={id}/>
+            return <ProfileFeed uid={id} type="post"/>
         case "profile_channel":
-            return <ProfileDetails uid={id}/>
+            return <ProfileVids uid={id} type="video"/>
+        case "profile_saved":
+            return <ProfileSaved uid={id} type="saved"/>
         default:
             return <></>
     }

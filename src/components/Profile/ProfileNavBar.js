@@ -7,6 +7,10 @@ import {
     Bookmark as BookmarkIcon,
     Film as FilmIcon
 } from 'react-feather';
+import {useAuthState} from "react-firebase-hooks/auth";
+
+import {auth} from "../../firebase";
+
 
 
 
@@ -53,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ProfileNavBar = ({user}) => {
     const classes = useStyles();
-
+    const [authUser] = useAuthState(auth);
 
     return(
         <List className={classes.list}>
@@ -71,9 +75,7 @@ const ProfileNavBar = ({user}) => {
                         className={classes.icon}
                         size="20"
                     />
-                    <span className={classes.title}>
-                    Post
-                </span>
+                    <span className={classes.title}>Post</span>
                 </Button>
             </ListItem>
 
@@ -91,31 +93,32 @@ const ProfileNavBar = ({user}) => {
                         className={classes.icon}
                         size="20"
                     />
-                    <span className={classes.title}>
-                    Video
-                </span>
+                    <span className={classes.title}>Video</span>
                 </Button>
             </ListItem>
 
-            <ListItem
-                className={classes.item}
-                disableGutters
-            >
-                <Button
-                    activeClassName={classes.active}
-                    className={classes.button}
-                    component={RouterLink}
-                    to={`/profile/saved/${user?.uid}`}
-                >
-                    <BookmarkIcon
-                        className={classes.icon}
-                        size="20"
-                    />
-                    <span className={classes.title}>
-                    Save
-                </span>
-                </Button>
-            </ListItem>
+            {
+                user?.uid === authUser.uid ? (
+                    <ListItem
+                        className={classes.item}
+                        disableGutters
+                    >
+                        <Button
+                            activeClassName={classes.active}
+                            className={classes.button}
+                            component={RouterLink}
+                            to={`/profile/saved/${user?.uid}`}
+                        >
+                            <BookmarkIcon
+                                className={classes.icon}
+                                size="20"
+                            />
+                            <span className={classes.title}>Save</span>
+                        </Button>
+                    </ListItem>
+                ) : null
+            }
+
         </List>
 
     )

@@ -3,7 +3,7 @@ import {IconButton, Modal} from "@material-ui/core";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 import {makeStyles} from "@material-ui/core/styles";
 // import {db} from "../../firebase";
-// import ListComment from "../Post/Comments";
+// import ListComment from "../Posts/Comments";
 import CardHeader from "@material-ui/core/CardHeader";
 import Avatar from "@material-ui/core/Avatar";
 import {Link} from "react-router-dom";
@@ -12,6 +12,15 @@ import {Link} from "react-router-dom";
 import Divider from '@material-ui/core/Divider';
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import {ToggleButton} from "@material-ui/lab";
+import FavoriteRoundedIcon from "@material-ui/icons/FavoriteRounded";
+import FavoriteBorderTwoToneIcon from "@material-ui/icons/FavoriteBorderTwoTone";
+import ModeCommentOutlinedIcon from "@material-ui/icons/ModeCommentOutlined";
+import BookmarkBorderOutlinedIcon from "@material-ui/icons/BookmarkBorderOutlined";
+import ShareIcon from "@material-ui/icons/Share";
+// import clsx from "clsx";
+// import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import CardActions from "@material-ui/core/CardActions";
 
 // import {auth, db, storage} from "../../firebase";
 // import firebase from "firebase";
@@ -92,16 +101,34 @@ const useStyles = makeStyles((theme) => ({
         overflowY: "scroll"
     },
     captionText: {
-        fontFamily: "'Quicksand', sans-serif",
         whiteSpace: "pre-line",
         lineHeight: "26px"
     },
     modalBody: {
         height: "auto"
+    },
+    action: {
+        borderTop: "1px solid rgba(var(--b6a,219,219,219),1)"
+    },
+    displayLike: {
+        padding: "0 0 20px 20px",
+        borderBottom: "1px solid rgba(var(--b6a,219,219,219),1)"
+    },
+    likeButton: {
+        border: "0",
+        backgroundColor: "none",
+        borderRadius: "50%",
+        '&:hover': {
+            color: 'red',
+        }
     }
 }));
 
 function MediaViewer(props){
+    const classes = useStyles();
+    const [modalStyle] = useState(getModalStyle);
+    const [selected, setSelected] = useState(false);
+
     // const [user] = useAuthState(auth);
     dayjs.extend(relativeTime);
     let postCreated  = null;
@@ -109,10 +136,6 @@ function MediaViewer(props){
     if(props?.post?.timestamp){
         postCreated = new Date(props?.post?.timestamp.seconds * 1000).toLocaleString();
     }
-
-
-    const classes = useStyles();
-    const [modalStyle] = useState(getModalStyle);
 
 
 
@@ -167,6 +190,56 @@ function MediaViewer(props){
                                 <Link to={`/profile/${props.postAuthor?.uid}`} className="post__user">{props.postAuthor?.displayName}</Link>
                                 <span className={classes.captionText}>{props.post.caption}</span>
                             </div>
+                        </div>
+
+                        <CardActions disableSpacing className={classes.action}>
+                            <div className="action__like">
+                                <ToggleButton
+                                    value="check"
+                                    selected={selected}
+                                    className={classes.likeButton}
+                                    onChange={() => {
+                                        setSelected(!selected);
+                                    }}
+                                >
+                                    {
+                                        selected ? <FavoriteRoundedIcon style={{color: "red"}}/> : <FavoriteBorderTwoToneIcon />
+                                    }
+                                </ToggleButton>
+
+                            </div>
+                            <div className="action__comment">
+                                <IconButton aria-label="comment">
+                                    <ModeCommentOutlinedIcon/>
+                                </IconButton>
+                            </div>
+                            <div className="action__share">
+                                <IconButton aria-label="share">
+                                    <BookmarkBorderOutlinedIcon />
+                                </IconButton>
+                            </div>
+                            <div className="action__share">
+                                <IconButton aria-label="share">
+                                    <ShareIcon />
+                                </IconButton>
+                            </div>
+
+                            {/*<div className="action__expand">*/}
+                            {/*    <IconButton*/}
+                            {/*        className={clsx(classes.expand, {*/}
+                            {/*            [classes.expandOpen]: expanded,*/}
+                            {/*        })}*/}
+                            {/*        onClick={handleExpandClick}*/}
+                            {/*        aria-expanded={expanded}*/}
+                            {/*        aria-label="show more"*/}
+                            {/*    >*/}
+                            {/*        <ExpandMoreIcon />*/}
+                            {/*    </IconButton>*/}
+                            {/*</div>*/}
+                        </CardActions>
+
+                        <div className={classes.displayLike}>
+                            <span><b>0 Likes</b></span>
                         </div>
                     </div>
                 </div>

@@ -1,17 +1,17 @@
-import React, {useEffect} from "react";
+import React from "react";
 import CardHeader from "@material-ui/core/CardHeader";
 import Avatar from "@material-ui/core/Avatar";
 import getRecipientUser from "../../../utils/getRecipientUser";
 import {auth, db} from "../../../firebase";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {useCollection} from "react-firebase-hooks/firestore";
-import {Link, NavLink as RouterLink} from "react-router-dom";
+import { NavLink as RouterLink} from "react-router-dom";
 import {Button, ListItem} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import {useDispatch} from "react-redux";
 import { setChat} from "../../../features/chatSlice";
-import {useParams} from "react-router";
-import TimeAgo from "timeago-react";
+// import {useParams} from "react-router";
+// import TimeAgo from "timeago-react";
 
 const useStyles = makeStyles((theme) => ({
     item: {

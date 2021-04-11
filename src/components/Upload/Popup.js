@@ -10,7 +10,7 @@ import {auth, db, storage} from "../../firebase";
 import firebase from "firebase";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {green} from "@material-ui/core/colors";
-import {useCollection} from "react-firebase-hooks/firestore";
+// import {useCollection} from "react-firebase-hooks/firestore";
 
 function getModalStyle() {
     const top = 50 ;
@@ -77,7 +77,6 @@ const useStyles = makeStyles((theme) => ({
     reviewImg: {
         width: "100%",
         objectFit: "contain",
-        borderRadius: "10px",
         boxShadow: "0px 0px 2px 0px rgba(21,12,12,0.9)"
     },
     inputText: {
@@ -111,6 +110,17 @@ function Popup(props){
     // }
 
     // const [post] = useCollection()
+    let media;
+    if(props.image){
+        if(props.image.type === "video/mp4" ){
+            media = <video controls className={classes.reviewImg} muted="muted">
+                <source src={window.URL.createObjectURL(props.image)} type="video/mp4"/>
+            </video>
+        } else {
+            media = <img className={classes.reviewImg} src={window.URL.createObjectURL(props.image)} alt="" />
+        }
+    }
+
 
     const handleUpload = () => {
         const uploadTask = storage.ref(`images/${props.image.name}`).put(props.image);
@@ -202,7 +212,8 @@ function Popup(props){
                     {
                         props.image ? (
                             <div className="popup__review">
-                                <img className={classes.reviewImg} src={URL.createObjectURL(props.image)} alt="" />
+                                {/*<img className={classes.reviewImg} src={URL.createObjectURL(props.image)} alt="" />*/}
+                                {media}
                                 {/*<div className={classes.buttonClose}>*/}
                                 {/*    <IconButton aria-label="Cancel" color="inherit" >*/}
                                 {/*        <CancelTwoToneIcon />*/}

@@ -13,6 +13,7 @@ import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 import Divider from "@material-ui/core/Divider";
 
 const useStyles = makeStyles((theme) => ({
+
     avatar: {
         width: 100,
         height: 100,
@@ -36,6 +37,7 @@ const useStyles = makeStyles((theme) => ({
     label: {
         flex: "0 0 25%",
         textAlign: "right",
+        paddingTop: "5px"
     },
     input: {
         paddingLeft: 20,
@@ -133,6 +135,13 @@ const EditAccount = () => {
     const [open, setOpen] = useState(false);
     const [modalStyle] = useState(getModalStyle);
     const hiddenFileInput = useRef(null);
+    const [fullName, setFullName] = useState('');
+    const [displayName, setDisplayName] = useState('');
+    const [link, setLink] = useState('');
+    const [bio, setBio] = useState('');
+    const [phone, setPhone] = useState('');
+
+
 
     const handleOpen = () => {
         setOpen(true);
@@ -149,11 +158,13 @@ const EditAccount = () => {
     const handleChange = event => {
         const fileUploaded = event.target.files[0];
         // Change photoUrl here
-
         console.log(fileUploaded);
     };
 
 
+    const handleSubmit = (event) => {
+
+    }
 
     return(
         <article className="edit_account__content">
@@ -179,13 +190,15 @@ const EditAccount = () => {
                     }
                 />
             </div>
-            <form method="POST">
+            <form method="POST" onSubmit={event => event.preventDefault()}>
                 <div className={classes.holder}>
                     <aside className={classes.label}>
                         <label htmlFor="pepName" style={{fontWeight: "bold", fontSize: "18px"}}>Name</label>
                     </aside>
                     <div className={classes.input}>
                         <input
+                            value={fullName}
+                            onChange={event => setFullName(event.target.value)}
                             className={classes.inputField}
                             aria-required="false" id="pepName" placeholder="Name" type="text"
                         />
@@ -202,6 +215,8 @@ const EditAccount = () => {
                     </aside>
                     <div className={classes.input}>
                         <input
+                            value={displayName}
+                            onChange={event => setDisplayName(event.target.value)}
                             className={classes.inputField}
                             aria-required="false" id="pepUsername" placeholder="Username" type="text"
                         />
@@ -218,6 +233,8 @@ const EditAccount = () => {
                     </aside>
                     <div className={classes.input}>
                         <input
+                            value={link}
+                            onChange={event => setLink(event.target.value)}
                             className={classes.inputField}
                             aria-required="false" id="pepLink" placeholder="Link" type="text"
                              />
@@ -231,6 +248,8 @@ const EditAccount = () => {
                     </aside>
                     <div className={classes.input}>
                         <textarea
+                            value={bio}
+                            onChange={event => setBio(event.target.value)}
                             className={classes.inputText}
                             id="pepBio"
                         />
@@ -246,6 +265,8 @@ const EditAccount = () => {
                     </aside>
                     <div className={classes.input}>
                         <input
+                            value={user.email}
+                            disabled="true"
                             className={classes.inputField}
                             aria-required="false" id="pepEmail" placeholder="Email" type="text"
                         />
@@ -259,6 +280,8 @@ const EditAccount = () => {
                     </aside>
                     <div className={classes.input}>
                         <input
+                            value={phone}
+                            onChange={event => setPhone(event.target.value)}
                             className={classes.inputField}
                             aria-required="false" id="pepPhone" placeholder="Phone" type="text"
                         />
