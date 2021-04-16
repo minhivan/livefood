@@ -24,7 +24,6 @@ function getModalStyle() {
 }
 
 
-
 const useStyles = makeStyles((theme) => ({
     divider: {
         height: 1,
@@ -45,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
         boxShadow: theme.shadows[5],
         padding: theme.spacing(2, 3, 3),
         borderRadius: "8px",
-        maxHeight: "740px",
+        maxHeight: "calc(100vh - 70px)",
         "&:focus": {
             outline: "none"
         },

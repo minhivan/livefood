@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import {makeStyles} from "@material-ui/core/styles";
@@ -7,6 +7,10 @@ import {Link} from "react-router-dom";
 import IconButton from "@material-ui/core/IconButton";
 import {Badge} from "@material-ui/core";
 import ExploreTwoToneIcon from "@material-ui/icons/ExploreTwoTone";
+import {useCollection, useDocument} from "react-firebase-hooks/firestore";
+import {auth, db} from "../../firebase";
+import {useAuthState} from "react-firebase-hooks/auth";
+import firebase from "firebase";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -43,13 +47,86 @@ const useStyles = makeStyles((theme) => ({
         },
         marginRight: "15px",
         textTransform: "capitalize"
+    },
+    buttonUnfollow: {
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        position: "relative",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minWidth: "150px",
+        color: "#454444",
+        // "&:hover": {
+        //     backgroundColor: "#c3d6fa",
+        // },
+        marginRight: "15px",
+        textTransform: "capitalize"
     }
 }));
 
 
 const ProfileHeader = ({isAuthProfile,user, ...rest}) => {
-    const classes = useStyles();
+    const [userFollowing, setUserFollowing] = useState([]);
+    const [userFollower, setUserFollower] = useState([]);
 
+    // Your data
+    const [authUser] = useAuthState(auth);
+    const userRef = db.collection('users').doc(authUser.uid);
+    const [userSnapshot] = useDocument(userRef);
+    const [userPost] = useCollection(db.collection("posts").where("uid", '==', authUser.uid));
+
+    useEffect(() => {
+        if(typeof user?.follower !== 'undefined'){
+            setUserFollower(user.follower);
+        }
+        if(typeof user?.following !== 'undefined'){
+            setUserFollowing(user.following);
+        }
+    }, [user])
+
+    // const checkOpponentFollowYou = (userFollowing, uid) => {
+    //     let rs = false;
+    //     if(typeof userFollowing !== 'undefined' ){
+    //         rs = userFollowing.includes(uid);
+    //     }
+    //     return rs;
+    // }
+
+    // check if user followed opponents
+
+    const handleFollowClick = (opponentID, uid) => {
+        // Update user following
+        userRef.update({
+            following: firebase.firestore.FieldValue.arrayUnion(opponentID)
+        });
+        // Update opponent follower
+        db.collection('users').doc(opponentID).update({
+            follower: firebase.firestore.FieldValue.arrayUnion(uid)
+        });
+    }
+
+    const handleUnfollowClick = (opponentID, uid) => {
+        userRef.update({
+            following: firebase.firestore.FieldValue.arrayRemove(opponentID)
+        });
+        // Update opponent follower
+        db.collection('users').doc(opponentID).update({
+            follower: firebase.firestore.FieldValue.arrayRemove(uid)
+        });
+    }
+
+    // Check opponent follower to find you
+    const checkFollowed = (userFollowerList, uid) => {
+        let rs = false;
+        if(typeof userFollowerList !== 'undefined' ){
+            rs = userFollowerList.includes(uid);
+        }
+        return rs;
+    }
+
+
+    const classes = useStyles();
     return (
         <div className="profile__header">
             <div className="profile__bio">
@@ -67,7 +144,7 @@ const ProfileHeader = ({isAuthProfile,user, ...rest}) => {
                     <div className="share-title-container">
                         {/* User bio */}
                         <h2 className="share-title">{user?.displayName}</h2>
-                        <h1 className="share-sub-title">Full Name</h1>
+                        <h1 className="share-sub-title">{userSnapshot?.data().fullName ?? ''}</h1>
                         {
                             isAuthProfile ? (
                                 <div className="share-follow-container">
@@ -80,20 +157,29 @@ const ProfileHeader = ({isAuthProfile,user, ...rest}) => {
                                             Edit profile
                                         </Button>
                                     </Link>
-
-
                                 </div>
                             ) : (
                                 <div className="share-follow-container">
                                     {/* Checking if followed */}
-
-                                    <Button
-                                        variant="contained"
-                                        className={classes.button}
-                                    >
-                                        Followed
-                                    </Button>
-
+                                    {
+                                        checkFollowed(userFollower, authUser.uid) ? (
+                                            <Button
+                                                variant="outlined"
+                                                className={classes.buttonUnfollow}
+                                                onClick={() => handleUnfollowClick(user.uid, authUser.uid)}
+                                            >
+                                                Unfollow
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                variant="contained"
+                                                className={classes.button}
+                                                onClick={() => handleFollowClick(user.uid, authUser.uid)}
+                                            >
+                                                Follow
+                                            </Button>
+                                        )
+                                    }
                                     <Button
                                         variant="contained"
                                         className={classes.button}
@@ -106,7 +192,7 @@ const ProfileHeader = ({isAuthProfile,user, ...rest}) => {
 
 
                         <h2 className="share-desc mt10">
-                            "Welcome to my blogggg"
+                            "{userSnapshot?.data().bio ?? ''}"
                         </h2>
 
                         <div className="share-links">
@@ -116,11 +202,11 @@ const ProfileHeader = ({isAuthProfile,user, ...rest}) => {
 
                         {/* Count info */}
                         <h2 className="count-infos">
-                            <div className="number"><strong title="Likes">12</strong><span
+                            <div className="number"><strong title="Likes">{userPost?.size ?? '0'}</strong><span
                                 className="unit">Post</span></div>
-                            <div className="number"><strong title="Following">1</strong><span
+                            <div className="number"><strong title="Following">{userFollowing.length}</strong><span
                                 className="unit">Following</span></div>
-                            <div className="number"><strong title="Followers">4.9M</strong><span
+                            <div className="number"><strong title="Followers">{userFollower.length}</strong><span
                                 className="unit">Followers</span></div>
                         </h2>
                     </div>

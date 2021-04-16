@@ -10,9 +10,7 @@ import {auth} from "../firebase";
 
 const HomePage = () => {
     const [user] = useAuthState(auth);
-    useEffect(() => {
-        window.scroll({top: 0, left: 0, behavior: 'smooth' })
-    }, [])
+    window.scroll({top: 0, left: 0, behavior: 'smooth' })
 
     return (
         <Page

@@ -1,5 +1,5 @@
 /*@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap');*/
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@450&display=swap');
+/*@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@450&display=swap');*/
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400&display=swap');
 /*@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200&family=Roboto+Condensed:wght@300&display=swap');*/
 
@@ -11,6 +11,7 @@
     /*font-family: 'Roboto', sans-serif;*/
     box-sizing: border-box;
     font-weight: 500;
+    letter-spacing: normal;
 }
 a{
     color: #262626;
@@ -121,7 +122,9 @@ body {
     margin-bottom: 50px;
     height: 80px;
 }
-
+.post__button{
+    display: flex;
+}
 /* Override css setting */
 input:focus{
     outline: unset;

@@ -64,7 +64,7 @@ const AccountNavBar = () => {
                     component={RouterLink}
                     to={`/account/edit`}
                 >
-                    <span className={classes.title}>Post</span>
+                    <span className={classes.title}>Edit profile</span>
                 </Button>
             </ListItem>
 

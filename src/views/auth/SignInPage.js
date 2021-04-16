@@ -83,6 +83,7 @@ function PageLogin() {
     const [password, setPassword] = useState('');
     const [user] = useAuthState(auth);
 
+
     const signUpGoogle = (event) => {
         event.preventDefault();
         auth.signInWithPopup(provider).catch((error) =>{
@@ -98,16 +99,17 @@ function PageLogin() {
             });
     }
 
-    // useEffect( () => {
-    //     return auth.onAuthStateChanged((authUser) => {
-    //         if (authUser) {
-    //             checkFirebaseAuth(authUser);
-    //             setUser(authUser);
-    //         } else {
-    //             setUser(null);
-    //         }
-    //     });
-    // }, [user])
+    useEffect( () => {
+        const unsubscribe =  auth.onAuthStateChanged((authUser) => {
+            if (authUser) {
+                checkFirebaseAuth(authUser);
+            }
+        });
+
+        return () => {
+            unsubscribe();
+        }
+    }, [user])
 
     if(user){
         return <Navigate to="/"/>

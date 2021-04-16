@@ -93,7 +93,6 @@ function Chat({id}){
             .collection("messages")
             .orderBy("timestamp", "asc")
             .onSnapshot((doc) => {
-
                 chatRef?.current?.scrollIntoView({
                     behavior: "auto",
                     block: "start"
@@ -105,15 +104,13 @@ function Chat({id}){
                 })))
             })
         // realtime on page
-
-
         chatRef?.current?.scrollIntoView({
             behavior: "auto",
-            block: "start"
+            block: "nearest"
         });
 
 
-    }, [loading])
+    }, [id, loading])
 
 
     if(!roomID ){

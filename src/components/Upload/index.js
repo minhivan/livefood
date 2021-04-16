@@ -11,9 +11,9 @@ import PhotoSizeSelectActualIcon from '@material-ui/icons/PhotoSizeSelectActual'
 import SentimentSatisfiedTwoToneIcon from '@material-ui/icons/SentimentSatisfiedTwoTone';
 import EmojiObjectsTwoToneIcon from '@material-ui/icons/EmojiObjectsTwoTone';
 import Popup from "./Popup";
-import VerticalLinearStepper from "./Stepper";
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import RecipeStepper from "./Stepper";
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -68,7 +68,9 @@ function Upload() {
     const handleChange = (event) => {
         if(event.target.files[0]){
             setImage(event.target.files[0]);
-            setOpen(true);
+            if(!openStep){
+                setOpen(true);
+            }
         }
 
         // if(event.target.files[0]){
@@ -126,7 +128,7 @@ function Upload() {
             {/*    <CircularProgress variant="determinate" value={Number(progress)} />*/}
             {/*</div>*/}
             <Popup open={open} image={image}  handleClose={handleClose} setImage={setImage} setOpenSnack={setOpenSnack} />
-            <VerticalLinearStepper open={openStep} image={image} setImage={setImage} handleClose={handleCloseStep}/>
+            <RecipeStepper open={openStep} image={image} setImage={setImage} handleClose={handleCloseStep} setOpenSnack={setOpenSnack}/>
 
             <Snackbar
                 open={openSnack}

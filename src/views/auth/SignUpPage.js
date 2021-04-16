@@ -3,7 +3,8 @@ import {auth, provider } from "../../firebase";
 import {Button, TextField} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import {Link, Navigate} from "react-router-dom";
-import checkFirebaseAuth from "../../CustomHook/FirebaseAuth"; //import Redirect first
+import checkFirebaseAuth from "../../CustomHook/FirebaseAuth";
+import {useAuthState} from "react-firebase-hooks/auth"; //import Redirect first
 
 
 
@@ -68,7 +69,7 @@ function PageLogin() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
-    const [user, setUser] = useState(null);
+    const [user] = useAuthState(auth);
 
     const signUp = (event) => {
         auth.createUserWithEmailAndPassword(email, password)
@@ -76,7 +77,6 @@ function PageLogin() {
                 return authUser.user.updateProfile({
                     displayName: username
                 })
-
             })
             .catch((error) => alert(error.message));
     }
@@ -94,9 +94,6 @@ function PageLogin() {
         const unsubscribe = auth.onAuthStateChanged((authUser) => {
             if(authUser){
                 checkFirebaseAuth(authUser);
-                setUser(authUser);
-            }else{
-                setUser(null);
             }
         })
         return () => {

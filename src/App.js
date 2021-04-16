@@ -18,10 +18,12 @@ import theme from './theme';
 import routes from "./routes";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {auth, db} from "./firebase";
-import styled from 'styled-components';
+
+// import styled from 'styled-components';
+
 import firebase from "firebase";
-import {useDispatch, useSelector} from "react-redux";
-import {login, logout, selectUser} from "./features/userSlice";
+import {useDispatch} from "react-redux";
+import {login, logout} from "./features/userSlice";
 
 function App() {
 	const [userLogged, loading] = useAuthState(auth);
@@ -53,7 +55,7 @@ function App() {
 			})
 		}
 
-	}, [userLogged])
+	}, [dispatch, userLogged])
 
 
 

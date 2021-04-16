@@ -45,6 +45,8 @@ function PageMessenger() {
     const [open, setOpen] = useState(false);
     const [user] = useAuthState(auth);
     const userChatRef = db.collection("conversations").where('users', 'array-contains', user.email).orderBy('lastUpdate', 'desc');
+    // const userChatRef = db.collection("conversations").where('users', 'array-contains', user.email)
+
     const [chatsSnapshot] = useCollection(userChatRef);
 
 

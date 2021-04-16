@@ -90,6 +90,8 @@
     position: relative;
 }
 
+
+
 .upload__button button{
     padding: 15px;
     width: 100%;
@@ -129,6 +131,10 @@
     flex-grow: 1;
 }
 
+.handle__upload{
+    position: relative;
+}
+
 .handle__reset button{
     padding: 15px;
     width: calc(100% - 10px);
@@ -159,6 +165,15 @@
     background-color: #0679ba;
     transition: 0.3s all ease;
 }
+
+
+/* Stepper */
+.step{
+    padding-top: 15px;
+}
+
+
+
 
 @media (min-width: 481px) and (max-width: 767px) {
     .upload{

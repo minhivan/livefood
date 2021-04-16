@@ -94,16 +94,14 @@ const CreateNewChat = (props) => {
     const [usersSnapshot] = useCollection(userRef);
 
 
-    useEffect(()=> {
-
-    }, [])
-
     // perform add to database
     const handleAddChat = () => {
         if(email && email!== props.user.email && !conversationExists(email)){
             db.collection("conversations").add({
                 users: [props?.user.email, email],
-                lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
+                lastUpdate: firebase.firestore.FieldValue.serverTimestamp(),
+                isSeen: firebase.firestore.FieldValue.serverTimestamp(),
+                lastSend: props.user.email
             })
         }
 

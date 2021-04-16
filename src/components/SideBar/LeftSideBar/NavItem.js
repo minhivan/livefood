@@ -31,8 +31,8 @@ const useStyles = makeStyles((theme) => ({
     title: {
         marginRight: 'auto',
         fontWeight: "500",
-        fontSize: "1.1rem",
-        paddingLeft: "15px",
+        fontSize: "1rem",
+        paddingLeft: "10px",
         color: "#050505"
     },
     active: {

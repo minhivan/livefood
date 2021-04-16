@@ -8,9 +8,9 @@ import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import {
-    Badge,
+    Badge, CircularProgress,
     FormControl,
-    IconButton,
+    IconButton, InputLabel,
     Modal,
     Select,
     TextField
@@ -18,6 +18,11 @@ import {
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 import PhotoCameraTwoToneIcon from "@material-ui/icons/PhotoCameraTwoTone";
 import VideoCallTwoToneIcon from "@material-ui/icons/VideoCallTwoTone";
+import {auth, db, storage} from "../../firebase";
+import firebase from "firebase";
+import {useCollection} from "react-firebase-hooks/firestore";
+import {useAuthState} from "react-firebase-hooks/auth";
+import {green} from "@material-ui/core/colors";
 
 
 function getModalStyle() {
@@ -55,7 +60,8 @@ const useStyles = makeStyles((theme: Theme) =>
             boxShadow: theme.shadows[5],
             padding: theme.spacing(2, 4, 3),
             borderRadius: "8px",
-            minHeight: "500px",
+            maxHeight: "calc(100vh - 70px)",
+            overflowY: "scroll",
             "&:focus": {
                 outline: "none"
             },
@@ -87,8 +93,8 @@ const useStyles = makeStyles((theme: Theme) =>
             padding: "24px 0"
         },
         formControl: {
-            padding: "0 10px",
-            minWidth: "150px"
+            margin: "0 10px",
+            minWidth: "120px"
         },
         amount: {
             padding: "10px 0",
@@ -103,7 +109,18 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         serveYield: {
             padding: "10px 0"
-        }
+        },
+        formControlFullWidth: {
+            width: "100%"
+        },
+        buttonProgress: {
+            color: green[500],
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            marginTop: -12,
+            marginLeft: -12,
+        },
     }),
 
 );
@@ -112,187 +129,258 @@ function getSteps() {
     return ['Recipe details', 'Select category', 'Ingredients', 'Directions', 'Gallery'];
 }
 
-function GetStepContent(step: number) {
-    const classes = useStyles();
-    switch (step) {
-        case 0:
-            return (
-                <div className="stepper__details">
-                    <TextField
-                        required
-                        placeholder="Recipe Title"
-                        fullWidth variant="outlined"
-                        InputProps={{ disableUnderline: true, style : {fontFamily: "'Quicksand', sans-serif"}}}
-                    />
-                    <TextField
-                        // className={classes.inputText}
-                        placeholder="Description"
-                        multiline
-                        rows={4}
-                        fullWidth
-                        margin="normal"
-                        InputProps={{ disableUnderline: true, style : {fontFamily: "'Quicksand', sans-serif"}}}
-                    />
 
-                    <div className={classes.amount}>
-                        <div className={classes.prepData}>
-                            <TextField
-                                style = {{maxWidth: "100px"}}
-                                type="number"
-                                label="Prep time"
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                variant="outlined"
-                                InputProps={{ disableUnderline: true, style : {fontFamily: "'Quicksand', sans-serif"}}}
 
-                            />
-                            <FormControl variant="outlined" className={classes.formControl}>
-                                <Select
-                                    native
-                                    inputProps={{
-                                        id: 'prep-time',
-                                        style : {fontFamily: "'Quicksand', sans-serif"}
-                                    }}
-
-                                >
-                                    <option value={10}>Minute</option>
-                                    <option value={20}>Hour</option>
-                                    <option value={30}>Day</option>
-                                </Select>
-                            </FormControl>
-                        </div>
-                        <div className={classes.cookData}>
-                            <TextField
-                                style = {{maxWidth: "100px"}}
-                                label="Cook time"
-                                type="number"
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                variant="outlined"
-                                InputProps={{ disableUnderline: true, style : {fontFamily: "'Quicksand', sans-serif"}}}
-
-                            />
-                            <FormControl variant="outlined" className={classes.formControl}>
-                                <Select
-                                    native
-                                    inputProps={{
-                                        id: 'cook-time',
-                                        style : {fontFamily: "'Quicksand', sans-serif"}
-                                    }}
-                                >
-                                    <option value={10}>Minute</option>
-                                    <option value={20}>Hour</option>
-                                    <option value={30}>Day</option>
-                                </Select>
-                            </FormControl>
-                        </div>
-                        <div className={classes.serveYield}>
-                            <TextField
-                                style = {{maxWidth: "100px"}}
-                                label="Serves"
-                                type="number"
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                variant="outlined"
-                                InputProps={{ disableUnderline: true, style : {fontFamily: "'Quicksand', sans-serif"}}}
-                            />
-                        </div>
-
-                    </div>
-                </div>
-            );
-        case 1:
-            return (
-                <div className="stepper__category">
-                    <Select
-                        native
-                        defaultValue="Category"
-                        fullWidth variant="outlined"
-                        inputProps={{
-                            id: 'category',
-                            style : {fontFamily: "'Quicksand', sans-serif"}
-                        }}
-                    >
-                        <option aria-label="None" value="" />
-                        <optgroup label="Category 1">
-                            <option value={1}>Option 1</option>
-                            <option value={2}>Option 2</option>
-                        </optgroup>
-                        <optgroup label="Category 2">
-                            <option value={3}>Option 3</option>
-                            <option value={4}>Option 4</option>
-                        </optgroup>
-                    </Select>
-                </div>
-            );
-        case 2:
-            return (
-                <div className="stepper__ingredients">
-                    <TextField
-                        variant="outlined"
-                        // className={classes.inputText}
-                        placeholder="Ingredients"
-                        multiline
-                        rows={10}
-                        fullWidth
-                        margin="normal"
-                        InputProps={{ disableUnderline: true, style : {fontFamily: "'Quicksand', sans-serif"}}}
-                    />
-                </div>
-            );
-        case 3:
-            return (
-                <div className="stepper__details">
-                    <TextField
-                        variant="outlined"
-                        // className={classes.inputText}
-                        placeholder="Description"
-                        multiline
-                        rows={10}
-                        fullWidth
-                        margin="normal"
-                        InputProps={{ disableUnderline: true, style : {fontFamily: "'Quicksand', sans-serif"}}}
-                    />
-                </div>
-            );
-
-        case 4:
-            return (
-                <div className="popup__picker">
-                    <h3>Add more media</h3>
-                    <div className="popup__iconPicker">
-                        <div>
-                            <label htmlFor="icon-button-file" className="upload__pickerButton">
-                                <IconButton color="inherit" component="span" >
-                                    <Badge color="secondary">
-                                        <PhotoCameraTwoToneIcon className={classes.popIcon}/>
-                                    </Badge>
-                                </IconButton>
-                            </label>
-                        </div>
-                        <div>
-                            <IconButton color="inherit" component="span" >
-                                <Badge color="secondary">
-                                    <VideoCallTwoToneIcon className={classes.popIcon}/>
-                                </Badge>
-                            </IconButton>
-                        </div>
-                    </div>
-                </div>
-            )
-        default:
-            return 'Unknown step';
-    }
-}
-
-export default function VerticalLinearStepper(props) {
+export default function RecipeStepper(props) {
     const classes = useStyles();
     const [activeStep, setActiveStep] = React.useState(0);
     const steps = getSteps();
+    const [authUser] = useAuthState(auth);
+
+    // Init state
     const [modalStyle] = useState(getModalStyle);
+    const [category, setCategory] = useState('');
+    const [title, setTitle] = useState('');
+    const [desc, setDesc] = useState('');
+    const [prep, setPrep] = useState('');
+    const [prepUnit, setPrepUnit] = useState('Minute');
+    const [cook, setCook] = useState('');
+    const [cookUnit, setCookUnit] = useState('Minute');
+    const [serve, setServe] = useState('');
+    const [ingredient, setIngredient] = useState('');
+    const [direction, setDirection] = useState('');
+    const [progress, setProgress] = useState('');
+    const [postLoading, setPostLoading] = useState(false);
+
+
+    const [cate] = useCollection(db.collection("category"))
+    
+
+    const GetStepContent = (step) => {
+        const classes = useStyles();
+        switch (step) {
+            case 0:
+                return (
+                    <div className="stepper__details step">
+                        <TextField
+                            required
+                            placeholder="Recipe Title"
+                            fullWidth variant="outlined"
+                            value={title}
+                            onChange={event => setTitle(event.target.value)}
+
+                        />
+                        <TextField
+                            // className={classes.inputText}
+                            placeholder="Description"
+                            variant="outlined"
+                            multiline
+                            rows={4}
+                            fullWidth
+                            margin="normal"
+                            value={desc}
+                            onChange={event => setDesc(event.target.value)}
+
+                        />
+
+                        <div className={classes.amount}>
+                            <div className={classes.prepData}>
+                                <TextField
+                                    style = {{maxWidth: "100px"}}
+                                    type="number"
+                                    label="Prep time"
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    value={prep}
+                                    onChange={event => setPrep(event.target.value)}
+                                    variant="outlined"
+
+
+                                />
+                                <FormControl variant="outlined" className={classes.formControl}>
+                                    <Select
+                                        native
+                                        inputProps={{
+                                            id: 'prep-time'
+                                        }}
+                                        value={prepUnit}
+                                        onChange={event => setPrepUnit(event.target.value)}
+                                    >
+                                        <option value="Minute">Minute</option>
+                                        <option value="Hour">Hour</option>
+                                        <option value="Day">Day</option>
+                                    </Select>
+                                </FormControl>
+                            </div>
+                            <div className={classes.cookData}>
+                                <TextField
+                                    style = {{maxWidth: "100px"}}
+                                    label="Cook time"
+                                    type="number"
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    value={cook}
+                                    onChange={event => setCook(event.target.value)}
+
+                                    variant="outlined"
+
+
+                                />
+                                <FormControl variant="outlined" className={classes.formControl}>
+                                    <Select
+                                        native
+                                        inputProps={{
+                                            id: 'cook-time'
+                                        }}
+                                        value={cookUnit}
+                                        onChange={event => setCookUnit(event.target.value)}
+                                    >
+                                        <option selected="selected" value="Minute">Minute</option>
+                                        <option value="Hour">Hour</option>
+                                        <option value="Day">Day</option>
+                                    </Select>
+                                </FormControl>
+                            </div>
+                            <div className={classes.serveYield}>
+                                <TextField
+                                    style = {{maxWidth: "100px"}}
+                                    label="Serves"
+                                    type="number"
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    value={serve}
+                                    onChange={event => setServe(event.target.value)}
+                                    variant="outlined"
+
+                                />
+                            </div>
+
+                        </div>
+                    </div>
+                );
+            case 1:
+                return (
+                    <div className="stepper__category step">
+                        <FormControl fullWidth variant="outlined">
+                            <InputLabel htmlFor="grouped-native-select">Category</InputLabel>
+                            <Select
+                                native
+                                id="grouped-native-select"
+                                labelId="grouped-native-select"
+                                fullWidth
+                                value={category}
+                                onChange={event => setCategory(event.target.value)}
+                                label="Category"
+                            >
+                                <option aria-label="None" value="" />
+                                {
+                                    cate?.docs?.map((doc) => (
+                                        <option key={doc.id} value={doc.data().title}>{doc.data().title}</option>
+                                    ))
+                                }
+                                {/*<optgroup label="Category 1">*/}
+                                {/*    <option value={1}>Option 1</option>*/}
+                                {/*    <option value={2}>Option 2</option>*/}
+                                {/*</optgroup>*/}
+                            </Select>
+                        </FormControl>
+                    </div>
+                );
+            case 2:
+                return (
+                    <div className="stepper__ingredients">
+                        <TextField
+                            variant="outlined"
+                            // className={classes.inputText}
+                            placeholder="Ingredients"
+                            InputProps={{style: {lineHeight: "26px"}}}
+                            multiline
+                            rows={10}
+                            fullWidth
+                            margin="normal"
+                            value={ingredient}
+                            onChange={event => setIngredient(event.target.value)}
+
+                        />
+                    </div>
+                );
+            case 3:
+                return (
+                    <div className="stepper__details">
+                        <TextField
+                            variant="outlined"
+                            // className={classes.inputText}
+                            placeholder="Description"
+                            multiline
+                            rows={10}
+                            fullWidth
+                            InputProps={{style: {lineHeight: "26px"}}}
+                            value={direction}
+                            onChange={event => setDirection(event.target.value)}
+
+                        />
+                    </div>
+                );
+
+            case 4:
+                return (
+                    <>
+                        {
+                            props.image ? (
+                                <div className="popup__review">
+                                    {/*<img className={classes.reviewImg} src={URL.createObjectURL(props.image)} alt="" />*/}
+                                    {media}
+                                    {/*<div className={classes.buttonClose}>*/}
+                                    {/*    <IconButton aria-label="Cancel" color="inherit" >*/}
+                                    {/*        <CancelTwoToneIcon />*/}
+                                    {/*    </IconButton>*/}
+                                    {/*</div>*/}
+                                </div>
+                            ) : null
+                        }
+                        <div className="popup__picker">
+                            <h3>Add more media</h3>
+                            <div className="popup__iconPicker">
+                                <div>
+                                    <label htmlFor="icon-button-file" className="upload__pickerButton">
+                                        <IconButton color="inherit" component="span" >
+                                            <Badge color="secondary">
+                                                <PhotoCameraTwoToneIcon className={classes.popIcon}/>
+                                            </Badge>
+                                        </IconButton>
+                                    </label>
+                                </div>
+                                <div>
+                                    <IconButton color="inherit" component="span" >
+                                        <Badge color="secondary">
+                                            <VideoCallTwoToneIcon className={classes.popIcon}/>
+                                        </Badge>
+                                    </IconButton>
+                                </div>
+                            </div>
+                        </div>
+                    </>
+
+                )
+            default:
+                return 'Unknown step';
+        }
+    }
+
+
+    let media;
+    if(props.image){
+        if(props.image.type === "video/mp4" ){
+            media = <video controls className={classes.reviewImg} muted="muted">
+                <source src={window.URL.createObjectURL(props.image)} type="video/mp4"/>
+            </video>
+        } else {
+            media = <img className={classes.reviewImg} src={window.URL.createObjectURL(props.image)} alt="" />
+        }
+    }
 
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -304,7 +392,69 @@ export default function VerticalLinearStepper(props) {
 
     const handleReset = () => {
         setActiveStep(0);
+        setCategory(''); setDirection(''); setIngredient(''); setCook(''); setDesc(''); setServe(''); setPrep(''); setTitle('');
     };
+
+    const handleUpload = (event) => {
+        event.preventDefault();
+        const uploadTask = storage.ref(`images/${props.image.name}`).put(props.image);
+        uploadTask.on(
+            "state_changed",
+            (snapshot => {
+                const progressData = Math.round(
+                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                );
+                setProgress(parseInt(progressData));
+                setPostLoading(true);
+            }),
+            (error => {
+                console.log(error);
+            }),
+            () => {
+                storage
+                    .ref("images")
+                    .child(props.image.name)
+                    .getDownloadURL()
+                    .then(url => {
+                        db.collection("posts").add({
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                            hasImage: true,
+                            caption: title,
+                            type: "recipe",
+                            data: {
+                                title: title,
+                                note: desc,
+                                ingredient: ingredient,
+                                direction: direction,
+                                cookTime: cook,
+                                cookUnit: cookUnit,
+                                prepTime: prep,
+                                prepUnit: prepUnit,
+                                serve: serve,
+                                category: category,
+                            },
+                            mediaUrl: url,
+                            user: db.doc('users/' + authUser.uid),
+                            mediaType: props.image.type,
+                            uid: authUser.uid
+                        })
+                            .then(function(docRef) {
+                                console.log("Document written with ID: ", docRef.id);
+
+                            })
+                            .catch(function(error) {
+                                console.error("Error adding document: ", error);
+                            });
+                        props.setOpenSnack(true);
+                        props.setImage(null);
+                        props.handleClose(true);
+                        setProgress('0');
+                        handleReset();
+                    })
+            }
+        )
+    }
+
 
     return (
         <Modal
@@ -329,7 +479,9 @@ export default function VerticalLinearStepper(props) {
                                 <Step key={label}>
                                     <StepLabel>{label}</StepLabel>
                                     <StepContent>
-                                        <Typography>{GetStepContent(index)}</Typography>
+                                        <>
+                                            {GetStepContent(index)}
+                                        </>
                                         <div className={classes.actionsContainer}>
                                             <div>
                                                 <Button
@@ -362,7 +514,14 @@ export default function VerticalLinearStepper(props) {
                                         <Button onClick={handleReset}>Reset</Button>
                                     </div>
                                     <div className="handle__upload">
-                                        <Button onClick={props.handleUpload}>Create</Button>
+                                        <Button
+                                            type="submit"
+                                            onClick={handleUpload}
+                                            disabled={postLoading}
+                                        >
+                                            Create
+                                        </Button>
+                                        {postLoading && <CircularProgress size={24} value={parseInt(progress)} className={classes.buttonProgress} /> }
                                     </div>
 
                                 </div>

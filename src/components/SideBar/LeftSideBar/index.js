@@ -42,11 +42,10 @@ const useStyles = makeStyles(() => ({
         cursor: 'pointer',
         width: 56,
         height: 56,
-        marginBottom: "10px"
     },
     name: {
-        fontWeight: "500",
-        fontSize: "1.1rem",
+        fontWeight: "600",
+        fontSize: "1rem",
         padding: "0 10px",
         cursor: "pointer",
 
@@ -58,6 +57,12 @@ const useStyles = makeStyles(() => ({
 
 const NavBar = (props) => {
     const classes = useStyles();
+    const [user] = useAuthState(auth);
+    let uid = '';
+    if(user){
+        uid = user.uid;
+    }
+
     const items = [
         {
             href: '/explore',
@@ -70,7 +75,7 @@ const NavBar = (props) => {
             title: 'Followers'
         },
         {
-            href: '/profile/saved/' + props.user.uid,
+            href: '/profile/saved/' + uid,
             icon: BookmarkIcon,
             title: 'Saves'
         },

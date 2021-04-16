@@ -13,7 +13,7 @@ export default function NewFeed(){
     //Get post
     useEffect(() => {
         var postRef = db.collection('posts');
-        var unsubscribe = postRef
+        const unsubscribe = postRef
             .orderBy('timestamp', "desc")
             .onSnapshot(snapshot => {
                 setPosts(snapshot.docs.map(doc => ({
@@ -23,7 +23,7 @@ export default function NewFeed(){
             })
 
         return () => {
-            unsubscribe()
+            unsubscribe();
         }
     }, []);
 

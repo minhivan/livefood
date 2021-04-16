@@ -12,6 +12,7 @@ import Button from "@material-ui/core/Button";
 import {useAuthState} from "react-firebase-hooks/auth";
 import firebase from "firebase";
 import { useDocument} from "react-firebase-hooks/firestore";
+import {Link} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -58,16 +59,17 @@ const useStyles = makeStyles((theme) => ({
 export default function People() {
     const classes = useStyles();
     const [users, setUsers] = useState([])
-    const [user] = useAuthState(auth);
-    const userRef = db.collection('users').doc(user.uid);
-    const [userSnapshot, loading] = useDocument(userRef);
+    const [userData] = useAuthState(auth);
+    const userRef = db.collection('users').doc(userData.uid);
+    const [userSnapshot] = useDocument(userRef);
 
     let userFollowingList = userSnapshot?.data().following;
+    let userFollowerList = userSnapshot?.data().follower;
 
     // List user
     useEffect(() => {
         db.collection("users")
-            .where('uid' ,'!=' , user.uid)
+            .where('uid' ,'!=' , userData.uid)
             .get().then(snapshot => {
 
             setUsers(snapshot.docs.map(doc => ({
@@ -76,7 +78,7 @@ export default function People() {
             })));
         })
 
-    }, [user.uid])
+    }, [userData.uid])
 
     // check if user followed
     const checkFollowed = (userFollowingList, uid) => {
@@ -87,17 +89,34 @@ export default function People() {
         return rs;
     }
 
-
-    const handleFollowClick = (uid) => {
+    const handleFollowClick = (id, uid) => {
+        // Update user following
         userRef.update({
-            following: firebase.firestore.FieldValue.arrayUnion(uid)
+            following: firebase.firestore.FieldValue.arrayUnion(id)
+        });
+        // Update opponent follower
+        db.collection('users').doc(id).update({
+            follower: firebase.firestore.FieldValue.arrayUnion(uid)
         });
     }
 
-    const handleUnfollowClick = (uid) => {
+    const handleUnfollowClick = (id, uid) => {
         userRef.update({
-            following: firebase.firestore.FieldValue.arrayRemove(uid)
+            following: firebase.firestore.FieldValue.arrayRemove(id)
         });
+        // Update opponent follower
+        db.collection('users').doc(id).update({
+            follower: firebase.firestore.FieldValue.arrayRemove(uid)
+        });
+    }
+
+
+    const checkOpponentFollowYou = (userFollowerList, uid) => {
+        let rs = false;
+        if(typeof userFollowerList !== 'undefined' ){
+            rs = userFollowerList.includes(uid);
+        }
+        return rs;
     }
 
     return (
@@ -110,7 +129,9 @@ export default function People() {
                                 <Avatar alt={user.displayName} src={user.photoURL} />
                             </ListItemAvatar>
                             <ListItemText
-                                primary={user.displayName}
+                                primary={
+                                    <Link to={`profile/${user?.uid}`} className={classes.name}>{user?.displayName}</Link>
+                                    }
                                 secondary={
                                     <Typography
                                         component="span"
@@ -118,7 +139,8 @@ export default function People() {
                                         className={classes.inline}
                                         color="textPrimary"
                                     >
-                                        Full name - Suggested for you
+                                        Full name
+                                        -   {checkOpponentFollowYou(userFollowerList, id) ? "Follow you" : " Suggested for you"}
                                     </Typography>
                                 }
                             />
@@ -129,7 +151,7 @@ export default function People() {
                                         variant="outlined"
                                         style={{textTransform: "capitalize"}}
                                         className={classes.buttonUnfollow}
-                                        onClick={() => handleUnfollowClick(id)}
+                                        onClick={() => handleUnfollowClick(id, userData.uid)}
                                     >
                                         Unfollow
                                     </Button>
@@ -139,7 +161,7 @@ export default function People() {
                                         color="primary"
                                         style={{textTransform: "capitalize"}}
                                         className={classes.button}
-                                        onClick={() => handleFollowClick(id)}
+                                        onClick={() => handleFollowClick(id, userData.uid)}
                                     >
                                         Follow
                                     </Button>

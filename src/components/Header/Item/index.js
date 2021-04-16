@@ -11,7 +11,15 @@ import EmailTwoToneIcon from '@material-ui/icons/EmailTwoTone';
 // import {useAuthState} from "react-firebase-hooks/auth";
 import {auth, db} from "../../../firebase";
 import HomeTwoToneIcon from '@material-ui/icons/HomeTwoTone';
+import Divider from "@material-ui/core/Divider";
+import {useAuthState} from "react-firebase-hooks/auth";
+import {
+    User as UserIcon,
+    Bookmark as BookmarkIcon,
+    Settings as SettingIcon,
+    LogOut as LogoutIcon
 
+} from 'react-feather';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -26,11 +34,24 @@ const useStyles = makeStyles((theme) => ({
     popupNoti: {
         minHeight: 300,
         zIndex: 99999
+    },
+    userPopover: {
+        width: "400px"
+    },
+    iconBtn: {
+        marginRight: theme.spacing(1),
+        color: "#050505",
+    },
+    iconBtnCircle: {
+        marginRight: theme.spacing(1),
+        color: "#050505",
+        border: "1px solid",
+        borderRadius: "50%",
     }
 }));
 
 
-function MenuHeader({user}) {
+function MenuHeader() {
     const [mess, setMess] = useState(0);
 
     const classes = useStyles();
@@ -38,9 +59,11 @@ function MenuHeader({user}) {
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
 
-    const [anchorElNoti, setAnchorElNoti] = useState(null);
-    const openNoti = Boolean(anchorElNoti);
-    const idNoti = open ? 'simple-popper' : undefined;
+    const [anchorElNotice, setAnchorElNotice] = useState(null);
+    const openNotice = Boolean(anchorElNotice);
+    const idNotice = open ? 'simple-popper' : undefined;
+
+    const [user] = useAuthState(auth);
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -50,11 +73,11 @@ function MenuHeader({user}) {
         setAnchorEl(null);
     };
 
-    const handleNoti = (event) => {
-        setAnchorElNoti(anchorElNoti ? null : event.currentTarget);
+    const handleNotice = (event) => {
+        setAnchorElNotice(anchorElNotice ? null : event.currentTarget);
     }
-    const handleCloseNoti = () => {
-        setAnchorElNoti(null);
+    const handleCloseNotice = () => {
+        setAnchorElNotice(null);
     };
 
 
@@ -100,7 +123,7 @@ function MenuHeader({user}) {
                     </IconButton>
                 </Link>
 
-                <IconButton aria-label="11 new notifications" color="inherit" onClick={handleNoti}>
+                <IconButton aria-label="11 new notifications" color="inherit" onClick={handleNotice}>
                     <Badge badgeContent={24} max={20} color="secondary">
                         <NotificationsActiveTwoToneIcon className={classes.icon}/>
                     </Badge>
@@ -108,10 +131,10 @@ function MenuHeader({user}) {
 
                 <Popover
                     disableScrollLock
-                    id={idNoti}
-                    open={openNoti}
-                    anchorEl={anchorElNoti}
-                    onClose={handleCloseNoti}
+                    id={idNotice}
+                    open={openNotice}
+                    anchorEl={anchorElNotice}
+                    onClose={handleCloseNotice}
                     anchorOrigin={{
                         vertical: 'bottom',
                         horizontal: 'center',
@@ -123,11 +146,11 @@ function MenuHeader({user}) {
                 >
                 </Popover>
 
-
                 <IconButton onClick={handleClick}>
-                    <Avatar alt={user?.displayName} src={user?.photoURL} />
+                    <Avatar alt={user.displayName} src={user.photoURL} />
                 </IconButton>
                 <Popover
+                    className={classes.userPopover}
                     disableScrollLock
                     id={id}
                     open={open}
@@ -141,13 +164,43 @@ function MenuHeader({user}) {
                         vertical: 'top',
                         horizontal: 'center',
                     }}
-
                 >
-                    <MenuList autoFocusItem={open} id="menu-list-grow" >
-                        <Link to={{pathname:`/profile/${user.uid}`}} ><MenuItem onClick={handleClose}>Profile</MenuItem></Link>
-                        <Link to={{pathname:`save`}} ><MenuItem onClick={handleClose}>Save</MenuItem></Link>
-                        <MenuItem onClick={handleClose}>My account</MenuItem>
-                        <MenuItem onClick={() => auth.signOut()}>Logout</MenuItem>
+                    <MenuList autoFocusItem={open} id="menu-list-grow" style={{padding: "0", minWidth: 130}} >
+                        <Link to={{pathname:`/profile/${user.uid}`}} >
+                            <MenuItem onClick={handleClose}>
+                                <UserIcon
+                                    className={classes.iconBtnCircle}
+                                    size="15"
+                                />
+                                Profile
+                            </MenuItem>
+                        </Link>
+                        <Link to={{pathname:`save`}} >
+                            <MenuItem onClick={handleClose}>
+                                <BookmarkIcon
+                                    className={classes.iconBtn}
+                                    size="15"
+                                />
+                                Save
+                            </MenuItem>
+                        </Link>
+                        <Link to={{pathname:`/account/edit`}} >
+                            <MenuItem onClick={handleClose}>
+                                <SettingIcon
+                                    className={classes.iconBtn}
+                                    size="15"
+                                />
+                                Setting
+                            </MenuItem>
+                        </Link>
+                        <Divider />
+                        <MenuItem onClick={() => auth.signOut()}>
+                            <LogoutIcon
+                                className={classes.iconBtn}
+                                size="15"
+                            />
+                            Logout
+                        </MenuItem>
                     </MenuList>
                 </Popover>
             </div>

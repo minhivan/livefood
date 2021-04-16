@@ -62,6 +62,7 @@ function SidebarChat(props){
     const [recipientUserSnapshot] = useCollection(db.collection('users').where('email' ,'==', recipientUser));
     const recipient = recipientUserSnapshot?.docs?.[0]?.data();
 
+
     const [test] = useCollection(
         props.id &&
         db.collection("chats")

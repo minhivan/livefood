@@ -1,16 +1,21 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {useAuthState} from "react-firebase-hooks/auth";
-import {auth} from "../../../firebase";
+import {auth, db, storage} from "../../../firebase";
 import {makeStyles} from "@material-ui/core/styles";
 import Avatar from "@material-ui/core/Avatar";
 import Skeleton from "@material-ui/lab/Skeleton";
 import {Link} from "react-router-dom";
 import CardHeader from "@material-ui/core/CardHeader";
 import Button from "@material-ui/core/Button";
-import {IconButton, Modal, TextField} from "@material-ui/core";
-import {green} from "@material-ui/core/colors";
+import {CircularProgress, IconButton, Modal, TextField} from "@material-ui/core";
+// import {green} from "@material-ui/core/colors";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 import Divider from "@material-ui/core/Divider";
+import {useDocument} from "react-firebase-hooks/firestore";
+import firebase from "firebase";
+import Snackbar from "@material-ui/core/Snackbar";
+import {Alert} from "@material-ui/lab";
+import {green} from "@material-ui/core/colors";
 
 const useStyles = makeStyles((theme) => ({
 
@@ -107,14 +112,23 @@ const useStyles = makeStyles((theme) => ({
         color : "#0095f6",
         minHeight: "48px",
         width : "100%",
-        fontWeight: "bold"
     },
     btnRemove: {
         color : "#d8102a",
         minHeight: "48px",
         width : "100%",
+    },
+    btnLabel: {
         fontWeight: "bold"
-    }
+    },
+    buttonProgress: {
+        color: green[500],
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        marginTop: -12,
+        marginLeft: -12,
+    },
 }));
 
 function getModalStyle() {
@@ -140,8 +154,23 @@ const EditAccount = () => {
     const [link, setLink] = useState('');
     const [bio, setBio] = useState('');
     const [phone, setPhone] = useState('');
+    const [loadingAvt, setLoadingAvt] = useState(false);
+    const [userData, loading] = useDocument(db.collection("users").doc(user.uid));
+    const [openSnack, setOpenSnack] = useState(false);
 
 
+    useEffect(() => {
+        setDisplayName(userData?.data().displayName ?? '');
+        setFullName(userData?.data()?.fullName ?? '');
+        setLink(userData?.data()?.profileLink ?? '');
+        setBio(userData?.data()?.bio ?? '');
+        setPhone(userData?.data()?.phoneNumber ?? '');
+        // console.log(userData?.data()?.phoneNumber && userData?.data()?.phoneNumber)
+    }, [loading, userData])
+
+    const handleCloseSnack = (event) => {
+        setOpenSnack(false);
+    };
 
     const handleOpen = () => {
         setOpen(true);
@@ -157,22 +186,92 @@ const EditAccount = () => {
 
     const handleChange = event => {
         const fileUploaded = event.target.files[0];
+
         // Change photoUrl here
-        console.log(fileUploaded);
+        const uploadTask = storage.ref(`images/${fileUploaded.name}`).put(fileUploaded);
+        uploadTask.on(
+            "state_changed",
+            (snapshot => {
+                setLoadingAvt(true);
+            }),
+            (error => {
+                console.log(error);
+            }),
+            () => {
+                storage
+                    .ref("images")
+                    .child(fileUploaded.name)
+                    .getDownloadURL()
+                    .then(url => {
+                        // Update from firestore
+                        db.collection("users").doc(user.uid).update({
+                            updateAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            photoURL: url,
+                        })
+                        // Update user from firebase auth
+                        firebase.auth().currentUser.updateProfile({
+                            photoURL: url
+                        }).then(function() {
+                            // Update successful.
+                            setOpenSnack(true);
+                            setOpen(false);
+                            setLoadingAvt(false);
+                        }).catch(function(error) {
+                            // An error happened.
+                        });
+
+                    })
+            }
+        )
+
+    };
+
+
+    const handleRemove = event => {
+        db.collection("users").doc(user.uid).update({
+            updateAt: firebase.firestore.FieldValue.serverTimestamp(),
+            photoURL: "",
+        })
+        // Update user from firebase auth
+        firebase.auth().currentUser.updateProfile({
+            photoURL: ""
+        }).then(function() {
+            // Update successful.
+            setLoadingAvt(false);
+            setOpenSnack(true);
+        }).catch(function(error) {
+            // An error happened.
+        });
     };
 
 
     const handleSubmit = (event) => {
+        event.preventDefault();
+        db.collection("users").doc(user.uid).update({
+            bio: bio,
+            profileLink: link,
+            fullName: fullName,
+            displayName: displayName,
+            phoneNumber: phone,
+            updateAt: firebase.firestore.FieldValue.serverTimestamp(),
+        })
+
+        firebase.auth().currentUser.updateProfile({
+            displayName: displayName
+        }).then(function() {
+            // Update successful.
+            setOpenSnack(true);
+        })
 
     }
 
     return(
         <article className="edit_account__content">
-            <div className={classes.profile}>
+            <>
                 <CardHeader
                     className={classes.avatarHolder}
                     avatar={
-                        user?.uid ? (
+                        user ? (
                             <Avatar className={classes.avatar} alt={user.displayName} src={user.photoURL}/>
                         ):(
                             <Skeleton animation="wave" variant="circle" width={40} height={40} />
@@ -189,11 +288,11 @@ const EditAccount = () => {
                         <Button className={classes.changePhoto} onClick={handleOpen}>Change Profile Photo</Button>
                     }
                 />
-            </div>
+            </>
             <form method="POST" onSubmit={event => event.preventDefault()}>
                 <div className={classes.holder}>
                     <aside className={classes.label}>
-                        <label htmlFor="pepName" style={{fontWeight: "bold", fontSize: "18px"}}>Name</label>
+                        <label htmlFor="pepName" style={{fontWeight: "bold", fontSize: "18px"}}>Full Name</label>
                     </aside>
                     <div className={classes.input}>
                         <input
@@ -211,7 +310,7 @@ const EditAccount = () => {
 
                 <div className={classes.holder}>
                     <aside className={classes.label}>
-                        <label htmlFor="pepUsername" style={{fontWeight: "bold", fontSize: "18px"}}>Username</label>
+                        <label htmlFor="pepUsername" style={{fontWeight: "bold", fontSize: "18px"}}>Display Name</label>
                     </aside>
                     <div className={classes.input}>
                         <input
@@ -266,7 +365,7 @@ const EditAccount = () => {
                     <div className={classes.input}>
                         <input
                             value={user.email}
-                            disabled="true"
+                            disabled="disabled"
                             className={classes.inputField}
                             aria-required="false" id="pepEmail" placeholder="Email" type="text"
                         />
@@ -289,7 +388,7 @@ const EditAccount = () => {
                 </div>
 
                 <div className={classes.submit}>
-                    <Button variant="contained" color="primary">Submit</Button>
+                    <Button variant="contained" color="primary" onClick={handleSubmit}>Update</Button>
                 </div>
 
             </form>
@@ -312,7 +411,11 @@ const EditAccount = () => {
                     <Divider />
                     <div className={classes.btnAction}>
                         <Button
-                            className={classes.btnUpload}
+                            classes={{
+                                root: classes.btnUpload,
+                                label: classes.btnLabel,
+                            }}
+                            disabled={loadingAvt}
                             onClick={handleClick}
                         >
                             Upload Photo
@@ -320,8 +423,18 @@ const EditAccount = () => {
                     </div>
                     <Divider />
                     <div className={classes.btnAction}>
-                        <Button className={classes.btnRemove}>Remove Photo</Button>
+                        <Button
+                            classes={{
+                                root: classes.btnRemove,
+                                label: classes.btnLabel,
+                            }}
+                            disabled={loadingAvt}
+                            onClick={handleRemove}
+                        >
+                            Remove Photo
+                        </Button>
                     </div>
+                    {loadingAvt && <CircularProgress size={24} className={classes.buttonProgress} /> }
                     <Divider />
 
                     <form encType="multipart/form-data" method="POST" role="presentation">
@@ -336,7 +449,22 @@ const EditAccount = () => {
                 </div>
 
             </Modal>
+
+            <Snackbar
+                open={openSnack}
+                autoHideDuration={6000}
+                onClose={handleCloseSnack}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+            >
+                <Alert onClose={handleCloseSnack} severity="success">
+                    Upload successfully !
+                </Alert>
+            </Snackbar>
         </article>
+
     )
 }
 

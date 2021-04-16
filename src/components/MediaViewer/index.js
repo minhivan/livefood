@@ -84,7 +84,7 @@ const useStyles = makeStyles((theme) => ({
         overflow : "hidden",
     },
     img: {
-        objectFit: "cover",
+        objectFit: "contain",
         height: "100%",
         left: "0",
         position: "absolute",
@@ -166,6 +166,7 @@ function MediaViewer(props){
                 <div className={classes.leftPanel}>
                     {media}
                 </div>
+                <Divider orientation="vertical" flexItem />
                 <div className={classes.rightPanel}>
                     <div className="review__data">
                         <div className={classes.modalHeader}>

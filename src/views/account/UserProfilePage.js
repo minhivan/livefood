@@ -4,7 +4,7 @@ import {useAuthState} from "react-firebase-hooks/auth";
 import {auth, db} from "../../firebase";
 import ProfileHeader from "../../components/Profile/ProfileHeader";
 import {useParams} from "react-router";
-import { useCollection } from "react-firebase-hooks/firestore";
+import {useCollection, useDocument} from "react-firebase-hooks/firestore";
 import ProfileVids from "../../components/Profile/Content/ProfileVids";
 import ProfileNavBar from "../../components/Profile/ProfileNavBar";
 import {Divider} from "@material-ui/core";
@@ -27,7 +27,6 @@ function content(action, id){
 }
 
 
-
 const UserProfilePage = (props) => {
     const [currentUser] = useAuthState(auth);
     let { id } = useParams();
@@ -37,20 +36,19 @@ const UserProfilePage = (props) => {
         isAuthProfile = true;
     }
 
-    const [userData] = useCollection(db.collection('users').where('uid', '==', id))
-    const user = userData?.docs?.[0].data();
-
+    const [userData] = useDocument(db.collection('users').doc(id));
+    const userSnapshot = userData?.data()
 
     return(
         <Page
-            title={`${user?.displayName} | LiveFood`}
+            title={`${userSnapshot?.displayName} | LiveFood`}
             className="app__bodyContainer"
         >
             <div className="profile">
                 {/* User profile */}
-                <ProfileHeader isAuthProfile={isAuthProfile} user={user} />
+                <ProfileHeader isAuthProfile={isAuthProfile} user={userSnapshot} />
                 {/*  User content  */}
-                <ProfileNavBar user={user}/>
+                <ProfileNavBar user={userSnapshot}/>
                 <Divider />
                 {content(props.pagePath, id)}
             </div>

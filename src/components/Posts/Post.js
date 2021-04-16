@@ -57,15 +57,22 @@ const useStyles = makeStyles((theme) => ({
 		borderBottom: "1px solid rgba(var(--b6a,219,219,219),1)"
 	},
 	action: {
-		borderTop: "1px solid rgba(var(--b6a,219,219,219),1)"
+		borderTop: "1px solid rgba(var(--b6a,219,219,219),1)",
+		justifyContent: "space-between"
 	},
 	paragraph: {
 		lineHeight: "26px",
-		textAlign: "justify"
+		textAlign: "justify",
+		whiteSpace: "pre-line",
+		fontSize: "14px"
 	},
 	paragraphHead: {
 		fontWeight: "600",
-		fontSize: "1rem"
+		fontSize: "1rem",
+		marginBottom: "10px",
+		padding: "5px 0",
+		textTransform: "uppercase",
+		borderBottom : "1px solid #000"
 	},
 	captionText: {
 		whiteSpace: "pre-line",
@@ -88,6 +95,12 @@ const useStyles = makeStyles((theme) => ({
 		'&:hover': {
 			color: 'red',
 		}
+	},
+	dataContent: {
+		display: "flex"
+	},
+	selected: {
+		backgroundColor: "unset !important"
 	}
 }));
 
@@ -103,8 +116,8 @@ function Post( {id, post, author, ...rest} ) {
 	const [comment, setComment] = useState('');
 	const [expanded, setExpanded] = useState(false);
 	const [user] = useAuthState(auth);
-	const [userData] = useCollection(db.collection('users').where('uid', '==', author))
-	const postAuthor = userData?.docs?.[0].data();
+	const [postAuthor] = useCollection(db.collection('users').where('uid', '==', author))
+	const postAuthorSnapshot = postAuthor?.docs?.[0].data();
 	const [selected, setSelected] = useState(false);
 	// day ago
 	dayjs.extend(relativeTime);
@@ -158,13 +171,12 @@ function Post( {id, post, author, ...rest} ) {
 
 	// get comments
 	useEffect(() => {
-		let unsubscribe;
-		if(id) {
+		if(id && user) {
 			if(typeof post.likeBy !== 'undefined' && post.likeBy.includes(user.uid)){
 				setSelected(true);
 			}
 
-			unsubscribe = postData
+			postData
 				.collection("comments")
 				.orderBy('timestamp', "desc")
 				.onSnapshot((snapshot ) => {
@@ -183,9 +195,7 @@ function Post( {id, post, author, ...rest} ) {
 
 
 		}
-		return () => {
-			unsubscribe();
-		}
+
 	}, [id])
 
 
@@ -210,15 +220,15 @@ function Post( {id, post, author, ...rest} ) {
 			<Card className={classes.root} variant="outlined">
 				<CardHeader
 					avatar={
-						postAuthor?.uid ? (
-								<Avatar className={classes.avatar} alt={postAuthor?.displayName} src={postAuthor?.photoURL}/>
+						postAuthorSnapshot?.uid ? (
+								<Avatar className={classes.avatar} alt={postAuthorSnapshot?.displayName} src={postAuthorSnapshot?.photoURL}/>
 							):(
 								<Skeleton animation="wave" variant="circle" width={40} height={40} />
 							)
 					}
 					title={
-						postAuthor?.uid ? (
-							<Link to={`profile/${postAuthor.uid}`}>{postAuthor?.displayName}</Link>
+						postAuthorSnapshot?.uid ? (
+							<Link to={`profile/${postAuthorSnapshot.uid}`}>{postAuthorSnapshot?.displayName}</Link>
 						) : (
 							<Skeleton animation="wave" height={10} width="30%" style={{ marginBottom: 6 }} />
 							)
@@ -229,7 +239,7 @@ function Post( {id, post, author, ...rest} ) {
 						</IconButton>
 					}
 					subheader={
-						postAuthor?.uid ? (
+						postAuthorSnapshot?.uid ? (
 							dayjs(postCreated).fromNow()
 						) : (
 							<Skeleton animation="wave" height={10} width="10%" style={{ marginBottom: 6 }} />
@@ -250,7 +260,7 @@ function Post( {id, post, author, ...rest} ) {
 				{
 					post?.caption ? (
 							<div className="post__caption">
-								<Link to={`profile/${postAuthor?.uid}`} className="post__user">{postAuthor?.displayName}</Link>
+								<Link to={`profile/${postAuthorSnapshot?.uid}`} className="post__user">{postAuthorSnapshot?.displayName}</Link>
 								<span className={classes.captionText} >{post.caption}</span>
 							</div>
 					) : (
@@ -264,50 +274,64 @@ function Post( {id, post, author, ...rest} ) {
 
 				{/* Button */}
 				<CardActions disableSpacing className={classes.action}>
-					<div className="action__like">
-						<ToggleButton
-							value="check"
-							selected={selected}
-							className={classes.likeButton}
-							onClick={() => {
-								if(!selected) handleLikePost();
-								else handleDislikePost();
-							}}
-						>
-							{
-								selected ? <FavoriteRoundedIcon style={{color: "red"}}/> : <FavoriteBorderTwoToneIcon />
-							}
-						</ToggleButton>
+					{
+						user ? (
+							<div className="post__button">
+								<div className="action__like">
+									<ToggleButton
+										value="check"
+										selected={selected}
+										// className={classes.likeButton}
+										classes={{
+											root: classes.likeButton,
+											selected: classes.selected,
+										}}
+										onClick={() => {
+											if(!selected) handleLikePost();
+											else handleDislikePost();
+										}}
+									>
+										{
+											selected ? <FavoriteRoundedIcon style={{color: "red"}}/> : <FavoriteBorderTwoToneIcon />
+										}
+									</ToggleButton>
 
-					</div>
-					<div className="action__comment">
-						<IconButton aria-label="comment">
-							<ModeCommentOutlinedIcon/>
-						</IconButton>
-					</div>
-					<div className="action__share">
-						<IconButton aria-label="share">
-							<BookmarkBorderOutlinedIcon />
-						</IconButton>
-					</div>
-					<div className="action__share">
-						<IconButton aria-label="share">
-							<ShareIcon />
-						</IconButton>
-					</div>
+								</div>
+								<div className="action__comment">
+									<IconButton aria-label="comment">
+										<ModeCommentOutlinedIcon/>
+									</IconButton>
+								</div>
+								<div className="action__share">
+									<IconButton aria-label="share">
+										<BookmarkBorderOutlinedIcon />
+									</IconButton>
+								</div>
+								<div className="action__share">
+									<IconButton aria-label="share">
+										<ShareIcon />
+									</IconButton>
+								</div>
+							</div>
+						) : null
+					}
 
-					<div className="action__expand">
-						<IconButton
-							className={clsx(classes.expand, {
-								[classes.expandOpen]: expanded,
-							})}
-							onClick={handleExpandClick}
-							aria-expanded={expanded}
-							aria-label="show more"
-						>
-							<ExpandMoreIcon />
-						</IconButton>
-					</div>
+					{
+						post?.data ? (
+							<div className="action__expand">
+								<IconButton
+									className={clsx(classes.expand, {
+										[classes.expandOpen]: expanded,
+									})}
+									onClick={handleExpandClick}
+									aria-expanded={expanded}
+									aria-label="show more"
+								>
+									<ExpandMoreIcon />
+								</IconButton>
+							</div>
+						) : null
+					}
 				</CardActions>
 
 				{
@@ -319,34 +343,40 @@ function Post( {id, post, author, ...rest} ) {
 				}
 
 				{/* Posts */}
-				<Collapse in={expanded} timeout="auto" unmountOnExit>
-					<CardContent>
-						<Typography paragraph className={classes.paragraphHead}>Method:</Typography>
-						<Typography paragraph className={classes.paragraph}>
-							Heat 1/2 cup of the broth in a pot until simmering, add saffron and set aside for 10
-							minutes.
-						</Typography>
-						<Typography paragraph className={classes.paragraph}>
-							Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet over medium-high
-							heat. Add chicken, shrimp and chorizo, and cook, stirring occasionally until lightly
-							browned, 6 to 8 minutes. Transfer shrimp to a large plate and set aside, leaving chicken
-							and chorizo in the pan. Add pimentón, bay leaves, garlic, tomatoes, onion, salt and
-							pepper, and cook, stirring often until thickened and fragrant, about 10 minutes. Add
-							saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.
-						</Typography>
-						<Typography paragraph className={classes.paragraph}>
-							Add rice and stir very gently to distribute. Top with artichokes and peppers, and cook
-							without stirring, until most of the liquid is absorbed, 15 to 18 minutes. Reduce heat to
-							medium-low, add reserved shrimp and mussels, tucking them down into the rice, and cook
-							again without stirring, until mussels have opened and rice is just tender, 5 to 7
-							minutes more. (Discard any mussels that don’t open.)
-						</Typography>
-						<Typography paragraph className={classes.paragraph}>
-							Set aside off of the heat to let rest for 10 minutes, and then serve.
-						</Typography>
-					</CardContent>
-				</Collapse>
+				{
+					post?.data ? (
+							<Collapse in={expanded} timeout="auto" unmountOnExit >
+								<div className="recipe_layout">
+									<CardContent className="recipe_layout__content-left">
+										<div className="recipe_layout__facts">
+											<div className="recipe-facts__info">
+												<div className="recipe-facts__details recipe-facts__prepare"><span
+													className="recipe-facts__title">Prepare in:</span> <span>{post?.data?.prepTime} {post?.data?.prepUnit}</span></div>
+												<div className="recipe-facts__details recipe-facts__cooking"><span
+													className="recipe-facts__title">Cook in:</span> <a
+													className="theme-color">{post?.data?.cookTime} {post?.data?.cookUnit}</a></div>
+											</div>
+											<div className="recipe-facts__info">
+												<div className="recipe-facts__details recipe-facts__servings"><span
+													className="recipe-facts__title">Serves:</span> <a
+													className="theme-color">{post?.data?.serve}</a></div>
+											</div>
+										</div>
+										<Typography paragraph className={classes.paragraphHead}>Ingredients:</Typography>
+										<Typography paragraph className={classes.paragraph}>{post?.data?.ingredient}</Typography>
+									</CardContent>
+									<CardContent className="recipe_layout__content-right">
+										<Typography paragraph className={classes.paragraphHead}>Direction:</Typography>
+										<Typography paragraph className={classes.paragraph}>{post?.data?.direction}</Typography>
+									</CardContent>
+								</div>
+								<Divider />
+							</Collapse>
+					) : null
+				}
+
 				{/* Comments */}
+
 				<div className={classes.comment}>
 					<ListComment comments={comments} />
 					{
