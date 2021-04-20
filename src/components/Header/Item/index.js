@@ -83,14 +83,14 @@ function MenuHeader() {
 
     useEffect(() => {
         var query = db.collection("conversations");
-        query
+        user && query
             .where('users', 'array-contains', user.email)
             .where('isSeen', '==', false)
             .where('lastSend', '!=', user.email)
             .onSnapshot((snapshot) => {
                 setMess(snapshot.size);
             });
-    }, [user.email])
+    }, [user])
 
 
     return(
@@ -147,7 +147,7 @@ function MenuHeader() {
                 </Popover>
 
                 <IconButton onClick={handleClick}>
-                    <Avatar alt={user.displayName} src={user.photoURL} />
+                    <Avatar alt={user?.displayName} src={user?.photoURL} />
                 </IconButton>
                 <Popover
                     className={classes.userPopover}
@@ -166,7 +166,7 @@ function MenuHeader() {
                     }}
                 >
                     <MenuList autoFocusItem={open} id="menu-list-grow" style={{padding: "0", minWidth: 130}} >
-                        <Link to={{pathname:`/profile/${user.uid}`}} >
+                        <Link to={{pathname:`/profile/${user?.uid}`}} >
                             <MenuItem onClick={handleClose}>
                                 <UserIcon
                                     className={classes.iconBtnCircle}

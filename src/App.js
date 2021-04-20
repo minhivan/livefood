@@ -6,13 +6,6 @@ import { ThemeProvider } from '@material-ui/core';
 import GlobalStyles from "./components/GlobalStyle";
 import Spinner from 'react-spinkit'
 
-// import PageLogin from "./Template/PageLogin";
-// import PageMessenger from "./Template/PageMessenger";
-// import Header from "./components/Header/Header";
-// import PageNotFound from "./Template/PageNotFound";
-// import Feed from "./components/Feed/Feed";
-// import PageProfile from "./Template/PageProfile"
-
 
 import theme from './theme';
 import routes from "./routes";

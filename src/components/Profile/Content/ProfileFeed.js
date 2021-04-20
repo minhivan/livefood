@@ -67,7 +67,7 @@ const ProfileFeed = ({uid}) => {
                 {
                     feed.length > 0 ? (
                         feed.map(({id, post, authorProfile}) => (
-                            <ExploreItem key={id} post={post} postAuthor={authorProfile} />
+                            <ExploreItem key={id} id={id} post={post} postAuthor={authorProfile} />
                         ))
                     ) : (
                         <div className={classes.wrapper}>
@@ -77,7 +77,8 @@ const ProfileFeed = ({uid}) => {
                                     size="40"
                                 />
                             </div>
-                            <h3>No Posts Yet</h3>
+                            <h2 style={{paddingBottom: "10px"}}>No Posts Yet</h2>
+
                         </div>
                     )
                 }

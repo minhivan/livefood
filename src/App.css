@@ -50,6 +50,10 @@ body {
     background: #242a30;
 }
 
+/* Override css setting */
+input:focus{
+    outline: unset;
+}
 
 
 .bottomDivider{
@@ -125,10 +129,8 @@ body {
 .post__button{
     display: flex;
 }
-/* Override css setting */
-input:focus{
-    outline: unset;
-}
+
+
 
 .login__container{
     height: 100vh;
@@ -152,8 +154,8 @@ input:focus{
 }
 
 .login__container input{
-    font-family: 'Quicksand', sans-serif !important;
     font-size: 16px;
+    text-rendering: optimizeLegibility;
 }
 
 .login__container input::-webkit-input-placeholder{
@@ -230,7 +232,7 @@ input:focus{
 }
 
 
-/* Explore */
+/* explore */
 .explore__root{
     height: 100%;
     width: 100%;
@@ -251,6 +253,7 @@ input:focus{
     width: calc(100% /3);
     padding: 10px;
     height: 320px;
+    position: relative;
 }
 
 /* Profile page */
@@ -327,7 +330,7 @@ input:focus{
     font-size: 16px;
     line-height: 18px;
     height: 22px;
-    max-width: 236px;
+    max-width: 350px;
     display: inline-block;
     overflow: hidden;
     white-space: nowrap;
@@ -377,6 +380,7 @@ input:focus{
     right: 1rem;
 
 }
+
 
 @media (max-width: 767px) {
     .header{

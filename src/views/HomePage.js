@@ -6,6 +6,7 @@ import NewFeed from "../components/Posts";
 import NavBar from "../components/SideBar/LeftSideBar";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {auth} from "../firebase";
+import {Navigate} from "react-router-dom";
 
 
 const HomePage = () => {

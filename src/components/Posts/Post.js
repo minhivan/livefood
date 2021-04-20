@@ -14,6 +14,7 @@ import ModeCommentOutlinedIcon from '@material-ui/icons/ModeCommentOutlined';
 import FavoriteBorderTwoToneIcon from '@material-ui/icons/FavoriteBorderTwoTone';
 import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
+import BookmarkRoundedIcon from '@material-ui/icons/BookmarkRounded';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { red } from '@material-ui/core/colors';
 import {Button, CardContent, Collapse, TextField} from "@material-ui/core";
@@ -27,9 +28,13 @@ import Typography from "@material-ui/core/Typography";
 // import Upload from "../Upload";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Skeleton from "@material-ui/lab/Skeleton";
-import {useCollection, useDocument} from "react-firebase-hooks/firestore";
-import {ToggleButton, ToggleButtonGroup} from "@material-ui/lab";
+import {useDocument} from "react-firebase-hooks/firestore";
+import {ToggleButton} from "@material-ui/lab";
 import Divider from "@material-ui/core/Divider";
+import handleLikePost from "../../utils/handleLikePost";
+import handleDislikePost from "../../utils/handleDislikePost";
+import handleSavePost from "../../utils/handleSavePost";
+import handleUnsavedPost from "../../utils/handleUnsavedPost";
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -110,24 +115,39 @@ const useStyles = makeStyles((theme) => ({
 function Post( {id, post, author, ...rest} ) {
 
 
-	const postData = db.collection('posts').doc(id);
+	const postRef = db.collection('posts').doc(id);
 	const classes = useStyles();
 	const [comments, setComments] = useState([]);
 	const [comment, setComment] = useState('');
 	const [expanded, setExpanded] = useState(false);
+
+	// post author data
+	const [postAuthor] = useDocument(db.collection('users').doc(author))
+	const postAuthorSnapshot = postAuthor?.data();
+
+	// auth user data
 	const [user] = useAuthState(auth);
-	const [postAuthor] = useCollection(db.collection('users').where('uid', '==', author))
-	const postAuthorSnapshot = postAuthor?.docs?.[0].data();
+	const authUserRef = db.collection("users").doc(user.uid);
+
 	const [selected, setSelected] = useState(false);
+	const [saveSelected, setSaveSelected] = useState(false);
+
+	let likeCount = 0;
+	let media;
+
 	// day ago
 	dayjs.extend(relativeTime);
 	let postCreated  = null;
+
 	if(post?.timestamp){
 		postCreated = new Date(post.timestamp.seconds * 1000).toLocaleString();
 	}
 
+	if(typeof post.likeBy !== 'undefined'){
+		likeCount = post.likeBy.length;
+	}
+
 	// Render media
-	let media;
 	if(post?.mediaType === "video/mp4"){
 		media = <div className="post__content">
 			<video controls className="post__contentImage" muted="muted" >
@@ -149,25 +169,41 @@ function Post( {id, post, author, ...rest} ) {
 	};
 
 	// Handle like and dislike action
-	const handleLikePost = () => {
+	const likePost = () => {
 		setSelected(true);
-		postData.update({
-			likeBy: firebase.firestore.FieldValue.arrayUnion(user.uid)
-		});
+		handleLikePost(postRef, user.uid)
 	}
 
-	const handleDislikePost = () => {
+	const dislikePost = () => {
 		setSelected(false);
-		postData.update({
-			likeBy: firebase.firestore.FieldValue.arrayRemove(user.uid)
-		});
+		handleDislikePost(postRef, user.uid)
 	}
 
-	let likeCount = 0
-	if(typeof post.likeBy !== 'undefined'){
-		likeCount = post.likeBy.length;
+	const savePost = () => {
+		// Save post id to user data, and push to post data
+		setSaveSelected(true);
+		handleSavePost(postRef, authUserRef, user.uid, id);
 	}
 
+	const unsavedPost = () => {
+		// Save post id to user data, and push to post data
+		setSaveSelected(false);
+		handleUnsavedPost(postRef, authUserRef, user.uid, id);
+	}
+
+
+	const postComment = (event) => {
+		event.preventDefault();
+		if(comment){
+			db.collection("posts").doc(id).collection("comments").add({
+				text: comment,
+				user: db.doc('users/' + user.uid),
+				uid: user.uid,
+				timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+			});
+		}
+		setComment('');
+	}
 
 	// get comments
 	useEffect(() => {
@@ -176,7 +212,11 @@ function Post( {id, post, author, ...rest} ) {
 				setSelected(true);
 			}
 
-			postData
+			if(typeof post.saveBy !== 'undefined' && post.saveBy.includes(user.uid)){
+				setSaveSelected(true);
+			}
+
+			postRef
 				.collection("comments")
 				.orderBy('timestamp', "desc")
 				.onSnapshot((snapshot ) => {
@@ -192,27 +232,8 @@ function Post( {id, post, author, ...rest} ) {
 						})))
 					);
 				})
-
-
 		}
-
 	}, [id])
-
-
-	// console.log(props.post.mediaType);
-
-	const postComment = (event) => {
-		event.preventDefault();
-		if(comment){
-			db.collection("posts").doc(id).collection("comments").add({
-				text: comment,
-				user: db.doc('users/' + user.uid),
-				uid: user.uid,
-				timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-			});
-		}
-		setComment('');
-	}
 
 
 	return (
@@ -221,7 +242,7 @@ function Post( {id, post, author, ...rest} ) {
 				<CardHeader
 					avatar={
 						postAuthorSnapshot?.uid ? (
-								<Avatar className={classes.avatar} alt={postAuthorSnapshot?.displayName} src={postAuthorSnapshot?.photoURL}/>
+								<Avatar alt={postAuthorSnapshot?.displayName} src={postAuthorSnapshot?.photoURL}/>
 							):(
 								<Skeleton animation="wave" variant="circle" width={40} height={40} />
 							)
@@ -287,15 +308,14 @@ function Post( {id, post, author, ...rest} ) {
 											selected: classes.selected,
 										}}
 										onClick={() => {
-											if(!selected) handleLikePost();
-											else handleDislikePost();
+											if(!selected) likePost();
+											else dislikePost();
 										}}
 									>
 										{
 											selected ? <FavoriteRoundedIcon style={{color: "red"}}/> : <FavoriteBorderTwoToneIcon />
 										}
 									</ToggleButton>
-
 								</div>
 								<div className="action__comment">
 									<IconButton aria-label="comment">
@@ -303,9 +323,26 @@ function Post( {id, post, author, ...rest} ) {
 									</IconButton>
 								</div>
 								<div className="action__share">
-									<IconButton aria-label="share">
-										<BookmarkBorderOutlinedIcon />
-									</IconButton>
+									<ToggleButton
+										value="check"
+										selected={saveSelected}
+										// className={classes.likeButton}
+										classes={{
+											root: classes.likeButton,
+											selected: classes.selected,
+										}}
+										onClick={() => {
+											if(!saveSelected) savePost();
+											else unsavedPost();
+										}}
+									>
+										{
+											saveSelected ? <BookmarkRoundedIcon style={{color: "black"}}/> : <BookmarkBorderOutlinedIcon />
+										}
+									</ToggleButton>
+									{/*<IconButton aria-label="share">*/}
+									{/*	<BookmarkBorderOutlinedIcon />*/}
+									{/*</IconButton>*/}
 								</div>
 								<div className="action__share">
 									<IconButton aria-label="share">

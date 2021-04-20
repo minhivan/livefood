@@ -39,11 +39,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function ExploreItem(props) {
+export default function VideoItem(props) {
 
     const classes = useStyles();
     const [open, setOpen] = useState(false);
-    // const [postPic, setPostPic] = useState([]);
 
     function handleOpen(post, id){
         setOpen(true);
@@ -53,38 +52,24 @@ export default function ExploreItem(props) {
         setOpen(false);
     };
 
-    let media;
-    if(props.post.mediaType === "video/mp4"){
-        media =
-            <>
-                <video
-                    className={classes.img}
-                    muted="muted"
-                    onClick={() => handleOpen(props.post, props.id)}
-                >
-                    <source src={props.post.mediaUrl} type="video/mp4"/>
-                </video>
-                <div className={classes.none}>
-                    <PlayIcon
-                        className={classes.icon}
-                        size="15"
-                    />
-                </div>
-            </>
-    } else{
-        media = <img
-                alt=""
-                className={classes.img}
-                src={props.post.mediaUrl}
-                onClick={() => handleOpen(props.post, props.id)}
-            />
-    }
-
     return (
-            <div className="explore__gridSmall" key={props.id}>
-                {/*<img src={props.post.mediaUrl}  alt="" className={classes.img} onClick={() => handleOpen(props.post, props.id)} />*/}
-                {media}
-                <MediaViewer open={open} id={props.id} post={props.post} postAuthor={props.postAuthor} handleClose={handleClose}  />
+        <div className="explore__gridSmall" key={props.id}>
+            <video
+                loop
+                className={classes.img}
+                muted="muted"
+                onClick={() => handleOpen(props.post, props.id)}
+            >
+                <source src={props.post.mediaUrl} type="video/mp4"/>
+            </video>
+
+            <div className={classes.none}>
+                <PlayIcon
+                    className={classes.icon}
+                    size="15"
+                />
             </div>
+            <MediaViewer open={open} id={props.id} post={props.post} postAuthor={props.postAuthor} comments={props.comments} handleClose={handleClose}  />
+        </div>
     );
 }

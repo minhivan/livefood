@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import Page from "../../components/Page";
-import PeopleSuggested from "../../components/Explore/People";
+import PeopleSuggested from "../../components/Explore/ExplorePeopleItem";
 // import NavBar from "../../components/SideBar/LeftSideBar";
 // import {useAuthState} from "react-firebase-hooks/auth";
 // import {auth} from "../../firebase";

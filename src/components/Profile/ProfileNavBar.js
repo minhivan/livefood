@@ -98,7 +98,7 @@ const ProfileNavBar = ({user}) => {
             </ListItem>
 
             {
-                user?.uid === authUser.uid ? (
+                user?.uid === authUser?.uid ? (
                     <ListItem
                         className={classes.item}
                         disableGutters

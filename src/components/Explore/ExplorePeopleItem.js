@@ -56,29 +56,35 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function People() {
+export default function ExplorePeopleItem() {
     const classes = useStyles();
     const [users, setUsers] = useState([])
     const [userData] = useAuthState(auth);
+
     const userRef = db.collection('users').doc(userData.uid);
     const [userSnapshot] = useDocument(userRef);
 
-    let userFollowingList = userSnapshot?.data().following;
-    let userFollowerList = userSnapshot?.data().follower;
+    let userFollowingList = userSnapshot?.data()?.following;
+    let userFollowerList = userSnapshot?.data()?.follower;
 
     // List user
     useEffect(() => {
-        db.collection("users")
-            .where('uid' ,'!=' , userData.uid)
-            .get().then(snapshot => {
+        var followingList;
 
-            setUsers(snapshot.docs.map(doc => ({
-                id: doc.id,
-                user: doc.data(),
-            })));
-        })
+        if(typeof userSnapshot?.data()?.following !== 'undefined' && userSnapshot?.data()?.following.length >= 0){
+            followingList = userSnapshot.data().following
+            followingList.push(userData.uid);
+            return db.collection("users")
+                .where('uid' ,'not-in' , followingList )
+                .get().then(snapshot => {
+                    setUsers(snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        user: doc.data(),
+                    })));
+            })
+        }
+    }, [userSnapshot])
 
-    }, [userData.uid])
 
     // check if user followed
     const checkFollowed = (userFollowingList, uid) => {
@@ -130,7 +136,7 @@ export default function People() {
                             </ListItemAvatar>
                             <ListItemText
                                 primary={
-                                    <Link to={`profile/${user?.uid}`} className={classes.name}>{user?.displayName}</Link>
+                                    <Link to={`/profile/${user?.uid}`} className={classes.name}>{user?.displayName}</Link>
                                     }
                                 secondary={
                                     <Typography

@@ -4,10 +4,10 @@ import Button from "@material-ui/core/Button";
 import {makeStyles} from "@material-ui/core/styles";
 import Skeleton from '@material-ui/lab/Skeleton';
 import {Link} from "react-router-dom";
-import IconButton from "@material-ui/core/IconButton";
-import {Badge} from "@material-ui/core";
-import ExploreTwoToneIcon from "@material-ui/icons/ExploreTwoTone";
-import {useCollection, useDocument} from "react-firebase-hooks/firestore";
+// import IconButton from "@material-ui/core/IconButton";
+// import {Badge} from "@material-ui/core";
+// import ExploreTwoToneIcon from "@material-ui/icons/ExploreTwoTone";
+// import {useCollection, useDocument} from "react-firebase-hooks/firestore";
 import {auth, db} from "../../firebase";
 import {useAuthState} from "react-firebase-hooks/auth";
 import firebase from "firebase";
@@ -66,15 +66,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const ProfileHeader = ({isAuthProfile,user, ...rest}) => {
+const ProfileHeader = ({isAuthProfile,user, count,  ...rest}) => {
     const [userFollowing, setUserFollowing] = useState([]);
     const [userFollower, setUserFollower] = useState([]);
 
     // Your data
     const [authUser] = useAuthState(auth);
-    const userRef = db.collection('users').doc(authUser.uid);
-    const [userSnapshot] = useDocument(userRef);
-    const [userPost] = useCollection(db.collection("posts").where("uid", '==', authUser.uid));
+    const userRef = authUser && db.collection('users').doc(authUser?.uid);
+
 
     useEffect(() => {
         if(typeof user?.follower !== 'undefined'){
@@ -133,7 +132,7 @@ const ProfileHeader = ({isAuthProfile,user, ...rest}) => {
                 <div className={classes.bioAvt}>
                     {
                         user? (
-                                <Avatar alt="Remy Sharp" src={user.photoURL} className={classes.userPhoto}/>
+                                <Avatar alt={user?.displayName} src={user?.photoURL} className={classes.userPhoto}/>
                         ): (
                             <Skeleton animation="wave" variant="circle" width={120} height={120} />
                         )
@@ -144,7 +143,7 @@ const ProfileHeader = ({isAuthProfile,user, ...rest}) => {
                     <div className="share-title-container">
                         {/* User bio */}
                         <h2 className="share-title">{user?.displayName}</h2>
-                        <h1 className="share-sub-title">{userSnapshot?.data().fullName ?? ''}</h1>
+                        <h1 className="share-sub-title">{user?.fullName ?? ''}</h1>
                         {
                             isAuthProfile ? (
                                 <div className="share-follow-container">
@@ -159,50 +158,59 @@ const ProfileHeader = ({isAuthProfile,user, ...rest}) => {
                                     </Link>
                                 </div>
                             ) : (
-                                <div className="share-follow-container">
-                                    {/* Checking if followed */}
-                                    {
-                                        checkFollowed(userFollower, authUser.uid) ? (
-                                            <Button
-                                                variant="outlined"
-                                                className={classes.buttonUnfollow}
-                                                onClick={() => handleUnfollowClick(user.uid, authUser.uid)}
-                                            >
-                                                Unfollow
-                                            </Button>
-                                        ) : (
-                                            <Button
-                                                variant="contained"
-                                                className={classes.button}
-                                                onClick={() => handleFollowClick(user.uid, authUser.uid)}
-                                            >
-                                                Follow
-                                            </Button>
-                                        )
-                                    }
-                                    <Button
-                                        variant="contained"
-                                        className={classes.button}
-                                    >
-                                        Message
-                                    </Button>
-                                </div>
+                                authUser ? (
+                                    <div className="share-follow-container">
+                                        {/* Checking if followed */}
+                                        {
+                                            checkFollowed(userFollower, authUser.uid) ? (
+                                                <Button
+                                                    variant="outlined"
+                                                    className={classes.buttonUnfollow}
+                                                    onClick={() => handleUnfollowClick(user.uid, authUser.uid)}
+                                                >
+                                                    Unfollow
+                                                </Button>
+                                            ) : (
+                                                    <Button
+                                                        variant="contained"
+                                                        className={classes.button}
+                                                        onClick={() => handleFollowClick(user.uid, authUser.uid)}
+                                                    >
+                                                        Follow
+                                                    </Button>
+                                                )
+
+                                        }
+                                        <Button
+                                            variant="contained"
+                                            className={classes.button}
+                                        >
+                                            Message
+                                        </Button>
+                                    </div>
+                                ) : null
                             )
                         }
 
+                        {
+                            user?.bio ? (
+                                <h2 className="share-desc mt10">
+                                    {user.bio}
+                                </h2>
+                            ) : null
+                        }
 
-                        <h2 className="share-desc mt10">
-                            "{userSnapshot?.data().bio ?? ''}"
-                        </h2>
-
-                        <div className="share-links">
-                            <a href="https://www.tiktok.com/link/v2?aid=1988&amp;lang=en&amp;scene=bio_url&amp;target=youtube.com%2Fc%2Fhauhoang">youtube.com/c/hauhoang</a>
-                        </div>
-
+                        {
+                            user?.profileLink ? (
+                                    <div className="share-links">
+                                        <a href={user.profileLink}>{user.profileLink}</a>
+                                    </div>
+                            ) : null
+                        }
 
                         {/* Count info */}
                         <h2 className="count-infos">
-                            <div className="number"><strong title="Likes">{userPost?.size ?? '0'}</strong><span
+                            <div className="number"><strong title="Likes">{ count ?? '0'}</strong><span
                                 className="unit">Post</span></div>
                             <div className="number"><strong title="Following">{userFollowing.length}</strong><span
                                 className="unit">Following</span></div>

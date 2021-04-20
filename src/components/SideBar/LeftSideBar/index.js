@@ -80,7 +80,7 @@ const NavBar = (props) => {
             title: 'Saves'
         },
         {
-            href: '/watch',
+            href: '/explore/watch',
             icon: VideoIcon,
             title: 'Watch'
         },
@@ -106,20 +106,25 @@ const NavBar = (props) => {
             display="flex"
             flexDirection="column"
         >
-            <Box
-                alignItems="center"
-                display="flex"
-                flexDirection="row"
-                p={2}
-            >
-                <Avatar
-                    className={classes.avatar}
-                    component={RouterLink}
-                    src={props.user?.photoURL}
-                    to={`profile/${props.user?.uid}`}
-                />
-                <Link to={`profile/${props.user?.uid}`} className={classes.name}>{props.user?.displayName}</Link>
-            </Box>
+            {
+                props.user ? (
+                    <Box
+                        alignItems="center"
+                        display="flex"
+                        flexDirection="row"
+                        p={2}
+                    >
+                        <Avatar
+                            className={classes.avatar}
+                            component={RouterLink}
+                            src={props.user?.photoURL}
+                            to={`profile/${props.user?.uid}`}
+                        />
+                        <Link to={`profile/${props.user?.uid}`} className={classes.name}>{props.user?.displayName}</Link>
+                    </Box>
+                ) : null
+            }
+
             <Box p={2} className={classes.util}>
                 <List>
                     {items.map((item) => (

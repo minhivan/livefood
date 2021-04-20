@@ -38,6 +38,8 @@ const UserProfilePage = (props) => {
 
     const [userData] = useDocument(db.collection('users').doc(id));
     const userSnapshot = userData?.data()
+    const [userPost] = useCollection(id && db.collection("posts").where("uid", '==', id));
+
 
     return(
         <Page
@@ -46,7 +48,7 @@ const UserProfilePage = (props) => {
         >
             <div className="profile">
                 {/* User profile */}
-                <ProfileHeader isAuthProfile={isAuthProfile} user={userSnapshot} />
+                <ProfileHeader isAuthProfile={isAuthProfile} user={userSnapshot} count={userPost?.size}/>
                 {/*  User content  */}
                 <ProfileNavBar user={userSnapshot}/>
                 <Divider />

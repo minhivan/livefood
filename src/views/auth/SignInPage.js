@@ -100,15 +100,11 @@ function PageLogin() {
     }
 
     useEffect( () => {
-        const unsubscribe =  auth.onAuthStateChanged((authUser) => {
+        return auth.onAuthStateChanged((authUser) => {
             if (authUser) {
                 checkFirebaseAuth(authUser);
             }
         });
-
-        return () => {
-            unsubscribe();
-        }
     }, [user])
 
     if(user){

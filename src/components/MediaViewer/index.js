@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {IconButton, Modal} from "@material-ui/core";
+import {Button, CardContent, Collapse, IconButton, Modal, TextField} from "@material-ui/core";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 import {makeStyles} from "@material-ui/core/styles";
 // import {db} from "../../firebase";
@@ -17,14 +17,25 @@ import FavoriteRoundedIcon from "@material-ui/icons/FavoriteRounded";
 import FavoriteBorderTwoToneIcon from "@material-ui/icons/FavoriteBorderTwoTone";
 import ModeCommentOutlinedIcon from "@material-ui/icons/ModeCommentOutlined";
 import BookmarkBorderOutlinedIcon from "@material-ui/icons/BookmarkBorderOutlined";
-import ShareIcon from "@material-ui/icons/Share";
 // import clsx from "clsx";
 // import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import CardActions from "@material-ui/core/CardActions";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import clsx from "clsx";
+import Typography from "@material-ui/core/Typography";
+import {useAuthState} from "react-firebase-hooks/auth";
 
-// import {auth, db, storage} from "../../firebase";
-// import firebase from "firebase";
-// import {useAuthState} from "react-firebase-hooks/auth";
+import {auth, db} from "../../firebase";
+import firebase from "firebase";
+import ListComment from "../Comments";
+import handleLikePost from "../../utils/handleLikePost";
+import handleDislikePost from "../../utils/handleDislikePost";
+import {useCollection, useDocument} from "react-firebase-hooks/firestore";
+import BookmarkRoundedIcon from "@material-ui/icons/BookmarkRounded";
+import handleSavePost from "../../utils/handleSavePost";
+import handleUnsavedPost from "../../utils/handleUnsavedPost";
+
+
 
 function getModalStyle() {
     const top = 50 ;
@@ -39,17 +50,9 @@ function getModalStyle() {
 
 
 
-
-
 const useStyles = makeStyles((theme) => ({
-    divider: {
-        height: 1,
-        width: "50%",
-        background: "#39CCCC",
-        margin: "15px auto"
-    },
-    input: {
-        display: "none"
+    root: {
+        fontSize: "0.875rem"
     },
     label: {
         paddingLeft: "10px"
@@ -98,21 +101,19 @@ const useStyles = makeStyles((theme) => ({
     rightPanel: {
         width: "335px",
         height: "100%",
-        overflowY: "scroll"
+        overflowY: "scroll",
+        position: "relative"
     },
     captionText: {
         whiteSpace: "pre-line",
-        lineHeight: "26px"
+        lineHeight: "26px",
+
     },
     modalBody: {
         height: "auto"
     },
-    action: {
-        borderTop: "1px solid rgba(var(--b6a,219,219,219),1)"
-    },
     displayLike: {
         padding: "0 0 20px 20px",
-        borderBottom: "1px solid rgba(var(--b6a,219,219,219),1)"
     },
     likeButton: {
         border: "0",
@@ -121,20 +122,123 @@ const useStyles = makeStyles((theme) => ({
         '&:hover': {
             color: 'red',
         }
+    },
+    expand: {
+        transform: 'rotate(0deg)',
+        marginLeft: 'auto',
+        transition: theme.transitions.create('transform', {
+            duration: theme.transitions.duration.shortest,
+        }),
+    },
+    expandOpen: {
+        transform: 'rotate(180deg)',
+    },
+    paragraph: {
+        lineHeight: "26px",
+        textAlign: "justify",
+        whiteSpace: "pre-line",
+        fontSize: "0.875rem"
+    },
+    paragraphHead: {
+        fontWeight: "600",
+        fontSize: "0.875rem",
+        marginBottom: "10px",
+        padding: "5px 0",
+        textTransform: "uppercase",
+        borderBottom : "1px solid #000"
+    },
+    selected: {
+        backgroundColor: "unset !important"
+    },
+    commentContainer: {
+        marginTop: "auto",
+        padding: "10px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+    },
+    cmtButton: {
+
+    },
+    cmtButtonLabel: {
+        fontWeight: "bold",
+        textTransform: "capitalize",
+        fontSize: "14px"
+    },
+    direction: {
+        minHeight: "auto"
     }
 }));
 
 function MediaViewer(props){
+
     const classes = useStyles();
     const [modalStyle] = useState(getModalStyle);
     const [selected, setSelected] = useState(false);
+    const [expanded, setExpanded] = useState(true);
+    const [user] = useAuthState(auth);
+    const postRef = db.collection('posts').doc(props.id);
+    const authUserRef = user && db.collection("users").doc(user.uid);
 
-    // const [user] = useAuthState(auth);
+    const [postSnapshot] = useDocument(postRef);
+    const [saveSelected, setSaveSelected] = useState(false);
+
+    const [comments, setComments] = useState([]);
+    const [comment, setComment] = useState('');
+
+    let likeCount = 0
+    if(typeof postSnapshot?.data()?.likeBy !== 'undefined'){
+        likeCount = postSnapshot.data().likeBy.length;
+    }
+
+
     dayjs.extend(relativeTime);
     let postCreated  = null;
 
     if(props?.post?.timestamp){
         postCreated = new Date(props?.post?.timestamp.seconds * 1000).toLocaleString();
+    }
+
+    const postComment = (event) => {
+        event.preventDefault();
+        if(comment){
+            db.collection("posts").doc(props.id).collection("comments").add({
+                text: comment,
+                user: db.doc('users/' + user.uid),
+                uid: user.uid,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            });
+        }
+        setComment('');
+    }
+
+    const handleExpandClick = () => {
+        setExpanded(!expanded);
+    };
+
+    // Handle like and dislike action
+    const likePost = () => {
+        setSelected(true);
+        handleLikePost(postRef, user.uid);
+    }
+
+    // Handle dislike post
+    const dislikePost = () => {
+        setSelected(false);
+        handleDislikePost(postRef, user.uid)
+    }
+
+
+    const savePost = () => {
+        // Save post id to user data, and push to post data
+        setSaveSelected(true);
+        handleSavePost(postRef, authUserRef, user.uid, props.id);
+    }
+
+    const unsavedPost = () => {
+        // Save post id to user data, and push to post data
+        setSaveSelected(false);
+        handleUnsavedPost(postRef, authUserRef, user.uid, props.id);
     }
 
 
@@ -143,7 +247,7 @@ function MediaViewer(props){
 
     if(props.post.mediaType === "video/mp4"){
         media = <div className={classes.imgHolder}>
-            <video controls className={classes.img} muted="muted">
+            <video controls className={classes.img} muted="muted" onClick={e => e.target.play()}>
                 <source src={props.post.mediaUrl} type="video/mp4"/>
             </video>
         </div>
@@ -155,8 +259,43 @@ function MediaViewer(props){
 
 
 
+
+    useEffect(() => {
+        if(props.id && user) {
+
+            if(typeof props.post.likeBy !== 'undefined' && props.post.likeBy.includes(user.uid)){
+                setSelected(true);
+            }
+
+            if(typeof props.post.saveBy !== 'undefined' && props.post.saveBy.includes(user.uid)){
+                setSaveSelected(true);
+            }
+        }
+
+        // get comments
+        postRef
+            .collection("comments")
+            .orderBy('timestamp', "desc")
+            .limit(5)
+            .onSnapshot((snapshot ) => {
+                // var userProfile = {};
+                setComments(
+                    snapshot.docs.map((doc => ({
+                        id: doc.id,
+                        comment: doc.data(),
+                        cmtAuthor: doc.data().user.get().then( cmtAuthor => {
+                            return cmtAuthor.data();
+                            // return Object.assign(userProfile, author.data());
+                        })
+                    })))
+                );
+            })
+
+    }, [props.id])
+
     return (
         <Modal
+            className={classes.root}
             open={props.open}
             onClose={props.handleClose}
             aria-labelledby="simple-modal-title"
@@ -172,7 +311,7 @@ function MediaViewer(props){
                         <div className={classes.modalHeader}>
                             <CardHeader
                                 avatar={
-                                    <Avatar className={classes.avatar} alt={props.postAuthor?.displayName} src={props.postAuthor.photoURL}/>
+                                    <Avatar alt={props.postAuthor?.displayName} src={props.postAuthor.photoURL}/>
                                 }
                                 title={
                                     <Link to={`/profile/${props.postAuthor?.uid}`}>{props.postAuthor?.displayName}</Link>
@@ -192,59 +331,156 @@ function MediaViewer(props){
                                 <span className={classes.captionText}>{props.post.caption}</span>
                             </div>
                         </div>
+                        <Divider />
+                        {/* Card action */}
+                        <CardActions disableSpacing>
+                            {
+                                user ? (
+                                    <div className="post__button">
+                                        <div className="action__like">
+                                            <ToggleButton
+                                                value="check"
+                                                selected={selected}
+                                                classes={{
+                                                    root: classes.likeButton,
+                                                    selected: classes.selected,
+                                                }}
+                                                onClick={() => {
+                                                    if(!selected) likePost();
+                                                    else dislikePost();
+                                                }}
+                                            >
+                                                {
+                                                    selected ? <FavoriteRoundedIcon style={{color: "red"}}/> : <FavoriteBorderTwoToneIcon />
+                                                }
+                                            </ToggleButton>
 
-                        <CardActions disableSpacing className={classes.action}>
-                            <div className="action__like">
-                                <ToggleButton
-                                    value="check"
-                                    selected={selected}
-                                    className={classes.likeButton}
-                                    onChange={() => {
-                                        setSelected(!selected);
-                                    }}
-                                >
-                                    {
-                                        selected ? <FavoriteRoundedIcon style={{color: "red"}}/> : <FavoriteBorderTwoToneIcon />
-                                    }
-                                </ToggleButton>
+                                        </div>
+                                        <div className="action__comment">
+                                            <IconButton aria-label="comment">
+                                                <ModeCommentOutlinedIcon/>
+                                            </IconButton>
+                                        </div>
+                                        <div className="action__share">
+                                            <ToggleButton
+                                                value="check"
+                                                selected={saveSelected}
+                                                // className={classes.likeButton}
+                                                classes={{
+                                                    root: classes.likeButton,
+                                                    selected: classes.selected,
+                                                }}
+                                                onClick={() => {
+                                                    if(!saveSelected) savePost();
+                                                    else unsavedPost();
+                                                }}
+                                            >
+                                                {
+                                                    saveSelected ? <BookmarkRoundedIcon style={{color: "black"}}/> : <BookmarkBorderOutlinedIcon />
+                                                }
+                                            </ToggleButton>
+                                        </div>
+                                    </div>
+                                ) : null
 
-                            </div>
-                            <div className="action__comment">
-                                <IconButton aria-label="comment">
-                                    <ModeCommentOutlinedIcon/>
-                                </IconButton>
-                            </div>
-                            <div className="action__share">
-                                <IconButton aria-label="share">
-                                    <BookmarkBorderOutlinedIcon />
-                                </IconButton>
-                            </div>
-                            <div className="action__share">
-                                <IconButton aria-label="share">
-                                    <ShareIcon />
-                                </IconButton>
-                            </div>
+                            }
 
-                            {/*<div className="action__expand">*/}
-                            {/*    <IconButton*/}
-                            {/*        className={clsx(classes.expand, {*/}
-                            {/*            [classes.expandOpen]: expanded,*/}
-                            {/*        })}*/}
-                            {/*        onClick={handleExpandClick}*/}
-                            {/*        aria-expanded={expanded}*/}
-                            {/*        aria-label="show more"*/}
-                            {/*    >*/}
-                            {/*        <ExpandMoreIcon />*/}
-                            {/*    </IconButton>*/}
-                            {/*</div>*/}
+                            {
+                                props?.post?.data ? (
+                                    <div className="action__expand">
+                                        <IconButton
+                                            className={clsx(classes.expand, {
+                                                [classes.expandOpen]: expanded,
+                                            })}
+                                            onClick={handleExpandClick}
+                                            aria-expanded={expanded}
+                                            aria-label="show more"
+                                        >
+                                            <ExpandMoreIcon />
+                                        </IconButton>
+                                    </div>
+                                ) : null
+                            }
+
+
                         </CardActions>
 
-                        <div className={classes.displayLike}>
-                            <span><b>0 Likes</b></span>
+                        {/* Like count */}
+                        {
+                            likeCount > 0 ? (
+                                <div className={classes.displayLike}>
+                                    <span><b>{likeCount.toLocaleString()} Likes</b></span>
+
+                                </div>
+                            ) : null
+                        }
+                        <Divider />
+
+                        {/*Posts*/}
+                        {
+                            props?.post?.data ? (
+                                <Collapse in={expanded} timeout="auto" unmountOnExit style={{minHeight: "auto"}}>
+                                    <>
+                                        <CardContent className="recipe_layout__content-left">
+                                            <div className="recipe_layout__facts">
+                                                <div className="recipe-facts__info">
+                                                    <div className="recipe-facts__details recipe-facts__prepare"><span
+                                                        className="recipe-facts__title">Prepare in:</span> <span>{props?.post?.data?.prepTime} {props?.post?.data?.prepUnit}</span></div>
+                                                    <div className="recipe-facts__details recipe-facts__cooking"><span
+                                                        className="recipe-facts__title">Cook in:</span> <a
+                                                        className="theme-color">{props?.post?.data?.cookTime} {props?.post?.data?.cookUnit}</a></div>
+                                                </div>
+                                                <div className="recipe-facts__info">
+                                                    <div className="recipe-facts__details recipe-facts__servings"><span
+                                                        className="recipe-facts__title">Serves:</span> <a
+                                                        className="theme-color">{props?.post?.data?.serve}</a></div>
+                                                </div>
+                                            </div>
+                                            <Typography paragraph className={classes.paragraphHead}>Ingredients:</Typography>
+                                            <Typography paragraph className={classes.paragraph}>{props?.post?.data?.ingredient}</Typography>
+                                        </CardContent>
+                                        <CardContent className="recipe_layout__content-right">
+                                            <Typography paragraph className={classes.paragraphHead}>Direction:</Typography>
+                                            <Typography paragraph className={classes.paragraph}>{props?.post?.data?.direction}</Typography>
+                                        </CardContent>
+                                    </>
+                                    <Divider />
+                                </Collapse>
+                            ) : null
+                        }
+
+                        {/*<ListComment comments={comments} />*/}
+                        <ListComment comments={comments} />
+
+                        <div className="commentContainer commentViewer ">
+                            <Divider />
+                            {
+                                user &&  (
+                                    <form onSubmit={postComment} >
+                                        <TextField
+                                            className="comment__input"
+                                            placeholder="Leave a comment ... "
+                                            value={comment}
+                                            onChange={event => setComment(event.target.value)}
+                                            InputProps={{ disableUnderline: true}}
+                                        />
+                                        <Button
+                                            variant="contained"
+                                            disabled={!comment}
+                                            onClick={postComment}
+                                            classes={{
+                                                root: classes.cmtButton,
+                                                label: classes.cmtButtonLabel
+                                            }}
+                                        >
+                                            Post
+                                        </Button>
+                                    </form>
+                                )
+                            }
                         </div>
                     </div>
                 </div>
-                {/*<ListComment comments={comments} />*/}
             </div>
         </Modal>
     )

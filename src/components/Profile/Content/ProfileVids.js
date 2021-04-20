@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react";
 // import {useAuthState} from "react-firebase-hooks/auth";
 import {db} from "../../../firebase";
-import ExploreItem from "../../Explore/ExploreItem";
 import {Video as VideoIcon} from "react-feather";
 import {makeStyles} from "@material-ui/core/styles";
-import {useCollection} from "react-firebase-hooks/firestore";
+import ExploreItem from "../../Explore/ExploreItem";
+// import {useCollection} from "react-firebase-hooks/firestore";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -45,8 +45,9 @@ const ProfileVids = ({uid}) => {
         postDoc
             .where('uid', "==", uid)
             .where('mediaType', '==', 'video/mp4')
+            .orderBy('timestamp', 'desc')
             .limit(12)
-            .onSnapshot(snapshot => {
+            .get().then(snapshot => {
                 let temp = []
                 snapshot.forEach(data => {
                     var authorVid = {};
@@ -57,7 +58,6 @@ const ProfileVids = ({uid}) => {
                 })
                 setVid(temp);
             })
-
     }, [uid]);
 
     return(
@@ -81,7 +81,6 @@ const ProfileVids = ({uid}) => {
                         </div>
                     )
                 }
-
             </div>
         </div>
     )

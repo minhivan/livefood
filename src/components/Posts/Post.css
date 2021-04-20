@@ -41,6 +41,8 @@
     margin-right: 10px;
 }
 
+
+
 .commentContainer{
     display: flex;
     align-items: center;
@@ -159,6 +161,21 @@
     letter-spacing: 1px;
     font-size: 14px;
 }
+
+
+.review__data {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.commentViewer{
+    padding: 0;
+    margin-top: auto;
+    flex-direction: column;
+    align-items: normal;
+}
+
 
 @media (min-width: 481px) and (max-width: 767px) {
     .post{

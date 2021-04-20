@@ -5,9 +5,6 @@ import PostComment from "./Comment";
 
 const useStyles = makeStyles((theme) => ({
 
-    avatar: {
-        backgroundColor: red[500],
-    },
     displayCmt: {
         padding: "10px 20px",
         textAlign: "right",
