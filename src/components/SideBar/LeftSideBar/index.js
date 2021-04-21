@@ -20,6 +20,7 @@ import {
 import NavItem from './NavItem';
 import {useAuthState} from "react-firebase-hooks/auth";
 import {auth} from "../../../firebase";
+import Divider from "@material-ui/core/Divider";
 
 // import {useAuthState} from "react-firebase-hooks/auth";
 // import {auth} from "../../../firebase";
@@ -31,11 +32,10 @@ const useStyles = makeStyles(() => ({
         width: 256
     },
     desktopDrawer: {
-        width: 256,
+        width: 290,
         position: "sticky",
         top: "100px",
         height: "calc(100% - 100px)",
-        backgroundColor: "#f0f2f5",
         border: "none",
     },
     avatar: {
@@ -51,7 +51,14 @@ const useStyles = makeStyles(() => ({
 
     },
     util: {
-        padding: "0 0 0 20px"
+        padding: "0 10px 0 10px",
+        backgroundColor: "#fff",
+        borderRadius: "max(0px, min(8px, calc((100vw - 4px - 100%) * 9999))) / 8px"
+    },
+    userFrame: {
+        marginBottom: "20px",
+        backgroundColor: "#fff",
+        borderRadius: "max(0px, min(8px, calc((100vw - 4px - 100%) * 9999))) / 8px",
     }
 }));
 
@@ -113,6 +120,7 @@ const NavBar = (props) => {
                         display="flex"
                         flexDirection="row"
                         p={2}
+                        className={classes.userFrame}
                     >
                         <Avatar
                             className={classes.avatar}
@@ -121,16 +129,16 @@ const NavBar = (props) => {
                             to={`profile/${props.user?.uid}`}
                         />
                         <Link to={`profile/${props.user?.uid}`} className={classes.name}>{props.user?.displayName}</Link>
+
                     </Box>
                 ) : null
             }
-
             <Box p={2} className={classes.util}>
                 <List>
                     {items.map((item) => (
                         <NavItem
-                            href={item.href}
                             key={item.title}
+                            href={item.href}
                             title={item.title}
                             icon={item.icon}
                         />

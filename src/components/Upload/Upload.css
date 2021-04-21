@@ -2,7 +2,6 @@
     background-color: #fff;
     border-radius: max(0px, min(8px, calc((100vw - 4px - 100%) * 9999))) / 8px;
     margin-bottom: 20px;
-    border: 1px solid #00000014;
 }
 .upload .upload__container{
     padding: 20px;
@@ -39,6 +38,7 @@
     text-transform: uppercase;
     cursor: pointer;
     font-size: 14px;
+    box-shadow: 0px 0px 3px 0px #ddc4c4bf;
 }
 .upload .upload__container .upload__picker .upload__pickerButton:hover{
     background-color: #f2f2f2;
@@ -53,6 +53,7 @@
     border-radius: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 1px;
+    box-shadow: 0px 0px 3px 0px #ddc4c4bf;
 }
 
 .upload .upload__container .upload__picker .upload__pickButton button:hover {

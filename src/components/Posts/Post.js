@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from "react";
 import './Post.css';
+import {Link} from "react-router-dom";
+import ListComment from "../Comments";
+import handleDislikePost from "../../utils/handleDislikePost";
+import handleSavePost from "../../utils/handleSavePost";
+import handleUnsavedPost from "../../utils/handleUnsavedPost";
+
+
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
@@ -16,13 +23,11 @@ import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
 import BookmarkRoundedIcon from '@material-ui/icons/BookmarkRounded';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { red } from '@material-ui/core/colors';
-import {Button, CardContent, Collapse, TextField} from "@material-ui/core";
+import {Button, CardContent, CircularProgress, Collapse, Modal, TextField} from "@material-ui/core";
 import {db, auth} from "../../firebase";
 import firebase from "firebase";
 import clsx from "clsx";
-import {Link} from "react-router-dom";
-import ListComment from "../Comments";
+
 import {useAuthState} from "react-firebase-hooks/auth";
 import Typography from "@material-ui/core/Typography";
 // import Upload from "../Upload";
@@ -32,14 +37,27 @@ import {useDocument} from "react-firebase-hooks/firestore";
 import {ToggleButton} from "@material-ui/lab";
 import Divider from "@material-ui/core/Divider";
 import handleLikePost from "../../utils/handleLikePost";
-import handleDislikePost from "../../utils/handleDislikePost";
-import handleSavePost from "../../utils/handleSavePost";
-import handleUnsavedPost from "../../utils/handleUnsavedPost";
+import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
+import {green} from "@material-ui/core/colors";
+
+
+function getModalStyle() {
+	const top = 50 ;
+	const left = 50;
+
+	return {
+		top: `${top}%`,
+		left: `${left}%`,
+		transform: `translate(-${top}%, -${left}%)`,
+	};
+}
+
 
 const useStyles = makeStyles((theme) => ({
 	root: {
 		maxWidth: "100%",
 		borderRadius: "max(0px, min(8px, calc((100vw - 4px - 100%) * 9999))) / 8px",
+		boxShadow: "0px 0px 5px 0px #ddc4c4bf"
 	},
 	media: {
 		height: 400
@@ -53,9 +71,6 @@ const useStyles = makeStyles((theme) => ({
 	},
 	expandOpen: {
 		transform: 'rotate(180deg)',
-	},
-	avatar: {
-		backgroundColor: red[500],
 	},
 	displayLike: {
 		padding: "0 0 20px 20px",
@@ -83,22 +98,12 @@ const useStyles = makeStyles((theme) => ({
 		whiteSpace: "pre-line",
 		lineHeight: "26px"
 	},
-	imgHolder: {
-		backgroundColor: "#efefef",
-		display: "block",
-		width: "100%",
-		position: "relative"
-	},
-	imgPlace: {
-		paddingBottom: "100%",
-		overflow: "hidden"
-	},
 	likeButton: {
 		border: "0",
 		backgroundColor: "none",
 		borderRadius: "50%",
 		'&:hover': {
-			color: 'red',
+			color: 'black',
 		}
 	},
 	dataContent: {
@@ -106,7 +111,56 @@ const useStyles = makeStyles((theme) => ({
 	},
 	selected: {
 		backgroundColor: "unset !important"
-	}
+	},
+
+	paper: {
+		position: 'absolute',
+		width: 300,
+		backgroundColor: theme.palette.background.paper,
+		boxShadow: theme.shadows[5],
+		padding: theme.spacing(2, 3, 3),
+		borderRadius: "8px",
+		maxHeight: "300px",
+		"&:focus": {
+			outline: "none"
+		},
+		display: "flex",
+		flexDirection: "column"
+	},
+	modalHeader: {
+		display: "flex",
+		justifyContent: "center",
+		padding: "10px 0 20px 0",
+	},
+	btnAction: {
+		display: "flex",
+		justifyContent: "center",
+	},
+	btnNormal: {
+		color : "#282626",
+		minHeight: "48px",
+		width : "100%",
+		textTransform: "capitalize",
+		fontSize: "16px"
+	},
+	btnRed: {
+		color : "#d8102a",
+		minHeight: "48px",
+		width : "100%",
+		textTransform: "capitalize",
+		fontSize: "16px"
+	},
+	btnLabel: {
+		fontWeight: "bold"
+	},
+	buttonProgress: {
+		color: green[500],
+		position: 'absolute',
+		top: '50%',
+		left: '50%',
+		marginTop: -12,
+		marginLeft: -12,
+	},
 }));
 
 
@@ -114,7 +168,7 @@ const useStyles = makeStyles((theme) => ({
 //
 function Post( {id, post, author, ...rest} ) {
 
-
+	const [modalStyle] = useState(getModalStyle);
 	const postRef = db.collection('posts').doc(id);
 	const classes = useStyles();
 	const [comments, setComments] = useState([]);
@@ -136,6 +190,7 @@ function Post( {id, post, author, ...rest} ) {
 	let media;
 
 	// day ago
+
 	dayjs.extend(relativeTime);
 	let postCreated  = null;
 
@@ -163,6 +218,17 @@ function Post( {id, post, author, ...rest} ) {
 			/>
 		</div>
 	}
+
+	const [open, setOpen] = React.useState(false);
+
+	const handleClickOpen = () => {
+		setOpen(true);
+	};
+
+	const handleClose = () => {
+		setOpen(false);
+	};
+
 
 	const handleExpandClick = () => {
 		setExpanded(!expanded);
@@ -238,7 +304,7 @@ function Post( {id, post, author, ...rest} ) {
 
 	return (
 		<div className="post">
-			<Card className={classes.root} variant="outlined">
+			<Card className={classes.root} >
 				<CardHeader
 					avatar={
 						postAuthorSnapshot?.uid ? (
@@ -249,13 +315,13 @@ function Post( {id, post, author, ...rest} ) {
 					}
 					title={
 						postAuthorSnapshot?.uid ? (
-							<Link to={`profile/${postAuthorSnapshot.uid}`}>{postAuthorSnapshot?.displayName}</Link>
+							<Link to={`profile/${postAuthorSnapshot.uid}`}><span style={{fontWeight: "bold"}}>{postAuthorSnapshot?.displayName}</span></Link>
 						) : (
 							<Skeleton animation="wave" height={10} width="30%" style={{ marginBottom: 6 }} />
 							)
 					}
 					action={
-						<IconButton aria-label="settings">
+						<IconButton aria-label="settings" onClick={handleClickOpen}>
 							<MoreVertIcon />
 						</IconButton>
 					}
@@ -313,7 +379,7 @@ function Post( {id, post, author, ...rest} ) {
 										}}
 									>
 										{
-											selected ? <FavoriteRoundedIcon style={{color: "red"}}/> : <FavoriteBorderTwoToneIcon />
+											selected ? <FavoriteRoundedIcon style={{color: "black"}}/> : <FavoriteBorderTwoToneIcon />
 										}
 									</ToggleButton>
 								</div>
@@ -419,7 +485,7 @@ function Post( {id, post, author, ...rest} ) {
 					{
 						user &&  (
 							<div className="commentContainer">
-								<Avatar className={classes.avatar} alt={user?.displayName} src={user?.photoURL} />
+								<Avatar alt={user?.displayName} src={user?.photoURL} />
 
 								<form onSubmit={postComment}>
 									<TextField
@@ -439,6 +505,80 @@ function Post( {id, post, author, ...rest} ) {
 					}
 				</div>
 			</Card>
+
+			<>
+				<Modal
+					open={open}
+					onClose={handleClose}
+					aria-labelledby="simple-modal-title"
+					aria-describedby="simple-modal-description"
+				>
+					<div style={modalStyle} className={classes.paper}>
+
+						<div className={classes.btnAction}>
+							<Button
+								classes={{
+									root: classes.btnRed,
+									label: classes.btnLabel,
+								}}
+							>
+								Report Post
+							</Button>
+						</div>
+						<Divider />
+
+						<div className={classes.btnAction}>
+							<Button
+								classes={{
+									root: classes.btnRed,
+									label: classes.btnLabel,
+								}}
+							>
+								Follow
+							</Button>
+						</div>
+						<Divider />
+
+						<div className={classes.btnAction}>
+							<Button
+								classes={{
+									root: classes.btnNormal,
+									label: classes.btnLabel,
+								}}
+							>
+								Go to post
+							</Button>
+						</div>
+						<Divider />
+
+						<div className={classes.btnAction}>
+							<Button
+								classes={{
+									root: classes.btnNormal,
+									label: classes.btnLabel,
+								}}
+							>
+								Save post
+							</Button>
+						</div>
+						<Divider />
+
+						<div className={classes.btnAction}>
+							<Button
+								classes={{
+									root: classes.btnNormal,
+									label: classes.btnLabel,
+								}}
+							>
+								Cancel
+							</Button>
+						</div>
+						<Divider />
+					</div>
+
+				</Modal>
+			</>
+
 		</div>
 	)
 }

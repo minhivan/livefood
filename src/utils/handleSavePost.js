@@ -1,10 +1,10 @@
 import firebase from "firebase";
 
-const handleSavePost = (postRef, userRef, uid, pid) => {
-    postRef.update({
+const handleSavePost = (postReference, userReference, uid, pid) => {
+    postReference.update({
         saveBy: firebase.firestore.FieldValue.arrayUnion(uid)
     })
-    userRef.update({
+    userReference.update({
         postSave: firebase.firestore.FieldValue.arrayUnion(pid)
     })
 }

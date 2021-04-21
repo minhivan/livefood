@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React from "react";
 import Page from "../components/Page";
 // import {makeStyles} from "@material-ui/core/styles";
 import RightSideBar from "../components/SideBar/RightSideBar";
@@ -6,7 +6,6 @@ import NewFeed from "../components/Posts";
 import NavBar from "../components/SideBar/LeftSideBar";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {auth} from "../firebase";
-import {Navigate} from "react-router-dom";
 
 
 const HomePage = () => {

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import Page from "../../components/Page";
 import PeopleSuggested from "../../components/Explore/ExplorePeopleItem";
 // import NavBar from "../../components/SideBar/LeftSideBar";

@@ -44,15 +44,13 @@ export default function NewFeed(){
     const userRef = db.collection('users').doc(authUser.uid);
     const [userSnapshot] = useDocument(userRef);
 
-
-
+    let userFollow = userSnapshot?.data()?.following;
     //Get post
     useEffect( () => {
         var userFollowingList;
-        if(typeof userSnapshot?.data()?.following !== 'undefined' && userSnapshot?.data()?.following.length > 0){
-            userFollowingList = userSnapshot.data().following;
+        if(typeof userFollow !== 'undefined' && userFollow.length > 0){
+            userFollowingList = userFollow;
             userFollowingList.push(authUser.uid);
-
             return db.collection('posts')
                 .orderBy('timestamp', "desc")
                 .where('uid', 'in', userFollowingList)
@@ -63,8 +61,19 @@ export default function NewFeed(){
                     })));
                 })
         }
+        else{
+            return db.collection('posts')
+                .orderBy('timestamp', "desc")
+                .where('uid', '==', authUser.uid)
+                .onSnapshot(snapshot => {
+                    setPosts(snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        post: doc.data(),
+                    })));
+                })
+        }
 
-    }, [userSnapshot]);
+    }, [userFollow?.length]);
 
 
 
@@ -72,7 +81,7 @@ export default function NewFeed(){
         <div className="app__post">
             {
                 authUser ? (
-                    <Upload />
+                    <Upload user={authUser}/>
                 ) : null
             }
             {

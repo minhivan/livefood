@@ -1,10 +1,10 @@
 import firebase from "firebase";
 
-const handleUnsavedPost = (postRef, userRef, uid, pid) => {
-    postRef.update({
+const handleUnsavedPost = (postReference, userReference, uid, pid) => {
+    postReference.update({
         saveBy: firebase.firestore.FieldValue.arrayRemove(uid)
     })
-    userRef.update({
+    userReference.update({
         postSave: firebase.firestore.FieldValue.arrayRemove(pid)
     })
 }

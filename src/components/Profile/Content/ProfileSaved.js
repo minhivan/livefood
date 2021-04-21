@@ -41,7 +41,7 @@ const ProfileSaved = ({uid}) => {
     const [savedPost, setSavedPost] = useState([]);
 
     const userRef = db.collection('users').doc(uid);
-    const [userSnapshot, loading] = useDocument(userRef);
+    const [userSnapshot] = useDocument(userRef);
 
     let userSavedList = userSnapshot?.data()?.postSave;
 
@@ -66,7 +66,7 @@ const ProfileSaved = ({uid}) => {
                     })
             }
         }
-    }, [loading]);
+    }, [userSavedList?.length]);
 
     return(
         <div className="explore__root">

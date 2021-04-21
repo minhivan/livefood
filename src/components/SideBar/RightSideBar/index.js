@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import '../RightSideBar.css';
 
 
@@ -9,6 +9,10 @@ import Avatar from "@material-ui/core/Avatar";
 // import dayjs from "dayjs";
 import CardHeader from "@material-ui/core/CardHeader";
 import {Button, Hidden, makeStyles} from "@material-ui/core";
+import {useAuthState} from "react-firebase-hooks/auth";
+import {auth, db} from "../../../firebase";
+import {useDocument} from "react-firebase-hooks/firestore";
+import {Link} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -24,6 +28,33 @@ const useStyles = makeStyles((theme) => ({
 
 function RightSideBar(props) {
     const classes = useStyles();
+    const [users, setUsers] = useState([])
+    const [userData] = useAuthState(auth);
+
+    const userRef = db.collection('users').doc(userData.uid);
+    const [userSnapshot] = useDocument(userRef);
+
+
+    // List user
+    useEffect(() => {
+        var followingList;
+
+        if(typeof userSnapshot?.data()?.following !== 'undefined' && userSnapshot?.data()?.following.length >= 0){
+            followingList = userSnapshot.data().following
+            followingList.push(userData.uid);
+            return db.collection("users")
+                .where('uid' ,'not-in' , followingList )
+                .limit(4)
+                .get().then(snapshot => {
+                    setUsers(snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        user: doc.data(),
+                    })));
+                })
+        }
+    }, [userSnapshot])
+
+
 
     return(
         <Hidden mdDown>
@@ -84,68 +115,31 @@ function RightSideBar(props) {
                         <div className="suggest__header padding-20 bottomDivider">
                             <h2>Who to follow</h2>
                         </div>
-                        <div className="suggest__content  bottomDivider">
-                            <CardHeader className="suggest__user"
-                                        avatar={
-                                            <Avatar aria-label="recipe" className="">
-                                                K
-                                            </Avatar>
-                                        }
-                                        title="minhivan"
-                                        subheader="@asdasd"
-                            />
+                        {
+                            users && users?.map(({id, user}) => (
+                                <div key={id} className="suggest__content  bottomDivider">
+                                    <CardHeader className="suggest__user"
+                                                avatar={
+                                                    <Avatar aria-label={user.displayName} src={user.photoURL} />
+                                                }
+                                                title={
+                                                    <Link to={`profile/${user.uid}`}>{user.displayName}</Link>
+                                                }
+                                                subheader={user.fullName}
+                                    />
 
-                            <Button variant="outlined" color="primary" className="followBtn">
-                                Follow
-                            </Button>
-                        </div>
-                        <div className="suggest__content  bottomDivider">
-                            <CardHeader className="suggest__user"
-                                        avatar={
-                                            <Avatar aria-label="recipe" className="">
-                                                K
-                                            </Avatar>
-                                        }
-                                        title="minhivan"
-                                        subheader="@asdasd"
-                            />
+                                    <Button variant="outlined" color="primary" className="followBtn">
+                                        Follow
+                                    </Button>
+                                </div>
+                            ))
+                        }
 
-                            <Button variant="outlined" color="primary" className="followBtn">
-                                Follow
-                            </Button>
-                        </div>
-                        <div className="suggest__content  bottomDivider">
-                            <CardHeader className="suggest__user"
-                                        avatar={
-                                            <Avatar aria-label="recipe" className="">
-                                                K
-                                            </Avatar>
-                                        }
-                                        title="minhivan"
-                                        subheader="@asdasd"
-                            />
-
-                            <Button variant="outlined" color="primary" className="followBtn">
-                                Follow
-                            </Button>
-                        </div>
-                        <div className="suggest__content  bottomDivider">
-                            <CardHeader className="suggest__user"
-                                        avatar={
-                                            <Avatar aria-label="recipe" className="">
-                                                K
-                                            </Avatar>
-                                        }
-                                        title="minhivan"
-                                        subheader="@asdasd"
-                            />
-
-                            <Button variant="outlined" color="primary" className="followBtn">
-                                Follow
-                            </Button>
-                        </div>
                         <div role="button" className="padding-20 show-more">
-                            <span className="">Show more</span>
+                            <Link to="/explore/people">
+                                <span className="">Show more</span>
+                            </Link>
+
                         </div>
                     </div>
 

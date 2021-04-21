@@ -175,7 +175,7 @@ function MenuHeader() {
                                 Profile
                             </MenuItem>
                         </Link>
-                        <Link to={{pathname:`save`}} >
+                        <Link to={{pathname:`/profile/saved/${user?.uid}`}} >
                             <MenuItem onClick={handleClose}>
                                 <BookmarkIcon
                                     className={classes.iconBtn}

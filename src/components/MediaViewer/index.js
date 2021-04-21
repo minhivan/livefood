@@ -30,7 +30,7 @@ import firebase from "firebase";
 import ListComment from "../Comments";
 import handleLikePost from "../../utils/handleLikePost";
 import handleDislikePost from "../../utils/handleDislikePost";
-import {useCollection, useDocument} from "react-firebase-hooks/firestore";
+import {useDocument} from "react-firebase-hooks/firestore";
 import BookmarkRoundedIcon from "@material-ui/icons/BookmarkRounded";
 import handleSavePost from "../../utils/handleSavePost";
 import handleUnsavedPost from "../../utils/handleUnsavedPost";
@@ -273,7 +273,7 @@ function MediaViewer(props){
         }
 
         // get comments
-        postRef
+        return postRef
             .collection("comments")
             .orderBy('timestamp', "desc")
             .limit(5)

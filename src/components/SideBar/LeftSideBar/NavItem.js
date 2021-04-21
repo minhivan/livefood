@@ -13,36 +13,38 @@ const useStyles = makeStyles((theme) => ({
     item: {
         display: 'flex',
         paddingTop: 0,
-        paddingBottom: 0
+        paddingBottom: 0,
     },
     button: {
         color: theme.palette.text.secondary,
         fontWeight: theme.typography.fontWeightMedium,
         justifyContent: 'flex-start',
         letterSpacing: 0,
-        padding: '10px 8px',
+        padding: '15px 15px',
         textTransform: 'none',
         width: '100%'
     },
     icon: {
         marginRight: theme.spacing(1),
-        color: "#050505"
+        color: "#3c3d40",
+        fontWeight: "600",
     },
     title: {
         marginRight: 'auto',
-        fontWeight: "500",
+        fontWeight: "600",
         fontSize: "1rem",
         paddingLeft: "10px",
-        color: "#050505"
+        color: "#65676B"
     },
     active: {
         color: theme.palette.primary.main,
         '& $title': {
             fontWeight: theme.typography.fontWeightMedium,
-            color: theme.palette.primary.main,
+            color: "#262626",
+
         },
         '& $icon': {
-            color: theme.palette.primary.main,
+            color: "#65676B",
         }
     }
 }));
