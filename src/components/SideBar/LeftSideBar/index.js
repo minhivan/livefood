@@ -20,7 +20,6 @@ import {
 import NavItem from './NavItem';
 import {useAuthState} from "react-firebase-hooks/auth";
 import {auth} from "../../../firebase";
-import Divider from "@material-ui/core/Divider";
 
 // import {useAuthState} from "react-firebase-hooks/auth";
 // import {auth} from "../../../firebase";
@@ -51,7 +50,7 @@ const useStyles = makeStyles(() => ({
 
     },
     util: {
-        padding: "0 10px 0 10px",
+        padding: "0",
         backgroundColor: "#fff",
         borderRadius: "max(0px, min(8px, calc((100vw - 4px - 100%) * 9999))) / 8px"
     },
@@ -134,7 +133,7 @@ const NavBar = (props) => {
                 ) : null
             }
             <Box p={2} className={classes.util}>
-                <List>
+                <List style={{padding: "0"}}>
                     {items.map((item) => (
                         <NavItem
                             key={item.title}

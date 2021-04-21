@@ -42,7 +42,7 @@ const ProfileVids = ({uid}) => {
         window.scroll({top: 0, left: 0, behavior: 'smooth' });
 
         let postDoc = db.collection('posts');
-        postDoc
+        return postDoc
             .where('uid', "==", uid)
             .where('mediaType', '==', 'video/mp4')
             .orderBy('timestamp', 'desc')

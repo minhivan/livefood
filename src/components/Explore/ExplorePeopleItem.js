@@ -13,6 +13,8 @@ import {useAuthState} from "react-firebase-hooks/auth";
 import firebase from "firebase";
 import { useDocument} from "react-firebase-hooks/firestore";
 import {Link} from "react-router-dom";
+import handleUserFollow from "../../utils/handleUserFollow";
+import handleUserUnfollow from "../../utils/handleUserUnfollow";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -83,7 +85,7 @@ export default function ExplorePeopleItem() {
                     })));
             })
         }
-    }, [userSnapshot])
+    }, [userFollowingList?.length])
 
 
     // check if user followed
@@ -93,27 +95,6 @@ export default function ExplorePeopleItem() {
             rs = userFollowingList.includes(uid);
         }
         return rs;
-    }
-
-    const handleFollowClick = (id, uid) => {
-        // Update user following
-        userRef.update({
-            following: firebase.firestore.FieldValue.arrayUnion(id)
-        });
-        // Update opponent follower
-        db.collection('users').doc(id).update({
-            follower: firebase.firestore.FieldValue.arrayUnion(uid)
-        });
-    }
-
-    const handleUnfollowClick = (id, uid) => {
-        userRef.update({
-            following: firebase.firestore.FieldValue.arrayRemove(id)
-        });
-        // Update opponent follower
-        db.collection('users').doc(id).update({
-            follower: firebase.firestore.FieldValue.arrayRemove(uid)
-        });
     }
 
 
@@ -157,7 +138,7 @@ export default function ExplorePeopleItem() {
                                         variant="outlined"
                                         style={{textTransform: "capitalize"}}
                                         className={classes.buttonUnfollow}
-                                        onClick={() => handleUnfollowClick(id, userData.uid)}
+                                        onClick={() => handleUserUnfollow(userData.uid, id)}
                                     >
                                         Unfollow
                                     </Button>
@@ -167,7 +148,7 @@ export default function ExplorePeopleItem() {
                                         color="primary"
                                         style={{textTransform: "capitalize"}}
                                         className={classes.button}
-                                        onClick={() => handleFollowClick(id, userData.uid)}
+                                        onClick={() => handleUserFollow(userData.uid, id)}
                                     >
                                         Follow
                                     </Button>

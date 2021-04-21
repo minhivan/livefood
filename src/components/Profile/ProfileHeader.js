@@ -11,6 +11,8 @@ import {Link} from "react-router-dom";
 import {auth, db} from "../../firebase";
 import {useAuthState} from "react-firebase-hooks/auth";
 import firebase from "firebase";
+import handleUserFollow from "../../utils/handleUserFollow";
+import handleUserUnfollow from "../../utils/handleUserUnfollow";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -72,8 +74,6 @@ const ProfileHeader = ({isAuthProfile,user, count,  ...rest}) => {
 
     // Your data
     const [authUser] = useAuthState(auth);
-    const userRef = authUser && db.collection('users').doc(authUser?.uid);
-
 
     useEffect(() => {
         if(typeof user?.follower !== 'undefined'){
@@ -92,28 +92,6 @@ const ProfileHeader = ({isAuthProfile,user, count,  ...rest}) => {
     //     return rs;
     // }
 
-    // check if user followed opponents
-
-    const handleFollowClick = (opponentID, uid) => {
-        // Update user following
-        userRef.update({
-            following: firebase.firestore.FieldValue.arrayUnion(opponentID)
-        });
-        // Update opponent follower
-        db.collection('users').doc(opponentID).update({
-            follower: firebase.firestore.FieldValue.arrayUnion(uid)
-        });
-    }
-
-    const handleUnfollowClick = (opponentID, uid) => {
-        userRef.update({
-            following: firebase.firestore.FieldValue.arrayRemove(opponentID)
-        });
-        // Update opponent follower
-        db.collection('users').doc(opponentID).update({
-            follower: firebase.firestore.FieldValue.arrayRemove(uid)
-        });
-    }
 
     // Check opponent follower to find you
     const checkFollowed = (userFollowerList, uid) => {
@@ -166,7 +144,7 @@ const ProfileHeader = ({isAuthProfile,user, count,  ...rest}) => {
                                                 <Button
                                                     variant="outlined"
                                                     className={classes.buttonUnfollow}
-                                                    onClick={() => handleUnfollowClick(user.uid, authUser.uid)}
+                                                    onClick={() => handleUserUnfollow(authUser.uid, user.uid)}
                                                 >
                                                     Unfollow
                                                 </Button>
@@ -174,7 +152,7 @@ const ProfileHeader = ({isAuthProfile,user, count,  ...rest}) => {
                                                     <Button
                                                         variant="contained"
                                                         className={classes.button}
-                                                        onClick={() => handleFollowClick(user.uid, authUser.uid)}
+                                                        onClick={() => handleUserFollow(authUser.uid, user.uid)}
                                                     >
                                                         Follow
                                                     </Button>

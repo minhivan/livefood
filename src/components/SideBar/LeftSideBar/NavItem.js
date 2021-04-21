@@ -14,16 +14,20 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         paddingTop: 0,
         paddingBottom: 0,
+        borderBottom: "1px solid rgb(235, 238, 240)",
+        "&:last-child": {
+            borderBottom: "none"
+        },
     },
-    button: {
+    button: props => ({
         color: theme.palette.text.secondary,
         fontWeight: theme.typography.fontWeightMedium,
         justifyContent: 'flex-start',
         letterSpacing: 0,
-        padding: '15px 15px',
+        padding: '20px',
         textTransform: 'none',
-        width: '100%'
-    },
+        width: '100%',
+    }),
     icon: {
         marginRight: theme.spacing(1),
         color: "#3c3d40",

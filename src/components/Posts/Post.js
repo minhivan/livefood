@@ -23,7 +23,7 @@ import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
 import BookmarkRoundedIcon from '@material-ui/icons/BookmarkRounded';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import {Button, CardContent, CircularProgress, Collapse, Modal, TextField} from "@material-ui/core";
+import {Button, CardContent, Collapse, Modal, TextField} from "@material-ui/core";
 import {db, auth} from "../../firebase";
 import firebase from "firebase";
 import clsx from "clsx";
@@ -37,20 +37,11 @@ import {useDocument} from "react-firebase-hooks/firestore";
 import {ToggleButton} from "@material-ui/lab";
 import Divider from "@material-ui/core/Divider";
 import handleLikePost from "../../utils/handleLikePost";
-import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 import {green} from "@material-ui/core/colors";
+import PostAction from "./PostAction";
+import Popup from "../Upload/Popup";
 
 
-function getModalStyle() {
-	const top = 50 ;
-	const left = 50;
-
-	return {
-		top: `${top}%`,
-		left: `${left}%`,
-		transform: `translate(-${top}%, -${left}%)`,
-	};
-}
 
 
 const useStyles = makeStyles((theme) => ({
@@ -112,55 +103,9 @@ const useStyles = makeStyles((theme) => ({
 	selected: {
 		backgroundColor: "unset !important"
 	},
-
-	paper: {
-		position: 'absolute',
-		width: 300,
-		backgroundColor: theme.palette.background.paper,
-		boxShadow: theme.shadows[5],
-		padding: theme.spacing(2, 3, 3),
-		borderRadius: "8px",
-		maxHeight: "300px",
-		"&:focus": {
-			outline: "none"
-		},
-		display: "flex",
-		flexDirection: "column"
-	},
-	modalHeader: {
-		display: "flex",
-		justifyContent: "center",
-		padding: "10px 0 20px 0",
-	},
-	btnAction: {
-		display: "flex",
-		justifyContent: "center",
-	},
-	btnNormal: {
-		color : "#282626",
-		minHeight: "48px",
-		width : "100%",
-		textTransform: "capitalize",
-		fontSize: "16px"
-	},
-	btnRed: {
-		color : "#d8102a",
-		minHeight: "48px",
-		width : "100%",
-		textTransform: "capitalize",
-		fontSize: "16px"
-	},
-	btnLabel: {
-		fontWeight: "bold"
-	},
-	buttonProgress: {
-		color: green[500],
-		position: 'absolute',
-		top: '50%',
-		left: '50%',
-		marginTop: -12,
-		marginLeft: -12,
-	},
+	comment:{
+		display: "block"
+	}
 }));
 
 
@@ -168,7 +113,6 @@ const useStyles = makeStyles((theme) => ({
 //
 function Post( {id, post, author, ...rest} ) {
 
-	const [modalStyle] = useState(getModalStyle);
 	const postRef = db.collection('posts').doc(id);
 	const classes = useStyles();
 	const [comments, setComments] = useState([]);
@@ -299,8 +243,7 @@ function Post( {id, post, author, ...rest} ) {
 					);
 				})
 		}
-	}, [id])
-
+	}, [id, user])
 
 	return (
 		<div className="post">
@@ -506,78 +449,7 @@ function Post( {id, post, author, ...rest} ) {
 				</div>
 			</Card>
 
-			<>
-				<Modal
-					open={open}
-					onClose={handleClose}
-					aria-labelledby="simple-modal-title"
-					aria-describedby="simple-modal-description"
-				>
-					<div style={modalStyle} className={classes.paper}>
-
-						<div className={classes.btnAction}>
-							<Button
-								classes={{
-									root: classes.btnRed,
-									label: classes.btnLabel,
-								}}
-							>
-								Report Post
-							</Button>
-						</div>
-						<Divider />
-
-						<div className={classes.btnAction}>
-							<Button
-								classes={{
-									root: classes.btnRed,
-									label: classes.btnLabel,
-								}}
-							>
-								Follow
-							</Button>
-						</div>
-						<Divider />
-
-						<div className={classes.btnAction}>
-							<Button
-								classes={{
-									root: classes.btnNormal,
-									label: classes.btnLabel,
-								}}
-							>
-								Go to post
-							</Button>
-						</div>
-						<Divider />
-
-						<div className={classes.btnAction}>
-							<Button
-								classes={{
-									root: classes.btnNormal,
-									label: classes.btnLabel,
-								}}
-							>
-								Save post
-							</Button>
-						</div>
-						<Divider />
-
-						<div className={classes.btnAction}>
-							<Button
-								classes={{
-									root: classes.btnNormal,
-									label: classes.btnLabel,
-								}}
-							>
-								Cancel
-							</Button>
-						</div>
-						<Divider />
-					</div>
-
-				</Modal>
-			</>
+			<PostAction open={open} handleClose={handleClose} uid={user.uid} opponentID={post.uid} postID={id} isSave={saveSelected}/>
 
 		</div>
 	)
