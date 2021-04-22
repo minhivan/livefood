@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from "react";
 import Page from "../../components/Page";
 import ExploreItem from "../../components/Explore/ExploreItem";
-import {db} from "../../firebase";
+import { db} from "../../firebase";
 import {Image as ImageIcon} from "react-feather";
 import {makeStyles} from "@material-ui/core/styles";
+import NavBar from "../../components/SideBar/LeftSideBar";
 
 const useStyles = makeStyles((theme) => ({
     icon: {
@@ -32,7 +33,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const Explore = () => {
+const Explore = (props) => {
+
     const [explore, setExplore] = useState([]);
     useEffect(() => {
         window.scroll({top: 0, left: 0, behavior: 'smooth' });
@@ -61,7 +63,9 @@ const Explore = () => {
             title="Explore | LiveFood"
             className="app__bodyContainer"
         >
+
             <div className="explore__root">
+                <NavBar userLogged={props.userLogged}/>
                 <div className="explore__container">
                     {
                         explore.length > 0 ? (

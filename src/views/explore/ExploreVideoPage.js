@@ -4,6 +4,7 @@ import {db} from "../../firebase";
 import {Video as VideoIcon} from "react-feather";
 import {makeStyles} from "@material-ui/core/styles";
 import ExploreItem from "../../components/Explore/ExploreItem";
+import NavBar from "../../components/SideBar/LeftSideBar";
 
 const useStyles = makeStyles((theme) => ({
     icon: {
@@ -33,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-const ExploreVideo = () => {
+const ExploreVideo = (props) => {
     const classes = useStyles();
 
     const [exploreVid, setExploreVid] = useState([]);
@@ -66,6 +67,7 @@ const ExploreVideo = () => {
             className="app__bodyContainer"
         >
             <div className="explore__root">
+                <NavBar userLogged={props.userLogged}/>
                 <div className="explore__container">
                     {
                         exploreVid.length > 0 ? (

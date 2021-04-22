@@ -31,7 +31,7 @@ function RightSideBar(props) {
     // const classes = useStyles();
     const [users, setUsers] = useState([])
 
-    const userRef = props?.user?.uid && db.collection('users').doc(props.user.uid);
+    const userRef = props?.userLogged?.uid && db.collection('users').doc(props.userLogged.uid);
     const [userSnapshot] = useDocument(userRef);
 
 
@@ -40,9 +40,9 @@ function RightSideBar(props) {
     useEffect(() => {
         var followingList;
 
-        if(typeof userSnapshot?.data()?.following !== 'undefined' && userSnapshot?.data()?.following.length >= 0){
+        if(typeof userSnapshot?.data()?.following !== 'undefined'){
             followingList = userSnapshot.data().following
-            followingList.push(props.user.uid);
+            followingList.push(props.userLogged.uid);
             return db.collection("users")
                 .where('uid' ,'not-in' , followingList )
                 .limit(4)
@@ -133,7 +133,7 @@ function RightSideBar(props) {
                                         variant="outlined"
                                         color="primary"
                                         className="followBtn"
-                                        onClick={() => handleUserFollow(props.user.uid, opponent.uid)}
+                                        onClick={() => handleUserFollow(props.userLogged.uid, opponent.uid)}
                                     >
                                         Follow
                                     </Button>

@@ -16,6 +16,12 @@ import firebase from "firebase";
 import Snackbar from "@material-ui/core/Snackbar";
 import {Alert} from "@material-ui/lab";
 import {green} from "@material-ui/core/colors";
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+
+
 
 const useStyles = makeStyles((theme) => ({
 
@@ -74,6 +80,11 @@ const useStyles = makeStyles((theme) => ({
         resize: "vertical",
         border: "1px solid rgba(var(--ca6,219,219,219),1)",
         width: "100%"
+    },
+    formControl: {
+        margin: 0,
+        width: "100%",
+        height: "32px"
     },
     submit: {
         display: "flex",
@@ -143,8 +154,7 @@ function getModalStyle() {
 }
 
 
-const EditAccount = () => {
-    const [user] = useAuthState(auth);
+const EditAccount = (props) => {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
     const [modalStyle] = useState(getModalStyle);
@@ -155,7 +165,7 @@ const EditAccount = () => {
     const [bio, setBio] = useState('');
     const [phone, setPhone] = useState('');
     const [loadingAvt, setLoadingAvt] = useState(false);
-    const [userData, loading] = useDocument(db.collection("users").doc(user.uid));
+    const [userData] = useDocument(props.userLogged &&  db.collection("users").doc(props.userLogged.uid));
     const [openSnack, setOpenSnack] = useState(false);
 
 
@@ -166,7 +176,7 @@ const EditAccount = () => {
         setBio(userData?.data()?.bio ?? '');
         setPhone(userData?.data()?.phoneNumber ?? '');
         // console.log(userData?.data()?.phoneNumber && userData?.data()?.phoneNumber)
-    }, [loading, userData])
+    }, [userData])
 
     const handleCloseSnack = (event) => {
         setOpenSnack(false);
@@ -204,7 +214,7 @@ const EditAccount = () => {
                     .getDownloadURL()
                     .then(url => {
                         // Update from firestore
-                        db.collection("users").doc(user.uid).update({
+                        db.collection("users").doc(props.userLogged.uid).update({
                             updateAt: firebase.firestore.FieldValue.serverTimestamp(),
                             photoURL: url,
                         })
@@ -228,7 +238,7 @@ const EditAccount = () => {
 
 
     const handleRemove = event => {
-        db.collection("users").doc(user.uid).update({
+        db.collection("users").doc(props.userLogged.uid).update({
             updateAt: firebase.firestore.FieldValue.serverTimestamp(),
             photoURL: "",
         })
@@ -247,7 +257,7 @@ const EditAccount = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        db.collection("users").doc(user.uid).update({
+        db.collection("users").doc(props.userLogged.uid).update({
             bio: bio,
             profileLink: link,
             fullName: fullName,
@@ -271,15 +281,15 @@ const EditAccount = () => {
                 <CardHeader
                     className={classes.avatarHolder}
                     avatar={
-                        user ? (
-                            <Avatar className={classes.avatar} alt={user.displayName} src={user.photoURL}/>
+                        props.userLogged ? (
+                            <Avatar className={classes.avatar} alt={props.userLogged.displayName} src={props.userLogged.photoURL}/>
                         ):(
                             <Skeleton animation="wave" variant="circle" width={40} height={40} />
                         )
                     }
                     title={
-                        user?.uid ? (
-                            <Link to={`/profile/${user.uid}`} className={classes.displayName}>{user.displayName}</Link>
+                        props.userLogged?.uid ? (
+                            <Link to={`/profile/${props.userLogged.uid}`} className={classes.displayName}>{props.userLogged.displayName}</Link>
                         ) : (
                             <Skeleton animation="wave" height={10} width="30%" style={{ marginBottom: 6 }} />
                         )
@@ -364,7 +374,7 @@ const EditAccount = () => {
                     </aside>
                     <div className={classes.input}>
                         <input
-                            value={user.email}
+                            value={props.userLogged.email}
                             disabled="disabled"
                             className={classes.inputField}
                             aria-required="false" id="pepEmail" placeholder="Email" type="text"
@@ -384,6 +394,26 @@ const EditAccount = () => {
                             className={classes.inputField}
                             aria-required="false" id="pepPhone" placeholder="Phone" type="text"
                         />
+                    </div>
+                </div>
+
+                <div className={classes.holder}>
+                    <aside className={classes.label}>
+                        <label htmlFor="pepType" style={{fontWeight: "bold", fontSize: "18px"}}>Account Type</label>
+                    </aside>
+                    <div className={classes.input}>
+                        <FormControl className={classes.formControl}>
+                            <InputLabel id="demo-simple-select-label">Age</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value=""
+                            >
+                                <MenuItem value={10}>Ten</MenuItem>
+                                <MenuItem value={20}>Twenty</MenuItem>
+                                <MenuItem value={30}>Thirty</MenuItem>
+                            </Select>
+                        </FormControl>
                     </div>
                 </div>
 

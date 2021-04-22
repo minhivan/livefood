@@ -2,15 +2,12 @@ import React, {useEffect, useState} from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import Divider from '@material-ui/core/Divider';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
-import {auth, db} from "../../firebase";
+import {db} from "../../firebase";
 import Button from "@material-ui/core/Button";
-import {useAuthState} from "react-firebase-hooks/auth";
-import firebase from "firebase";
 import { useDocument} from "react-firebase-hooks/firestore";
 import {Link} from "react-router-dom";
 import handleUserFollow from "../../utils/handleUserFollow";
@@ -20,9 +17,17 @@ const useStyles = makeStyles((theme) => ({
     root: {
         width: '100%',
         backgroundColor: theme.palette.background.paper,
+        marginLeft: "10px",
+        borderRadius: "max(0px, min(8px, calc((100vw - 4px - 100%) * 9999))) / 8px",
+        padding: 0
     },
     inline: {
         display: 'inline',
+    },
+    listItem: {
+        "&:hover": {
+            backgroundColor: "rgba(38, 50, 56, 0.04)",
+        },
     },
     button: {
         overflow: "hidden",
@@ -49,21 +54,17 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: "center",
         minWidth: "150px",
         color: "#454444",
-        // "&:hover": {
-        //     backgroundColor: "#c3d6fa",
-        // },
         marginRight: "15px",
         textTransform: "capitalize"
     }
 }));
 
 
-export default function ExplorePeopleItem() {
+export default function ExplorePeopleItem(props) {
     const classes = useStyles();
     const [users, setUsers] = useState([])
-    const [userData] = useAuthState(auth);
 
-    const userRef = db.collection('users').doc(userData.uid);
+    const userRef = props.userLogged && db.collection('users').doc(props.userLogged.uid);
     const [userSnapshot] = useDocument(userRef);
 
     let userFollowingList = userSnapshot?.data()?.following;
@@ -72,10 +73,9 @@ export default function ExplorePeopleItem() {
     // List user
     useEffect(() => {
         var followingList;
-
-        if(typeof userSnapshot?.data()?.following !== 'undefined' && userSnapshot?.data()?.following.length >= 0){
+        if(typeof userSnapshot?.data()?.following !== 'undefined' && userSnapshot?.data()?.following.length > 0){
             followingList = userSnapshot.data().following
-            followingList.push(userData.uid);
+            followingList.push(props.userLogged.uid);
             return db.collection("users")
                 .where('uid' ,'not-in' , followingList )
                 .get().then(snapshot => {
@@ -84,6 +84,16 @@ export default function ExplorePeopleItem() {
                         user: doc.data(),
                     })));
             })
+        }
+        else{
+            return db.collection("users")
+                .where('uid' ,'!=' , props.userLogged.uid )
+                .get().then(snapshot => {
+                    setUsers(snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        user: doc.data(),
+                    })));
+                })
         }
     }, [userFollowingList?.length])
 
@@ -107,11 +117,11 @@ export default function ExplorePeopleItem() {
     }
 
     return (
-        <div className="explore__container">
+        <div className="explore__container" >
             <List className={classes.root}>
                 {
                     users?.map(({id, user}) => (
-                        <ListItem key={id} alignItems="flex-start">
+                        <ListItem key={id} alignItems="center" className={classes.listItem}>
                             <ListItemAvatar>
                                 <Avatar alt={user.displayName} src={user.photoURL} />
                             </ListItemAvatar>
@@ -138,7 +148,7 @@ export default function ExplorePeopleItem() {
                                         variant="outlined"
                                         style={{textTransform: "capitalize"}}
                                         className={classes.buttonUnfollow}
-                                        onClick={() => handleUserUnfollow(userData.uid, id)}
+                                        onClick={() => handleUserUnfollow(props.userLogged.uid, id)}
                                     >
                                         Unfollow
                                     </Button>
@@ -148,7 +158,7 @@ export default function ExplorePeopleItem() {
                                         color="primary"
                                         style={{textTransform: "capitalize"}}
                                         className={classes.button}
-                                        onClick={() => handleUserFollow(userData.uid, id)}
+                                        onClick={() => handleUserFollow(props.userLogged.uid, id)}
                                     >
                                         Follow
                                     </Button>

@@ -16,6 +16,8 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         paddingTop: 0,
         paddingBottom: 0,
+        borderBottom: "1px solid rgb(235, 238, 240)",
+
     },
     button: {
         color: theme.palette.text.secondary,

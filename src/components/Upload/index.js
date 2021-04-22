@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function Upload({user}) {
+function Upload({userLogged}) {
     const [open, setOpen] = useState(false);
     const classes = useStyles();
     const [image, setImage] = useState('');
@@ -96,7 +96,7 @@ function Upload({user}) {
                     <div className="caption__holder" onClick={handleOpen}>
                         <CreateTwoToneIcon />
                         <span>
-                            What's new, {user.displayName} ?
+                            What's new, {userLogged.displayName} ?
                         </span>
                     </div>
                 </div>

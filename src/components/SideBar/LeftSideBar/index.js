@@ -14,15 +14,13 @@ import {
     Video as VideoIcon,
     BookOpen as BookOpenIcon,
     TrendingUp as TrendingUpIcon,
-    Bell as BellIcon,
+    Compass as BellIcon,
     MapPin as MapIcon
 } from 'react-feather';
 import NavItem from './NavItem';
-import {useAuthState} from "react-firebase-hooks/auth";
-import {auth} from "../../../firebase";
+import {useDocument} from "react-firebase-hooks/firestore";
+import {db} from "../../../firebase";
 
-// import {useAuthState} from "react-firebase-hooks/auth";
-// import {auth} from "../../../firebase";
 
 
 
@@ -63,17 +61,15 @@ const useStyles = makeStyles(() => ({
 
 const NavBar = (props) => {
     const classes = useStyles();
-    const [user] = useAuthState(auth);
-    let uid = '';
-    if(user){
-        uid = user.uid;
-    }
+    const [userData] = useDocument(props.userLogged && db.collection("users").doc(props.userLogged.uid));
 
-    const items = [
+    console.log(userData?.data()?.fullName)
+
+    const itemsWithAuth = [
         {
             href: '/explore',
             icon: BellIcon,
-            title: 'Notifications'
+            title: 'Explore'
         },
         {
             href: '/explore/people',
@@ -81,7 +77,7 @@ const NavBar = (props) => {
             title: 'Followers'
         },
         {
-            href: '/profile/saved/' + uid,
+            href: '/profile/saved/' + props.userLogged?.uid,
             icon: BookmarkIcon,
             title: 'Saves'
         },
@@ -106,6 +102,35 @@ const NavBar = (props) => {
             title: 'Location'
         },
     ];
+    const itemsWithoutAuth = [
+        {
+            href: '/explore',
+            icon: BellIcon,
+            title: 'Explore'
+        },
+        {
+            href: '/explore/watch',
+            icon: VideoIcon,
+            title: 'Watch'
+        },
+        {
+            href: '/recipe',
+            icon: BookOpenIcon,
+            title: 'Recipe'
+        },
+        {
+            href: '/trending',
+            icon: TrendingUpIcon,
+            title: 'Trending'
+        },
+        {
+            href: '/location',
+            icon: MapIcon,
+            title: 'Location'
+        },
+    ];
+
+
     const content = (
         <Box
             height="100%"
@@ -113,7 +138,7 @@ const NavBar = (props) => {
             flexDirection="column"
         >
             {
-                props.user ? (
+                props.userLogged ? (
                     <Box
                         alignItems="center"
                         display="flex"
@@ -124,24 +149,41 @@ const NavBar = (props) => {
                         <Avatar
                             className={classes.avatar}
                             component={RouterLink}
-                            src={props.user?.photoURL}
-                            to={`profile/${props.user?.uid}`}
+                            src={props.userLogged?.photoURL}
+                            to={`profile/${props.userLogged?.uid}`}
                         />
-                        <Link to={`profile/${props.user?.uid}`} className={classes.name}>{props.user?.displayName}</Link>
+
+                        <Link to={`profile/${props.userLogged?.uid}`} className={classes.name}>
+                            <span style={{display: "block", fontWeight: "bold", paddingBottom: 5}}>{props.userLogged?.displayName}</span>
+                            <span style={{display: "block", color: "#546e7a"}}>{userData?.data()?.fullName}</span>
+                        </Link>
 
                     </Box>
                 ) : null
             }
             <Box p={2} className={classes.util}>
                 <List style={{padding: "0"}}>
-                    {items.map((item) => (
-                        <NavItem
-                            key={item.title}
-                            href={item.href}
-                            title={item.title}
-                            icon={item.icon}
-                        />
-                    ))}
+                    {
+                        props.userLogged ? (
+                            itemsWithAuth.map((item) => (
+                                <NavItem
+                                    key={item.title}
+                                    href={item.href}
+                                    title={item.title}
+                                    icon={item.icon}
+                                />
+                            ))
+                        ) : (
+                            itemsWithoutAuth.map((item) => (
+                                <NavItem
+                                    key={item.title}
+                                    href={item.href}
+                                    title={item.title}
+                                    icon={item.icon}
+                                />
+                            ))
+                        )
+                    }
                 </List>
             </Box>
         </Box>

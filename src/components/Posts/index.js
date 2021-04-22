@@ -36,12 +36,11 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default function NewFeed(){
+export default function NewFeed(props){
     const classes = useStyles();
     const [posts, setPosts] = useState([]);
-    const [ authUser ] = useAuthState(auth);
 
-    const userRef = db.collection('users').doc(authUser.uid);
+    const userRef = props.userLogged && db.collection('users').doc(props.userLogged.uid);
     const [userSnapshot] = useDocument(userRef);
 
     let userFollow = userSnapshot?.data()?.following;
@@ -50,7 +49,7 @@ export default function NewFeed(){
         var userFollowingList;
         if(typeof userFollow !== 'undefined' && userFollow.length > 0){
             userFollowingList = userFollow;
-            userFollowingList.push(authUser.uid);
+            userFollowingList.push(props.userLogged.uid);
             return db.collection('posts')
                 .orderBy('timestamp', "desc")
                 .where('uid', 'in', userFollowingList)
@@ -64,7 +63,7 @@ export default function NewFeed(){
         else{
             return db.collection('posts')
                 .orderBy('timestamp', "desc")
-                .where('uid', '==', authUser.uid)
+                .where('uid', '==', props.userLogged.uid)
                 .onSnapshot(snapshot => {
                     setPosts(snapshot.docs.map(doc => ({
                         id: doc.id,
@@ -80,8 +79,8 @@ export default function NewFeed(){
     return(
         <div className="app__post">
             {
-                authUser ? (
-                    <Upload user={authUser}/>
+                props.userLogged ? (
+                    <Upload userLogged={props.userLogged}/>
                 ) : null
             }
             {

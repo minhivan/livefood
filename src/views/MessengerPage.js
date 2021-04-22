@@ -36,15 +36,12 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function PageMessenger() {
+function PageMessenger(props) {
     const dispatch = useDispatch();
-
-
     let { id } = useParams();
     const classes = useStyles();
     const [open, setOpen] = useState(false);
-    const [user] = useAuthState(auth);
-    const userChatRef = db.collection("conversations").where('users', 'array-contains', user.email).orderBy('lastUpdate', 'desc');
+    const userChatRef = props.userLogged && db.collection("conversations").where('users', 'array-contains', props.userLogged.email).orderBy('lastUpdate', 'desc');
     // const userChatRef = db.collection("conversations").where('users', 'array-contains', user.email)
 
     const [chatsSnapshot] = useCollection(userChatRef);
@@ -97,7 +94,7 @@ function PageMessenger() {
 
 
             {/*  Create chat  */}
-            <CreateNewChat open={open} handleClose={handleClose} user={user}/>
+            <CreateNewChat open={open} handleClose={handleClose} user={props.userLogged}/>
         </Page>
     )
 }

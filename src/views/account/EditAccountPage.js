@@ -20,9 +20,9 @@ const EditAccountPage = (props) => {
     function content(action){
         switch (action){
             case "account_edit":
-                return <EditAccount />
+                return <EditAccount userLogged={props.userLogged}/>
             case "account_password":
-                return <EditPassword />
+                return <EditPassword userLogged={props.userLogged}/>
             default:
                 return <></>
         }

@@ -61,7 +61,7 @@ const ProfileVids = ({uid}) => {
     }, [uid]);
 
     return(
-        <div className="explore__root">
+        <div className="explore__root" style={{paddingTop: "20px"}}>
             <div className="explore__container">
                 {
                     vid.length > 0 ? (
