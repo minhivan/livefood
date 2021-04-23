@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {IconButton, Modal, TextField} from "@material-ui/core";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 
@@ -72,7 +72,8 @@ const useStyles = makeStyles((theme) => ({
         alignItems: "center"
     },
     suggest: {
-        padding: "20px 0"
+        padding: "20px 0",
+        overflowY: "scroll"
     },
     userToChat: {
         padding: "10px 0",

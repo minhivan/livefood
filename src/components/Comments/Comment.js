@@ -24,7 +24,6 @@ function PostComment (props) {
                                     dayjs(new Date(props.comment.timestamp.seconds * 1000).toLocaleString()).fromNow()}</span>
                             ) : null
                         }
-
                         <p>{props.comment.text}</p>
                     </div>
                 </div>

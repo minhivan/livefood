@@ -22,8 +22,8 @@ const routes = (isLoggedIn)  => [
         path: '/',
         element: <MainLayout />,
         children: [
-            { path: 'p/:id', element: <SinglePage type="post" />},
-            { path: 'recipe/', element: <RecipePage />},
+            { path: 'p/:id', element: <SinglePage userLogged={isLoggedIn} type="post" />},
+            { path: 'recipe/', element: <RecipePage userLogged={isLoggedIn}/>},
             { path: '/', element: isLoggedIn ? <HomePage userLogged={isLoggedIn}/> : <Navigate to="/explore" />  },
             { path: '404', element: <NotFoundView /> },
             { path: '*', element: <Navigate to="/404" /> }

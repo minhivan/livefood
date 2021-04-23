@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {auth, provider} from "../../firebase";
 import {Button, TextField} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
@@ -86,7 +86,9 @@ function PageLogin() {
 
     const signUpGoogle = (event) => {
         event.preventDefault();
-        auth.signInWithPopup(provider).catch((error) =>{
+        auth.signInWithPopup(provider).then((result) => {
+            checkFirebaseAuth(result.user);
+        }).catch((error) =>{
             alert(error.message)
         })
     }
@@ -98,14 +100,6 @@ function PageLogin() {
                 alert(error.message);
             });
     }
-
-    useEffect( () => {
-        return auth.onAuthStateChanged((authUser) => {
-            if (authUser) {
-                checkFirebaseAuth(authUser);
-            }
-        });
-    }, [user])
 
     if(user){
         return <Navigate to="/"/>

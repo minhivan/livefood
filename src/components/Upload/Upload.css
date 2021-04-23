@@ -37,7 +37,7 @@
     height: 100%;
     text-transform: uppercase;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 1rem;
     box-shadow: 0px 0px 3px 0px #ddc4c4bf;
 }
 .upload .upload__container .upload__picker .upload__pickerButton:hover{
@@ -63,6 +63,7 @@
 .upload .upload__container .upload__picker .upload__buttonLabel{
     padding-left: 10px;
     font-weight: 600;
+    font-size: 1rem;
 }
 
 
@@ -100,9 +101,13 @@
     color: #fff;
     border: none;
     border-radius: 0.5rem;
-    text-transform: uppercase;
+}
+
+.upload__button button span{
+    text-transform: capitalize;
     letter-spacing: 1px;
     font-weight: bold;
+    font-size: 16px;
 }
 .upload__button button:hover{
     background-color: #03649d;
@@ -158,13 +163,14 @@
 }
 
 
-.popup__review{
-    margin-bottom: 15px;
-}
 
 .handle__button .handle__upload button:hover{
     background-color: #0679ba;
     transition: 0.3s all ease;
+}
+
+.popup__review{
+    position: relative;
 }
 
 
@@ -172,8 +178,6 @@
 .step{
     padding-top: 15px;
 }
-
-
 
 
 @media (min-width: 481px) and (max-width: 767px) {

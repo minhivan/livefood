@@ -48,6 +48,7 @@ export default function NewFeed(props){
     useEffect( () => {
         var userFollowingList;
         if(typeof userFollow !== 'undefined' && userFollow.length > 0){
+
             userFollowingList = userFollow;
             userFollowingList.push(props.userLogged.uid);
             return db.collection('posts')

@@ -40,11 +40,21 @@ function RightSideBar(props) {
     useEffect(() => {
         var followingList;
 
-        if(typeof userSnapshot?.data()?.following !== 'undefined'){
+        if(typeof userSnapshot?.data()?.following !== 'undefined' && userSnapshot?.data()?.following.length >= 0){
             followingList = userSnapshot.data().following
-            followingList.push(props.userLogged.uid);
+            props.userLogged.uid && followingList.push(props.userLogged.uid);
             return db.collection("users")
                 .where('uid' ,'not-in' , followingList )
+                .limit(4)
+                .get().then(snapshot => {
+                    setUsers(snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        opponent: doc.data(),
+                    })));
+                })
+        }else{
+            return db.collection("users")
+                .where('uid' ,'!=' , props?.userLogged?.uid )
                 .limit(4)
                 .get().then(snapshot => {
                     setUsers(snapshot.docs.map(doc => ({

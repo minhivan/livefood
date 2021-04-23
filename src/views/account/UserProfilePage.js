@@ -36,10 +36,9 @@ const UserProfilePage = (props) => {
         isAuthProfile = true;
     }
 
-    const [userData] = useDocument(db.collection('users').doc(id));
+    const [userData] = useDocument(id && db.collection('users').doc(id));
     const userSnapshot = userData?.data()
     const [userPost] = useCollection(id && db.collection("posts").where("uid", '==', id));
-
 
     return(
         <Page

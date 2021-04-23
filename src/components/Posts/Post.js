@@ -23,7 +23,7 @@ import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
 import BookmarkRoundedIcon from '@material-ui/icons/BookmarkRounded';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import {Button, CardContent, Collapse, Modal, TextField} from "@material-ui/core";
+import {Button, CardContent, Collapse,TextField} from "@material-ui/core";
 import {db, auth} from "../../firebase";
 import firebase from "firebase";
 import clsx from "clsx";
@@ -37,7 +37,6 @@ import {useDocument} from "react-firebase-hooks/firestore";
 import {ToggleButton} from "@material-ui/lab";
 import Divider from "@material-ui/core/Divider";
 import handleLikePost from "../../utils/handleLikePost";
-import {green} from "@material-ui/core/colors";
 import PostAction from "./PostAction";
 import Popup from "../Upload/Popup";
 
@@ -89,10 +88,11 @@ const useStyles = makeStyles((theme) => ({
 		whiteSpace: "pre-line",
 		lineHeight: "26px"
 	},
-	likeButton: {
+	actionButton: {
 		border: "0",
 		backgroundColor: "none",
 		borderRadius: "50%",
+		color: "rgba(0, 0, 0, 0.54)",
 		'&:hover': {
 			color: 'black',
 		}
@@ -120,12 +120,12 @@ function Post( {id, post, author, ...rest} ) {
 	const [expanded, setExpanded] = useState(false);
 
 	// post author data
-	const [postAuthor] = useDocument(db.collection('users').doc(author))
+	const [postAuthor] = useDocument(author && db.collection('users').doc(author))
 	const postAuthorSnapshot = postAuthor?.data();
 
 	// auth user data
 	const [user] = useAuthState(auth);
-	const authUserRef = db.collection("users").doc(user.uid);
+	const authUserRef = user.uid && db.collection("users").doc(user.uid);
 
 	const [selected, setSelected] = useState(false);
 	const [saveSelected, setSaveSelected] = useState(false);
@@ -313,7 +313,7 @@ function Post( {id, post, author, ...rest} ) {
 										selected={selected}
 										// className={classes.likeButton}
 										classes={{
-											root: classes.likeButton,
+											root: classes.actionButton,
 											selected: classes.selected,
 										}}
 										onClick={() => {
@@ -322,7 +322,7 @@ function Post( {id, post, author, ...rest} ) {
 										}}
 									>
 										{
-											selected ? <FavoriteRoundedIcon style={{color: "black"}}/> : <FavoriteBorderTwoToneIcon />
+											selected ? <FavoriteRoundedIcon style={{color: "red"}}/> : <FavoriteBorderTwoToneIcon />
 										}
 									</ToggleButton>
 								</div>
@@ -337,7 +337,7 @@ function Post( {id, post, author, ...rest} ) {
 										selected={saveSelected}
 										// className={classes.likeButton}
 										classes={{
-											root: classes.likeButton,
+											root: classes.actionButton,
 											selected: classes.selected,
 										}}
 										onClick={() => {

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Avatar, Badge, Button, CircularProgress, IconButton, Modal, TextField} from "@material-ui/core";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -76,7 +76,8 @@ const useStyles = makeStyles((theme) => ({
     reviewImg: {
         width: "100%",
         objectFit: "contain",
-        boxShadow: "0px 0px 2px 0px rgba(21,12,12,0.9)"
+        boxShadow: "0px 0px 2px 0px rgba(21,12,12,0.9)",
+        borderRadius: "max(0px, min(8px, calc((100vw - 4px - 100%) * 9999))) / 8px"
     },
     inputText: {
         width: "100%",
@@ -92,6 +93,15 @@ const useStyles = makeStyles((theme) => ({
         marginTop: -12,
         marginLeft: -12,
     },
+    buttonDisable: {
+        color: "#bcc0c4 !important",
+        backgroundColor : "#e4e6eb !important"
+    },
+    buttonRemove: {
+        position: "absolute",
+        top: "0px",
+        right: "0"
+    }
 }));
 
 
@@ -103,70 +113,105 @@ function Popup(props){
     const [caption, setCaption] = useState('');
     const [progress, setProgress] = useState('');
     const [loading, setLoading] = useState(false);
+    const [disable, setDisable] = useState(true);
 
-    // const handleUpload = () => {
-    //
-    // }
+
+    const removeImage = () => {
+        props.setImage('');
+    }
+
 
     // const [post] = useCollection()
     let media;
     if(props.image){
         if(props.image.type === "video/mp4" ){
-            media = <video controls className={classes.reviewImg} muted="muted">
-                <source src={window.URL.createObjectURL(props.image)} type="video/mp4"/>
-            </video>
+
+            media =
+                <>
+                    <video controls className={classes.reviewImg} muted="muted">
+                        <source src={window.URL.createObjectURL(props.image)} type="video/mp4"/>
+                    </video>
+                    <div className={classes.buttonRemove}>
+                        <IconButton aria-label="Cancel" color="inherit" onClick={removeImage} >
+                            <CancelTwoToneIcon />
+                        </IconButton>
+                    </div>
+                </>
         } else {
-            media = <img className={classes.reviewImg} src={window.URL.createObjectURL(props.image)} alt="" />
+            media =
+                <>
+                    <img className={classes.reviewImg} src={window.URL.createObjectURL(props.image)} alt="" />
+                    <div className={classes.buttonRemove}>
+                        <IconButton aria-label="Cancel" color="inherit" onClick={removeImage} >
+                            <CancelTwoToneIcon />
+                        </IconButton>
+                    </div>
+                </>
+
         }
     }
 
 
     const handleUpload = () => {
-        const uploadTask = storage.ref(`images/${props.image.name}`).put(props.image);
-        uploadTask.on(
-            "state_changed",
-            (snapshot => {
-                const progressData = Math.round(
-                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-                );
-                setProgress(progressData);
-                setLoading(true);
-            }),
-            (error => {
-                console.log(error);
-            }),
-            () => {
-                storage
-                    .ref("images")
-                    .child(props.image.name)
-                    .getDownloadURL()
-                    .then(url => {
-                        db.collection("posts").add({
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                            hasImage: true,
-                            caption: caption,
-                            mediaUrl: url,
-                            user: db.doc('users/' + user.uid),
-                            mediaType: props.image.type,
-                            uid: user.uid
-                        })
-                            .then(function(docRef) {
-                                console.log("Document written with ID: ", docRef.id);
-
+        if(props.image) {
+            const uploadTask = storage.ref(`images/${props.image.name}`).put(props.image);
+            uploadTask.on(
+                "state_changed",
+                (snapshot => {
+                    const progressData = Math.round(
+                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                    );
+                    setProgress(progressData);
+                    setLoading(true);
+                }),
+                (error => {
+                    console.log(error);
+                }),
+                () => {
+                    storage
+                        .ref("images")
+                        .child(props.image.name)
+                        .getDownloadURL()
+                        .then(url => {
+                            db.collection("posts").add({
+                                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                                hasImage: true,
+                                caption: caption,
+                                mediaUrl: url,
+                                user: db.doc('users/' + user.uid),
+                                mediaType: props.image.type,
+                                uid: user.uid
                             })
-                            .catch(function(error) {
-                                console.error("Error adding document: ", error);
-                            });
-                        props.setOpenSnack(true);
-                        props.setImage(null);
-                        props.handleClose(true);
-                        setProgress('0');
-                        setCaption("");
-                        setLoading(false);
-                    })
-            }
-        )
+                                .then(function(docRef) {
+                                    console.log("Document written with ID: ", docRef.id);
+                                    db.collection("users").doc(user.uid).update({
+                                        post: firebase.firestore.FieldValue.arrayUnion(docRef.id)
+                                    })
+                                })
+                                .catch(function(error) {
+                                    console.error("Error adding document: ", error);
+                                });
+                            props.setOpenSnack(true);
+                            props.setImage(null);
+                            props.handleClose(true);
+                            setProgress('0');
+                            setCaption("");
+                            setLoading(false);
+                        })
+                }
+            )
+        }
     }
+
+
+    useEffect(() => {
+        if(caption.length > 0 || props.image){
+            setDisable(false);
+        }else {
+            setDisable(true)
+        }
+    },[caption.length, props.image])
+
 
     return (
         <Modal
@@ -205,7 +250,7 @@ function Popup(props){
                             placeholder="What's on your mind ... "
                             value={caption}
                             onChange={event => setCaption(event.target.value)}
-                            InputProps={{ disableUnderline: true, style : {fontSize: "18px", fontFamily: "'Quicksand', sans-serif"}}}
+                            InputProps={{ disableUnderline: true, style : {fontSize: "1rem"}}}
                         />
                     </div>
                     {
@@ -224,7 +269,7 @@ function Popup(props){
 
                 </div>
                 <div className="popup__picker">
-                    <h3>Add to this post </h3>
+                    <h3 style={{textTransform: "inherit", fontSize: "1rem", letterSpacing: "0"}}>Add to this post </h3>
                     <div className="popup__iconPicker">
                         <div>
                             <label htmlFor="icon-button-file" className="upload__pickerButton">
@@ -253,10 +298,14 @@ function Popup(props){
                 </div>
                 <div className="upload__button">
                     <Button
+                        classes={{
+                            disabled: classes.buttonDisable
+                        }}
+                        type="submit"
                         onClick={handleUpload}
-                        disabled={loading}
+                        disabled={disable}
                     >
-                        Create
+                        POST
                     </Button>
                     {loading && <CircularProgress size={24} value={parseInt(progress)} className={classes.buttonProgress} /> }
                 </div>

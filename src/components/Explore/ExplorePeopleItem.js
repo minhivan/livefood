@@ -123,7 +123,7 @@ export default function ExplorePeopleItem(props) {
                     users?.map(({id, user}) => (
                         <ListItem key={id} alignItems="center" className={classes.listItem}>
                             <ListItemAvatar>
-                                <Avatar alt={user.displayName} src={user.photoURL} />
+                                <Avatar alt="" src={user.photoURL} />
                             </ListItemAvatar>
                             <ListItemText
                                 primary={

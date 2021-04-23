@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
@@ -81,8 +81,9 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         reviewImg: {
             width: "100%",
-            objectFit: "contain",
-            padding: "15px 0"
+            objectFit: "cover",
+            marginTop: "10px",
+            borderRadius: "10px"
         },
         popIcon: {
             height: "28px",
@@ -121,6 +122,11 @@ const useStyles = makeStyles((theme: Theme) =>
             marginTop: -12,
             marginLeft: -12,
         },
+        buttonRemove: {
+            position: "absolute",
+            top: "10px",
+            right: "0"
+        }
     }),
 
 );
@@ -152,9 +158,13 @@ export default function RecipeStepper(props) {
     const [progress, setProgress] = useState('');
     const [postLoading, setPostLoading] = useState(false);
 
+    const [disable, setDisable] = useState(true);
 
     const [cate] = useCollection(db.collection("category"))
-    
+
+    const removeImage = () => {
+        props.setImage('');
+    }
 
     const GetStepContent = (step) => {
         const classes = useStyles();
@@ -200,16 +210,15 @@ export default function RecipeStepper(props) {
                                 />
                                 <FormControl variant="outlined" className={classes.formControl}>
                                     <Select
-                                        native
                                         inputProps={{
                                             id: 'prep-time'
                                         }}
                                         value={prepUnit}
                                         onChange={event => setPrepUnit(event.target.value)}
                                     >
-                                        <option value="Minute">Minute</option>
-                                        <option value="Hour">Hour</option>
-                                        <option value="Day">Day</option>
+                                        <option value={'Minute'}>Minute</option>
+                                        <option value={'Hour'}>Hour</option>
+                                        <option value={'Day'}>Day</option>
                                     </Select>
                                 </FormControl>
                             </div>
@@ -230,16 +239,15 @@ export default function RecipeStepper(props) {
                                 />
                                 <FormControl variant="outlined" className={classes.formControl}>
                                     <Select
-                                        native
                                         inputProps={{
                                             id: 'cook-time'
                                         }}
                                         value={cookUnit}
                                         onChange={event => setCookUnit(event.target.value)}
                                     >
-                                        <option selected="selected" value="Minute">Minute</option>
-                                        <option value="Hour">Hour</option>
-                                        <option value="Day">Day</option>
+                                        <option value={'Minute'}>Minute</option>
+                                        <option value={'Hour'}>Hour</option>
+                                        <option value={'Day'}>Day</option>
                                     </Select>
                                 </FormControl>
                             </div>
@@ -274,8 +282,9 @@ export default function RecipeStepper(props) {
                                 value={category}
                                 onChange={event => setCategory(event.target.value)}
                                 label="Category"
+                                style={{textTransform: "uppercase", fontWeight: "bold"}}
                             >
-                                <option aria-label="None" value="" />
+                                <option aria-label="None" value="" disabled/>
                                 {
                                     cate?.docs?.map((doc) => (
                                         <option key={doc.id} value={doc.data().title}>{doc.data().title}</option>
@@ -342,7 +351,7 @@ export default function RecipeStepper(props) {
                             ) : null
                         }
                         <div className="popup__picker">
-                            <h3>Add more media</h3>
+                            <h3 style={{textTransform: "inherit", fontSize: "1rem", letterSpacing: "0"}}>Add more media</h3>
                             <div className="popup__iconPicker">
                                 <div>
                                     <label htmlFor="icon-button-file" className="upload__pickerButton">
@@ -378,9 +387,17 @@ export default function RecipeStepper(props) {
                 <source src={window.URL.createObjectURL(props.image)} type="video/mp4"/>
             </video>
         } else {
-            media = <img className={classes.reviewImg} src={window.URL.createObjectURL(props.image)} alt="" />
+            media = <>
+                <img className={classes.reviewImg} src={window.URL.createObjectURL(props.image)} alt="" />
+                <div className={classes.buttonRemove}>
+                    <IconButton aria-label="Cancel" color="inherit" onClick={removeImage} >
+                        <CancelTwoToneIcon />
+                    </IconButton>
+                </div>
+            </>
         }
     }
+
 
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -397,6 +414,7 @@ export default function RecipeStepper(props) {
 
     const handleUpload = (event) => {
         event.preventDefault();
+
         const uploadTask = storage.ref(`images/${props.image.name}`).put(props.image);
         uploadTask.on(
             "state_changed",
@@ -440,7 +458,9 @@ export default function RecipeStepper(props) {
                         })
                             .then(function(docRef) {
                                 console.log("Document written with ID: ", docRef.id);
-
+                                db.collection("users").doc(authUser.uid).update({
+                                    post: firebase.firestore.FieldValue.arrayUnion(docRef.id)
+                                })
                             })
                             .catch(function(error) {
                                 console.error("Error adding document: ", error);
@@ -455,6 +475,14 @@ export default function RecipeStepper(props) {
         )
     }
 
+
+    useEffect(() => {
+        if(category && title && direction && ingredient && props.image){
+            setDisable(false);
+        }else {
+            setDisable(true)
+        }
+    },[category, direction, ingredient, props.image, title])
 
     return (
         <Modal
@@ -473,7 +501,7 @@ export default function RecipeStepper(props) {
                     </div>
                 </div>
                 <div className={classes.root}>
-                    <form noValidate autoComplete="off" >
+                    <form noValidate autoComplete="off" onSubmit={handleUpload}>
                         <Stepper activeStep={activeStep} orientation="vertical" className={classes.form}>
                             {steps.map((label, index) => (
                                 <Step key={label}>
@@ -491,14 +519,29 @@ export default function RecipeStepper(props) {
                                                 >
                                                     Back
                                                 </Button>
-                                                <Button
-                                                    variant="contained"
-                                                    color="primary"
-                                                    onClick={handleNext}
-                                                    className={classes.button}
-                                                >
-                                                    {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-                                                </Button>
+                                                {
+                                                    activeStep === steps.length - 1 ? (
+                                                        <Button
+                                                            variant="contained"
+                                                            color="primary"
+                                                            onClick={handleNext}
+                                                            className={classes.button}
+                                                            disabled={disable}
+                                                        >
+                                                            Finish
+                                                        </Button>
+                                                    ) : (
+                                                        <Button
+                                                            variant="contained"
+                                                            color="primary"
+                                                            onClick={handleNext}
+                                                            className={classes.button}
+                                                        >
+                                                            Next
+                                                        </Button>
+                                                    )
+                                                }
+
                                             </div>
                                         </div>
                                     </StepContent>

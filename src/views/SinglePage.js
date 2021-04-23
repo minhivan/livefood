@@ -4,12 +4,16 @@ import Page from "../components/Page";
 import RightSideBar from "../components/SideBar/RightSideBar";
 import Post from "../components/Posts/Post";
 import NavBar from "../components/SideBar/LeftSideBar";
-import {useAuthState} from "react-firebase-hooks/auth";
-import {auth, db} from "../firebase";
+import {db} from "../firebase";
 import {useParams} from "react-router";
 
 import {makeStyles} from "@material-ui/core/styles";
 import pic from "../images/Background/undraw_page_not_found_su7k.svg";
+import {useDocument} from "react-firebase-hooks/firestore";
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
+
 
 const useStyles = makeStyles((theme) => ({
 
@@ -41,30 +45,19 @@ const useStyles = makeStyles((theme) => ({
     },
     imgHolder: {
         textAlign: "center"
-    }
+    },
+    backdrop: {
+        zIndex: theme.zIndex.drawer + 1,
+        color: '#fff',
+    },
 }));
 
 const SinglePage = (props) => {
     const classes = useStyles();
-    const [user] = useAuthState(auth);
     let { id } = useParams();
-    const [post, setPost] = useState([]);
-    useEffect(() => {
-        window.scroll({top: 0, left: 0, behavior: 'smooth' })
+    window.scroll({top: 0, left: 0, behavior: 'smooth' })
 
-        db.collection('posts')
-            .doc(id)
-            .get().then(snapshot => {
-                if (snapshot.exists){
-                    setPost({
-                        id: snapshot.id,
-                        post: snapshot.data(),
-                    });
-                }
-            });
-
-    }, [id])
-
+    const [postSnapshot, loading] = useDocument(db.collection("posts").doc(id));
 
 
     return (
@@ -72,32 +65,58 @@ const SinglePage = (props) => {
             title="LiveFood"
             className="app__bodyContainer"
         >
-            <NavBar auth={user}/>
+            <NavBar userLogged={props.userLogged}/>
             <div className="app__post">
                 {
-                    post?.post ? (
-                        <Post
-                            key={id}
-                            id={id}
-                            post={post.post}
-                            author={post.post.uid}
-                        />
+                    loading ? (
+                        <Backdrop className={classes.backdrop} open={loading} >
+                            <CircularProgress color="inherit" />
+                        </Backdrop>
                     ) : (
-                        <>
-                            <div className={classes.wrapper}>
-                                <div className={classes.imgHolder}>
-                                    <img src={pic} alt="404" className={classes.img}/>
+                        postSnapshot?.data() ? (
+                            <Post
+                                key={postSnapshot.id}
+                                id={postSnapshot.id}
+                                post={postSnapshot.data()}
+                                author={postSnapshot.data().uid}
+                            />
+                        ) : (
+                            <>
+                                <div className={classes.wrapper}>
+                                    <div className={classes.imgHolder}>
+                                        <img src={pic} alt="404" className={classes.img}/>
+                                    </div>
+                                    <div className={classes.details}>
+                                        <h1>This page doesn’t exist</h1>
+                                        <p>Please check your URL or return to LiveFood home.</p>
+                                    </div>
                                 </div>
-                                <div className={classes.details}>
-                                    <h1>This page doesn’t exist</h1>
-                                    <p>Please check your URL or return to LiveFood home.</p>
-                                </div>
-                            </div>
-                        </>
+                            </>
+                        )
                     )
                 }
+
+                {/*{*/}
+                {/*    post.post ? (*/}
+
+                {/*    ) : (*/}
+                {/*        <>*/}
+                {/*            <div className={classes.wrapper}>*/}
+                {/*                <div className={classes.imgHolder}>*/}
+                {/*                    <img src={pic} alt="404" className={classes.img}/>*/}
+                {/*                </div>*/}
+                {/*                <div className={classes.details}>*/}
+                {/*                    <h1>This page doesn’t exist</h1>*/}
+                {/*                    <p>Please check your URL or return to LiveFood home.</p>*/}
+                {/*                </div>*/}
+                {/*            </div>*/}
+                {/*        </>*/}
+                {/*    )*/}
+                {/*}*/}
+
+
             </div>
-            <RightSideBar auth={user}/>
+            <RightSideBar userLogged={props.userLogged}/>
         </Page>
     )
 }

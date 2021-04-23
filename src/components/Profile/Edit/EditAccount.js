@@ -155,6 +155,7 @@ function getModalStyle() {
 
 
 const EditAccount = (props) => {
+
     const classes = useStyles();
     const [open, setOpen] = useState(false);
     const [modalStyle] = useState(getModalStyle);
@@ -168,6 +169,9 @@ const EditAccount = (props) => {
     const [userData] = useDocument(props.userLogged &&  db.collection("users").doc(props.userLogged.uid));
     const [openSnack, setOpenSnack] = useState(false);
 
+    const [disable, setDisable] = useState(true);
+    const [type, setType] = useState('blogger');
+
 
     useEffect(() => {
         setDisplayName(userData?.data().displayName ?? '');
@@ -176,6 +180,8 @@ const EditAccount = (props) => {
         setBio(userData?.data()?.bio ?? '');
         setPhone(userData?.data()?.phoneNumber ?? '');
         // console.log(userData?.data()?.phoneNumber && userData?.data()?.phoneNumber)
+
+
     }, [userData])
 
     const handleCloseSnack = (event) => {
@@ -193,6 +199,10 @@ const EditAccount = (props) => {
     const handleClick = event => {
         hiddenFileInput.current.click();
     };
+
+    const handleSelectType = (event) => {
+        setType(event.target.value);
+    }
 
     const handleChange = event => {
         const fileUploaded = event.target.files[0];
@@ -403,15 +413,15 @@ const EditAccount = (props) => {
                     </aside>
                     <div className={classes.input}>
                         <FormControl className={classes.formControl}>
-                            <InputLabel id="demo-simple-select-label">Age</InputLabel>
                             <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                value=""
+                                style={{fontWeight: "bold", textTransform: "capitalize"}}
+                                fullWidth
+                                value={type}
+                                onChange={handleSelectType}
                             >
-                                <MenuItem value={10}>Ten</MenuItem>
-                                <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem>
+                                <MenuItem value={'blogger'} style={{fontWeight: "bold", textTransform: "uppercase"}}>Blogger</MenuItem>
+                                <MenuItem value={'reviewer'} style={{fontWeight: "bold", textTransform: "uppercase"}}>Reviewer</MenuItem>
+                                <MenuItem value={'foodshop'} style={{fontWeight: "bold", textTransform: "uppercase"}}>Food shop</MenuItem>
                             </Select>
                         </FormControl>
                     </div>

@@ -43,7 +43,7 @@ const ProfileFeed = ({uid}) => {
         window.scroll({top: 0, left: 0, behavior: 'smooth' });
 
         let postDoc = db.collection('posts');
-        postDoc
+        return postDoc
             .where('uid', "==", uid)
             .orderBy('timestamp', 'desc')
             .limit(12)
@@ -63,7 +63,7 @@ const ProfileFeed = ({uid}) => {
 
     return(
         <div className="explore__root" style={{paddingTop: "20px"}}>
-            <div className="explore__container">
+            <div className="explore__container" style={{padding: "0"}} >
                 {
                     feed.length > 0 ? (
                         feed.map(({id, post, authorProfile}) => (

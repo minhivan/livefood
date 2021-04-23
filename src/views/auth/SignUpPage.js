@@ -76,6 +76,8 @@ function PageLogin() {
             .then((authUser) => {
                 return authUser.user.updateProfile({
                     displayName: username
+                }).then(function (){
+                    checkFirebaseAuth(authUser.user);
                 })
             })
             .catch((error) => alert(error.message));
@@ -83,23 +85,16 @@ function PageLogin() {
 
     const signUpGoogle = (event) => {
         event.preventDefault();
-        auth.signInWithPopup(provider).catch((error) =>{
+        auth.signInWithPopup(provider).then((result) => {
+            checkFirebaseAuth(result.user);
+        }).catch((error) =>{
             alert(error.message)
         })
     }
 
 
-
-    useEffect( () => {
-        return auth.onAuthStateChanged((authUser) => {
-            if(authUser){
-                checkFirebaseAuth(authUser);
-            }
-        })
-    }, [user])
-
     if(user){
-        return <Navigate to="/"/>
+        return <Navigate to="/" />
     }
 
     return(

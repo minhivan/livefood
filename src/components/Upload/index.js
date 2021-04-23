@@ -124,9 +124,6 @@ function Upload({userLogged}) {
                 </div>
             </div>
 
-            {/*<div className="">*/}
-            {/*    <CircularProgress variant="determinate" value={Number(progress)} />*/}
-            {/*</div>*/}
             <Popup open={open} image={image}  handleClose={handleClose} setImage={setImage} setOpenSnack={setOpenSnack} />
             <RecipeStepper open={openStep} image={image} setImage={setImage} handleClose={handleCloseStep} setOpenSnack={setOpenSnack}/>
 
@@ -139,7 +136,7 @@ function Upload({userLogged}) {
                     horizontal: 'left',
                 }}
             >
-                <Alert onClose={handleCloseSnack} severity="success">
+                <Alert variant="filled" onClose={handleCloseSnack} severity="success">
                     Upload successfully !
                 </Alert>
             </Snackbar>

@@ -45,7 +45,7 @@ const useStyles = makeStyles(() => ({
         fontSize: "1rem",
         padding: "0 10px",
         cursor: "pointer",
-
+        overflow: "hidden"
     },
     util: {
         padding: "0",
@@ -63,7 +63,6 @@ const NavBar = (props) => {
     const classes = useStyles();
     const [userData] = useDocument(props.userLogged && db.collection("users").doc(props.userLogged.uid));
 
-    console.log(userData?.data()?.fullName)
 
     const itemsWithAuth = [
         {
@@ -150,12 +149,12 @@ const NavBar = (props) => {
                             className={classes.avatar}
                             component={RouterLink}
                             src={props.userLogged?.photoURL}
-                            to={`profile/${props.userLogged?.uid}`}
+                            to={`/profile/${props.userLogged?.uid}`}
                         />
 
-                        <Link to={`profile/${props.userLogged?.uid}`} className={classes.name}>
-                            <span style={{display: "block", fontWeight: "bold", paddingBottom: 5}}>{props.userLogged?.displayName}</span>
-                            <span style={{display: "block", color: "#546e7a"}}>{userData?.data()?.fullName}</span>
+                        <Link to={`/profile/${props.userLogged?.uid}`} className={classes.name}>
+                            <span style={{display: "block", fontWeight: "bold", paddingBottom: 5, whiteSpace: "nowrap"}}>{props.userLogged?.displayName}</span>
+                            <span style={{display: "block", color: "#546e7a", whiteSpace: "nowrap"}}>{userData?.data()?.fullName}</span>
                         </Link>
 
                     </Box>
