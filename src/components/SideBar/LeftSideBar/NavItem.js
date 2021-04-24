@@ -43,11 +43,11 @@ const useStyles = makeStyles((theme) => ({
     active: {
         color: theme.palette.primary.main,
         '& $title': {
-            color: "#262626",
+            color: theme.palette.primary.main,
             fontWeight: "600",
         },
         '& $icon': {
-            color: "#262626",
+            color: theme.palette.primary.main,
             fontWeight: "600",
         }
     }

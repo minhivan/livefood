@@ -78,7 +78,6 @@ const ProfileFeed = ({uid}) => {
                                 />
                             </div>
                             <h2 style={{paddingBottom: "10px"}}>No Posts Yet</h2>
-
                         </div>
                     )
                 }

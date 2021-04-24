@@ -53,7 +53,7 @@ const ProfileSaved = ({uid}) => {
                 db.collection('posts')
                     .where(firebase.firestore.FieldPath.documentId(), 'in', userSavedList)
                     .limit(12)
-                    .get().then(snapshot => {
+                    .get().then(async snapshot => {
                         let temp = []
                         snapshot.forEach(data => {
                             var userProfile = {};

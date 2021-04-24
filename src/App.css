@@ -309,6 +309,7 @@ input:focus{
     font-size: 16px;
     line-height: 22px;
     margin-left: 6px;
+    cursor: pointer;
 }
 .share-follow-container{
     display: flex;
@@ -426,6 +427,7 @@ input:focus{
     margin-bottom: 35px;
     height: 372px;
     width: 490px;
+    box-shadow: 0px 0px 5px 0px #ddc4c4bf;
 }
 .recipe-inner{
     border-bottom: 7px solid #0095A3;
@@ -545,6 +547,7 @@ input:focus{
     height: 100%;
     border-bottom: 4px solid #77E2E1;
     background-color: #fff;
+    box-shadow: 0px 0px 5px 0px #ddc4c4bf;
 }
 .inner-wrap{
     height: 200px;

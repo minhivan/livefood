@@ -50,12 +50,14 @@ const useStyles = makeStyles(() => ({
     util: {
         padding: "0",
         backgroundColor: "#fff",
-        borderRadius: "max(0px, min(8px, calc((100vw - 4px - 100%) * 9999))) / 8px"
+        borderRadius: "max(0px, min(8px, calc((100vw - 4px - 100%) * 9999))) / 8px",
+        boxShadow: "0px 0px 5px 0px #ddc4c4bf",
     },
     userFrame: {
         marginBottom: "20px",
         backgroundColor: "#fff",
         borderRadius: "max(0px, min(8px, calc((100vw - 4px - 100%) * 9999))) / 8px",
+        boxShadow: "0px 0px 5px 0px #ddc4c4bf",
     }
 }));
 

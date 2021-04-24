@@ -15,8 +15,7 @@ import {useDocument} from "react-firebase-hooks/firestore";
 import firebase from "firebase";
 import Snackbar from "@material-ui/core/Snackbar";
 import {Alert} from "@material-ui/lab";
-import {green} from "@material-ui/core/colors";
-import InputLabel from '@material-ui/core/InputLabel';
+import {blue, green} from "@material-ui/core/colors";
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
@@ -24,14 +23,15 @@ import Select from '@material-ui/core/Select';
 
 
 const useStyles = makeStyles((theme) => ({
-
     avatar: {
         width: 100,
         height: 100,
         margin: "0 20px",
+        backgroundColor: blue[100],
+        color: blue[600],
     },
     avatarHolder: {
-        padding: "16px 32px"
+        padding: "16px 32px",
     },
     holder: {
         display: "flex",
@@ -40,10 +40,11 @@ const useStyles = makeStyles((theme) => ({
     changePhoto: {
         color: "#0095f6",
         padding: 0,
-        textTransform: "capitalize"
+        textTransform: "capitalize",
     },
     displayName: {
-        fontSize: 18
+        fontSize: 18,
+        fontWeight: "bold"
     },
     label: {
         flex: "0 0 25%",
@@ -170,19 +171,21 @@ const EditAccount = (props) => {
     const [openSnack, setOpenSnack] = useState(false);
 
     const [disable, setDisable] = useState(true);
-    const [type, setType] = useState('blogger');
+    const [type, setType] = useState('');
 
 
     useEffect(() => {
         setDisplayName(userData?.data().displayName ?? '');
+
         setFullName(userData?.data()?.fullName ?? '');
         setLink(userData?.data()?.profileLink ?? '');
         setBio(userData?.data()?.bio ?? '');
         setPhone(userData?.data()?.phoneNumber ?? '');
         // console.log(userData?.data()?.phoneNumber && userData?.data()?.phoneNumber)
-
+        setType(userData?.data()?.accountType ?? 'blogger');
 
     }, [userData])
+
 
     const handleCloseSnack = (event) => {
         setOpenSnack(false);
@@ -208,42 +211,43 @@ const EditAccount = (props) => {
         const fileUploaded = event.target.files[0];
 
         // Change photoUrl here
-        const uploadTask = storage.ref(`images/${fileUploaded.name}`).put(fileUploaded);
-        uploadTask.on(
-            "state_changed",
-            (snapshot => {
-                setLoadingAvt(true);
-            }),
-            (error => {
-                console.log(error);
-            }),
-            () => {
-                storage
-                    .ref("images")
-                    .child(fileUploaded.name)
-                    .getDownloadURL()
-                    .then(url => {
-                        // Update from firestore
-                        db.collection("users").doc(props.userLogged.uid).update({
-                            updateAt: firebase.firestore.FieldValue.serverTimestamp(),
-                            photoURL: url,
+        if(fileUploaded){
+            const uploadTask = storage.ref(`images/${fileUploaded.name}`).put(fileUploaded);
+            uploadTask.on(
+                "state_changed",
+                (snapshot => {
+                    setLoadingAvt(true);
+                }),
+                (error => {
+                    console.log(error);
+                }),
+                () => {
+                    storage
+                        .ref("images")
+                        .child(fileUploaded.name)
+                        .getDownloadURL()
+                        .then(url => {
+                            // Update from firestore
+                            db.collection("users").doc(props.userLogged.uid).update({
+                                updateAt: firebase.firestore.FieldValue.serverTimestamp(),
+                                photoURL: url,
+                            })
+                            // Update user from firebase auth
+                            firebase.auth().currentUser.updateProfile({
+                                photoURL: url
+                            }).then(function() {
+                                // Update successful.
+                                setOpenSnack(true);
+                                setOpen(false);
+                                setLoadingAvt(false);
+                            }).catch(function(error) {
+                                // An error happened.
+                            });
+
                         })
-                        // Update user from firebase auth
-                        firebase.auth().currentUser.updateProfile({
-                            photoURL: url
-                        }).then(function() {
-                            // Update successful.
-                            setOpenSnack(true);
-                            setOpen(false);
-                            setLoadingAvt(false);
-                        }).catch(function(error) {
-                            // An error happened.
-                        });
-
-                    })
-            }
-        )
-
+                }
+            )
+        }
     };
 
 
@@ -273,6 +277,7 @@ const EditAccount = (props) => {
             fullName: fullName,
             displayName: displayName,
             phoneNumber: phone,
+            accountType: type,
             updateAt: firebase.firestore.FieldValue.serverTimestamp(),
         })
 
@@ -419,9 +424,9 @@ const EditAccount = (props) => {
                                 value={type}
                                 onChange={handleSelectType}
                             >
-                                <MenuItem value={'blogger'} style={{fontWeight: "bold", textTransform: "uppercase"}}>Blogger</MenuItem>
-                                <MenuItem value={'reviewer'} style={{fontWeight: "bold", textTransform: "uppercase"}}>Reviewer</MenuItem>
-                                <MenuItem value={'foodshop'} style={{fontWeight: "bold", textTransform: "uppercase"}}>Food shop</MenuItem>
+                                <MenuItem value={'blogger'} style={{fontWeight: "bold"}}>Blogger</MenuItem>
+                                <MenuItem value={'reviewer'} style={{fontWeight: "bold"}}>Reviewer</MenuItem>
+                                <MenuItem value={'foodshop'} style={{fontWeight: "bold"}}>Food shop</MenuItem>
                             </Select>
                         </FormControl>
                     </div>
@@ -499,7 +504,7 @@ const EditAccount = (props) => {
                     horizontal: 'left',
                 }}
             >
-                <Alert onClose={handleCloseSnack} severity="success">
+                <Alert variant="filled" onClose={handleCloseSnack} severity="success">
                     Upload successfully !
                 </Alert>
             </Snackbar>

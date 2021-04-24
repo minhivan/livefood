@@ -15,7 +15,8 @@ const useStyles = makeStyles((theme) => ({
         objectFit: "cover",
         width: "100%",
         height: "100%",
-        cursor: "pointer"
+        cursor: "pointer",
+        boxShadow: "0px 0px 5px 0px #ddc4c4bf",
     },
     icon: {
         color: "#050505",

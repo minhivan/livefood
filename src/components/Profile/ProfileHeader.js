@@ -10,15 +10,32 @@ import {Link} from "react-router-dom";
 // import {useCollection, useDocument} from "react-firebase-hooks/firestore";
 import {auth, db} from "../../firebase";
 import {useAuthState} from "react-firebase-hooks/auth";
-import firebase from "firebase";
+
 import handleUserFollow from "../../utils/handleUserFollow";
 import handleUserUnfollow from "../../utils/handleUserUnfollow";
 
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import ListItemText from '@material-ui/core/ListItemText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Dialog from '@material-ui/core/Dialog';
+import { blue } from '@material-ui/core/colors';
+import firebase from "firebase";
+import {DialogContent} from "@material-ui/core";
+
+
 
 const useStyles = makeStyles((theme) => ({
+    avatar: {
+        backgroundColor: blue[100],
+        color: blue[600],
+    },
     userPhoto: {
         width: "120px",
-        height: "120px"
+        height: "120px",
+        backgroundColor: blue[100],
+        color: blue[600],
     },
     bioDetails: {
         marginLeft: "50px",
@@ -64,25 +81,116 @@ const useStyles = makeStyles((theme) => ({
         // },
         marginRight: "15px",
         textTransform: "capitalize"
+    },
+    dialog: {
+        maxWidth: "600px",
+        width: "390px",
     }
 }));
+
+
+
+function SimpleDialog(props) {
+    const classes = useStyles();
+    const { handleClose, type, open, users } = props;
+
+
+    return (
+        <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open} >
+            {
+                type === '1' ? (
+                    <DialogTitle id="simple-dialog-title" style={{textAlign: "center"}}>Following</DialogTitle>
+                ) : (
+                    <DialogTitle id="simple-dialog-title" style={{textAlign: "center"}}>Follower</DialogTitle>
+                )
+            }
+            <DialogContent className={classes.dialog}>
+                <List>
+                        {
+                            users ? (users.map(({id, data}) => (
+                                <ListItem key={id}>
+                                    <>
+                                        <ListItemAvatar>
+                                            <Avatar className={classes.avatar} src={data?.photoURL} />
+                                        </ListItemAvatar>
+                                        <ListItemText primary={data?.displayName} />
+                                    </>
+                                    {
+                                        type === '1' ? (
+                                            <Button variant="contained" color="primary">Unfollow</Button>
+                                        ) : (
+                                            <Button variant="contained" color="primary">Follow</Button>
+                                        )
+                                    }
+                                </ListItem>
+                            ))) : null
+                        }
+                </List>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+
 
 
 const ProfileHeader = ({isAuthProfile,user, count,  ...rest}) => {
     const [userFollowing, setUserFollowing] = useState([]);
     const [userFollower, setUserFollower] = useState([]);
 
+
+    const [openFollowing, setOpenFollowing] = useState(false);
+    const [openFollower, setOpenFollower] = useState(false);
+
+
+    const handleClickOpenFollowing = () => {
+        setOpenFollowing(true);
+    };
+
+    const handleCloseFollowing = (value) => {
+        setOpenFollowing(false);
+    };
+
+    const handleClickOpenFollower = () => {
+        setOpenFollower(true);
+    };
+
+    const handleCloseFollower = (value) => {
+        setOpenFollower(false);
+    };
+
+
     // Your data
     const [authUser] = useAuthState(auth);
 
     useEffect(() => {
         if(typeof user?.follower !== 'undefined'){
-            setUserFollower(user.follower);
+            db.collection("users")
+                .where(firebase.firestore.FieldPath.documentId(), 'in', user.follower)
+                .get().then(snapshot => {
+                    setUserFollower(
+                        snapshot.docs.map((doc => ({
+                            id: doc.id,
+                            data: doc.data(),
+                        })))
+                    );
+                })
         }
         if(typeof user?.following !== 'undefined'){
-            setUserFollowing(user.following);
+            db.collection("users")
+                .where(firebase.firestore.FieldPath.documentId(), 'in', user.following)
+                .get().then(snapshot => {
+                setUserFollowing(
+                    snapshot.docs.map((doc => ({
+                        id: doc.id,
+                        data: doc.data(),
+                    })))
+                );
+            })
         }
+
     }, [user])
+
 
     // const checkOpponentFollowYou = (userFollowing, uid) => {
     //     let rs = false;
@@ -97,10 +205,16 @@ const ProfileHeader = ({isAuthProfile,user, count,  ...rest}) => {
     const checkFollowed = (userFollowerList, uid) => {
         let rs = false;
         if(typeof userFollowerList !== 'undefined' ){
-            rs = userFollowerList.includes(uid);
+            userFollowerList.some(person => person.name === uid)
         }
+        // if(persons.some(person => person.name === "Peter")){
+        //     alert("Object found inside the array.");
+        // } else{
+        //     alert("Object not found.");
+        // }
         return rs;
     }
+
 
 
     const classes = useStyles();
@@ -140,7 +254,7 @@ const ProfileHeader = ({isAuthProfile,user, count,  ...rest}) => {
                                     <div className="share-follow-container">
                                         {/* Checking if followed */}
                                         {
-                                            checkFollowed(userFollower, authUser.uid) ? (
+                                            checkFollowed(userFollower.id, authUser.uid) ? (
                                                 <Button
                                                     variant="outlined"
                                                     className={classes.buttonUnfollow}
@@ -190,16 +304,15 @@ const ProfileHeader = ({isAuthProfile,user, count,  ...rest}) => {
                         <h2 className="count-infos">
                             <div className="number"><strong title="Likes">{ count ?? '0'}</strong><span
                                 className="unit">Post</span></div>
-                            <div className="number"><strong title="Following">{userFollowing.length}</strong><span
-                                className="unit">Following</span></div>
-                            <div className="number"><strong title="Followers">{userFollower.length}</strong><span
-                                className="unit">Followers</span></div>
+                            <div className="number"><strong title="Following">{userFollowing.length}</strong><a className="unit" onClick={handleClickOpenFollowing}>Following</a></div>
+                            <div className="number"><strong title="Followers">{userFollower.length}</strong><a className="unit" onClick={handleClickOpenFollower}>Follower</a></div>
                         </h2>
                     </div>
                 </div>
 
             </div>
-
+            <SimpleDialog open={openFollowing} handleClose={handleCloseFollowing} users={userFollowing} type={`1`}/>
+            <SimpleDialog open={openFollower} handleClose={handleCloseFollower} users={userFollower} type={`2`}/>
         </div>
     )
 }

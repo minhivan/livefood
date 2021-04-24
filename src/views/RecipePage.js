@@ -41,7 +41,6 @@ const RecipePage = (props) => {
 
 
     useEffect( () => {
-        window.scroll({top: 0, left: 0, behavior: 'smooth' });
 
         // Set newest
         db.collection('posts')
@@ -67,11 +66,17 @@ const RecipePage = (props) => {
                 .where('type', '==', 'recipe')
                 .orderBy('timestamp', "desc")
                 .limit(12)
-                .get().then(snapshot => {
-                    setListRecipe(snapshot.docs.map(doc => ({
-                        id: doc.id,
-                        post: doc.data(),
-                    })));
+                .get().then(async snapshot => {
+                    const tracking = await Promise.all(
+                        snapshot.docs.map(async doc => ({
+                            id: doc.id,
+                            post: doc.data(),
+                            postAuthor: await Promise.resolve(doc.data().user.get().then( author => {
+                                return author.data();
+                            }))
+                        }))
+                    )
+                    setListRecipe(tracking);
             })
         }
         else{
@@ -79,11 +84,17 @@ const RecipePage = (props) => {
                 .where('type', '==', 'recipe')
                 .orderBy('timestamp', "desc")
                 .limit(12)
-                .get().then(snapshot => {
-                setListRecipe(snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    post: doc.data(),
-                })));
+                .get().then(async snapshot => {
+                    const tracking = await Promise.all(
+                        snapshot.docs.map(async doc => ({
+                            id: doc.id,
+                            post: doc.data(),
+                            postAuthor: await Promise.resolve(doc.data().user.get().then( author => {
+                                return author.data();
+                            }))
+                        }))
+                    )
+                    setListRecipe(tracking);
             })
         }
 
@@ -157,7 +168,7 @@ const RecipePage = (props) => {
                         <div className="list-recipe-grid">
                             {
                                 listRecipe.length > 0 ? (
-                                    listRecipe.map(({id, post}) => (
+                                    listRecipe.map(({id, post, postAuthor}) => (
                                         <div key={id} className="list-recipe-item">
                                             <div className="list-recipe-wrap">
                                                 <div className="inner-wrap">
@@ -172,6 +183,7 @@ const RecipePage = (props) => {
                                                             <Link to={`/p/${id}`}>{post?.caption}</Link>
                                                         </h2>
                                                         <div className="recipe-data">
+                                                            <div className="author"><span className="name">By <Link to={`/profile/${post?.uid}`}>{postAuthor?.displayName}</Link></span></div>
                                                             <div className="meta-data">
                                                                 <div className="fd-rating">
                                                                     <span><FavoriteRoundedIcon style={{color: "red", marginRight: 5}}/> {post?.likeBy?.length}</span></div>

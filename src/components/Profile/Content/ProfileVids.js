@@ -77,7 +77,7 @@ const ProfileVids = ({uid}) => {
                                 />
                             </div>
                             <h2 style={{paddingBottom: "10px"}}>Start Record Video</h2>
-                            <p>Creating videos to your collection.</p>
+                            <p>No videos found.</p>
                         </div>
                     )
                 }

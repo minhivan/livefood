@@ -9,26 +9,22 @@ import Avatar from "@material-ui/core/Avatar";
 // import dayjs from "dayjs";
 import CardHeader from "@material-ui/core/CardHeader";
 import {Button, Hidden, makeStyles} from "@material-ui/core";
-import {useAuthState} from "react-firebase-hooks/auth";
-import {auth, db} from "../../../firebase";
+import {db} from "../../../firebase";
 import {useDocument} from "react-firebase-hooks/firestore";
 import {Link} from "react-router-dom";
 import handleUserFollow from "../../../utils/handleUserFollow";
+import {blue} from "@material-ui/core/colors";
 
-// const useStyles = makeStyles((theme) => ({
-//     root: {
-//         width: '100%',
-//         maxWidth: 290,
-//         backgroundColor: theme.palette.background.paper,
-//     },
-//     nested: {
-//         paddingLeft: theme.spacing(4),
-//     },
-// }));
+const useStyles = makeStyles((theme) => ({
+    avatar: {
+        backgroundColor: blue[100],
+        color: blue[600],
+    },
+}));
 
 
 function RightSideBar(props) {
-    // const classes = useStyles();
+    const classes = useStyles();
     const [users, setUsers] = useState([])
 
     const userRef = props?.userLogged?.uid && db.collection('users').doc(props.userLogged.uid);
@@ -131,7 +127,7 @@ function RightSideBar(props) {
                                 <div key={id} className="suggest__content  bottomDivider">
                                     <CardHeader className="suggest__user"
                                                 avatar={
-                                                    <Avatar aria-label={opponent.displayName} src={opponent.photoURL} />
+                                                    <Avatar className={classes.avatar} aria-label={opponent.displayName} src={opponent.photoURL} />
                                                 }
                                                 title={
                                                     <Link to={`profile/${opponent.uid}`}>{opponent.displayName}</Link>

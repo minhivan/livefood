@@ -12,6 +12,7 @@ import { useDocument} from "react-firebase-hooks/firestore";
 import {Link} from "react-router-dom";
 import handleUserFollow from "../../utils/handleUserFollow";
 import handleUserUnfollow from "../../utils/handleUserUnfollow";
+import {blue} from "@material-ui/core/colors";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -56,7 +57,11 @@ const useStyles = makeStyles((theme) => ({
         color: "#454444",
         marginRight: "15px",
         textTransform: "capitalize"
-    }
+    },
+    avatar: {
+        backgroundColor: blue[100],
+        color: blue[600],
+    },
 }));
 
 
@@ -123,7 +128,7 @@ export default function ExplorePeopleItem(props) {
                     users?.map(({id, user}) => (
                         <ListItem key={id} alignItems="center" className={classes.listItem}>
                             <ListItemAvatar>
-                                <Avatar alt="" src={user.photoURL} />
+                                <Avatar className={classes.avatar} alt="" src={user.photoURL} />
                             </ListItemAvatar>
                             <ListItemText
                                 primary={

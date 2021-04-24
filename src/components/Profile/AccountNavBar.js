@@ -33,10 +33,10 @@ const useStyles = makeStyles((theme) => ({
         color: "#050505"
     },
     title: {
-        fontWeight: "500",
-        fontSize: "1.1rem",
+        fontWeight: "600",
+        fontSize: "1rem",
         paddingLeft: "15px",
-        color: "#050505"
+        color: "#65676B",
     },
     active: {
         color: theme.palette.primary.main,
