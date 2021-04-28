@@ -156,6 +156,7 @@ function getModalStyle() {
 
 
 const EditAccount = (props) => {
+    const {userLogged} = props;
 
     const classes = useStyles();
     const [open, setOpen] = useState(false);
@@ -167,7 +168,7 @@ const EditAccount = (props) => {
     const [bio, setBio] = useState('');
     const [phone, setPhone] = useState('');
     const [loadingAvt, setLoadingAvt] = useState(false);
-    const [userData] = useDocument(props.userLogged &&  db.collection("users").doc(props.userLogged.uid));
+    const [userData] = useDocument(userLogged &&  db.collection("users").doc(userLogged.uid));
     const [openSnack, setOpenSnack] = useState(false);
 
     const [disable, setDisable] = useState(true);
@@ -228,7 +229,7 @@ const EditAccount = (props) => {
                         .getDownloadURL()
                         .then(url => {
                             // Update from firestore
-                            db.collection("users").doc(props.userLogged.uid).update({
+                            db.collection("users").doc(userLogged.uid).update({
                                 updateAt: firebase.firestore.FieldValue.serverTimestamp(),
                                 photoURL: url,
                             })
@@ -252,7 +253,7 @@ const EditAccount = (props) => {
 
 
     const handleRemove = event => {
-        db.collection("users").doc(props.userLogged.uid).update({
+        db.collection("users").doc(userLogged.uid).update({
             updateAt: firebase.firestore.FieldValue.serverTimestamp(),
             photoURL: "",
         })
@@ -271,7 +272,7 @@ const EditAccount = (props) => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        db.collection("users").doc(props.userLogged.uid).update({
+        db.collection("users").doc(userLogged.uid).update({
             bio: bio,
             profileLink: link,
             fullName: fullName,
@@ -296,15 +297,15 @@ const EditAccount = (props) => {
                 <CardHeader
                     className={classes.avatarHolder}
                     avatar={
-                        props.userLogged ? (
-                            <Avatar className={classes.avatar} alt={props.userLogged.displayName} src={props.userLogged.photoURL}/>
+                        userLogged ? (
+                            <Avatar className={classes.avatar} alt={userLogged.displayName} src={userLogged.photoURL}/>
                         ):(
                             <Skeleton animation="wave" variant="circle" width={40} height={40} />
                         )
                     }
                     title={
-                        props.userLogged?.uid ? (
-                            <Link to={`/profile/${props.userLogged.uid}`} className={classes.displayName}>{props.userLogged.displayName}</Link>
+                        userLogged?.uid ? (
+                            <Link to={`/profile/${userLogged.uid}`} className={classes.displayName}>{userLogged.displayName}</Link>
                         ) : (
                             <Skeleton animation="wave" height={10} width="30%" style={{ marginBottom: 6 }} />
                         )
@@ -353,6 +354,26 @@ const EditAccount = (props) => {
 
                 <div className={classes.holder}>
                     <aside className={classes.label}>
+                        <label htmlFor="pepType" style={{fontWeight: "bold", fontSize: "18px"}}>Account Type</label>
+                    </aside>
+                    <div className={classes.input}>
+                        <FormControl className={classes.formControl}>
+                            <Select
+                                style={{fontWeight: "bold", textTransform: "capitalize"}}
+                                fullWidth
+                                value={type}
+                                onChange={handleSelectType}
+                            >
+                                <MenuItem value={'blogger'} style={{fontWeight: "bold"}}>Blogger</MenuItem>
+                                <MenuItem value={'reviewer'} style={{fontWeight: "bold"}}>Reviewer</MenuItem>
+                                <MenuItem value={'foodshop'} style={{fontWeight: "bold"}}>Food shop</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </div>
+                </div>
+
+                <div className={classes.holder}>
+                    <aside className={classes.label}>
                         <label htmlFor="pepLink" style={{fontWeight: "bold", fontSize: "18px"}}>Link</label>
                     </aside>
                     <div className={classes.input}>
@@ -389,7 +410,7 @@ const EditAccount = (props) => {
                     </aside>
                     <div className={classes.input}>
                         <input
-                            value={props.userLogged.email}
+                            value={userLogged.email}
                             disabled="disabled"
                             className={classes.inputField}
                             aria-required="false" id="pepEmail" placeholder="Email" type="text"
@@ -409,26 +430,6 @@ const EditAccount = (props) => {
                             className={classes.inputField}
                             aria-required="false" id="pepPhone" placeholder="Phone" type="text"
                         />
-                    </div>
-                </div>
-
-                <div className={classes.holder}>
-                    <aside className={classes.label}>
-                        <label htmlFor="pepType" style={{fontWeight: "bold", fontSize: "18px"}}>Account Type</label>
-                    </aside>
-                    <div className={classes.input}>
-                        <FormControl className={classes.formControl}>
-                            <Select
-                                style={{fontWeight: "bold", textTransform: "capitalize"}}
-                                fullWidth
-                                value={type}
-                                onChange={handleSelectType}
-                            >
-                                <MenuItem value={'blogger'} style={{fontWeight: "bold"}}>Blogger</MenuItem>
-                                <MenuItem value={'reviewer'} style={{fontWeight: "bold"}}>Reviewer</MenuItem>
-                                <MenuItem value={'foodshop'} style={{fontWeight: "bold"}}>Food shop</MenuItem>
-                            </Select>
-                        </FormControl>
                     </div>
                 </div>
 

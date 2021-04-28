@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import dayjs from "dayjs";
 import {Link} from "react-router-dom";
+import {Rating} from "@material-ui/lab";
 
 
 function PostComment (props) {
@@ -10,6 +11,7 @@ function PostComment (props) {
     props.cmtAuthor.then((data) => {
         setCommentAuthor(data);
     })
+
 
     return (
         <div className="commentDetails" key={props.comment.id}>
@@ -20,8 +22,15 @@ function PostComment (props) {
                         <Link to={`profile/${commentAuthor.uid}`}>{commentAuthor.displayName}</Link>
                         {
                             props.comment.timestamp ? (
-                                <span>{
-                                    dayjs(new Date(props.comment.timestamp.seconds * 1000).toLocaleString()).fromNow()}</span>
+                                <>
+                                    {
+                                        props.comment.rating ? (
+                                            <Rating style={{paddingRight: "5px"}} name="read-only" value={props.comment.rating} readOnly />
+                                        ) : null
+                                    }
+                                    <span style={{color: "#546e7a", fontSize: "12px"}}>{dayjs(new Date(props.comment.timestamp.seconds * 1000).toLocaleString()).fromNow()}</span>
+                                </>
+
                             ) : null
                         }
                         <p>{props.comment.text}</p>

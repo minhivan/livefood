@@ -34,15 +34,14 @@ const useStyles = makeStyles((theme) => ({
 
 
 const Explore = (props) => {
-
     const [explore, setExplore] = useState([]);
+
     useEffect(() => {
-        window.scroll({top: 0, left: 0, behavior: 'smooth' });
 
         let postDoc = db.collection('posts');
         postDoc
             .orderBy('timestamp', "desc")
-            .limit(20)
+            .limit(18)
             .get().then(snapshot => {
                 let temp = []
                 snapshot.forEach(data => {

@@ -5,14 +5,10 @@ import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
 import AccessTimeRoundedIcon from '@material-ui/icons/AccessTimeRounded';
 import Divider from "@material-ui/core/Divider";
 import { makeStyles } from '@material-ui/core/styles';
-import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import {db} from "../firebase";
-import ExploreItem from "../components/Explore/ExploreItem";
-import {Image as ImageIcon} from "react-feather";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -32,13 +28,13 @@ const RecipePage = (props) => {
     const [newest, setNewest] = useState([]);
     const [listRecipe, setListRecipe] = useState([]);
 
+    window.scroll({top: 0, left: 0, behavior: 'smooth' });
 
 
 
     const handleChange = (event) => {
         setType(event.target.value);
     };
-
 
     useEffect( () => {
 
@@ -98,13 +94,12 @@ const RecipePage = (props) => {
             })
         }
 
-
     },[type]);
 
 
     return (
         <Page
-            title="Explore | LiveFood"
+            title="Recipes | LiveFood"
             className="app__bodyContainer"
         >
             <div className="recipe__page">

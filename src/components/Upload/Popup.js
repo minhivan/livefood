@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.background.paper,
         boxShadow: theme.shadows[5],
         padding: theme.spacing(2, 3, 3),
-        borderRadius: "8px",
+        borderRadius: "16px",
         maxHeight: "calc(100vh - 70px)",
         "&:focus": {
             outline: "none"
@@ -205,7 +205,7 @@ function Popup(props){
 
 
     useEffect(() => {
-        if(caption.length > 0 || props.image){
+        if(caption.length > 0 && props.image){
             setDisable(false);
         }else {
             setDisable(true)

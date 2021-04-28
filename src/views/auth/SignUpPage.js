@@ -3,7 +3,7 @@ import {auth, provider } from "../../firebase";
 import {Button, TextField} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import {Link, Navigate} from "react-router-dom";
-import checkFirebaseAuth from "../../CustomHook/FirebaseAuth";
+import checkFirebaseAuth from "../../hooks/firebaseAuth";
 import {useAuthState} from "react-firebase-hooks/auth"; //import Redirect first
 
 

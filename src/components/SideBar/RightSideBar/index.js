@@ -1,24 +1,33 @@
 import React, {useEffect, useState} from "react";
 import '../RightSideBar.css';
 
-
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
 import IconButton from "@material-ui/core/IconButton";
 import MoreHorizOutlinedIcon from '@material-ui/icons/MoreHorizOutlined';
-import Avatar from "@material-ui/core/Avatar";
-// import dayjs from "dayjs";
+import Skeleton from '@material-ui/lab/Skeleton';
 import CardHeader from "@material-ui/core/CardHeader";
+import Avatar from "@material-ui/core/Avatar";
 import {Button, Hidden, makeStyles} from "@material-ui/core";
+import {blue} from "@material-ui/core/colors";
+
+
+
+// import dayjs from "dayjs";
+
 import {db} from "../../../firebase";
 import {useDocument} from "react-firebase-hooks/firestore";
 import {Link} from "react-router-dom";
 import handleUserFollow from "../../../utils/handleUserFollow";
-import {blue} from "@material-ui/core/colors";
+import firebase from "firebase";
+
 
 const useStyles = makeStyles((theme) => ({
     avatar: {
         backgroundColor: blue[100],
         color: blue[600],
+    },
+    root: {
+        width: "100%",
     },
 }));
 
@@ -26,21 +35,21 @@ const useStyles = makeStyles((theme) => ({
 function RightSideBar(props) {
     const classes = useStyles();
     const [users, setUsers] = useState([])
+    const { userLogged } = props;
 
-    const userRef = props?.userLogged?.uid && db.collection('users').doc(props.userLogged.uid);
+    const userRef = userLogged.uid && db.collection('users').doc(userLogged.uid);
     const [userSnapshot] = useDocument(userRef);
-
-
 
     // List user
     useEffect(() => {
-        var followingList;
 
         if(typeof userSnapshot?.data()?.following !== 'undefined' && userSnapshot?.data()?.following.length >= 0){
+            var followingList = {};
             followingList = userSnapshot.data().following
-            props.userLogged.uid && followingList.push(props.userLogged.uid);
+            userLogged.uid && followingList.push(userLogged.uid);
+
             return db.collection("users")
-                .where('uid' ,'not-in' , followingList )
+                .where(firebase.firestore.FieldPath.documentId() ,'not-in' , followingList )
                 .limit(4)
                 .get().then(snapshot => {
                     setUsers(snapshot.docs.map(doc => ({
@@ -49,8 +58,8 @@ function RightSideBar(props) {
                     })));
                 })
         }else{
-            return db.collection("users")
-                .where('uid' ,'!=' , props?.userLogged?.uid )
+             return db.collection("users")
+                .where(firebase.firestore.FieldPath.documentId() ,'!=' , userLogged.uid )
                 .limit(4)
                 .get().then(snapshot => {
                     setUsers(snapshot.docs.map(doc => ({
@@ -59,8 +68,7 @@ function RightSideBar(props) {
                     })));
                 })
         }
-    }, [userSnapshot])
-
+    }, [userLogged.uid, userSnapshot])
 
 
     return(
@@ -123,14 +131,14 @@ function RightSideBar(props) {
                             <h2>Who to follow</h2>
                         </div>
                         {
-                            users && users?.map(({id, opponent}) => (
+                            users ? (users.map(({id, opponent}) => (
                                 <div key={id} className="suggest__content  bottomDivider">
                                     <CardHeader className="suggest__user"
                                                 avatar={
                                                     <Avatar className={classes.avatar} aria-label={opponent.displayName} src={opponent.photoURL} />
                                                 }
                                                 title={
-                                                    <Link to={`profile/${opponent.uid}`}>{opponent.displayName}</Link>
+                                                    <Link to={`profile/${id}`}>{opponent.displayName}</Link>
                                                 }
                                                 subheader={opponent.fullName}
                                     />
@@ -139,12 +147,18 @@ function RightSideBar(props) {
                                         variant="outlined"
                                         color="primary"
                                         className="followBtn"
-                                        onClick={() => handleUserFollow(props.userLogged.uid, opponent.uid)}
+                                        onClick={() => handleUserFollow(userLogged.uid, opponent.uid)}
                                     >
                                         Follow
                                     </Button>
                                 </div>
-                            ))
+                            ))) : (
+                                <>
+                                    <div className={classes.root}>
+                                        <Skeleton variant="rect" height={300} />
+                                    </div>
+                                </>
+                            )
                         }
 
                         <div role="button" className="padding-20 show-more">

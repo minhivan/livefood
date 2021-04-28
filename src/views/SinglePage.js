@@ -55,9 +55,20 @@ const useStyles = makeStyles((theme) => ({
 const SinglePage = (props) => {
     const classes = useStyles();
     let { id } = useParams();
-    window.scroll({top: 0, left: 0, behavior: 'smooth' })
-
+    const [author, setAuthor] = useState([]);
     const [postSnapshot, loading] = useDocument(db.collection("posts").doc(id));
+
+
+    useEffect(() => {
+        postSnapshot?.data()?.user.get().then(author => {
+            setAuthor({
+                displayName: author.data().displayName,
+                photoURL: author.data().photoURL,
+                accountType: author.data().accountType,
+                uid: postSnapshot.data().uid
+            })
+        })
+    },[loading])
 
 
     return (
@@ -78,7 +89,7 @@ const SinglePage = (props) => {
                                 key={postSnapshot.id}
                                 id={postSnapshot.id}
                                 post={postSnapshot.data()}
-                                author={postSnapshot.data().uid}
+                                author={author}
                             />
                         ) : (
                             <>

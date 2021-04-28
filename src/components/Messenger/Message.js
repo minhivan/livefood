@@ -5,8 +5,6 @@ import {useAuthState} from "react-firebase-hooks/auth";
 import {auth} from "../../firebase";
 import {useSelector} from "react-redux";
 import {selectChatRecipient} from "../../features/chatSlice";
-import TimeAgo from "timeago-react";
-
 
 const useStyles = makeStyles((theme) => ({
     chat: {

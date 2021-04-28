@@ -3,7 +3,9 @@ import NavItem from "../SideBar/LeftSideBar/NavItem";
 import {Button, List, ListItem} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import {NavLink as RouterLink} from "react-router-dom";
-import {Users as UsersIcon} from "react-feather";
+import {List as ListIcon, Users as UsersIcon} from "react-feather";
+import {useDocument} from "react-firebase-hooks/firestore";
+import {db} from "../../firebase";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -24,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
         fontWeight: theme.typography.fontWeightMedium,
         justifyContent: 'flex-start',
         letterSpacing: 0,
-        padding: '15px',
+        padding: '10px 15px',
         textTransform: 'none',
         width: '100%',
     },
@@ -35,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
     title: {
         fontWeight: "600",
         fontSize: "1rem",
-        paddingLeft: "15px",
+        paddingLeft: "10px",
         color: "#65676B",
     },
     active: {
@@ -51,8 +53,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const AccountNavBar = () => {
+const AccountNavBar = (props) => {
     const classes = useStyles();
+    const { userLogged } = props;
+
+    const [userData] = useDocument(userLogged.uid && db.collection('users').doc(userLogged.uid));
+    const userSnapshot = userData?.data()
+
+
 
     return (
         <List className={classes.list}>
@@ -101,6 +109,26 @@ const AccountNavBar = () => {
                 </span>
                 </Button>
             </ListItem>
+
+            {
+                userSnapshot?.accountType === "foodshop" ? (
+                    <ListItem
+                        className={classes.item}
+                        disableGutters
+                    >
+                        <Button
+                            activeClassName={classes.active}
+                            className={classes.button}
+                            component={RouterLink}
+                            to={`/account/shop/edit`}
+                        >
+                    <span className={classes.title}>
+                    Restaurant Menu
+                </span>
+                        </Button>
+                    </ListItem>
+                ) : null
+            }
 
         </List>
     )

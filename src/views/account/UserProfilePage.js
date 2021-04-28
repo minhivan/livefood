@@ -15,11 +15,11 @@ import ProfileSaved from "../../components/Profile/Content/ProfileSaved";
 
 function content(action, id){
     switch (action){
-        case "profile_feed":
+        case "feed":
             return <ProfileFeed uid={id} type="post"/>
-        case "profile_channel":
+        case "channel":
             return <ProfileVids uid={id} type="video"/>
-        case "profile_saved":
+        case "saved":
             return <ProfileSaved uid={id} type="saved"/>
         default:
             return <></>
@@ -35,6 +35,7 @@ const UserProfilePage = (props) => {
     if(id === currentUser?.uid){
         isAuthProfile = true;
     }
+    window.scroll({top: 0, left: 0, behavior: 'smooth' });
 
     const [userData] = useDocument(id && db.collection('users').doc(id));
     const userSnapshot = userData?.data()

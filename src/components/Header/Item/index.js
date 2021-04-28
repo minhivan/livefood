@@ -104,7 +104,7 @@ function MenuHeader() {
                     </IconButton>
                 </Link>
 
-                <Link to="/explore">
+                <Link to="/explore/news">
                     <IconButton color="inherit" >
                         <Badge color="secondary">
                             <ExploreTwoToneIcon className={classes.icon} />

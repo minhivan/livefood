@@ -5,7 +5,8 @@ import {NavLink as RouterLink} from "react-router-dom";
 import {
     Grid as GridIcon,
     Bookmark as BookmarkIcon,
-    Film as FilmIcon
+    Film as FilmIcon,
+    List as ListIcon
 } from 'react-feather';
 import {useAuthState} from "react-firebase-hooks/auth";
 
@@ -98,6 +99,28 @@ const ProfileNavBar = ({user}) => {
             </ListItem>
 
             {
+                user?.accountType === "foodshop" ? (
+                    <ListItem
+                        className={classes.item}
+                        disableGutters
+                    >
+                        <Button
+                            activeClassName={classes.active}
+                            className={classes.button}
+                            component={RouterLink}
+                            to={`/profile/dishes/${user?.uid}`}
+                        >
+                            <ListIcon
+                                className={classes.icon}
+                                size="20"
+                            />
+                            <span className={classes.title}>Dishes</span>
+                        </Button>
+                    </ListItem>
+                ) : null
+            }
+
+            {
                 user?.uid === authUser?.uid ? (
                     <ListItem
                         className={classes.item}
@@ -118,6 +141,9 @@ const ProfileNavBar = ({user}) => {
                     </ListItem>
                 ) : null
             }
+
+
+
 
         </List>
 

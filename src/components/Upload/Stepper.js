@@ -59,9 +59,9 @@ const useStyles = makeStyles((theme: Theme) =>
             backgroundColor: theme.palette.background.paper,
             boxShadow: theme.shadows[5],
             padding: theme.spacing(2, 4, 3),
-            borderRadius: "8px",
+            borderRadius: "16px",
             maxHeight: "calc(100vh - 70px)",
-            overflowY: "scroll",
+            overflowY: "auto",
             "&:focus": {
                 outline: "none"
             },

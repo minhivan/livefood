@@ -18,64 +18,6 @@ function getModalStyle() {
 }
 
 const useStyles = makeStyles((theme) => ({
-    root: {
-        maxWidth: "100%",
-        borderRadius: "max(0px, min(8px, calc((100vw - 4px - 100%) * 9999))) / 8px",
-        boxShadow: "0px 0px 5px 0px #ddc4c4bf"
-    },
-    media: {
-        height: 400
-    },
-    expand: {
-        transform: 'rotate(0deg)',
-        marginLeft: 'auto',
-        transition: theme.transitions.create('transform', {
-            duration: theme.transitions.duration.shortest,
-        }),
-    },
-    expandOpen: {
-        transform: 'rotate(180deg)',
-    },
-    displayLike: {
-        padding: "0 0 20px 20px",
-        borderBottom: "1px solid rgba(var(--b6a,219,219,219),1)"
-    },
-    action: {
-        borderTop: "1px solid rgba(var(--b6a,219,219,219),1)",
-        justifyContent: "space-between"
-    },
-    paragraph: {
-        lineHeight: "26px",
-        textAlign: "justify",
-        whiteSpace: "pre-line",
-        fontSize: "14px"
-    },
-    paragraphHead: {
-        fontWeight: "600",
-        fontSize: "1rem",
-        marginBottom: "10px",
-        padding: "5px 0",
-        textTransform: "uppercase",
-        borderBottom : "1px solid #000"
-    },
-    captionText: {
-        whiteSpace: "pre-line",
-        lineHeight: "26px"
-    },
-    likeButton: {
-        border: "0",
-        backgroundColor: "none",
-        borderRadius: "50%",
-        '&:hover': {
-            color: 'black',
-        }
-    },
-    dataContent: {
-        display: "flex"
-    },
-    selected: {
-        backgroundColor: "unset !important"
-    },
     paper: {
         position: 'absolute',
         width: 300,
@@ -89,11 +31,6 @@ const useStyles = makeStyles((theme) => ({
         },
         display: "flex",
         flexDirection: "column"
-    },
-    modalHeader: {
-        display: "flex",
-        justifyContent: "center",
-        padding: "10px 0 20px 0",
     },
     btnAction: {
         display: "flex",
@@ -128,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-const PostAction = (props) => {
+const PostUtil = (props) => {
     const [modalStyle] = useState(getModalStyle);
     const classes = useStyles();
 
@@ -223,4 +160,4 @@ const PostAction = (props) => {
 }
 
 
-export default PostAction
+export default PostUtil

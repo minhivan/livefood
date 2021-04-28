@@ -1,36 +1,34 @@
-import React from "react";
-import {makeStyles} from "@material-ui/core/styles";
-import {red} from "@material-ui/core/colors";
-import PostComment from "./Comment";
+import React, {useEffect, useState} from "react";
+import PostComment from "./CommentDetails";
+import {db} from "../../firebase";
 
-const useStyles = makeStyles((theme) => ({
+function Comment({id}){
+    const [comments, setComments] = useState([])
 
-    displayCmt: {
-        padding: "10px 20px",
-        textAlign: "right",
-        color: "#8e8e8e"
-    }
+    useEffect(() => {
+        return db.collection("posts").doc(id)
+            .collection("comments")
+        	.orderBy('timestamp', "desc")
+        	.onSnapshot((snapshot ) => {
+        		// var userProfile = {};
+        		setComments(
+        			snapshot.docs.map((doc => ({
+        				id: doc.id,
+        				comment: doc.data(),
+        				cmtAuthor: doc.data().user.get().then( cmtAuthor => {
+        					return cmtAuthor.data();
+        					// return Object.assign(userProfile, author.data());
+        				})
+        			})))
+        		);
+        	})
 
-}));
-
-
-function Comment(props){
-    const classes = useStyles();
-    let count = 0;
-
-    props.comments.map((comment) => {
-        return count++
-    })
+    }, [id])
 
     return(
         <div className="listComments">
             {
-                count > 0 && (
-                    <h5 className={classes.displayCmt}>Displaying {count} comments</h5>
-                )
-            }
-            {
-                props.comments.slice(0, 5).map(({id, comment, cmtAuthor}) => (
+                comments.map(({id, comment, cmtAuthor}) => (
                     <PostComment
                         key={id}
                         comment={comment}

@@ -43,21 +43,21 @@ const ProfileFeed = ({uid}) => {
         window.scroll({top: 0, left: 0, behavior: 'smooth' });
 
         let postDoc = db.collection('posts');
-        return postDoc
+        postDoc
             .where('uid', "==", uid)
             .orderBy('timestamp', 'desc')
             .limit(12)
             .get().then(snapshot => {
-            let temp = []
-                snapshot.forEach(data => {
-                    var userProfile = {};
+                let temp = []
+                    snapshot.forEach(data => {
+                        var userProfile = {};
 
-                    data.data().user.get().then( author => {
-                        Object.assign(userProfile, author.data());
+                        data.data().user.get().then( author => {
+                            Object.assign(userProfile, author.data());
+                        })
+                        temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
                     })
-                    temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
-                })
-                setFeed(temp);
+                    setFeed(temp);
             })
     }, [uid]);
 

@@ -22,33 +22,33 @@ function App() {
 	const [userLogged, loading] = useAuthState(auth);
 	const routing = useRoutes(routes(userLogged));
 	// const u = useSelector(selectUser);
-	const dispatch = useDispatch();
+	// const dispatch = useDispatch();
 
-	useEffect(() => {
-		if(auth.onAuthStateChanged(author => {
-			if(author){
-				dispatch(
-					login({
-						uid: author.uid,
-						photoURL: author.photoURL,
-						email: author.email,
-						displayName: author.displayName
-					})
-				)
-			}else{
-				dispatch(logout())
-			}
-		}))
-
-		if(userLogged) {
-			db.collection("users").doc(userLogged.uid).set({
-				lastActive: firebase.firestore.FieldValue.serverTimestamp()
-			},{
-				merge: true
-			})
-		}
-
-	}, [dispatch, userLogged])
+	// useEffect(() => {
+	// 	if(auth.onAuthStateChanged(author => {
+	// 		if(author){
+	// 			dispatch(
+	// 				login({
+	// 					uid: author.uid,
+	// 					photoURL: author.photoURL,
+	// 					email: author.email,
+	// 					displayName: author.displayName
+	// 				})
+	// 			)
+	// 		}else{
+	// 			dispatch(logout())
+	// 		}
+	// 	}))
+	//
+	// 	if(userLogged) {
+	// 		db.collection("users").doc(userLogged.uid).set({
+	// 			lastActive: firebase.firestore.FieldValue.serverTimestamp()
+	// 		},{
+	// 			merge: true
+	// 		})
+	// 	}
+	//
+	// }, [dispatch, userLogged])
 
 
 

@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import './Upload.css';
 
 import {Button} from "@material-ui/core";
 // import {storage, db, auth} from "../../firebase";
@@ -18,7 +17,6 @@ import RecipeStepper from "./Stepper";
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
-
 
 const useStyles = makeStyles((theme) => ({
     divider: {

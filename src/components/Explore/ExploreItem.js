@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import MediaViewer from "../MediaViewer";
 import {Play as PlayIcon} from "react-feather";
+import {Modal} from "@material-ui/core";
 
 
 
@@ -17,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
         height: "100%",
         cursor: "pointer",
         boxShadow: "0px 0px 5px 0px #ddc4c4bf",
+        borderRadius: "16px"
     },
     icon: {
         color: "#050505",
@@ -43,12 +45,12 @@ const useStyles = makeStyles((theme) => ({
 export default function ExploreItem(props) {
 
     const classes = useStyles();
-    const [open, setOpen] = useState(false);
     // const [postPic, setPostPic] = useState([]);
+    const [open, setOpen] = React.useState(false);
 
-    function handleOpen(post, id){
+    const handleOpen = () => {
         setOpen(true);
-    }
+    };
 
     const handleClose = () => {
         setOpen(false);
@@ -61,7 +63,7 @@ export default function ExploreItem(props) {
                 <video
                     className={classes.img}
                     muted="muted"
-                    onClick={() => handleOpen(props.post, props.id)}
+                    onClick={() => handleOpen()}
                 >
                     <source src={props.post.mediaUrl} type="video/mp4"/>
                 </video>
@@ -77,7 +79,7 @@ export default function ExploreItem(props) {
                 alt=""
                 className={classes.img}
                 src={props.post.mediaUrl}
-                onClick={() => handleOpen(props.post, props.id)}
+                onClick={() => handleOpen()}
             />
     }
 

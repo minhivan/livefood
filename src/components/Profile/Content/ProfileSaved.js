@@ -70,7 +70,7 @@ const ProfileSaved = ({uid}) => {
 
     return(
         <div className="explore__root" style={{paddingTop: "20px"}}>
-            <div className="explore__container">
+            <div className="explore__container" style={{padding: "0"}}>
                 {
                     savedPost.length > 0 ? (
                         savedPost.map(({id, post, authorProfile}) => (

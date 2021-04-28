@@ -23,6 +23,7 @@ import Dialog from '@material-ui/core/Dialog';
 import { blue } from '@material-ui/core/colors';
 import firebase from "firebase";
 import {DialogContent} from "@material-ui/core";
+import Divider from "@material-ui/core/Divider";
 
 
 
@@ -92,7 +93,7 @@ const useStyles = makeStyles((theme) => ({
 
 function SimpleDialog(props) {
     const classes = useStyles();
-    const { handleClose, type, open, users } = props;
+    const { handleClose, type, open, users , auth} = props;
 
 
     return (
@@ -104,6 +105,7 @@ function SimpleDialog(props) {
                     <DialogTitle id="simple-dialog-title" style={{textAlign: "center"}}>Follower</DialogTitle>
                 )
             }
+            <Divider />
             <DialogContent className={classes.dialog}>
                 <List>
                         {
@@ -113,13 +115,16 @@ function SimpleDialog(props) {
                                         <ListItemAvatar>
                                             <Avatar className={classes.avatar} src={data?.photoURL} />
                                         </ListItemAvatar>
-                                        <ListItemText primary={data?.displayName} />
+                                        <ListItemText onClick={handleClose}>
+                                            <Link to={`/profile/${id}`}>{data?.displayName}</Link>
+                                        </ListItemText>
+
                                     </>
                                     {
                                         type === '1' ? (
-                                            <Button variant="contained" color="primary">Unfollow</Button>
+                                            <Button variant="contained" color="primary" onClick={() => handleUserUnfollow(auth, id)}>Following</Button>
                                         ) : (
-                                            <Button variant="contained" color="primary">Follow</Button>
+                                            <Button variant="contained" color="primary" onClick={() => handleUserFollow(auth, id)}>Follow</Button>
                                         )
                                     }
                                 </ListItem>
@@ -134,7 +139,7 @@ function SimpleDialog(props) {
 
 
 
-const ProfileHeader = ({isAuthProfile,user, count,  ...rest}) => {
+const ProfileHeader = ({isAuthProfile, user, count,  ...rest}) => {
     const [userFollowing, setUserFollowing] = useState([]);
     const [userFollower, setUserFollower] = useState([]);
 
@@ -205,16 +210,10 @@ const ProfileHeader = ({isAuthProfile,user, count,  ...rest}) => {
     const checkFollowed = (userFollowerList, uid) => {
         let rs = false;
         if(typeof userFollowerList !== 'undefined' ){
-            userFollowerList.some(person => person.name === uid)
+            rs = userFollowerList.some(person => person.id === uid)
         }
-        // if(persons.some(person => person.name === "Peter")){
-        //     alert("Object found inside the array.");
-        // } else{
-        //     alert("Object not found.");
-        // }
         return rs;
     }
-
 
 
     const classes = useStyles();
@@ -253,8 +252,9 @@ const ProfileHeader = ({isAuthProfile,user, count,  ...rest}) => {
                                 authUser ? (
                                     <div className="share-follow-container">
                                         {/* Checking if followed */}
+
                                         {
-                                            checkFollowed(userFollower.id, authUser.uid) ? (
+                                            checkFollowed(userFollower, authUser.uid) ? (
                                                 <Button
                                                     variant="outlined"
                                                     className={classes.buttonUnfollow}
@@ -311,8 +311,8 @@ const ProfileHeader = ({isAuthProfile,user, count,  ...rest}) => {
                 </div>
 
             </div>
-            <SimpleDialog open={openFollowing} handleClose={handleCloseFollowing} users={userFollowing} type={`1`}/>
-            <SimpleDialog open={openFollower} handleClose={handleCloseFollower} users={userFollower} type={`2`}/>
+            <SimpleDialog open={openFollowing} handleClose={handleCloseFollowing} users={userFollowing} type={`1`} auth={user?.uid} />
+            <SimpleDialog open={openFollower} handleClose={handleCloseFollower} users={userFollower} type={`2`} auth={user?.uid}/>
         </div>
     )
 }

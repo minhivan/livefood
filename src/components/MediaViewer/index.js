@@ -7,8 +7,6 @@ import {makeStyles} from "@material-ui/core/styles";
 import CardHeader from "@material-ui/core/CardHeader";
 import Avatar from "@material-ui/core/Avatar";
 import {Link} from "react-router-dom";
-// import dayjs from "dayjs";
-// import Card from "@material-ui/core/Card";
 import Divider from '@material-ui/core/Divider';
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -17,8 +15,6 @@ import FavoriteRoundedIcon from "@material-ui/icons/FavoriteRounded";
 import FavoriteBorderTwoToneIcon from "@material-ui/icons/FavoriteBorderTwoTone";
 import ModeCommentOutlinedIcon from "@material-ui/icons/ModeCommentOutlined";
 import BookmarkBorderOutlinedIcon from "@material-ui/icons/BookmarkBorderOutlined";
-// import clsx from "clsx";
-// import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import CardActions from "@material-ui/core/CardActions";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import clsx from "clsx";
@@ -28,12 +24,10 @@ import {useAuthState} from "react-firebase-hooks/auth";
 import {auth, db} from "../../firebase";
 import firebase from "firebase";
 import ListComment from "../Comments";
-import handleLikePost from "../../utils/handleLikePost";
-import handleDislikePost from "../../utils/handleDislikePost";
 import {useDocument} from "react-firebase-hooks/firestore";
 import BookmarkRoundedIcon from "@material-ui/icons/BookmarkRounded";
-import handleSavePost from "../../utils/handleSavePost";
-import handleUnsavedPost from "../../utils/handleUnsavedPost";
+import {handleSavePost, handleUnSavedPost, handleLikePost, handleDislikePost} from "../../hooks/services";
+
 
 
 
@@ -69,7 +63,8 @@ const useStyles = makeStyles((theme) => ({
         height: "100%",
         display: "flex",
         justifyContent: "space-between",
-        overflow: "hidden"
+        overflow: "hidden",
+        borderRadius: "16px"
     },
     modalHeader: {
         display: "flex",
@@ -85,6 +80,7 @@ const useStyles = makeStyles((theme) => ({
         paddingBottom: "100%",
         position: "relative",
         overflow : "hidden",
+        backgroundColor: "rgb(232, 231, 224)"
     },
     img: {
         objectFit: "contain",
@@ -101,7 +97,7 @@ const useStyles = makeStyles((theme) => ({
     rightPanel: {
         width: "335px",
         height: "100%",
-        overflowY: "scroll",
+        overflowY: "auto",
         position: "relative"
     },
     captionText: {
@@ -178,7 +174,6 @@ function MediaViewer(props){
     const [expanded, setExpanded] = useState(true);
     const [user] = useAuthState(auth);
     const postRef = db.collection('posts').doc(props.id);
-    const authUserRef = user && db.collection("users").doc(user.uid);
 
     const [postSnapshot] = useDocument(postRef);
     const [saveSelected, setSaveSelected] = useState(false);
@@ -219,26 +214,24 @@ function MediaViewer(props){
     // Handle like and dislike action
     const likePost = () => {
         setSelected(true);
-        handleLikePost(postRef, user.uid);
+        handleLikePost(props.id, user.uid)
     }
 
-    // Handle dislike post
     const dislikePost = () => {
         setSelected(false);
-        handleDislikePost(postRef, user.uid)
+        handleDislikePost(props.id, user.uid)
     }
-
 
     const savePost = () => {
         // Save post id to user data, and push to post data
         setSaveSelected(true);
-        handleSavePost(postRef, authUserRef, user.uid, props.id);
+        handleSavePost(props.id, user.uid);
     }
 
     const unsavedPost = () => {
         // Save post id to user data, and push to post data
         setSaveSelected(false);
-        handleUnsavedPost(postRef, authUserRef, user.uid, props.id);
+        handleUnSavedPost(props.id, user.uid);
     }
 
 
@@ -271,25 +264,6 @@ function MediaViewer(props){
                 setSaveSelected(true);
             }
         }
-
-        // get comments
-        return postRef
-            .collection("comments")
-            .orderBy('timestamp', "desc")
-            .limit(5)
-            .onSnapshot((snapshot ) => {
-                // var userProfile = {};
-                setComments(
-                    snapshot.docs.map((doc => ({
-                        id: doc.id,
-                        comment: doc.data(),
-                        cmtAuthor: doc.data().user.get().then( cmtAuthor => {
-                            return cmtAuthor.data();
-                            // return Object.assign(userProfile, author.data());
-                        })
-                    })))
-                );
-            })
 
     }, [props.id])
 
@@ -450,7 +424,7 @@ function MediaViewer(props){
                         }
 
                         {/*<ListComment comments={comments} />*/}
-                        <ListComment comments={comments} />
+                        <ListComment id={props.id} />
 
                         <div className="commentContainer commentViewer ">
                             <Divider />

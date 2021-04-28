@@ -1,6 +1,5 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 
-import "../components/Messenger/Messenger.css";
 import SidebarChat from "../components/Messenger/Sidebar/SidebarChat";
 import Chat from "../components/Messenger/Chat";
 import Page from "../components/Page";
@@ -11,8 +10,7 @@ import IconButton from "@material-ui/core/IconButton";
 import ControlPointOutlinedIcon from "@material-ui/icons/ControlPointOutlined";
 import {makeStyles} from "@material-ui/core/styles";
 import CreateNewChat from "../components/Messenger/Sidebar/CreateNewChat";
-import {useAuthState} from "react-firebase-hooks/auth";
-import {auth, db} from "../firebase";
+import { db} from "../firebase";
 import {useCollection} from "react-firebase-hooks/firestore";
 import {List} from "@material-ui/core";
 import {useDispatch} from "react-redux";

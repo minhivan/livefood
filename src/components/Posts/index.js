@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from "react";
 import Upload from "../Upload";
 import Post from "./Post";
-import { db, auth } from "../../firebase";
-import {useAuthState} from "react-firebase-hooks/auth";
+import { db } from "../../firebase";
 import {Compass as CompassIcon} from "react-feather";
 import {makeStyles} from "@material-ui/core/styles";
 import {useDocument} from "react-firebase-hooks/firestore";
@@ -38,60 +37,83 @@ const useStyles = makeStyles((theme) => ({
 
 export default function NewFeed(props){
     const classes = useStyles();
+    const {userLogged} = props;
     const [posts, setPosts] = useState([]);
-
-    const userRef = props.userLogged && db.collection('users').doc(props.userLogged.uid);
+    const userRef = userLogged && db.collection('users').doc(userLogged.uid);
     const [userSnapshot] = useDocument(userRef);
 
     let userFollow = userSnapshot?.data()?.following;
+
     //Get post
     useEffect( () => {
-        var userFollowingList;
-        if(typeof userFollow !== 'undefined' && userFollow.length > 0){
+        // if(userFollow) {
+        //     let userFollowingList = userFollow;
+        //     userFollowingList.push(userLogged.uid);
+        //
+        // }
 
-            userFollowingList = userFollow;
-            userFollowingList.push(props.userLogged.uid);
-            return db.collection('posts')
-                .orderBy('timestamp', "desc")
-                .where('uid', 'in', userFollowingList)
-                .onSnapshot(snapshot => {
-                    setPosts(snapshot.docs.map(doc => ({
+        // if(typeof userFollow !== 'undefined' && userFollow.length > 0){
+        //     userFollow.push(userLogged.uid);
+        //     return db.collection('posts')
+        //         .orderBy('timestamp', "desc")
+        //         .where('uid', 'in', userFollow)
+        //         .onSnapshot(snapshot => {
+        //             setPosts(snapshot.docs.map(doc => ({
+        //                 id: doc.id,
+        //                 post: doc.data(),
+        //             })));
+        //         })
+        // }
+        // else{
+        //     return db.collection('posts')
+        //         .orderBy('timestamp', "desc")
+        //         .where('uid', '==', userLogged.uid)
+        //         .onSnapshot(snapshot => {
+        //             setPosts(snapshot.docs.map(doc => ({
+        //                 id: doc.id,
+        //                 post: doc.data(),
+        //             })));
+        //         })
+        // }
+
+        return db.collection('posts')
+            .orderBy('timestamp', "desc")
+            .limit(5)
+            .get().then(async snapshot => {
+                const tracking = await Promise.all(
+                    snapshot.docs.map(async doc => ({
                         id: doc.id,
                         post: doc.data(),
-                    })));
-                })
-        }
-        else{
-            return db.collection('posts')
-                .orderBy('timestamp', "desc")
-                .where('uid', '==', props.userLogged.uid)
-                .onSnapshot(snapshot => {
-                    setPosts(snapshot.docs.map(doc => ({
-                        id: doc.id,
-                        post: doc.data(),
-                    })));
-                })
-        }
-
-    }, [userFollow?.length]);
-
+                        postAuthor: await (doc.data().user.get().then( author => {
+                            return {
+                                displayName: author.data().displayName,
+                                photoURL: author.data().photoURL,
+                                accountType: author.data().accountType,
+                                uid: doc.data().uid
+                            };
+                        }))
+                    }))
+                )
+                setPosts(tracking);
+            })
+    }, []);
 
 
     return(
         <div className="app__post">
             {
-                props.userLogged ? (
-                    <Upload userLogged={props.userLogged}/>
+                userLogged ? (
+                    <Upload userLogged={userLogged}/>
                 ) : null
             }
             {
-                posts.length > 0 ? (
-                    posts.map(({id, post}) => (
+                posts ? (
+                    posts.map(({id, post, postAuthor }) => (
                         <Post
                             key={id}
                             id={id}
                             post={post}
-                            author={post.uid}
+                            author={postAuthor}
                         />
                     ))
                 ) : (
@@ -117,7 +139,6 @@ export default function NewFeed(props){
 
                     </div>
                 )
-
             }
         </div>
     )

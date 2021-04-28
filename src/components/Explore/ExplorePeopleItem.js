@@ -19,8 +19,10 @@ const useStyles = makeStyles((theme) => ({
         width: '100%',
         backgroundColor: theme.palette.background.paper,
         marginLeft: "10px",
-        borderRadius: "max(0px, min(8px, calc((100vw - 4px - 100%) * 9999))) / 8px",
-        padding: 0
+        borderRadius: "16px",
+        padding: 0,
+        boxShadow: "0px 0px 5px 0px #ddc4c4bf",
+        overflow: "hidden"
     },
     inline: {
         display: 'inline',

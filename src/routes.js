@@ -41,9 +41,10 @@ const routes = (isLoggedIn)  => [
         path: '/explore',
         element: <MainLayout/>,
         children: [
-            // { path: '/', element: <Explore userLogged={isLoggedIn}/> },
-            { path: '/people', element: isLoggedIn ? <ExplorePeople userLogged={isLoggedIn}/> : <Navigate to="/login" />  },
-            // { path: '/watch', element:  <ExploreVideo userLogged={isLoggedIn}/> },
+            { path: '/', element: <Explore userLogged={isLoggedIn}/> },
+            { path: '/news', element: <Explore userLogged={isLoggedIn}/> },
+            { path: '/people',  element: isLoggedIn ? <ExplorePeople userLogged={isLoggedIn}/> : <Navigate to="/login" />  },
+            { path: '/watch', element:  <ExploreVideo userLogged={isLoggedIn}/> },
             { path: '/watch'},
         ]
     },
@@ -59,18 +60,20 @@ const routes = (isLoggedIn)  => [
         path: '/account',
         element: isLoggedIn ? <MainLayout /> : <Navigate to="/login" />,
         children: [
-            { path: 'edit', element: <EditAccountPage userLogged={isLoggedIn} pagePath="account_edit"/> },
-            { path: 'password/change', element: <EditAccountPage userLogged={isLoggedIn} pagePath="account_password"/> },
-            { path: 'setting/notifications', element: <EditAccountPage userLogged={isLoggedIn} pagePath="account_setting"/> },
+            { path: 'edit', element: <EditAccountPage userLogged={isLoggedIn} pagePath="edit"/> },
+            { path: 'password/change', element: <EditAccountPage userLogged={isLoggedIn} pagePath="password"/> },
+            { path: 'setting/notifications', element: <EditAccountPage userLogged={isLoggedIn} pagePath="setting"/> },
+            { path: 'shop/edit', element: <EditAccountPage userLogged={isLoggedIn} pagePath="shop"/> },
         ]
     },
     {
         path: '/profile',
         element: <MainLayout pageProfile={true}/>,
         children: [
-            { path: '/:id', element: <UserProfilePage userLogged={isLoggedIn} pagePath="profile_feed"/> },
-            { path: '/channel/:id', element: <UserProfilePage userLogged={isLoggedIn} pagePath="profile_channel"/> },
-            { path: '/saved/:id', element: <UserProfilePage userLogged={isLoggedIn}  pagePath="profile_saved"/> }
+            { path: '/:id', element: <UserProfilePage userLogged={isLoggedIn} pagePath="feed"/> },
+            { path: '/channel/:id', element: <UserProfilePage userLogged={isLoggedIn} pagePath="channel"/> },
+            { path: '/saved/:id', element: <UserProfilePage userLogged={isLoggedIn}  pagePath="saved"/> },
+            { path: '/dishes/:id', element: <UserProfilePage userLogged={isLoggedIn}  pagePath="dishes"/> }
         ]
     },
 

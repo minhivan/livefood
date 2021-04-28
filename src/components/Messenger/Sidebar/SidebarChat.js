@@ -1,7 +1,7 @@
 import React from "react";
 import CardHeader from "@material-ui/core/CardHeader";
 import Avatar from "@material-ui/core/Avatar";
-import getRecipientUser from "../../../utils/getRecipientUser";
+import getRecipientUser from "../../../hooks/getRecipientUser";
 import {auth, db} from "../../../firebase";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {useCollection} from "react-firebase-hooks/firestore";

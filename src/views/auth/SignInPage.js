@@ -6,7 +6,7 @@ import {Link, Navigate} from "react-router-dom";
 //import FacebookIcon from '../../icons/Facebook';
 import GoogleIcon from '../../icons/Google';
 import Page from "../../components/Page";
-import checkFirebaseAuth from "../../CustomHook/FirebaseAuth";
+import checkFirebaseAuth from "../../hooks/firebaseAuth";
 import {useAuthState} from "react-firebase-hooks/auth";
 
 const useStyles = makeStyles((theme) => ({

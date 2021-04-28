@@ -1,15 +1,12 @@
-import React, {useRef, useState} from "react";
+import React from "react";
 import CardHeader from "@material-ui/core/CardHeader";
 import Avatar from "@material-ui/core/Avatar";
 import Skeleton from "@material-ui/lab/Skeleton";
 import {Link} from "react-router-dom";
 import Button from "@material-ui/core/Button";
-import {IconButton, Modal} from "@material-ui/core";
-import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
-import Divider from "@material-ui/core/Divider";
+
 import {makeStyles} from "@material-ui/core/styles";
-import {useAuthState} from "react-firebase-hooks/auth";
-import {auth} from "../../../firebase";
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -51,73 +48,16 @@ const useStyles = makeStyles((theme) => ({
         border: "1px solid rgba(var(--ca6,219,219,219),1)"
 
     },
-    description: {
-        padding: "10px 0"
-    },
-    descriptionText: {
-        textOverflow: "ellipsis",
-        textAlign: "justify",
-        color: "#8e8e8e",
-        fontSize: "12px",
-    },
-    inputText: {
-        fontSize: "16px",
-        height: 60,
-        padding: "6px 10px",
-        resize: "vertical",
-        border: "1px solid rgba(var(--ca6,219,219,219),1)",
-        width: "100%"
-    },
     submit: {
         display: "flex",
         justifyContent: "center",
         padding: "20px"
     },
-    paper: {
-        position: 'absolute',
-        width: 400,
-        backgroundColor: theme.palette.background.paper,
-        boxShadow: theme.shadows[5],
-        padding: theme.spacing(2, 3, 3),
-        borderRadius: "8px",
-        maxHeight: "300px",
-        "&:focus": {
-            outline: "none"
-        },
-        display: "flex",
-        flexDirection: "column"
-    },
-    modalHeader: {
-        display: "flex",
-        justifyContent: "center",
-        padding: "10px 0 20px 0",
-    },
-    btnAction: {
-        display: "flex",
-        justifyContent: "center",
-    },
-    buttonClose: {
-        position: "fixed",
-        right: "20px",
-        top: "17px"
-    },
-    btnUpload: {
-        color : "#0095f6",
-        minHeight: "48px",
-        width : "100%",
-        fontWeight: "bold"
-    },
-    btnRemove: {
-        color : "#d8102a",
-        minHeight: "48px",
-        width : "100%",
-        fontWeight: "bold"
-    }
 }));
 
-const EditPassword = () => {
+const EditPassword = (props) => {
+    const {userLogged} = props;
 
-    const [user] = useAuthState(auth);
     const classes = useStyles();
 
     return(
@@ -126,15 +66,15 @@ const EditPassword = () => {
                 <CardHeader
                     className={classes.avatarHolder}
                     avatar={
-                        user?.uid ? (
-                            <Avatar className={classes.avatar} alt={user.displayName} src={user.photoURL}/>
+                        userLogged?.uid ? (
+                            <Avatar className={classes.avatar} alt={userLogged.displayName} src={userLogged.photoURL}/>
                         ):(
                             <Skeleton animation="wave" variant="circle" width={40} height={40} />
                         )
                     }
                     title={
-                        user?.uid ? (
-                            <Link to={`profile/${user.uid}`} className={classes.displayName}>{user.displayName}</Link>
+                        userLogged?.uid ? (
+                            <Link to={`profile/${userLogged.uid}`} className={classes.displayName}>{userLogged.displayName}</Link>
                         ) : (
                             <Skeleton animation="wave" height={10} width="30%" style={{ marginBottom: 6 }} />
                         )

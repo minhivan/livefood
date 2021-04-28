@@ -50,14 +50,16 @@ const useStyles = makeStyles(() => ({
     util: {
         padding: "0",
         backgroundColor: "#fff",
-        borderRadius: "max(0px, min(8px, calc((100vw - 4px - 100%) * 9999))) / 8px",
+        borderRadius: "16px",
         boxShadow: "0px 0px 5px 0px #ddc4c4bf",
+        overflow: "hidden"
     },
     userFrame: {
         marginBottom: "20px",
         backgroundColor: "#fff",
-        borderRadius: "max(0px, min(8px, calc((100vw - 4px - 100%) * 9999))) / 8px",
+        borderRadius: "16px",
         boxShadow: "0px 0px 5px 0px #ddc4c4bf",
+        overflow: "hidden"
     }
 }));
 
@@ -68,7 +70,7 @@ const NavBar = (props) => {
 
     const itemsWithAuth = [
         {
-            href: '/explore',
+            href: '/explore/news',
             icon: BellIcon,
             title: 'Explore'
         },
@@ -204,9 +206,6 @@ NavBar.propTypes = {
     openMobile: PropTypes.bool
 };
 
-NavBar.defaultProps = {
-    onMobileClose: () => {},
-    openMobile: false
-};
+
 
 export default NavBar;
