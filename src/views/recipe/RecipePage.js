@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import Page from "../components/Page";
+import Page from "../../components/Page";
 import {Link} from "react-router-dom";
 import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
 import AccessTimeRoundedIcon from '@material-ui/icons/AccessTimeRounded';
@@ -8,7 +8,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import {db} from "../firebase";
+import {db} from "../../firebase";
+import {useCollection} from "react-firebase-hooks/firestore";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -24,9 +25,11 @@ const useStyles = makeStyles((theme) => ({
 const RecipePage = (props) => {
     const classes = useStyles();
 
-    const [type, setType] = React.useState('recommend');
+    const [type, setType] = React.useState('newest');
     const [newest, setNewest] = useState([]);
     const [listRecipe, setListRecipe] = useState([]);
+    const [cate] = useCollection(db.collection("category"))
+
 
     window.scroll({top: 0, left: 0, behavior: 'smooth' });
 
@@ -57,7 +60,7 @@ const RecipePage = (props) => {
 
         // Set all post
 
-        if(type === 'recommend'){
+        if(type === 'newest'){
             db.collection('posts')
                 .where('type', '==', 'recipe')
                 .orderBy('timestamp', "desc")
@@ -78,6 +81,7 @@ const RecipePage = (props) => {
         else{
             db.collection('posts')
                 .where('type', '==', 'recipe')
+                .where('data.category', '==', type)
                 .orderBy('timestamp', "desc")
                 .limit(12)
                 .get().then(async snapshot => {
@@ -128,7 +132,7 @@ const RecipePage = (props) => {
                                                             <div className="fd-rating">
                                                                 <span><FavoriteRoundedIcon style={{color: "red", marginRight: 5}}/>{post?.likeBy?.length}</span></div>
                                                             <div className="cook-time">
-                                                                <span style={{marginLeft: 5}}><AccessTimeRoundedIcon style={{color: "black", marginRight: 5}}/> 40 m</span>
+                                                                <span style={{marginLeft: 5}}><AccessTimeRoundedIcon style={{color: "black", marginRight: 5, textTransform: "lowercase"}}/>{post?.data?.cookTime} {post?.data?.cookUnit}</span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -152,10 +156,13 @@ const RecipePage = (props) => {
                             value={type}
                             onChange={handleChange}
                         >
-                            <MenuItem value={'recommend'} style={{fontWeight: "bold", textTransform: "uppercase"}}>Recommend</MenuItem>
-                            <MenuItem value={'trending'} style={{fontWeight: "bold", textTransform: "uppercase"}}>Trending</MenuItem>
-                            <MenuItem value={'popular'} style={{fontWeight: "bold", textTransform: "uppercase"}}>Popular</MenuItem>
-                            <MenuItem value={'quickandeasy'} style={{fontWeight: "bold", textTransform: "uppercase"}}>Quick & Easy</MenuItem>
+                            <MenuItem value={'newest'} style={{fontWeight: "bold", textTransform: "uppercase"}}>Newest</MenuItem>
+                            {
+                                cate?.docs?.map((doc) => (
+                                    <MenuItem key={doc.id} value={doc.data().title} style={{fontWeight: "bold", textTransform: "uppercase"}}>{doc.data().title}</MenuItem>
+                                ))
+                            }
+
                         </Select>
                     </FormControl>
 
@@ -183,7 +190,7 @@ const RecipePage = (props) => {
                                                                 <div className="fd-rating">
                                                                     <span><FavoriteRoundedIcon style={{color: "red", marginRight: 5}}/> {post?.likeBy?.length}</span></div>
                                                                 <div className="cook-time">
-                                                                    <span><AccessTimeRoundedIcon style={{color: "black", marginRight: 5}}/> 40 m</span>
+                                                                    <span><AccessTimeRoundedIcon style={{color: "black", marginRight: 5, textTransform: "lowercase"}}/>{post?.data?.cookTime} {post?.data?.cookUnit}</span>
                                                                 </div>
                                                             </div>
                                                         </div>

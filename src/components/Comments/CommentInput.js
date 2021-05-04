@@ -6,6 +6,7 @@ import firebase from "firebase";
 import Button from "@material-ui/core/Button";
 import {Rating} from "@material-ui/lab";
 import {makeStyles} from "@material-ui/core/styles";
+import {useDocument} from "react-firebase-hooks/firestore";
 
 const labels = {
     1: 'Useless',
@@ -28,15 +29,31 @@ const useStyles = makeStyles({
     }
 });
 
-export default function CommentInput({user, id}){
+export default function CommentInput({user, id, type, path}){
     const classes = useStyles();
     const [value, setValue] = React.useState(null);
     const [hover, setHover] = React.useState(-1);
     const [comment, setComment] = useState('');
+    const postRef = db.collection('posts').doc(id);
+    const [postSnapshot] = useDocument(postRef);
+    let rating = postSnapshot?.data()?.rating
+
     const postComment = (event) => {
         event.preventDefault();
         if(comment){
             if(value){
+                if(typeof rating == 'undefined'){
+                    db.collection("posts").doc(id).update({
+                        rating: value
+                    })
+                }
+                else{
+                    let avg = parseFloat((parseFloat(rating) + parseFloat(value)) / 2);
+                    db.collection("posts").doc(id).update({
+                        rating: avg
+                    })
+                }
+
                 db.collection("posts").doc(id).collection("comments").add({
                     text: comment,
                     user: db.doc('users/' + user.uid),
@@ -61,11 +78,13 @@ export default function CommentInput({user, id}){
     return(
         <>
 
-            <div className="commentContainer">
-                <Avatar alt={user?.displayName} src={user?.photoURL} />
+            <div className={`commentContainer ${path === "preview" && "commentViewer"}`}>
+                {
+                    path === "preview" ? null : <Avatar alt={user?.displayName} src={user?.photoURL} />
+                }
                 <div className={classes.root}>
                     {
-                        comment ? (
+                        type==='recipe' && comment ? (
                             <div className={classes.rating}>
                                 <Rating
                                     name="hover-feedback"

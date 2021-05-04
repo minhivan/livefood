@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from "react";
-import {Avatar, Badge, Button, CircularProgress, IconButton, Modal, TextField} from "@material-ui/core";
+import {Avatar, Badge, Button, CircularProgress, IconButton, Modal, TextField, Tooltip} from "@material-ui/core";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 import CardHeader from "@material-ui/core/CardHeader";
 import {makeStyles} from "@material-ui/core/styles";
 import PhotoCameraTwoToneIcon from "@material-ui/icons/PhotoCameraTwoTone";
 import VideoCallTwoToneIcon from "@material-ui/icons/VideoCallTwoTone";
-import GroupAddTwoToneIcon from "@material-ui/icons/GroupAddTwoTone";
+import LocationOnTwoToneIcon from '@material-ui/icons/LocationOnTwoTone';
 import {auth, db, storage} from "../../firebase";
 import firebase from "firebase";
 import {useAuthState} from "react-firebase-hooks/auth";
@@ -256,13 +256,7 @@ function Popup(props){
                     {
                         props.image ? (
                             <div className="popup__review">
-                                {/*<img className={classes.reviewImg} src={URL.createObjectURL(props.image)} alt="" />*/}
                                 {media}
-                                {/*<div className={classes.buttonClose}>*/}
-                                {/*    <IconButton aria-label="Cancel" color="inherit" >*/}
-                                {/*        <CancelTwoToneIcon />*/}
-                                {/*    </IconButton>*/}
-                                {/*</div>*/}
                             </div>
                         ) : null
                     }
@@ -271,6 +265,7 @@ function Popup(props){
                 <div className="popup__picker">
                     <h3 style={{textTransform: "inherit", fontSize: "1rem", letterSpacing: "0"}}>Add to this post </h3>
                     <div className="popup__iconPicker">
+
                         <div>
                             <label htmlFor="icon-button-file" className="upload__pickerButton">
                                 <IconButton color="inherit" component="span" >
@@ -281,18 +276,13 @@ function Popup(props){
                             </label>
                         </div>
                         <div>
-                            <IconButton color="inherit" component="span" >
-                                <Badge color="secondary">
-                                    <VideoCallTwoToneIcon className={classes.popIcon}/>
-                                </Badge>
-                            </IconButton>
-                        </div>
-                        <div>
-                            <IconButton color="inherit" component="span" >
-                                <Badge color="secondary">
-                                    <GroupAddTwoToneIcon className={classes.popIcon}/>
-                                </Badge>
-                            </IconButton>
+                            <Tooltip title="Location">
+                                <IconButton color="inherit" component="span">
+                                    <Badge color="secondary">
+                                        <LocationOnTwoToneIcon className={classes.popIcon}/>
+                                    </Badge>
+                                </IconButton>
+                            </Tooltip>
                         </div>
                     </div>
                 </div>

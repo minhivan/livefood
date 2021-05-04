@@ -20,7 +20,8 @@ import {
     LogOut as LogoutIcon
 
 } from 'react-feather';
-
+import Fab from '@material-ui/core/Fab';
+import EditIcon from '@material-ui/icons/Edit';
 
 const useStyles = makeStyles((theme) => ({
     icon: {
@@ -53,15 +54,21 @@ const useStyles = makeStyles((theme) => ({
 
 function MenuHeader() {
     const [mess, setMess] = useState(0);
-
     const classes = useStyles();
+
+
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
 
     const [anchorElNotice, setAnchorElNotice] = useState(null);
     const openNotice = Boolean(anchorElNotice);
-    const idNotice = open ? 'simple-popper' : undefined;
+    const idNotice = openNotice ? 'simple-popper' : undefined;
+
+    // const [anchorElSasimi, setAnchorElSasimi] = useState(null);
+    // const openSasimi = Boolean(anchorElSasimi);
+    // const idSasimi = openSasimi ? 'simple-popover' : undefined;
+
 
     const [user] = useAuthState(auth);
 
@@ -79,6 +86,15 @@ function MenuHeader() {
     const handleCloseNotice = () => {
         setAnchorElNotice(null);
     };
+
+
+    // const handleClickSasimi = (event) => {
+    //     setAnchorElSasimi(anchorElSasimi ? null : event.currentTarget)
+    // }
+    // const handleCloseSasimi = () => {
+    //     setAnchorElSasimi(null);
+    // };
+
 
 
     useEffect(() => {
@@ -106,7 +122,7 @@ function MenuHeader() {
 
                 <Link to="/explore/news">
                     <IconButton color="inherit" >
-                        <Badge color="secondary">
+                        <Badge color="secondary" >
                             <ExploreTwoToneIcon className={classes.icon} />
                         </Badge>
                     </IconButton>
@@ -117,14 +133,14 @@ function MenuHeader() {
                     state: { users: user }
                 }}>
                     <IconButton aria-label="4 new messages" color="inherit" >
-                        <Badge badgeContent={mess} max={20} color="secondary">
+                        <Badge badgeContent={mess} max={20} color="error">
                             <EmailTwoToneIcon className={classes.icon}/>
                         </Badge>
                     </IconButton>
                 </Link>
 
                 <IconButton aria-label="11 new notifications" color="inherit" onClick={handleNotice}>
-                    <Badge badgeContent={24} max={20} color="secondary">
+                    <Badge badgeContent={24} max={20} color="error">
                         <NotificationsActiveTwoToneIcon className={classes.icon}/>
                     </Badge>
                 </IconButton>
@@ -204,7 +220,29 @@ function MenuHeader() {
                     </MenuList>
                 </Popover>
             </div>
-
+            {/*<div className="chat__sasimi">*/}
+            {/*    <Fab color="secondary" aria-label="edit" onClick={handleClickSasimi}>*/}
+            {/*        <EditIcon />*/}
+            {/*    </Fab>*/}
+            {/*    <Popover*/}
+            {/*        className={classes.userPopover}*/}
+            {/*        disableScrollLock*/}
+            {/*        id={idSasimi}*/}
+            {/*        open={openSasimi}*/}
+            {/*        anchorEl={anchorElSasimi}*/}
+            {/*        onClose={handleCloseSasimi}*/}
+            {/*        anchorOrigin={{*/}
+            {/*            vertical: 'center',*/}
+            {/*            horizontal: 'left',*/}
+            {/*        }}*/}
+            {/*        transformOrigin={{*/}
+            {/*            vertical: 'center',*/}
+            {/*            horizontal: 'left',*/}
+            {/*        }}*/}
+            {/*    >*/}
+            {/*        <h3>asdasdasdadasdad</h3>*/}
+            {/*    </Popover>*/}
+            {/*</div>*/}
         </div>
     )
 }

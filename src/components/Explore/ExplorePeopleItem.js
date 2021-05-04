@@ -10,8 +10,7 @@ import {db} from "../../firebase";
 import Button from "@material-ui/core/Button";
 import { useDocument} from "react-firebase-hooks/firestore";
 import {Link} from "react-router-dom";
-import handleUserFollow from "../../utils/handleUserFollow";
-import handleUserUnfollow from "../../utils/handleUserUnfollow";
+import {handleUserFollow, handleUserUnfollow} from "../../hooks/services";
 import {blue} from "@material-ui/core/colors";
 
 const useStyles = makeStyles((theme) => ({
@@ -70,8 +69,9 @@ const useStyles = makeStyles((theme) => ({
 export default function ExplorePeopleItem(props) {
     const classes = useStyles();
     const [users, setUsers] = useState([])
+    const {userLogged} = props;
 
-    const userRef = props.userLogged && db.collection('users').doc(props.userLogged.uid);
+    const userRef = userLogged && db.collection('users').doc(userLogged.uid);
     const [userSnapshot] = useDocument(userRef);
 
     let userFollowingList = userSnapshot?.data()?.following;
@@ -82,7 +82,7 @@ export default function ExplorePeopleItem(props) {
         var followingList;
         if(typeof userSnapshot?.data()?.following !== 'undefined' && userSnapshot?.data()?.following.length > 0){
             followingList = userSnapshot.data().following
-            followingList.push(props.userLogged.uid);
+            followingList.push(userLogged.uid);
             return db.collection("users")
                 .where('uid' ,'not-in' , followingList )
                 .get().then(snapshot => {
@@ -94,7 +94,7 @@ export default function ExplorePeopleItem(props) {
         }
         else{
             return db.collection("users")
-                .where('uid' ,'!=' , props.userLogged.uid )
+                .where('uid' ,'!=' , userLogged.uid )
                 .get().then(snapshot => {
                     setUsers(snapshot.docs.map(doc => ({
                         id: doc.id,
@@ -155,7 +155,7 @@ export default function ExplorePeopleItem(props) {
                                         variant="outlined"
                                         style={{textTransform: "capitalize"}}
                                         className={classes.buttonUnfollow}
-                                        onClick={() => handleUserUnfollow(props.userLogged.uid, id)}
+                                        onClick={() => handleUserUnfollow(userLogged.uid, id)}
                                     >
                                         Unfollow
                                     </Button>
@@ -165,7 +165,7 @@ export default function ExplorePeopleItem(props) {
                                         color="primary"
                                         style={{textTransform: "capitalize"}}
                                         className={classes.button}
-                                        onClick={() => handleUserFollow(props.userLogged.uid, id)}
+                                        onClick={() => handleUserFollow(userLogged.uid, id)}
                                     >
                                         Follow
                                     </Button>
