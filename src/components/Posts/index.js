@@ -46,57 +46,75 @@ export default function NewFeed(props){
 
     //Get post
     useEffect( () => {
-        // if(userFollow) {
-        //     let userFollowingList = userFollow;
-        //     userFollowingList.push(userLogged.uid);
-        //
-        // }
-
         // if(typeof userFollow !== 'undefined' && userFollow.length > 0){
         //     userFollow.push(userLogged.uid);
         //     return db.collection('posts')
-        //         .orderBy('timestamp', "desc")
         //         .where('uid', 'in', userFollow)
-        //         .onSnapshot(snapshot => {
-        //             setPosts(snapshot.docs.map(doc => ({
-        //                 id: doc.id,
-        //                 post: doc.data(),
-        //             })));
+        //         .orderBy('timestamp', "desc")
+        //         .limit(6)
+        //         .get().then(async snapshot => {
+        //             const tracking = await Promise.all(
+        //                 snapshot.docs.map(async doc => ({
+        //                     id: doc.id,
+        //                     post: doc.data(),
+        //                     postAuthor: await (doc.data().user.get().then( author => {
+        //                         return {
+        //                             displayName: author.data().displayName,
+        //                             photoURL: author.data().photoURL,
+        //                             accountType: author.data().accountType,
+        //                             uid: doc.data().uid
+        //                         };
+        //                     }))
+        //                 }))
+        //             )
+        //             setPosts(tracking);
         //         })
         // }
         // else{
         //     return db.collection('posts')
-        //         .orderBy('timestamp', "desc")
         //         .where('uid', '==', userLogged.uid)
-        //         .onSnapshot(snapshot => {
-        //             setPosts(snapshot.docs.map(doc => ({
-        //                 id: doc.id,
-        //                 post: doc.data(),
-        //             })));
+        //         .orderBy('timestamp', "desc")
+        //         .limit(6)
+        //         .get().then(async snapshot => {
+        //             const tracking = await Promise.all(
+        //                 snapshot.docs.map(async doc => ({
+        //                     id: doc.id,
+        //                     post: doc.data(),
+        //                     postAuthor: await (doc.data().user.get().then( author => {
+        //                         return {
+        //                             displayName: author.data().displayName,
+        //                             photoURL: author.data().photoURL,
+        //                             accountType: author.data().accountType,
+        //                             uid: doc.data().uid
+        //                         };
+        //                     }))
+        //                 }))
+        //             )
+        //             setPosts(tracking);
         //         })
         // }
 
-        return db.collection('posts')
+         const unsubscribe = db.collection('posts')
             .orderBy('timestamp', "desc")
             .limit(5)
-            .get().then(async snapshot => {
-                const tracking = await Promise.all(
-                    snapshot.docs.map(async doc => ({
-                        id: doc.id,
-                        post: doc.data(),
-                        postAuthor: await (doc.data().user.get().then( author => {
-                            return {
-                                displayName: author.data().displayName,
-                                photoURL: author.data().photoURL,
-                                accountType: author.data().accountType,
-                                uid: doc.data().uid
-                            };
-                        }))
-                    }))
-                )
-                setPosts(tracking);
+            .onSnapshot( snapshot => {
+                setPosts(snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    post: doc.data(),
+                })));
             })
-    }, []);
+
+        return () => {
+             unsubscribe();
+        }
+    }, [userFollow?.length, userLogged?.uid]);
+
+
+
+    function handleRemove(id) {
+        const newList = posts.filter((item) => item.id !== id);
+        setPosts(newList);
+    }
 
 
     return(
@@ -113,7 +131,7 @@ export default function NewFeed(props){
                             key={id}
                             id={id}
                             post={post}
-                            author={postAuthor}
+                            handleRemove={() => handleRemove(id)}
                         />
                     ))
                 ) : (

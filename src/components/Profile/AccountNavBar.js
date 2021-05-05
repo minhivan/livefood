@@ -77,22 +77,25 @@ const AccountNavBar = (props) => {
                     <span className={classes.title}>Edit profile</span>
                 </Button>
             </ListItem>
-
-            <ListItem
-                className={classes.item}
-                disableGutters
-            >
-                <Button
-                    activeClassName={classes.active}
-                    className={classes.button}
-                    component={RouterLink}
-                    to={`/account/password/change`}
-                >
+            {
+                props.userLogged?.providerData[0]?.providerId === "password" ? (
+                    <ListItem
+                        className={classes.item}
+                        disableGutters
+                    >
+                        <Button
+                            activeClassName={classes.active}
+                            className={classes.button}
+                            component={RouterLink}
+                            to={`/account/password/change`}
+                        >
                     <span className={classes.title}>
                     Change Password
                 </span>
-                </Button>
-            </ListItem>
+                        </Button>
+                    </ListItem>
+                ) : null
+            }
 
             <ListItem
                 className={classes.item}
@@ -112,21 +115,39 @@ const AccountNavBar = (props) => {
 
             {
                 userSnapshot?.accountType === "foodshop" ? (
-                    <ListItem
-                        className={classes.item}
-                        disableGutters
-                    >
-                        <Button
-                            activeClassName={classes.active}
-                            className={classes.button}
-                            component={RouterLink}
-                            to={`/account/shop/edit`}
+                    <>
+                        <ListItem
+                            className={classes.item}
+                            disableGutters
                         >
-                    <span className={classes.title}>
-                    Restaurant Menu
-                </span>
-                        </Button>
-                    </ListItem>
+                            <Button
+                                activeClassName={classes.active}
+                                className={classes.button}
+                                component={RouterLink}
+                                to={`/account/shop/about`}
+                            >
+                            <span className={classes.title}>
+                                About
+                            </span>
+                            </Button>
+                        </ListItem>
+                        <ListItem
+                            className={classes.item}
+                            disableGutters
+                        >
+                            <Button
+                                activeClassName={classes.active}
+                                className={classes.button}
+                                component={RouterLink}
+                                to={`/account/shop/edit`}
+                            >
+                            <span className={classes.title}>
+                                Restaurant Menu
+                            </span>
+                            </Button>
+                        </ListItem>
+
+                    </>
                 ) : null
             }
 

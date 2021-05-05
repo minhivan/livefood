@@ -1,6 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {useAuthState} from "react-firebase-hooks/auth";
-import {auth, db, storage} from "../../../firebase";
+import { db, storage} from "../../../firebase";
 import {makeStyles} from "@material-ui/core/styles";
 import Avatar from "@material-ui/core/Avatar";
 import Skeleton from "@material-ui/lab/Skeleton";
@@ -8,17 +7,16 @@ import {Link} from "react-router-dom";
 import CardHeader from "@material-ui/core/CardHeader";
 import Button from "@material-ui/core/Button";
 import {CircularProgress, IconButton, Modal} from "@material-ui/core";
-// import {green} from "@material-ui/core/colors";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 import Divider from "@material-ui/core/Divider";
 import {useDocument} from "react-firebase-hooks/firestore";
 import firebase from "firebase";
-import Snackbar from "@material-ui/core/Snackbar";
-import {Alert} from "@material-ui/lab";
+
 import {blue, green} from "@material-ui/core/colors";
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import {v4 as uuidv4} from "uuid";
 
 
 
@@ -63,7 +61,6 @@ const useStyles = makeStyles((theme) => ({
         fontSize: "16px",
         color: "#262626",
         border: "1px solid rgba(var(--ca6,219,219,219),1)"
-
     },
     description: {
         padding: "10px 0"
@@ -76,7 +73,7 @@ const useStyles = makeStyles((theme) => ({
     },
     inputText: {
         fontSize: "16px",
-        height: 60,
+        height: 100,
         padding: "6px 10px",
         resize: "vertical",
         border: "1px solid rgba(var(--ca6,219,219,219),1)",
@@ -156,8 +153,7 @@ function getModalStyle() {
 
 
 const EditAccount = (props) => {
-    const {userLogged} = props;
-
+    const {userLogged, setOpenSnack} = props;
     const classes = useStyles();
     const [open, setOpen] = useState(false);
     const [modalStyle] = useState(getModalStyle);
@@ -169,28 +165,19 @@ const EditAccount = (props) => {
     const [phone, setPhone] = useState('');
     const [loadingAvt, setLoadingAvt] = useState(false);
     const [userData] = useDocument(userLogged &&  db.collection("users").doc(userLogged.uid));
-    const [openSnack, setOpenSnack] = useState(false);
 
-    const [disable, setDisable] = useState(true);
     const [type, setType] = useState('');
 
 
     useEffect(() => {
         setDisplayName(userData?.data().displayName ?? '');
-
         setFullName(userData?.data()?.fullName ?? '');
         setLink(userData?.data()?.profileLink ?? '');
         setBio(userData?.data()?.bio ?? '');
         setPhone(userData?.data()?.phoneNumber ?? '');
-        // console.log(userData?.data()?.phoneNumber && userData?.data()?.phoneNumber)
         setType(userData?.data()?.accountType ?? 'blogger');
-
     }, [userData])
 
-
-    const handleCloseSnack = (event) => {
-        setOpenSnack(false);
-    };
 
     const handleOpen = () => {
         setOpen(true);
@@ -208,12 +195,13 @@ const EditAccount = (props) => {
         setType(event.target.value);
     }
 
-    const handleChange = event => {
+    const handleChange = (event) => {
         const fileUploaded = event.target.files[0];
 
         // Change photoUrl here
         if(fileUploaded){
-            const uploadTask = storage.ref(`images/${fileUploaded.name}`).put(fileUploaded);
+            const imageName = uuidv4();
+            const uploadTask = storage.ref(`avatar/${userLogged.uid}/${imageName}`).put(fileUploaded);
             uploadTask.on(
                 "state_changed",
                 (snapshot => {
@@ -224,8 +212,8 @@ const EditAccount = (props) => {
                 }),
                 () => {
                     storage
-                        .ref("images")
-                        .child(fileUploaded.name)
+                        .ref(`avatar/${userLogged.uid}/`)
+                        .child(imageName)
                         .getDownloadURL()
                         .then(url => {
                             // Update from firestore
@@ -251,8 +239,7 @@ const EditAccount = (props) => {
         }
     };
 
-
-    const handleRemove = event => {
+    const handleRemove = (event) => {
         db.collection("users").doc(userLogged.uid).update({
             updateAt: firebase.firestore.FieldValue.serverTimestamp(),
             photoURL: "",
@@ -268,7 +255,6 @@ const EditAccount = (props) => {
             // An error happened.
         });
     };
-
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -495,20 +481,6 @@ const EditAccount = (props) => {
                 </div>
 
             </Modal>
-
-            <Snackbar
-                open={openSnack}
-                autoHideDuration={6000}
-                onClose={handleCloseSnack}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-            >
-                <Alert variant="filled" onClose={handleCloseSnack} severity="success">
-                    Upload successfully !
-                </Alert>
-            </Snackbar>
         </article>
 
     )

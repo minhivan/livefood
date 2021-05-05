@@ -10,6 +10,7 @@ import {auth, db, storage} from "../../firebase";
 import firebase from "firebase";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {green} from "@material-ui/core/colors";
+import {v4 as uuidv4} from "uuid";
 // import {useCollection} from "react-firebase-hooks/firestore";
 
 function getModalStyle() {
@@ -154,7 +155,8 @@ function Popup(props){
 
     const handleUpload = () => {
         if(props.image) {
-            const uploadTask = storage.ref(`images/${props.image.name}`).put(props.image);
+            const imageName = uuidv4();
+            const uploadTask = storage.ref(`media/${user.uid}/${imageName}`).put(props.image);
             uploadTask.on(
                 "state_changed",
                 (snapshot => {
@@ -169,8 +171,8 @@ function Popup(props){
                 }),
                 () => {
                     storage
-                        .ref("images")
-                        .child(props.image.name)
+                        .ref(`media/${user.uid}/`)
+                        .child(imageName)
                         .getDownloadURL()
                         .then(url => {
                             db.collection("posts").add({
@@ -210,7 +212,7 @@ function Popup(props){
         }else {
             setDisable(true)
         }
-    },[caption.length, props.image])
+    },[caption, caption.length, props.image])
 
 
     return (

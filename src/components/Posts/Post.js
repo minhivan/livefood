@@ -3,7 +3,7 @@ import React, {useEffect, useState} from "react";
 import PostComment from "../Comments";
 import Card from '@material-ui/core/Card';
 import {makeStyles} from "@material-ui/core/styles";
-import {db, auth} from "../../firebase";
+import {auth, db} from "../../firebase";
 import {useAuthState} from "react-firebase-hooks/auth";
 import PostUtil from "./Util";
 import PostAction from "./Action";
@@ -11,6 +11,7 @@ import PostContent from "./Content";
 import PostHeader from "./Header";
 import PostRecipeData from "./RecipeData";
 import CommentInput from "../Comments/CommentInput";
+import {useDocument} from "react-firebase-hooks/firestore";
 
 
 
@@ -20,60 +21,19 @@ const useStyles = makeStyles((theme) => ({
 		maxWidth: "100%",
 		boxShadow: "none"
 	},
-	media: {
-		height: 400
-	},
-	expand: {
-		transform: 'rotate(0deg)',
-		marginLeft: 'auto',
-		transition: theme.transitions.create('transform', {
-			duration: theme.transitions.duration.shortest,
-		}),
-	},
-	expandOpen: {
-		transform: 'rotate(180deg)',
-	},
-	action: {
-		borderTop: "1px solid rgba(var(--b6a,219,219,219),1)",
-		justifyContent: "space-between"
-	},
-	captionText: {
-		whiteSpace: "pre-line",
-		lineHeight: "26px"
-	},
-	actionButton: {
-		border: "0",
-		backgroundColor: "none",
-		borderRadius: "50%",
-		color: "rgba(0, 0, 0, 0.54)",
-		'&:hover': {
-			color: 'black',
-		}
-	},
-	dataContent: {
-		display: "flex"
-	},
-	selected: {
-		backgroundColor: "unset !important"
-	},
-	comment:{
-		display: "block"
-	}
 }));
 
 
-// id, user, caption, imageUrl, timestamp
-//
-function Post( {id, post, author, ...rest} ) {
+function Post( {id, post, handleRemove, handleReport, isSinglePage, ...rest} ) {
 
 	const classes = useStyles();
-	const [expanded, setExpanded] = useState(false);
-
+	const [expanded, setExpanded] = useState(true);
 	// auth user data
 	const [user] = useAuthState(auth);
-
-
 	const [open, setOpen] = React.useState(false);
+
+	const [postAuthor] = useDocument(post.uid && db.collection('users').doc(post.uid))
+	const author = postAuthor?.data();
 
 	const handleClickOpen = () => {
 		setOpen(true);
@@ -84,24 +44,24 @@ function Post( {id, post, author, ...rest} ) {
 	};
 
 
+
 	return (
-		<div className="post">
+		<div className="post" id={id}>
 			<Card className={classes.root} >
-				<PostHeader author={author} handleClickOpen={handleClickOpen} postDate={post.timestamp} type={post.type}/>
+				<PostHeader author={author} handleClickOpen={handleClickOpen} postDate={post.timestamp} type={post.type} />
 				{/*Media*/}
-				<PostContent author={author} mediaUrl={post.mediaUrl} caption={post.caption} mediaType={post.mediaType} />
+				<PostContent author={author} mediaUrl={post.mediaUrl} caption={post.caption} mediaType={post.mediaType}/>
 				{/* Post Action*/}
-				<PostAction id={id} uid={user.uid} postLike={post.likeBy} postSave={post.saveBy} expanded={expanded} setExpanded={setExpanded} hasData={!!post?.data}/>
+				<PostAction id={id} uid={user.uid} postLike={post.likeBy} postSave={post.saveBy} expanded={expanded} setExpanded={setExpanded} hasData={!!post?.data} />
 				{/* Recipe data */}
-				<PostRecipeData postData={post.data} expanded={expanded}/>
+				<PostRecipeData id={id} postData={post.data} expanded={expanded}  rating={post?.rating}/>
 				{/* Comments */}
-				<PostComment id={id} />
+				<PostComment id={id} isSinglePage={isSinglePage}/>
 				{/* Comments input */}
-				<CommentInput user={user} id={id}/>
+				<CommentInput user={user} id={id} type={post.type}/>
 			</Card>
 
-			<PostUtil open={open} handleClose={handleClose} uid={user.uid} opponentID={post.uid} postID={id} isSave={false}/>
-
+			<PostUtil open={open} handleClose={handleClose} uid={user.uid} opponentID={post.uid} postID={id} handleReport={handleReport} handleRemove={handleRemove} isSave={false} />
 		</div>
 	)
 }

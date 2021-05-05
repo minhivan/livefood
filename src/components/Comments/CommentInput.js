@@ -38,6 +38,15 @@ export default function CommentInput({user, id, type, path}){
     const [postSnapshot] = useDocument(postRef);
     let rating = postSnapshot?.data()?.rating
 
+    const checkEmpty = (string) => {
+        let rs = true
+        if(string.length > 0 && !/^\s+$/.test(string)){
+            rs=false
+        }
+        return rs;
+    }
+
+
     const postComment = (event) => {
         event.preventDefault();
         if(comment){
@@ -73,7 +82,6 @@ export default function CommentInput({user, id, type, path}){
         }
         setComment('');
     }
-
 
     return(
         <>
@@ -111,7 +119,7 @@ export default function CommentInput({user, id, type, path}){
                             InputProps={{ disableUnderline: true}}
 
                         />
-                        <Button variant="contained" disabled={!comment} onClick={postComment}>
+                        <Button variant="contained" disabled={checkEmpty(comment)} onClick={postComment}>
                             Post
                         </Button>
                     </form>

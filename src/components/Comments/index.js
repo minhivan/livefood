@@ -1,53 +1,81 @@
 import React, {useEffect, useState} from "react";
 import PostComment from "./CommentDetails";
 import {db} from "../../firebase";
+import {Link} from "react-router-dom";
+import IconButton from "@material-ui/core/IconButton";
+import AddCircleTwoToneIcon from '@material-ui/icons/AddCircleTwoTone';
 
-function Comment({id}){
+function Comment({id, isSinglePage, isPopup}){
     const [comments, setComments] = useState([])
+	const [limit] = useState(5);
+	const [lastIdx, setLastIdx] = useState(5);
 
     useEffect(() => {
         const unsubscribe = db.collection("posts").doc(id)
             .collection("comments")
         	.orderBy('timestamp', "desc")
-			.limit(5)
+			.limit(15)
         	.onSnapshot((snapshot ) => {
-				// var temp = []
-				// snapshot.forEach(data => {
-				// 	var userProfile = {};
-				// 	data.data().user.get().then( author => {
-				// 		Object.assign(userProfile, author.data());
-				// 	})
-				// 	temp.push({id: data.id, comment: data.data(), cmtAuthor: userProfile })
-				// })
-				// setComments(temp);
-
-        		// // var userProfile = {};
-        		setComments(
+				setComments(
         			snapshot.docs.map((doc => ({
         				id: doc.id,
         				comment: doc.data(),
-        				cmtAuthor: doc.data().user.get().then( cmtAuthor => {
-        					return cmtAuthor.data();
-        				})
         			})))
         		);
         	})
+
 		return () => {
         	unsubscribe();
 		}
-    }, [id])
+    }, [id, limit])
 
+
+	const handleClickSeeMore = () => {
+		setLastIdx(lastIdx => lastIdx + 5);
+	}
     return(
         <div className="listComments">
-            {
-                comments.map(({id, comment, cmtAuthor}) => (
-                    <PostComment
-                        key={id}
-                        comment={comment}
-                        cmtAuthor={cmtAuthor}
-                    />
-                ))
-            }
+
+			{
+				!isSinglePage && !isPopup ? (
+					<>
+						{
+							comments.length > 3 && (
+								<p className="comment__see-more">
+									<Link to={`/p/${id}`}>View more comments ?</Link>
+								</p>
+							)
+						}
+
+						{
+							comments.slice(0,3).map(({id, comment}) => (
+								<PostComment
+									key={id}
+									comment={comment}
+								/>
+							))
+						}
+					</>
+				) : (
+					<>
+						{
+							comments.slice(0,lastIdx).map(({id, comment}) => (
+								<PostComment
+									key={id}
+									comment={comment}
+									isPopup={isPopup}
+								/>
+							))
+						}
+						<div className="comment__see-more-btn">
+							<IconButton aria-label="see more" onClick={handleClickSeeMore}>
+								<AddCircleTwoToneIcon />
+							</IconButton>
+						</div>
+					</>
+				)
+			}
+
         </div>
     )
 }

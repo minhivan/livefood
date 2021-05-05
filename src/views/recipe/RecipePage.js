@@ -10,6 +10,8 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import {db} from "../../firebase";
 import {useCollection} from "react-firebase-hooks/firestore";
+import {Camera as CameraIcon} from "react-feather";
+import {Rating} from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -20,6 +22,34 @@ const useStyles = makeStyles((theme) => ({
     selectEmpty: {
         marginTop: theme.spacing(2),
     },
+    icon: {
+        color: "#050505"
+    },
+    wrapper: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+        maxHeight: "300px",
+        width: "100%"
+    },
+    none: {
+        width: "100px",
+        height: "100px",
+        borderColor: "#262626",
+        borderWidth: "2px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        borderStyle: "solid",
+        borderRadius: "50%",
+        margin: "50px 0 20px 0"
+    },
+    rating: {
+        display: "flex",
+        alignItems: "center",
+        width: "100%"
+    }
 }));
 
 const RecipePage = (props) => {
@@ -81,7 +111,7 @@ const RecipePage = (props) => {
         else{
             db.collection('posts')
                 .where('type', '==', 'recipe')
-                .where('data.category', '==', type)
+                .where('data.category', '==', type.toLowerCase())
                 .orderBy('timestamp', "desc")
                 .limit(12)
                 .get().then(async snapshot => {
@@ -116,7 +146,7 @@ const RecipePage = (props) => {
                                     <div key={id} className="recipe-double">
                                         <div className="recipe-inner">
                                             <div className="recipe-inner-wrap">
-                                                <Link to="" className='text-link'>
+                                                <Link to={`/p/${id}`} className='text-link'>
                                                     <img
                                                         src={post?.mediaUrl} alt=""/>
                                                 </Link>
@@ -174,7 +204,7 @@ const RecipePage = (props) => {
                                         <div key={id} className="list-recipe-item">
                                             <div className="list-recipe-wrap">
                                                 <div className="inner-wrap">
-                                                    <Link to="" className='text-link'>
+                                                    <Link to={`/p/${id}`} className='text-link'>
                                                         <img
                                                             src={post?.mediaUrl} alt=""/>
                                                     </Link>
@@ -184,14 +214,18 @@ const RecipePage = (props) => {
                                                         <h2 className="title" title={post?.caption}>
                                                             <Link to={`/p/${id}`}>{post?.caption}</Link>
                                                         </h2>
+                                                        {
+                                                            post.rating ? (
+                                                                <div className={classes.rating}>
+                                                                    <Rating style={{marginRight: "5px"}} name="read-only" value={post?.rating} precision={0.1} readOnly /> ({parseFloat(post?.rating).toFixed(1, 2)})
+                                                                </div>
+                                                            ) : null
+                                                        }
                                                         <div className="recipe-data">
                                                             <div className="author"><span className="name">By <Link to={`/profile/${post?.uid}`}>{postAuthor?.displayName}</Link></span></div>
                                                             <div className="meta-data">
                                                                 <div className="fd-rating">
                                                                     <span><FavoriteRoundedIcon style={{color: "red", marginRight: 5}}/> {post?.likeBy?.length}</span></div>
-                                                                <div className="cook-time">
-                                                                    <span><AccessTimeRoundedIcon style={{color: "black", marginRight: 5, textTransform: "lowercase"}}/>{post?.data?.cookTime} {post?.data?.cookUnit}</span>
-                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -199,7 +233,17 @@ const RecipePage = (props) => {
                                             </div>
                                         </div>
                                     ))
-                                ) : null
+                                ) : (
+                                    <div className={classes.wrapper}>
+                                        <div className={classes.none}>
+                                            <CameraIcon
+                                                className={classes.icon}
+                                                size="40"
+                                            />
+                                        </div>
+                                        <h2 style={{paddingBottom: "10px"}}>No Posts Found</h2>
+                                    </div>
+                                )
                             }
                         </div>
                     </div>

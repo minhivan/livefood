@@ -12,7 +12,7 @@ function Header() {
     const [ user ] = useAuthState(auth);
 
     return(
-        <div className="app__header">
+        <div className="app__header no-print">
             <div className="header">
                 <AppLogo />
                 <HeaderSearch />

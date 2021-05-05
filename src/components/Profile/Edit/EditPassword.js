@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import CardHeader from "@material-ui/core/CardHeader";
 import Avatar from "@material-ui/core/Avatar";
 import Skeleton from "@material-ui/lab/Skeleton";
@@ -6,6 +6,8 @@ import {Link} from "react-router-dom";
 import Button from "@material-ui/core/Button";
 
 import {makeStyles} from "@material-ui/core/styles";
+import {auth} from "../../../firebase";
+import firebase from "firebase";
 
 
 
@@ -56,8 +58,44 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const EditPassword = (props) => {
-    const {userLogged} = props;
+    const {userLogged, setOpenSnack} = props;
+    const [oldPass, setOldPass] = useState('');
+    const [newPass, setNewPass] = useState('');
+    const [rePass, setRePass] = useState('');
+    const [disable, setDisable] = useState(true);
 
+    useEffect(() => {
+        if(oldPass.length >= 8 && newPass.length >= 8 && rePass.length >= 8){
+            if(rePass === newPass){
+                setDisable(false);
+            }
+        }else {
+            setDisable(true)
+        }
+    }, [newPass.length, oldPass.length, rePass.length])
+
+    // auth.sendPasswordResetEmail("minhmuofficial@gmail.com").then(function() {
+    //     // Email sent.
+    //     console.log("true")
+    // }).catch(function(error) {
+    //     // An error happened.
+    //     console.log(error)
+    // });
+
+    const handleChangePassword = () => {
+        var user = firebase.auth().currentUser;
+
+        user.updatePassword(newPass).then(function() {
+            // Update successful.
+            setOpenSnack(true)
+            setRePass('');
+            setNewPass('');
+            setOldPass('');
+        }).catch(function(error) {
+            // An error happened.
+            console.log(error)
+        });
+    }
     const classes = useStyles();
 
     return(
@@ -89,6 +127,8 @@ const EditPassword = (props) => {
                     <div className={classes.input}>
                         <input
                             className={classes.inputField}
+                            value={oldPass}
+                            onChange={event => setOldPass(event.target.value)}
                             aria-required="false" id="pepOld"  type="password"
                         />
 
@@ -102,6 +142,8 @@ const EditPassword = (props) => {
                     <div className={classes.input}>
                         <input
                             className={classes.inputField}
+                            value={newPass}
+                            onChange={event => setNewPass(event.target.value)}
                             aria-required="false" id="pepNewPassword"  type="password"
                         />
                     </div>
@@ -114,15 +156,23 @@ const EditPassword = (props) => {
                     <div className={classes.input}>
                         <input
                             className={classes.inputField}
+                            value={rePass}
+                            onChange={event => setRePass(event.target.value)}
                             aria-required="false" id="pepConfirm" type="password"
                         />
 
                     </div>
                 </div>
 
-
                 <div className={classes.submit}>
-                    <Button variant="contained" color="primary">Change</Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        disabled={disable}
+                        onClick={handleChangePassword}
+                    >
+                        Change
+                    </Button>
                 </div>
 
             </form>

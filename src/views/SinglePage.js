@@ -15,6 +15,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 
 
+
 const useStyles = makeStyles((theme) => ({
 
     wrapper: {
@@ -55,21 +56,9 @@ const useStyles = makeStyles((theme) => ({
 const SinglePage = (props) => {
     const classes = useStyles();
     let { id } = useParams();
-    const [author, setAuthor] = useState([]);
     const [postSnapshot, loading] = useDocument(db.collection("posts").doc(id));
 
-
-    useEffect(() => {
-        postSnapshot?.data()?.user.get().then(author => {
-            setAuthor({
-                displayName: author.data().displayName,
-                photoURL: author.data().photoURL,
-                accountType: author.data().accountType,
-                uid: postSnapshot.data().uid
-            })
-        })
-    },[loading])
-
+    window.scroll({top: 0, left: 0, behavior: 'smooth' });
 
     return (
         <Page
@@ -89,7 +78,7 @@ const SinglePage = (props) => {
                                 key={postSnapshot.id}
                                 id={postSnapshot.id}
                                 post={postSnapshot.data()}
-                                author={author}
+                                isSinglePage={true}
                             />
                         ) : (
                             <>
@@ -106,24 +95,6 @@ const SinglePage = (props) => {
                         )
                     )
                 }
-
-                {/*{*/}
-                {/*    post.post ? (*/}
-
-                {/*    ) : (*/}
-                {/*        <>*/}
-                {/*            <div className={classes.wrapper}>*/}
-                {/*                <div className={classes.imgHolder}>*/}
-                {/*                    <img src={pic} alt="404" className={classes.img}/>*/}
-                {/*                </div>*/}
-                {/*                <div className={classes.details}>*/}
-                {/*                    <h1>This page doesn’t exist</h1>*/}
-                {/*                    <p>Please check your URL or return to LiveFood home.</p>*/}
-                {/*                </div>*/}
-                {/*            </div>*/}
-                {/*        </>*/}
-                {/*    )*/}
-                {/*}*/}
 
 
             </div>

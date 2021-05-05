@@ -27,6 +27,9 @@ const useStyles = makeStyles((theme) => ({
         display: 'inline',
     },
     listItem: {
+        paddingTop: "15px",
+        paddingBottom: "15px",
+        borderBottom: "1px solid #0000001f",
         "&:hover": {
             backgroundColor: "rgba(38, 50, 56, 0.04)",
         },
@@ -57,12 +60,18 @@ const useStyles = makeStyles((theme) => ({
         minWidth: "150px",
         color: "#454444",
         marginRight: "15px",
-        textTransform: "capitalize"
+        textTransform: "capitalize",
     },
     avatar: {
         backgroundColor: blue[100],
         color: blue[600],
     },
+    name: {
+        fontWeight: "bold",
+        "&:hover": {
+            textDecoration: "underline"
+        },
+    }
 }));
 
 
@@ -79,18 +88,22 @@ export default function ExplorePeopleItem(props) {
 
     // List user
     useEffect(() => {
-        var followingList;
-        if(typeof userSnapshot?.data()?.following !== 'undefined' && userSnapshot?.data()?.following.length > 0){
+        var followingList = {};
+        if(typeof userFollowingList !== 'undefined' && userFollowingList?.length > 0){
             followingList = userSnapshot.data().following
-            followingList.push(userLogged.uid);
+            userLogged.uid && followingList.push(userLogged.uid);
             return db.collection("users")
-                .where('uid' ,'not-in' , followingList )
+                .limit(15)
                 .get().then(snapshot => {
-                    setUsers(snapshot.docs.map(doc => ({
-                        id: doc.id,
-                        user: doc.data(),
-                    })));
-            })
+                    let data = [];
+                    snapshot.forEach(function(doc) {
+                        // doc.data() is never undefined for query doc snapshots
+                        if(!followingList.includes(doc.id)){
+                            data.push({id: doc.id, user: doc.data()})
+                        }
+                    });
+                    setUsers(data);
+                })
         }
         else{
             return db.collection("users")

@@ -16,6 +16,7 @@ import Button from "@material-ui/core/Button";
 import Previewer from "../../MediaViewer/Preview";
 import AddDishes from "../../Upload/AddDishes";
 
+import {handleDeleteMenuItem} from "../../../hooks/services";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -55,7 +56,14 @@ const useStyles = makeStyles((theme) => ({
         cursor: "pointer",
         padding : "15px"
     },
-
+    btnDelete: {
+        color : "#fff",
+        backgroundColor: "rgb(220, 0, 78)",
+        '&:hover': {
+            backgroundColor: 'rgb(154, 0, 54)',
+        },
+        textTransform: "capitalize"
+    },
 }));
 
 const EditShop = ({userLogged, setOpenSnack}) => {
@@ -87,11 +95,16 @@ const EditShop = ({userLogged, setOpenSnack}) => {
         setOpenAdd(false);
     };
 
+    const removeDishes = (uid, id) => {
+        handleDeleteMenuItem(uid, id);
+        setOpenSnack(true);
+    }
+
     useEffect(() => {
-        return db.collection("users").doc(userLogged.uid)
+        const unsubscribe = db.collection("users").doc(userLogged.uid)
             .collection("menu")
             .orderBy('timestamp', "desc")
-            .get().then((snapshot ) => {
+            .onSnapshot((snapshot ) => {
                 // var userProfile = {};
                 SetMenu(
                     snapshot.docs.map((doc => ({
@@ -100,6 +113,10 @@ const EditShop = ({userLogged, setOpenSnack}) => {
                     })))
                 );
             })
+
+        return () => {
+            unsubscribe();
+        }
     }, [userLogged])
 
     return(
@@ -116,7 +133,7 @@ const EditShop = ({userLogged, setOpenSnack}) => {
                     }
                     title={
                         user?.uid ? (
-                            <Link to={`profile/${user.uid}`} className={classes.displayName}>{user.displayName}</Link>
+                            <Link to={`/profile/${user.uid}`} className={classes.displayName}>{user.displayName}</Link>
                         ) : (
                             <Skeleton animation="wave" height={10} width="30%" style={{ marginBottom: 6 }} />
                         )
@@ -130,17 +147,19 @@ const EditShop = ({userLogged, setOpenSnack}) => {
                     {
                         menu ? (
                             menu.map(({id, data}) => (
-                                <>
+                                <div key={id}>
                                     <ListItem
-                                        key={id}
                                         alignItems="flex-start"
                                         className={classes.item}
-                                        onClick={() => handleOpen(data)}
                                     >
-                                        <ListItemAvatar style={{margin: "0 10px 0 0"}}>
+                                        <ListItemAvatar
+                                            style={{margin: "0 10px 0 0"}}
+                                            onClick={() => handleOpen(data)}
+                                        >
                                             <Avatar className={classes.displayPic} src={data?.mediaUrl} />
                                         </ListItemAvatar>
                                         <ListItemText
+                                            onClick={() => handleOpen(data)}
                                             primary={data?.dishName}
                                             secondary={
                                                 <React.Fragment>
@@ -155,9 +174,16 @@ const EditShop = ({userLogged, setOpenSnack}) => {
                                                 </React.Fragment>
                                             }
                                         />
+                                        <Button
+                                            className={classes.btnDelete}
+                                            variant="contained" color="secondary"
+                                            onClick={() => removeDishes(userLogged.uid, id)}
+                                        >
+                                            Remove
+                                        </Button>
                                     </ListItem>
-                                    <Divider variant="inset" component="li" />
-                                </>
+                                    <Divider component="li" />
+                                </div>
                             ))
                         ) : null
                     }
@@ -166,7 +192,6 @@ const EditShop = ({userLogged, setOpenSnack}) => {
 
             <div className="addMenu__button">
                 <Button variant="contained" color="primary" onClick={openAddDishes}>Add new</Button>
-                <Button variant="contained" color="default">Edit</Button>
             </div>
 
 

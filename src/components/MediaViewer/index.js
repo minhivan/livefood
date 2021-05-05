@@ -10,7 +10,7 @@ import {Link} from "react-router-dom";
 import Divider from '@material-ui/core/Divider';
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import {ToggleButton} from "@material-ui/lab";
+import {Rating, ToggleButton} from "@material-ui/lab";
 import FavoriteRoundedIcon from "@material-ui/icons/FavoriteRounded";
 import FavoriteBorderTwoToneIcon from "@material-ui/icons/FavoriteBorderTwoTone";
 import ModeCommentOutlinedIcon from "@material-ui/icons/ModeCommentOutlined";
@@ -27,6 +27,7 @@ import ListComment from "../Comments";
 import {useDocument} from "react-firebase-hooks/firestore";
 import BookmarkRoundedIcon from "@material-ui/icons/BookmarkRounded";
 import {handleSavePost, handleUnSavedPost, handleLikePost, handleDislikePost} from "../../hooks/services";
+import CommentInput from "../Comments/CommentInput";
 
 
 
@@ -95,9 +96,8 @@ const useStyles = makeStyles((theme) => ({
         maxWidth: "600px"
     },
     rightPanel: {
-        width: "335px",
+        width: "350px",
         height: "100%",
-        overflowY: "auto",
         position: "relative"
     },
     captionText: {
@@ -163,11 +163,14 @@ const useStyles = makeStyles((theme) => ({
     },
     direction: {
         minHeight: "auto"
+    },
+    data: {
+        overflowY: "auto"
     }
 }));
 
 function MediaViewer(props){
-
+    const {open, handleClose, id, post, postAuthor} = props;
     const classes = useStyles();
     const [modalStyle] = useState(getModalStyle);
     const [selected, setSelected] = useState(false);
@@ -178,13 +181,15 @@ function MediaViewer(props){
     const [postSnapshot] = useDocument(postRef);
     const [saveSelected, setSaveSelected] = useState(false);
 
-    const [comments, setComments] = useState([]);
-    const [comment, setComment] = useState('');
-
     let likeCount = 0
     if(typeof postSnapshot?.data()?.likeBy !== 'undefined'){
         likeCount = postSnapshot.data().likeBy.length;
     }
+
+    const [isReadMore, setIsReadMore] = useState(true);
+    const toggleReadMore = () => {
+        setIsReadMore(!isReadMore);
+    };
 
 
     dayjs.extend(relativeTime);
@@ -194,19 +199,6 @@ function MediaViewer(props){
         postCreated = new Date(props?.post?.timestamp.seconds * 1000).toLocaleString();
     }
 
-    const postComment = (event) => {
-        event.preventDefault();
-        if(comment){
-            db.collection("posts").doc(props.id).collection("comments").add({
-                text: comment,
-                user: db.doc('users/' + user.uid),
-                uid: user.uid,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-            });
-        }
-        setComment('');
-    }
-
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
@@ -214,64 +206,62 @@ function MediaViewer(props){
     // Handle like and dislike action
     const likePost = () => {
         setSelected(true);
-        handleLikePost(props.id, user.uid)
+        handleLikePost(id, user.uid)
     }
 
     const dislikePost = () => {
         setSelected(false);
-        handleDislikePost(props.id, user.uid)
+        handleDislikePost(id, user.uid)
     }
 
     const savePost = () => {
         // Save post id to user data, and push to post data
         setSaveSelected(true);
-        handleSavePost(props.id, user.uid);
+        handleSavePost(id, user.uid);
     }
 
     const unsavedPost = () => {
         // Save post id to user data, and push to post data
         setSaveSelected(false);
-        handleUnSavedPost(props.id, user.uid);
+        handleUnSavedPost(id, user.uid);
     }
 
 
 
     let media;
 
-    if(props.post.mediaType === "video/mp4"){
+    if(post.mediaType === "video/mp4"){
         media = <div className={classes.imgHolder}>
             <video controls className={classes.img} muted="muted" onClick={e => e.target.play()}>
-                <source src={props.post.mediaUrl} type="video/mp4"/>
+                <source src={post.mediaUrl} type="video/mp4"/>
             </video>
         </div>
     } else{
         media = <div className={classes.imgHolder}>
-            <img src={props.post.mediaUrl} alt="" className={classes.img}/>
+            <img src={post.mediaUrl} alt="" className={classes.img}/>
         </div>
     }
 
 
-
-
     useEffect(() => {
-        if(props.id && user) {
+        if(id && user) {
 
-            if(typeof props.post.likeBy !== 'undefined' && props.post.likeBy.includes(user.uid)){
+            if(typeof post.likeBy !== 'undefined' && post.likeBy.includes(user.uid)){
                 setSelected(true);
             }
 
-            if(typeof props.post.saveBy !== 'undefined' && props.post.saveBy.includes(user.uid)){
+            if(typeof post.saveBy !== 'undefined' && post.saveBy.includes(user.uid)){
                 setSaveSelected(true);
             }
         }
 
-    }, [props.id])
+    }, [id])
 
     return (
         <Modal
             className={classes.root}
-            open={props.open}
-            onClose={props.handleClose}
+            open={open}
+            onClose={handleClose}
             aria-labelledby="simple-modal-title"
             aria-describedby="simple-modal-description"
         >
@@ -282,177 +272,173 @@ function MediaViewer(props){
                 <Divider orientation="vertical" flexItem />
                 <div className={classes.rightPanel}>
                     <div className="review__data">
+                        {/* Card header */}
                         <div className={classes.modalHeader}>
                             <CardHeader
                                 avatar={
-                                    <Avatar alt={props.postAuthor?.displayName} src={props.postAuthor.photoURL}/>
+                                    <Avatar alt={postAuthor?.displayName} src={postAuthor.photoURL}/>
                                 }
                                 title={
-                                    <Link to={`/profile/${props.postAuthor?.uid}`}>{props.postAuthor?.displayName}</Link>
+                                    <Link to={`/profile/${postAuthor?.uid}`} style={{fontWeight: "bold"}}>{postAuthor?.displayName}</Link>
                                 }
                                 subheader={dayjs(postCreated).fromNow()}
                             />
                             <div className={classes.buttonClose}>
-                                <IconButton aria-label="Cancel" color="inherit" onClick={props.handleClose} >
+                                <IconButton aria-label="Cancel" color="inherit" onClick={handleClose} >
                                     <CancelTwoToneIcon />
                                 </IconButton>
                             </div>
                         </div>
                         <Divider />
-                        <div className={classes.modalBody}>
-                            <div className="post__caption">
-                                <Link to={`/profile/${props.postAuthor?.uid}`} className="post__user">{props.postAuthor?.displayName}</Link>
-                                <span className={classes.captionText}>{props.post.caption}</span>
-                            </div>
-                        </div>
-                        <Divider />
-                        {/* Card action */}
-                        <CardActions disableSpacing>
-                            {
-                                user ? (
-                                    <div className="post__button">
-                                        <div className="action__like">
-                                            <ToggleButton
-                                                value="check"
-                                                selected={selected}
-                                                classes={{
-                                                    root: classes.likeButton,
-                                                    selected: classes.selected,
-                                                }}
-                                                onClick={() => {
-                                                    if(!selected) likePost();
-                                                    else dislikePost();
-                                                }}
-                                            >
-                                                {
-                                                    selected ? <FavoriteRoundedIcon style={{color: "red"}}/> : <FavoriteBorderTwoToneIcon />
-                                                }
-                                            </ToggleButton>
 
+                        <div className={classes.data}>
+                            {/* Card body */}
+                            <div className={classes.modalBody}>
+                                <div className="post__caption">
+                                    <Link to={`/profile/${postAuthor?.uid}`} className="post__user">{postAuthor?.displayName}</Link>
+                                    {
+                                        post.caption.length > 50 ? (
+                                            <span className={classes.captionText} >
+                                                {
+                                                    isReadMore ? post.caption.slice(0, 50) : post.caption}
+                                                    <span onClick={toggleReadMore} style={{fontWeight: "bold", cursor: "pointer", color: "#8e8e8e"}}>
+                                                    {isReadMore ? "...read more" : null
+                                                }
+                                            </span>
+                                            </span>
+                                        ) : post.caption
+                                    }
+                                </div>
+                            </div>
+                            <Divider />
+
+                            {/* Card action */}
+                            <CardActions disableSpacing>
+                                {
+                                    user ? (
+                                        <div className="post__button">
+                                            <div className="action__like">
+                                                <ToggleButton
+                                                    value="check"
+                                                    selected={selected}
+                                                    classes={{
+                                                        root: classes.likeButton,
+                                                        selected: classes.selected,
+                                                    }}
+                                                    onClick={() => {
+                                                        if(!selected) likePost();
+                                                        else dislikePost();
+                                                    }}
+                                                >
+                                                    {
+                                                        selected ? <FavoriteRoundedIcon style={{color: "red"}}/> : <FavoriteBorderTwoToneIcon />
+                                                    }
+                                                </ToggleButton>
+
+                                            </div>
+                                            <div className="action__comment">
+                                                <IconButton aria-label="comment">
+                                                    <ModeCommentOutlinedIcon/>
+                                                </IconButton>
+                                            </div>
+                                            <div className="action__share">
+                                                <ToggleButton
+                                                    value="check"
+                                                    selected={saveSelected}
+                                                    // className={classes.likeButton}
+                                                    classes={{
+                                                        root: classes.likeButton,
+                                                        selected: classes.selected,
+                                                    }}
+                                                    onClick={() => {
+                                                        if(!saveSelected) savePost();
+                                                        else unsavedPost();
+                                                    }}
+                                                >
+                                                    {
+                                                        saveSelected ? <BookmarkRoundedIcon style={{color: "black"}}/> : <BookmarkBorderOutlinedIcon />
+                                                    }
+                                                </ToggleButton>
+                                            </div>
                                         </div>
-                                        <div className="action__comment">
-                                            <IconButton aria-label="comment">
-                                                <ModeCommentOutlinedIcon/>
+                                    ) : null
+
+                                }
+
+                                {
+                                    props?.post?.data ? (
+                                        <div className="action__expand">
+                                            <IconButton
+                                                className={clsx(classes.expand, {
+                                                    [classes.expandOpen]: expanded,
+                                                })}
+                                                onClick={handleExpandClick}
+                                                aria-expanded={expanded}
+                                                aria-label="show more"
+                                            >
+                                                <ExpandMoreIcon />
                                             </IconButton>
                                         </div>
-                                        <div className="action__share">
-                                            <ToggleButton
-                                                value="check"
-                                                selected={saveSelected}
-                                                // className={classes.likeButton}
-                                                classes={{
-                                                    root: classes.likeButton,
-                                                    selected: classes.selected,
-                                                }}
-                                                onClick={() => {
-                                                    if(!saveSelected) savePost();
-                                                    else unsavedPost();
-                                                }}
-                                            >
-                                                {
-                                                    saveSelected ? <BookmarkRoundedIcon style={{color: "black"}}/> : <BookmarkBorderOutlinedIcon />
-                                                }
-                                            </ToggleButton>
-                                        </div>
+                                    ) : null
+                                }
+
+
+                            </CardActions>
+
+                            {/* Like count */}
+                            {
+                                likeCount > 0 ? (
+                                    <div className={classes.displayLike}>
+                                        <span><b>{likeCount.toLocaleString()} Likes</b></span>
+
                                     </div>
                                 ) : null
-
                             }
+                            <Divider />
 
+                            {/*Posts*/}
                             {
                                 props?.post?.data ? (
-                                    <div className="action__expand">
-                                        <IconButton
-                                            className={clsx(classes.expand, {
-                                                [classes.expandOpen]: expanded,
-                                            })}
-                                            onClick={handleExpandClick}
-                                            aria-expanded={expanded}
-                                            aria-label="show more"
-                                        >
-                                            <ExpandMoreIcon />
-                                        </IconButton>
-                                    </div>
+                                    <Collapse in={expanded} timeout="auto" unmountOnExit style={{minHeight: "auto"}}>
+                                        <>
+                                            <CardContent className="recipe_layout__content-left">
+                                                <Typography paragraph className={classes.paragraphHead} style={{display: "flex", lineHeight: "30px"}}>Rating:
+                                                    <Rating style={{marginLeft: "5px"}} name="read-only" value={post.rating} precision={0.1} readOnly />
+                                                </Typography>
+                                                <div className="recipe_layout__facts">
+                                                    <div className="recipe-facts__info">
+                                                        <div className="recipe-facts__details recipe-facts__prepare"><span
+                                                            className="recipe-facts__title">Prepare in:</span> <span>{props?.post?.data?.prepTime} {props?.post?.data?.prepUnit}</span></div>
+                                                        <div className="recipe-facts__details recipe-facts__cooking"><span
+                                                            className="recipe-facts__title">Cook in:</span> <a
+                                                            className="theme-color">{props?.post?.data?.cookTime} {props?.post?.data?.cookUnit}</a></div>
+                                                    </div>
+                                                    <div className="recipe-facts__info">
+                                                        <div className="recipe-facts__details recipe-facts__servings"><span
+                                                            className="recipe-facts__title">Serves:</span> <a
+                                                            className="theme-color">{props?.post?.data?.serve}</a></div>
+                                                    </div>
+                                                </div>
+                                                <Typography paragraph className={classes.paragraphHead} >Category: <Link style={{textDecoration: "underline"}} to={`/topic/${post?.data?.category?.toLowerCase()}`}>{post?.data?.category}</Link></Typography>
+                                                <Typography paragraph className={classes.paragraphHead}>Ingredients:</Typography>
+                                                <Typography paragraph className={classes.paragraph}>{props?.post?.data?.ingredient}</Typography>
+                                            </CardContent>
+                                            <CardContent className="recipe_layout__content-right">
+                                                <Typography paragraph className={classes.paragraphHead}>Direction:</Typography>
+                                                <Typography paragraph className={classes.paragraph}>{props?.post?.data?.direction}</Typography>
+                                            </CardContent>
+                                        </>
+                                        <Divider />
+                                    </Collapse>
                                 ) : null
                             }
 
+                            {/* Comment*/}
+                            <ListComment id={id} isPopup={`true`} />
 
-                        </CardActions>
-
-                        {/* Like count */}
-                        {
-                            likeCount > 0 ? (
-                                <div className={classes.displayLike}>
-                                    <span><b>{likeCount.toLocaleString()} Likes</b></span>
-
-                                </div>
-                            ) : null
-                        }
-                        <Divider />
-
-                        {/*Posts*/}
-                        {
-                            props?.post?.data ? (
-                                <Collapse in={expanded} timeout="auto" unmountOnExit style={{minHeight: "auto"}}>
-                                    <>
-                                        <CardContent className="recipe_layout__content-left">
-                                            <div className="recipe_layout__facts">
-                                                <div className="recipe-facts__info">
-                                                    <div className="recipe-facts__details recipe-facts__prepare"><span
-                                                        className="recipe-facts__title">Prepare in:</span> <span>{props?.post?.data?.prepTime} {props?.post?.data?.prepUnit}</span></div>
-                                                    <div className="recipe-facts__details recipe-facts__cooking"><span
-                                                        className="recipe-facts__title">Cook in:</span> <a
-                                                        className="theme-color">{props?.post?.data?.cookTime} {props?.post?.data?.cookUnit}</a></div>
-                                                </div>
-                                                <div className="recipe-facts__info">
-                                                    <div className="recipe-facts__details recipe-facts__servings"><span
-                                                        className="recipe-facts__title">Serves:</span> <a
-                                                        className="theme-color">{props?.post?.data?.serve}</a></div>
-                                                </div>
-                                            </div>
-                                            <Typography paragraph className={classes.paragraphHead}>Ingredients:</Typography>
-                                            <Typography paragraph className={classes.paragraph}>{props?.post?.data?.ingredient}</Typography>
-                                        </CardContent>
-                                        <CardContent className="recipe_layout__content-right">
-                                            <Typography paragraph className={classes.paragraphHead}>Direction:</Typography>
-                                            <Typography paragraph className={classes.paragraph}>{props?.post?.data?.direction}</Typography>
-                                        </CardContent>
-                                    </>
-                                    <Divider />
-                                </Collapse>
-                            ) : null
-                        }
-
-                        {/*<ListComment comments={comments} />*/}
-                        <ListComment id={props.id} />
-
-                        <div className="commentContainer commentViewer ">
-                            <Divider />
-                            {
-                                user &&  (
-                                    <form onSubmit={postComment} >
-                                        <TextField
-                                            className="comment__input"
-                                            placeholder="Leave a comment ... "
-                                            value={comment}
-                                            onChange={event => setComment(event.target.value)}
-                                            InputProps={{ disableUnderline: true}}
-                                        />
-                                        <Button
-                                            variant="contained"
-                                            disabled={!comment}
-                                            onClick={postComment}
-                                            classes={{
-                                                root: classes.cmtButton,
-                                                label: classes.cmtButtonLabel
-                                            }}
-                                        >
-                                            Post
-                                        </Button>
-                                    </form>
-                                )
-                            }
                         </div>
+                        <CommentInput user={user} id={id} type={post.type} path={'preview'}/>
+
                     </div>
                 </div>
             </div>

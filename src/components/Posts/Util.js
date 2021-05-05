@@ -1,10 +1,11 @@
 import React, {useState} from "react";
 import Divider from "@material-ui/core/Divider";
 import {Button, Modal} from "@material-ui/core";
-import handleUserUnfollow from "../../utils/handleUserUnfollow";
 import {Link} from "react-router-dom";
 import {makeStyles} from "@material-ui/core/styles";
 import {green} from "@material-ui/core/colors";
+import {handleReportPost, handleDeletePost, handleUserUnfollow} from "../../hooks/services";
+import id from "emoji-mart/dist/components/search";
 
 function getModalStyle() {
     const top = 50 ;
@@ -69,6 +70,11 @@ const PostUtil = (props) => {
     const [modalStyle] = useState(getModalStyle);
     const classes = useStyles();
 
+    let isYourPost  = false;
+    if(props.uid === props.opponentID){
+        isYourPost = true;
+    }
+
     return (
         <Modal
             open={props.open}
@@ -78,35 +84,88 @@ const PostUtil = (props) => {
         >
             <div style={modalStyle} className={classes.paper}>
                 <Divider />
-                <div className={classes.btnAction}>
-                    <Button
-                        classes={{
-                            root: classes.btnRed,
-                            label: classes.btnLabel,
-                        }}
-                    >
-                        Report
-                    </Button>
-                </div>
-                <Divider />
+                {
+                    isYourPost ? (
+                        <>
+                            <div className={classes.btnAction}>
+                                <Button
+                                    classes={{
+                                        root: classes.btnRed,
+                                        label: classes.btnLabel,
+                                    }}
+                                    onClick={
+                                        () => {
+                                            handleDeletePost(props.id);
+                                            props.handleRemove(props.id);
+                                            props.handleClose(true);
+                                        }
+                                    }
+                                >
+                                    Delete
+                                </Button>
+                            </div>
+                            <Divider />
 
-                <div className={classes.btnAction}>
-                    <Button
-                        classes={{
-                            root: classes.btnRed,
-                            label: classes.btnLabel,
-                        }}
-                        onClick={
-                            () => {
-                                handleUserUnfollow(props.uid, props.opponentID);
-                                props.handleClose(true);
-                            }
-                        }
-                    >
-                        Unfollow
-                    </Button>
-                </div>
-                <Divider />
+                            <div className={classes.btnAction}>
+                                <Button
+                                    classes={{
+                                        root: classes.btnRed,
+                                        label: classes.btnLabel,
+                                    }}
+                                    onClick={
+                                        () => {
+                                            // handleUserUnfollow(props.uid, props.opponentID);
+                                            props.handleClose(true);
+                                        }
+                                    }
+                                >
+                                    Edit
+                                </Button>
+                            </div>
+                            <Divider />
+                        </>
+                    ) : (
+                        <>
+                            <div className={classes.btnAction}>
+                                <Button
+                                    classes={{
+                                        root: classes.btnRed,
+                                        label: classes.btnLabel,
+                                    }}
+                                    onClick={
+                                        () => {
+                                            handleReportPost(props.uid, props.id);
+                                            props.handleRemove(props.id);
+                                            props.handleClose(true);
+                                        }
+                                    }
+                                >
+                                    Report
+                                </Button>
+                            </div>
+                            <Divider />
+                            <div className={classes.btnAction}>
+                                <Button
+                                    classes={{
+                                        root: classes.btnRed,
+                                        label: classes.btnLabel,
+                                    }}
+                                    onClick={
+                                        () => {
+                                            handleUserUnfollow(props.uid, props.opponentID);
+                                            props.handleRemove(props.id);
+                                            props.handleClose(true);
+                                        }
+                                    }
+                                >
+                                    Unfollow
+                                </Button>
+                            </div>
+                            <Divider />
+                        </>
+                    )
+                }
+
 
                 <div className={classes.btnAction}>
                     <Button
@@ -147,6 +206,7 @@ const PostUtil = (props) => {
                             root: classes.btnNormal,
                             label: classes.btnLabel,
                         }}
+                        onClick={props.handleClose}
                     >
                         Cancel
                     </Button>

@@ -23,6 +23,8 @@ import firebase from "firebase";
 import {useCollection} from "react-firebase-hooks/firestore";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {green} from "@material-ui/core/colors";
+import { v4 as uuidv4 } from 'uuid';
+
 
 
 function getModalStyle() {
@@ -210,6 +212,7 @@ export default function RecipeStepper(props) {
                                 />
                                 <FormControl variant="outlined" className={classes.formControl}>
                                     <Select
+                                        native
                                         inputProps={{
                                             id: 'prep-time'
                                         }}
@@ -232,13 +235,11 @@ export default function RecipeStepper(props) {
                                     }}
                                     value={cook}
                                     onChange={event => setCook(event.target.value)}
-
                                     variant="outlined"
-
-
                                 />
                                 <FormControl variant="outlined" className={classes.formControl}>
                                     <Select
+                                        native
                                         inputProps={{
                                             id: 'cook-time'
                                         }}
@@ -412,10 +413,10 @@ export default function RecipeStepper(props) {
         setCategory(''); setDirection(''); setIngredient(''); setCook(''); setDesc(''); setServe(''); setPrep(''); setTitle('');
     };
 
-    const handleUpload = (event) => {
+    const handleUpload = (event) => {d
         event.preventDefault();
-
-        const uploadTask = storage.ref(`images/${props.image.name}`).put(props.image);
+        const imageName = uuidv4();
+        const uploadTask = storage.ref(`media/${authUser.uid}/${imageName}`).put(props.image);
         uploadTask.on(
             "state_changed",
             (snapshot => {
@@ -430,14 +431,15 @@ export default function RecipeStepper(props) {
             }),
             () => {
                 storage
-                    .ref("images")
-                    .child(props.image.name)
+                    .ref(`media/${authUser.uid}/`)
+                    .child(imageName)
                     .getDownloadURL()
                     .then(url => {
                         db.collection("posts").add({
                             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                             hasImage: true,
                             caption: title,
+                            captionToLowerCase: title.toLowerCase(),
                             type: "recipe",
                             data: {
                                 title: title,

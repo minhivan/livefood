@@ -5,7 +5,7 @@ import {NavLink as RouterLink} from "react-router-dom";
 import {
     Grid as GridIcon,
     Bookmark as BookmarkIcon,
-    Film as FilmIcon,
+    Video as VideoIcon,
     List as ListIcon
 } from 'react-feather';
 import {useAuthState} from "react-firebase-hooks/auth";
@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const ProfileNavBar = ({user}) => {
+const ProfileNavBar = ({userSnapshot}) => {
     const classes = useStyles();
     const [authUser] = useAuthState(auth);
 
@@ -70,7 +70,7 @@ const ProfileNavBar = ({user}) => {
                     activeClassName={classes.active}
                     className={classes.button}
                     component={RouterLink}
-                    to={`/profile/${user?.uid}`}
+                    to={`/profile/${userSnapshot?.uid}`}
                 >
                     <GridIcon
                         className={classes.icon}
@@ -88,9 +88,9 @@ const ProfileNavBar = ({user}) => {
                     activeClassName={classes.active}
                     className={classes.button}
                     component={RouterLink}
-                    to={`/profile/channel/${user?.uid}`}
+                    to={`/profile/channel/${userSnapshot?.uid}`}
                 >
-                    <FilmIcon
+                    <VideoIcon
                         className={classes.icon}
                         size="20"
                     />
@@ -99,29 +99,31 @@ const ProfileNavBar = ({user}) => {
             </ListItem>
 
             {
-                user?.accountType === "foodshop" ? (
-                    <ListItem
-                        className={classes.item}
-                        disableGutters
-                    >
-                        <Button
-                            activeClassName={classes.active}
-                            className={classes.button}
-                            component={RouterLink}
-                            to={`/profile/dishes/${user?.uid}`}
+                userSnapshot?.accountType === "foodshop" ? (
+                    <>
+                        <ListItem
+                            className={classes.item}
+                            disableGutters
                         >
-                            <ListIcon
-                                className={classes.icon}
-                                size="20"
-                            />
-                            <span className={classes.title}>Dishes</span>
-                        </Button>
-                    </ListItem>
+                            <Button
+                                activeClassName={classes.active}
+                                className={classes.button}
+                                component={RouterLink}
+                                to={`/profile/dishes/${userSnapshot?.uid}`}
+                            >
+                                <ListIcon
+                                    className={classes.icon}
+                                    size="20"
+                                />
+                                <span className={classes.title}>Dishes</span>
+                            </Button>
+                        </ListItem>
+                    </>
                 ) : null
             }
 
             {
-                user?.uid === authUser?.uid ? (
+                userSnapshot?.uid === authUser?.uid ? (
                     <ListItem
                         className={classes.item}
                         disableGutters
@@ -130,7 +132,7 @@ const ProfileNavBar = ({user}) => {
                             activeClassName={classes.active}
                             className={classes.button}
                             component={RouterLink}
-                            to={`/profile/saved/${user?.uid}`}
+                            to={`/profile/saved/${userSnapshot?.uid}`}
                         >
                             <BookmarkIcon
                                 className={classes.icon}

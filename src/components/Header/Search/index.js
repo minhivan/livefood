@@ -1,8 +1,9 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import InputBase from '@material-ui/core/InputBase';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
 import { Hidden} from "@material-ui/core";
+import {createSearchParams, useLocation, useNavigate} from "react-router-dom"
 
 const useStyles = makeStyles((theme) => ({
     search: {
@@ -50,22 +51,53 @@ const useStyles = makeStyles((theme) => ({
 
 function HeaderSearch() {
     const classes = useStyles();
+    const [query, setQuery] = useState("")
+    const navigate = useNavigate();
+
+    const location = useLocation();
+
+    function handleSubmit(e) {
+        e.preventDefault()
+        if(query){
+            navigate({
+                pathname: location.pathname,
+                search: `?${createSearchParams({
+                    search: query
+                })}`
+            });
+        }
+    }
+
+    useEffect(() => {
+        if(!query){
+            navigate({
+                pathname: location.pathname
+            });
+        }
+    }, [query])
+
     return (
         <Hidden smDown>
-            <div className="header__search">
-                <div className={classes.search}>
-                    <div className={classes.searchIcon}>
-                        <SearchIcon />
+            <div className="header__search" onSubmit={handleSubmit}>
+                <form action="" method="GET">
+                    <div className={classes.search}>
+                        <div className={classes.searchIcon}>
+                            <SearchIcon />
+                        </div>
+                        <InputBase
+                            placeholder="Search…"
+                            classes={{
+                                root: classes.inputRoot,
+                                input: classes.inputInput,
+                            }}
+                            name="search"
+                            value={query}
+                            onChange={event => setQuery(event.target.value)}
+                            inputProps={{ 'aria-label': 'search' }}
+                        />
                     </div>
-                    <InputBase
-                        placeholder="Search…"
-                        classes={{
-                            root: classes.inputRoot,
-                            input: classes.inputInput,
-                        }}
-                        inputProps={{ 'aria-label': 'search' }}
-                    />
-                </div>
+                </form>
+
             </div>
         </Hidden>
     )

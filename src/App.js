@@ -11,12 +11,13 @@ import theme from './theme';
 import routes from "./routes";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {auth, db} from "./firebase";
+import firebase from "firebase";
 
 // import styled from 'styled-components';
 
-import firebase from "firebase";
-import {useDispatch} from "react-redux";
-import {login, logout} from "./features/userSlice";
+// import firebase from "firebase";
+// import {useDispatch} from "react-redux";
+// import {login, logout} from "./features/userSlice";
 
 function App() {
 	const [userLogged, loading] = useAuthState(auth);
@@ -24,33 +25,26 @@ function App() {
 	// const u = useSelector(selectUser);
 	// const dispatch = useDispatch();
 
+	useEffect(() => {
+		if(userLogged) {
+			db.collection("users").doc(userLogged.uid).set({
+				lastActive: firebase.firestore.FieldValue.serverTimestamp()
+			},{
+				merge: true
+			})
+		}
+
+	}, [userLogged])
+
+	//
 	// useEffect(() => {
-	// 	if(auth.onAuthStateChanged(author => {
-	// 		if(author){
-	// 			dispatch(
-	// 				login({
-	// 					uid: author.uid,
-	// 					photoURL: author.photoURL,
-	// 					email: author.email,
-	// 					displayName: author.displayName
-	// 				})
-	// 			)
-	// 		}else{
-	// 			dispatch(logout())
-	// 		}
-	// 	}))
-	//
-	// 	if(userLogged) {
-	// 		db.collection("users").doc(userLogged.uid).set({
-	// 			lastActive: firebase.firestore.FieldValue.serverTimestamp()
-	// 		},{
-	// 			merge: true
-	// 		})
+	// 	if (navigator.geolocation) {
+	// 		navigator.geolocation.watchPosition(function(position) {
+	// 			console.log("Latitude is :", position.coords.latitude);
+	// 			console.log("Longitude is :", position.coords.longitude);
+	// 		});
 	// 	}
-	//
-	// }, [dispatch, userLogged])
-
-
+	// })
 
 	if(loading){
 		return(
@@ -74,7 +68,7 @@ const AppLoading = () => {
 				 src="/static/images/brand.png"
 			/>
 			<Spinner
-				name="ball-spin-fade-loader"
+				name="cube-grid"
 				color="red"
 				fadeIn="none"
 			/>

@@ -60,6 +60,14 @@ const useStyles = makeStyles(() => ({
         borderRadius: "16px",
         boxShadow: "0px 0px 5px 0px #ddc4c4bf",
         overflow: "hidden"
+    },
+    displayName: {
+        display: "block",
+        fontWeight: "bold",
+        paddingBottom: 5,
+        whiteSpace: "nowrap",
+        textOverflow: "ellipsis",
+        overflow: "hidden"
     }
 }));
 
@@ -139,6 +147,7 @@ const NavBar = (props) => {
             height="100%"
             display="flex"
             flexDirection="column"
+            className="no-print"
         >
             {
                 props.userLogged ? (
@@ -157,8 +166,8 @@ const NavBar = (props) => {
                         />
 
                         <Link to={`/profile/${props.userLogged?.uid}`} className={classes.name}>
-                            <span style={{display: "block", fontWeight: "bold", paddingBottom: 5, whiteSpace: "nowrap"}}>{props.userLogged?.displayName}</span>
-                            <span style={{display: "block", color: "#546e7a", whiteSpace: "nowrap"}}>{userData?.data()?.fullName}</span>
+                            <span className={classes.displayName}>{props.userLogged?.displayName}</span>
+                            <span className={classes.displayName} style={{ color: "#546e7a"}}>{userData?.data()?.fullName}</span>
                         </Link>
 
                     </Box>

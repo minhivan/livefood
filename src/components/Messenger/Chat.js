@@ -87,8 +87,13 @@ function Chat({id}){
 
 
     useEffect(() => {
+        // realtime on page
+        chatRef?.current?.scrollIntoView({
+            behavior: "auto",
+            block: "nearest"
+        });
 
-        id && db.collection("chats")
+        return id && db.collection("chats")
             .doc(id)
             .collection("messages")
             .orderBy("timestamp", "asc")
@@ -97,23 +102,16 @@ function Chat({id}){
                     behavior: "auto",
                     block: "start"
                 });
-
                 setChatMessage(doc.docs.map((doc) => ({
                     id: doc.id,
                     data: doc.data()
                 })))
             })
-        // realtime on page
-        chatRef?.current?.scrollIntoView({
-            behavior: "auto",
-            block: "nearest"
-        });
-
 
     }, [id, loading])
 
 
-    if(!roomID ){
+    if(!id){
         return (
             <div className="messenger__chat">
                 <div className={classes.wrapper}>

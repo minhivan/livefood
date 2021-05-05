@@ -38,7 +38,8 @@ const useStyles = makeStyles((theme) => ({
         width: "600px",
         position: "relative",
         overflow : "hidden",
-        backgroundColor: "rgb(232, 231, 224)"
+        backgroundColor: "rgb(232, 231, 224)",
+        maxHeight: "490px"
     },
     img: {
         objectFit: "contain",

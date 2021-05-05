@@ -38,10 +38,10 @@ const useStyles = makeStyles((theme) => ({
 const ProfileFeed = ({uid}) => {
     const classes = useStyles();
     const [feed, setFeed] = useState([]);
+    const [loadingFeed, setLoadingFeed] = useState(true);
 
     useEffect(() => {
         window.scroll({top: 0, left: 0, behavior: 'smooth' });
-
         let postDoc = db.collection('posts');
         postDoc
             .where('uid', "==", uid)
@@ -58,6 +58,7 @@ const ProfileFeed = ({uid}) => {
                         temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
                     })
                     setFeed(temp);
+                    setLoadingFeed(false);
             })
     }, [uid]);
 
@@ -65,6 +66,7 @@ const ProfileFeed = ({uid}) => {
         <div className="explore__root" style={{paddingTop: "20px"}}>
             <div className="explore__container" style={{padding: "0"}} >
                 {
+
                     feed.length > 0 ? (
                         feed.map(({id, post, authorProfile}) => (
                             <ExploreItem key={id} id={id} post={post} postAuthor={authorProfile} />

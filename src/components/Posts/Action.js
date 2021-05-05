@@ -10,11 +10,9 @@ import IconButton from "@material-ui/core/IconButton";
 import ModeCommentOutlinedIcon from "@material-ui/icons/ModeCommentOutlined";
 import BookmarkRoundedIcon from "@material-ui/icons/BookmarkRounded";
 import BookmarkBorderOutlinedIcon from "@material-ui/icons/BookmarkBorderOutlined";
-import ShareIcon from "@material-ui/icons/Share";
 
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import CardActions from "@material-ui/core/CardActions";
-import Divider from "@material-ui/core/Divider";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -56,7 +54,7 @@ export default function PostAction({id, uid, postLike, postSave, expanded, setEx
     const classes = useStyles();
     const [selected, setSelected] = useState(false);
     const [saveSelected, setSaveSelected] = useState(false);
-    const [likeCount, setLikeCount] = useState(parseInt(postLike?.length));
+    const [likeCount, setLikeCount] = useState(parseInt(postLike.length));
 
 
     const handleExpandClick = () => {
@@ -170,9 +168,11 @@ export default function PostAction({id, uid, postLike, postSave, expanded, setEx
             </CardActions>
 
             {
-                likeCount > 0 ? (<div className={classes.displayLike}>
-                    <span><b>{likeCount} Likes</b></span>
-                </div>) : null
+                likeCount > 0 ? (
+                    <div className={classes.displayLike}>
+                        <span><b>{likeCount} {likeCount === 1 ? 'Like' : 'Likes'}</b></span>
+                    </div>
+                ) : null
             }
 
         </>

@@ -91,7 +91,7 @@ const CreateNewChat = (props) => {
     const userChatRef = db.collection("conversations").where('users', 'array-contains', props.user.email);
     const [chatsSnapshot] = useCollection(userChatRef);
 
-    const userRef = db.collection("users").where('uid', '!=', props.user.uid);
+    const userRef = db.collection("users").where('uid', '!=', props.user.uid).limit(4);
     const [usersSnapshot] = useCollection(userRef);
 
 

@@ -542,12 +542,12 @@ input:focus{
 .list-recipe-item{
     width: calc(100% / 4);
     padding: 0 10px 20px;
-    height: 370px;
+    height: 420px;
     position: relative;
 }
 .list-recipe-wrap{
     height: 100%;
-    border-bottom: 4px solid #77E2E1;
+    border-bottom: 4px solid #892074;
     background-color: #fff;
     box-shadow: 0px 0px 5px 0px #ddc4c4bf;
 }
@@ -565,6 +565,7 @@ input:focus{
     padding: 10px;
 }
 .list-recipe-item  h2.title{
+    width: 100%;
     font-size: 20px;
     line-height: 25px;
     margin-bottom: 10px;
@@ -746,6 +747,7 @@ input:focus{
 }
 .popup__review{
     position: relative;
+    margin-top: 15px;
 }
 /* Stepper */
 .step{
@@ -776,20 +778,43 @@ input:focus{
 .headerPadding{
     padding-top: 10px;
 }
+.trending__content{
+    height: 255px;
+    overflow-y: auto;
+}
+.trending__content .chat__details{
+    text-align: justify;
+    line-height: 22px;
+    font-size: 12px;
+    max-width: 80%;
+    padding: 10px;
+    margin: 0;
+}
+.trending__content .chat__message{
+    padding: 5px 10px;
+}
+.trending__content .chat__container{
+    padding: 5px 0;
+    display: flex;
+    height: 100%;
+    align-items: center;
+}
+
 
 .sideBar__containerBlock .trending__content .trending__contentBlock .trending__header h4{
     color: rgb(91, 112, 131);
 }
-
 .trending__container .show-more:hover,
-.trending__content:hover{
+.suggest__content:hover{
     background-color: rgba(0,0,0,0.03);
     cursor: pointer;
     transition: 0.3s all ease;
 }
+
+
+
 .sideBar__containerBlock .show-more span{
     color: #1a90da;
-    font-size: 1.2rem;
     font-weight: bold;
 }
 
@@ -847,6 +872,7 @@ input:focus{
     text-align: justify;
     display: inline-block;
     text-rendering: optimizeLegibility;
+    width: 100%;
 }
 .post__caption .post__user{
     color: #262626;
@@ -858,6 +884,7 @@ input:focus{
     display: flex;
     align-items: center;
     padding: 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
 }
 .commentContainer .comment__input{
     padding: 10px 20px;
@@ -884,15 +911,28 @@ input:focus{
 }
 .comment__sub{
     padding-left: 10px;
+    display: flex;
+    position: relative;
 }
-.comment__sub p{
-    padding-top: 10px;
+.comment__sub-popup,
+.comment__sub-popup span{
+    display: block;
+}
+.comment__sub-popup a {
+    width: 80%;
+    white-space: nowrap;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.comment__caption p{
+    padding: 10px;
     text-align: justify;
     word-break: break-word;
+    line-height: 20px;
 }
 .comment__content{
     padding: 0 10px;
-    display: inline;
     width: 100%;
 }
 .comment__action{
@@ -904,7 +944,6 @@ input:focus{
     padding: 20px;
     display: flex;
     align-items: flex-start;
-    border-bottom: 1px solid rgb(235, 238, 240);
 }
 .commentDetails:hover{
     background-color: rgba(0,0,0,0.03);
@@ -919,6 +958,17 @@ input:focus{
 .commentDetails span{
     font-size: 0.875rem;
 }
+.comment__see-more{
+    padding: 20px 20px 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.comment__see-more-btn{
+    display: flex;
+    justify-content: center;
+    padding: 0 0 10px;
+}
+
 .action__expand{
     margin-left: auto;
 }
@@ -973,6 +1023,7 @@ input:focus{
     margin-top: auto;
     flex-direction: column;
     align-items: normal;
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
 }
 
 /*============== Messenger page ================*/
@@ -1114,6 +1165,41 @@ input:focus{
     background-color: #fff;
 }
 
+/* Open chat rasa */
+.chat__sasimi{
+    position: absolute;
+    top: 90vh;
+    right: 100px;
+}
+
+.right-chat-input{
+    display: flex;
+    align-items: center;
+}
+.right-chat-input__holder{
+    padding: 10px 20px;
+    border: none;
+    border-radius: max(0px, min(8px, calc((100vw - 4px - 100%) * 9999))) / 8px;
+    width: 100%;
+    font-size: 16px;
+    line-height: 10px;
+}
+.right-chat-input button{
+    background: transparent;
+    font-weight: bold;
+    transition: 0.3s all ease;
+    box-shadow: unset;
+    font-size: 14px;
+    text-transform: capitalize;
+}
+.right-chat-input button:hover{
+    background: transparent;
+    font-weight: bold;
+    transition: 0.3s all ease;
+    box-shadow: unset;
+}
+
+
 
 /*============= Responsive ===================*/
 @media (max-width: 767px) {
@@ -1138,3 +1224,8 @@ input:focus{
     }
 }
 
+@media print {
+    .no-print {
+        display: none;
+    }
+}

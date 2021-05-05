@@ -20,8 +20,8 @@ const ChatInput = ({roomID, chatRef}) => {
 
     const [input, setInput] = useState('');
     const [user] = useAuthState(auth);
-    const conversationRef = db.collection("conversations").doc(roomID);
-    const messageRef = db.collection("chats").doc(roomID).collection("messages")
+    const conversationRef = roomID && db.collection("conversations").doc(roomID);
+    const messageRef = roomID && db.collection("chats").doc(roomID).collection("messages")
     const [conversationData] = useDocument(conversationRef)
 
     const [anchorElPicker, setAnchorElPicker] = useState(null);
@@ -62,7 +62,7 @@ const ChatInput = ({roomID, chatRef}) => {
 
     const sendMessage = (event) => {
         event.preventDefault();
-        if(input !== ''){
+        if(input !== '' && (!/^\s+$/.test(input))){
             messageRef.add({
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 uid: user.uid,
@@ -110,8 +110,9 @@ const ChatInput = ({roomID, chatRef}) => {
                         value={input}
                         onChange={event => setInput(event.target.value)}
                         onClick={checkingRead}
-                        onKeyPress={checkingKeypress}
+                        onKeyPress={(event) => checkingKeypress(event)}
                         InputProps={{ disableUnderline: true}}
+                        autoFocus
                     />
 
                     <IconButton className="chat__iconPicker" aria-label="Add " onClick={handleClick}>

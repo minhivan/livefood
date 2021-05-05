@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import Skeleton from "@material-ui/lab/Skeleton";
 import {Link} from "react-router-dom";
 import PropTypes from "prop-types";
@@ -69,6 +69,11 @@ const useStyles = makeStyles((theme) => ({
 export default function PostContent({mediaUrl, caption, mediaType, author, ...rest}) {
     const classes = useStyles();
 
+    const [isReadMore, setIsReadMore] = useState(true);
+    const toggleReadMore = () => {
+        setIsReadMore(!isReadMore);
+    };
+
 
     let media;
     if(mediaType === "video/mp4"){
@@ -100,7 +105,16 @@ export default function PostContent({mediaUrl, caption, mediaType, author, ...re
                 caption ? (
                     <div className="post__caption">
                         <Link to={`profile/${author?.uid}`} className="post__user">{author?.displayName}</Link>
-                        <span className={classes.captionText} >{caption}</span>
+                        {
+                            caption.length > 50 ? (
+                                <span className={classes.captionText} >
+                                    {isReadMore ? caption.slice(0, 50) : caption}
+                                    <span onClick={toggleReadMore} style={{fontWeight: "bold", cursor: "pointer", color: "#8e8e8e"}}>
+                                        {isReadMore ? "...read more" : null}
+                                    </span>
+                                 </span>
+                            ) : caption
+                        }
                     </div>
                 ) : (
                     <div className="post__caption">

@@ -7,13 +7,16 @@ import HomePage from "./views/HomePage";
 import NotFoundView from "./views/NotFoundPage"
 import Messenger from "./views/MessengerPage";
 import SignUp from "./views/auth/SignUpPage";
+import Forgot from "./views/auth/ForgotPassword"
 import Explore from "./views/explore/ExplorePage";
 import UserProfilePage from "./views/account/UserProfilePage";
 import EditAccountPage from "./views/account/EditAccountPage";
 import SinglePage from "./views/SinglePage";
 import ExplorePeople from "./views/explore/ExplorePeoplePage";
 import ExploreVideo from "./views/explore/ExploreVideoPage";
-import RecipePage from "./views/RecipePage";
+import RecipePage from "./views/recipe/RecipePage";
+import TopicPage from "./views/recipe/TopicPage";
+import TrendingPage from "./views/recipe/TrendingPage";
 
 
 const routes = (isLoggedIn)  => [
@@ -24,9 +27,11 @@ const routes = (isLoggedIn)  => [
         children: [
             { path: 'p/:id', element: <SinglePage userLogged={isLoggedIn} type="post" />},
             { path: 'recipe/', element: <RecipePage userLogged={isLoggedIn}/>},
+            { path: 'topic/:name', element: <TopicPage userLogged={isLoggedIn}/>},
+            { path: 'trending/', element: <TrendingPage userLogged={isLoggedIn}/>},
             { path: '/', element: isLoggedIn ? <HomePage userLogged={isLoggedIn}/> : <Navigate to="/explore" />  },
             { path: '404', element: <NotFoundView /> },
-            { path: '*', element: <Navigate to="/404" /> }
+            // { path: '*', element: <Navigate to="/404" /> }
         ]
     },
     {
@@ -34,7 +39,8 @@ const routes = (isLoggedIn)  => [
         element: <DefaultLayout />,
         children: [
             { path: 'login', element: <Login /> },
-            { path: 'register', element: <SignUp /> }
+            { path: 'register', element: <SignUp /> },
+            { path: 'forgot', element: <Forgot /> }
         ]
     },
     {
@@ -45,7 +51,6 @@ const routes = (isLoggedIn)  => [
             { path: '/news', element: <Explore userLogged={isLoggedIn}/> },
             { path: '/people',  element: isLoggedIn ? <ExplorePeople userLogged={isLoggedIn}/> : <Navigate to="/login" />  },
             { path: '/watch', element:  <ExploreVideo userLogged={isLoggedIn}/> },
-            { path: '/watch'},
         ]
     },
     {
@@ -64,6 +69,7 @@ const routes = (isLoggedIn)  => [
             { path: 'password/change', element: <EditAccountPage userLogged={isLoggedIn} pagePath="password"/> },
             { path: 'setting/notifications', element: <EditAccountPage userLogged={isLoggedIn} pagePath="setting"/> },
             { path: 'shop/edit', element: <EditAccountPage userLogged={isLoggedIn} pagePath="shop"/> },
+            { path: 'shop/about', element: <EditAccountPage userLogged={isLoggedIn} pagePath="about"/> },
         ]
     },
     {

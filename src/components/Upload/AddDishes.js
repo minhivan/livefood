@@ -1,25 +1,19 @@
 import React, {useEffect, useState} from "react";
 import {
-    Avatar,
     Badge,
     Button,
-    CardContent,
     CircularProgress,
-    Collapse,
     IconButton,
     Modal,
     TextField
 } from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 import PhotoCameraTwoToneIcon from "@material-ui/icons/PhotoCameraTwoTone";
-import VideoCallTwoToneIcon from "@material-ui/icons/VideoCallTwoTone";
-import GroupAddTwoToneIcon from "@material-ui/icons/GroupAddTwoTone";
-import CardHeader from "@material-ui/core/CardHeader";
 import {green} from "@material-ui/core/colors";
 import {db, storage} from "../../firebase";
 import firebase from "firebase";
+import NumberFormat from 'react-number-format';
 
 function getModalStyle() {
     const top = 50 ;
@@ -101,6 +95,29 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
+function NumberFormatCustom(props) {
+    const { inputRef, onChange, ...other } = props;
+
+    return (
+        <NumberFormat
+            {...other}
+            getInputRef={inputRef}
+            onValueChange={(values) => {
+                onChange({
+                    target: {
+                        name: props.name,
+                        value: values.value,
+                    },
+                });
+            }}
+            thousandSeparator
+            isNumericString
+        />
+    );
+}
+
+
+
 function AddDishes({open, handleClose, setOpenSnack, userLogged}){
     const classes = useStyles();
     const [modalStyle] = useState(getModalStyle);
@@ -109,20 +126,26 @@ function AddDishes({open, handleClose, setOpenSnack, userLogged}){
     const [price, setPrice] = useState('');
     const [disable, setDisable] = useState(true);
     const [loading, setLoading] = useState(false);
+    const [progress, setProgress] = useState(0);
 
 
+    // const [values, setValues] = React.useState(0);
+
+    const handleChangePrice = (event) => {
+        setPrice(event.target.value);
+    };
     // console.log(new Intl.NumberFormat().format(price))
 
-
-
     const handleUpload = () => {
-        const uploadTask = storage.ref(`media/${dishImg.name}`).put(dishImg);
+        const imageName = Math.floor(Date.now()).toString()+dishImg.name;
+        const uploadTask = storage.ref(`media/${userLogged.uid}/${imageName}`).put(dishImg);
         uploadTask.on(
             "state_changed",
             (snapshot => {
                 const progressData = Math.round(
                     (snapshot.bytesTransferred / snapshot.totalBytes) * 100
                 );
+                setProgress(progressData);
                 setLoading(true);
             }),
             (error => {
@@ -130,8 +153,8 @@ function AddDishes({open, handleClose, setOpenSnack, userLogged}){
             }),
             () => {
                 storage
-                    .ref("media")
-                    .child(dishImg.name)
+                    .ref(`media/${userLogged.uid}/`)
+                    .child(imageName)
                     .getDownloadURL()
                     .then(url => {
                         db.collection("users").doc(userLogged.uid).collection("menu").add({
@@ -153,6 +176,7 @@ function AddDishes({open, handleClose, setOpenSnack, userLogged}){
                         setDishName("");
                         setPrice("");
                         setLoading(false);
+                        setProgress(0);
                     })
             }
         )
@@ -171,12 +195,15 @@ function AddDishes({open, handleClose, setOpenSnack, userLogged}){
 
 
     useEffect(() => {
-        if(dishName.length > 0 && dishImg){
-            setDisable(false);
+        if(dishName.length > 0 && dishImg && price){            setDisable(false);
+
+            if(!/^\s+$/.test(dishName) && price > 0){
+                setDisable(false);
+            }
         }else {
             setDisable(true)
         }
-    },[dishName.length, dishImg])
+    },[dishName.length, dishImg, price])
 
 
     return (
@@ -208,19 +235,36 @@ function AddDishes({open, handleClose, setOpenSnack, userLogged}){
                             onChange={event => setDishName(event.target.value)}
 
                         />
+
                         <TextField
-                            required
-                            style = {{maxWidth: "150px", marginLeft: "20px"}}
-                            type="number"
                             label="Price"
+                            value={price}
+                            style = {{maxWidth: "150px", marginLeft: "20px"}}
+                            onChange={handleChangePrice}
+                            name="price"
+                            id="price"
+                            InputProps={{
+                                inputComponent: NumberFormatCustom,
+                            }}
                             InputLabelProps={{
                                 shrink: true,
                             }}
-                            InputProps={{ inputProps: { min: 0 } }}
-                            value={price}
-                            onChange={event => {setPrice(event.target.value)}}
                             variant="outlined"
                         />
+
+                        {/*<TextField*/}
+                        {/*    required*/}
+                        {/*    style = {{maxWidth: "150px", marginLeft: "20px"}}*/}
+                        {/*    type="number"*/}
+                        {/*    label="Price"*/}
+                        {/*    InputLabelProps={{*/}
+                        {/*        shrink: true,*/}
+                        {/*    }}*/}
+                        {/*    InputProps={{ inputProps: { min: 0 } }}*/}
+                        {/*    value={price}*/}
+                        {/*    onChange={event => {setPrice(event.target.value)}}*/}
+                        {/*    variant="outlined"*/}
+                        {/*/>*/}
 
                     </div>
                     {
@@ -244,7 +288,7 @@ function AddDishes({open, handleClose, setOpenSnack, userLogged}){
                     <h3 style={{textTransform: "inherit", fontSize: "1rem", letterSpacing: "0"}}>Upload picture of your dish</h3>
                     <div className="popup__iconPicker">
                         <div>
-                            <input accept="image/*|video/*" type="file" onChange={handleChange} multiple="multiple" id="icon-button-file" className={classes.input}/>
+                            <input accept="image/*" type="file" onChange={handleChange} onClick={e => (e.target.value = null)} id="icon-button-file" className={classes.input}/>
 
                             <label htmlFor="icon-button-file" className="upload__pickerButton">
                                 <IconButton color="inherit" component="span" >
@@ -269,7 +313,7 @@ function AddDishes({open, handleClose, setOpenSnack, userLogged}){
                     >
                         POST
                     </Button>
-                    {loading && <CircularProgress size={24} className={classes.buttonProgress} /> }
+                    {loading && <CircularProgress value={progress} size={24} className={classes.buttonProgress} /> }
                 </div>
             </div>
         </Modal>

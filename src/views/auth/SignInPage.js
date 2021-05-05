@@ -178,7 +178,7 @@ function PageLogin() {
                             >
                                 Sign up with Google
                             </Button>
-                            <Link to="" className={classes.forgot}>Forgot your password ?</Link>
+                            <Link to="/forgot" className={classes.forgot}>Forgot your password ?</Link>
 
                             <div className={classes.divider} />
                             <div className={classes.SignUpHolder}>

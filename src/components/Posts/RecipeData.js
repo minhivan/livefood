@@ -4,6 +4,10 @@ import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import {makeStyles} from "@material-ui/core/styles";
 import PropTypes from "prop-types";
+import {Rating} from "@material-ui/lab";
+import LocalPrintshopRoundedIcon from '@material-ui/icons/LocalPrintshopRounded';
+import {Link} from "react-router-dom";
+
 
 const useStyles = makeStyles((theme) => ({
 
@@ -24,9 +28,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function PostRecipeData({postData, expanded}){
+export default function PostRecipeData({id, postData, expanded, rating}){
     const classes = useStyles();
-
 
     return(
         <>
@@ -35,6 +38,10 @@ export default function PostRecipeData({postData, expanded}){
                     <Collapse in={expanded} timeout="auto" unmountOnExit >
                         <div className="recipe_layout">
                             <CardContent className="recipe_layout__content-left">
+                                <Typography paragraph className={classes.paragraphHead} style={{display: "flex", lineHeight: "30px"}}>Rating:
+                                    <Rating style={{marginLeft: "5px"}} name="read-only" value={rating} precision={0.1} readOnly />
+                                </Typography>
+
                                 <div className="recipe_layout__facts">
                                     <div className="recipe-facts__info">
                                         <div className="recipe-facts__details recipe-facts__prepare"><span
@@ -49,12 +56,20 @@ export default function PostRecipeData({postData, expanded}){
                                             className="theme-color">{postData?.serve}</a></div>
                                     </div>
                                 </div>
+                                <Typography paragraph className={classes.paragraphHead} >Category: <Link style={{textDecoration: "underline"}} to={`/topic/${postData?.category?.toLowerCase()}`}>{postData?.category}</Link></Typography>
                                 <Typography paragraph className={classes.paragraphHead}>Ingredients:</Typography>
                                 <Typography paragraph className={classes.paragraph}>{postData?.ingredient}</Typography>
                             </CardContent>
                             <CardContent className="recipe_layout__content-right">
                                 <Typography paragraph className={classes.paragraphHead}>Direction:</Typography>
                                 <Typography paragraph className={classes.paragraph}>{postData?.direction}</Typography>
+                                <Typography
+                                    paragraph
+                                    className={classes.paragraphHead}
+                                    style={{display: "flex", gap: "5px"}}
+                                >
+                                    <LocalPrintshopRoundedIcon />Print Recipe
+                                </Typography>
                             </CardContent>
                         </div>
                         <Divider />
@@ -67,6 +82,8 @@ export default function PostRecipeData({postData, expanded}){
 
 
 PostRecipeData.propTypes = {
+    id: PropTypes.string,
     postData: PropTypes.object,
     expanded: PropTypes.bool,
+    rating: PropTypes.number
 };

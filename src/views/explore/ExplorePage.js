@@ -34,14 +34,17 @@ const useStyles = makeStyles((theme) => ({
 
 
 const Explore = (props) => {
+    const {userLogged} = props;
     const [explore, setExplore] = useState([]);
+    window.scroll({top: 0, left: 0, behavior: 'smooth' })
 
     useEffect(() => {
 
         let postDoc = db.collection('posts');
         postDoc
             .orderBy('timestamp', "desc")
-            .limit(18)
+
+            .limit(20)
             .get().then(snapshot => {
                 let temp = []
                 snapshot.forEach(data => {
@@ -85,7 +88,6 @@ const Explore = (props) => {
                     }
                 </div>
             </div>
-
         </Page>
     )
 }

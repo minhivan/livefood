@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
     }),
     icon: {
         marginRight: theme.spacing(1),
-        color: "#3c3d40",
+        color: "#000",
         fontWeight: "600",
     },
     title: {
@@ -38,16 +38,16 @@ const useStyles = makeStyles((theme) => ({
         fontWeight: "600",
         fontSize: "1rem",
         paddingLeft: "10px",
-        color: "#65676B"
+        color: "#000"
     },
     active: {
         color: theme.palette.primary.main,
         '& $title': {
-            color: theme.palette.primary.main,
+            color: "#892074",
             fontWeight: "600",
         },
         '& $icon': {
-            color: theme.palette.primary.main,
+            color: "#892074",
             fontWeight: "600",
         }
     }

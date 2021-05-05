@@ -11,7 +11,9 @@ import EditPassword from "../../components/Profile/Edit/EditPassword";
 import EditShop from "../../components/Profile/Edit/EditShop";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
-import Popup from "../../components/Upload/Popup";
+import EditNotification from "../../components/Profile/Edit/EditNotification";
+import {Navigate} from "react-router-dom";
+import EditAbout from "../../components/Profile/Edit/EditAbout";
 
 
 
@@ -20,9 +22,7 @@ function Alert(props) {
 }
 
 const EditAccountPage = (props) => {
-    // const [currentUser] = useAuthState(auth);
-    // const [userData] = useCollection(db.collection('users').where('uid', '==', currentUser.uid))
-    // const user = userData?.docs?.[0].data();
+
     const [openSnack, setOpenSnack] = useState(false);
 
     const handleCloseSnack = (event) => {
@@ -32,15 +32,27 @@ const EditAccountPage = (props) => {
     function content(action){
         switch (action){
             case "edit":
-                return <EditAccount userLogged={props.userLogged} />
+                return <EditAccount userLogged={props.userLogged} setOpenSnack={setOpenSnack}/>
             case "password":
-                return <EditPassword userLogged={props.userLogged}/>
+                if(props.userLogged.providerData[0].providerId === "password"){
+                    return <EditPassword userLogged={props.userLogged} setOpenSnack={setOpenSnack}/>
+                }
+                else {
+                    return <Navigate to="/account/edit"/>
+                }
+
             case "shop":
                 return <EditShop userLogged={props.userLogged} setOpenSnack={setOpenSnack} />
+            case "setting":
+                return <EditNotification userLogged={props.userLogged} setOpenSnack={setOpenSnack}/>
+            case "about" :
+                return <EditAbout userLogged={props.userLogged} setOpenSnack={setOpenSnack}/>
+
             default:
                 return <></>
         }
     }
+
 
     return(
         <Page
@@ -63,9 +75,10 @@ const EditAccountPage = (props) => {
                 }}
             >
                 <Alert variant="filled" onClose={handleCloseSnack} severity="success">
-                    Upload successfully !
+                    Successfully !
                 </Alert>
             </Snackbar>
+
         </Page>
     )
 }
