@@ -128,6 +128,10 @@ const useStyles = makeStyles((theme: Theme) =>
             position: "absolute",
             top: "10px",
             right: "0"
+        },
+        selectInput: {
+            textTransform: "uppercase",
+            fontWeight: "bold"
         }
     }),
 
@@ -162,7 +166,7 @@ export default function RecipeStepper(props) {
 
     const [disable, setDisable] = useState(true);
 
-    const [cate] = useCollection(db.collection("category"))
+    const [cate] = useCollection(db.collection("category").orderBy('title', 'asc'))
 
     const removeImage = () => {
         props.setImage('');
@@ -283,12 +287,14 @@ export default function RecipeStepper(props) {
                                 value={category}
                                 onChange={event => setCategory(event.target.value)}
                                 label="Category"
-                                style={{textTransform: "uppercase", fontWeight: "bold"}}
+                                classes={{
+                                    root: classes.selectInput
+                                }}
                             >
                                 <option aria-label="None" value="" disabled/>
                                 {
                                     cate?.docs?.map((doc) => (
-                                        <option key={doc.id} value={doc.data().title}>{doc.data().title}</option>
+                                        <option key={doc.id} value={doc.data().title} style={{textTransform: "uppercase"}}>{doc.data().title}</option>
                                     ))
                                 }
                                 {/*<optgroup label="Category 1">*/}
@@ -413,7 +419,7 @@ export default function RecipeStepper(props) {
         setCategory(''); setDirection(''); setIngredient(''); setCook(''); setDesc(''); setServe(''); setPrep(''); setTitle('');
     };
 
-    const handleUpload = (event) => {d
+    const handleUpload = (event) => {
         event.preventDefault();
         const imageName = uuidv4();
         const uploadTask = storage.ref(`media/${authUser.uid}/${imageName}`).put(props.image);

@@ -4,7 +4,7 @@ import {Button, TextField} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import {Link, Navigate} from "react-router-dom";
 //import FacebookIcon from '../../icons/Facebook';
-import GoogleIcon from '../../icons/Google';
+import GoogleIcon from '../../images/icons/Google';
 import Page from "../../components/Page";
 import checkFirebaseAuth from "../../hooks/firebaseAuth";
 import {useAuthState} from "react-firebase-hooks/auth";

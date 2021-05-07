@@ -9,7 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import {db} from "../../firebase";
 import Button from "@material-ui/core/Button";
 import { useDocument} from "react-firebase-hooks/firestore";
-import {Link} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 import {handleUserFollow, handleUserUnfollow} from "../../hooks/services";
 import {blue} from "@material-ui/core/colors";
 
@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
         width: '100%',
         backgroundColor: theme.palette.background.paper,
         marginLeft: "10px",
-        borderRadius: "16px",
+        borderRadius: "8px",
         padding: 0,
         boxShadow: "0px 0px 5px 0px #ddc4c4bf",
         overflow: "hidden"
@@ -86,6 +86,8 @@ export default function ExplorePeopleItem(props) {
     let userFollowingList = userSnapshot?.data()?.following;
     let userFollowerList = userSnapshot?.data()?.follower;
 
+    let query = new URLSearchParams(useLocation().search).get("q");
+
     // List user
     useEffect(() => {
         var followingList = {};
@@ -115,7 +117,9 @@ export default function ExplorePeopleItem(props) {
                     })));
                 })
         }
-    }, [userFollowingList?.length])
+
+
+    }, [userFollowingList?.length, query])
 
 
     // check if user followed

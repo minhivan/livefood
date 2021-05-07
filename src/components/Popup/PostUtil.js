@@ -5,7 +5,6 @@ import {Link} from "react-router-dom";
 import {makeStyles} from "@material-ui/core/styles";
 import {green} from "@material-ui/core/colors";
 import {handleReportPost, handleDeletePost, handleUserUnfollow} from "../../hooks/services";
-import id from "emoji-mart/dist/components/search";
 
 function getModalStyle() {
     const top = 50 ;

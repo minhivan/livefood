@@ -12,6 +12,8 @@ import {db} from "../../firebase";
 import {useCollection} from "react-firebase-hooks/firestore";
 import {Camera as CameraIcon} from "react-feather";
 import {Rating} from "@material-ui/lab";
+import ListRecipe from "../../components/Recipe/ListRecipe";
+import NewestRecipe from "../../components/Recipe/NewestRecipe";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -70,7 +72,6 @@ const RecipePage = (props) => {
     };
 
     useEffect( () => {
-
         // Set newest
         db.collection('posts')
             .where('type', '==', 'recipe')
@@ -89,7 +90,6 @@ const RecipePage = (props) => {
         })
 
         // Set all post
-
         if(type === 'newest'){
             db.collection('posts')
                 .where('type', '==', 'recipe')
@@ -143,38 +143,10 @@ const RecipePage = (props) => {
                         {
                             newest.length > 0 ? (
                                 (newest.map( ({id, post, postAuthor}) => (
-                                    <div key={id} className="recipe-double">
-                                        <div className="recipe-inner">
-                                            <div className="recipe-inner-wrap">
-                                                <Link to={`/p/${id}`} className='text-link'>
-                                                    <img
-                                                        src={post?.mediaUrl} alt=""/>
-                                                </Link>
-                                            </div>
-                                            <div className="tile-content">
-                                                <div className="details">
-                                                    <h2 className="title" title={post?.caption}>
-                                                        <Link to={`/p/${id}`}>{post?.caption}</Link>
-                                                    </h2>
-                                                    <div className="recipe-data">
-                                                        <div className="author"><span className="name">By <Link to={`/profile/${post?.uid}`}>{postAuthor?.displayName}</Link></span></div>
-                                                        <div className="meta-data">
-                                                            <div className="fd-rating">
-                                                                <span><FavoriteRoundedIcon style={{color: "red", marginRight: 5}}/>{post?.likeBy?.length}</span></div>
-                                                            <div className="cook-time">
-                                                                <span style={{marginLeft: 5}}><AccessTimeRoundedIcon style={{color: "black", marginRight: 5, textTransform: "lowercase"}}/>{post?.data?.cookTime} {post?.data?.cookUnit}</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <NewestRecipe key={id} id={id} post={post} postAuthor={postAuthor}/>
                                 ))
                             )) : null
                         }
-
-
                     </div>
                 </div>
                 <Divider />
@@ -195,43 +167,12 @@ const RecipePage = (props) => {
 
                         </Select>
                     </FormControl>
-
                     <div className="list-recipe">
                         <div className="list-recipe-grid">
                             {
                                 listRecipe.length > 0 ? (
                                     listRecipe.map(({id, post, postAuthor}) => (
-                                        <div key={id} className="list-recipe-item">
-                                            <div className="list-recipe-wrap">
-                                                <div className="inner-wrap">
-                                                    <Link to={`/p/${id}`} className='text-link'>
-                                                        <img
-                                                            src={post?.mediaUrl} alt=""/>
-                                                    </Link>
-                                                </div>
-                                                <div className="tile-content">
-                                                    <div className="details">
-                                                        <h2 className="title" title={post?.caption}>
-                                                            <Link to={`/p/${id}`}>{post?.caption}</Link>
-                                                        </h2>
-                                                        {
-                                                            post.rating ? (
-                                                                <div className={classes.rating}>
-                                                                    <Rating style={{marginRight: "5px"}} name="read-only" value={post?.rating} precision={0.1} readOnly /> ({parseFloat(post?.rating).toFixed(1, 2)})
-                                                                </div>
-                                                            ) : null
-                                                        }
-                                                        <div className="recipe-data">
-                                                            <div className="author"><span className="name">By <Link to={`/profile/${post?.uid}`}>{postAuthor?.displayName}</Link></span></div>
-                                                            <div className="meta-data">
-                                                                <div className="fd-rating">
-                                                                    <span><FavoriteRoundedIcon style={{color: "red", marginRight: 5}}/> {post?.likeBy?.length}</span></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <ListRecipe key={id} id={id} post={post} postAuthor={postAuthor}/>
                                     ))
                                 ) : (
                                     <div className={classes.wrapper}>

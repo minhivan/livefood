@@ -46,69 +46,41 @@ export default function NewFeed(props){
 
     //Get post
     useEffect( () => {
-        // if(typeof userFollow !== 'undefined' && userFollow.length > 0){
-        //     userFollow.push(userLogged.uid);
-        //     return db.collection('posts')
-        //         .where('uid', 'in', userFollow)
-        //         .orderBy('timestamp', "desc")
-        //         .limit(6)
-        //         .get().then(async snapshot => {
-        //             const tracking = await Promise.all(
-        //                 snapshot.docs.map(async doc => ({
-        //                     id: doc.id,
-        //                     post: doc.data(),
-        //                     postAuthor: await (doc.data().user.get().then( author => {
-        //                         return {
-        //                             displayName: author.data().displayName,
-        //                             photoURL: author.data().photoURL,
-        //                             accountType: author.data().accountType,
-        //                             uid: doc.data().uid
-        //                         };
-        //                     }))
-        //                 }))
-        //             )
-        //             setPosts(tracking);
-        //         })
-        // }
-        // else{
-        //     return db.collection('posts')
-        //         .where('uid', '==', userLogged.uid)
-        //         .orderBy('timestamp', "desc")
-        //         .limit(6)
-        //         .get().then(async snapshot => {
-        //             const tracking = await Promise.all(
-        //                 snapshot.docs.map(async doc => ({
-        //                     id: doc.id,
-        //                     post: doc.data(),
-        //                     postAuthor: await (doc.data().user.get().then( author => {
-        //                         return {
-        //                             displayName: author.data().displayName,
-        //                             photoURL: author.data().photoURL,
-        //                             accountType: author.data().accountType,
-        //                             uid: doc.data().uid
-        //                         };
-        //                     }))
-        //                 }))
-        //             )
-        //             setPosts(tracking);
-        //         })
-        // }
+        if(typeof userFollow !== 'undefined' && userFollow.length > 0){
+            userFollow.push(userLogged.uid);
+            const unsubscribe = db.collection('posts')
+                .orderBy('timestamp', "desc")
+                .limit(15)
+                .onSnapshot((snapshot) => {
+                    var data = [];
+                    snapshot.forEach((doc) => {
+                        if(userFollow.includes(doc.data().uid)){
+                            data.push({id: doc.id, post: doc.data()})
+                        }
+                    })
+                    setPosts(data);
+                })
+            return () => {
+                unsubscribe();
+            }
+        }
+        else{
+            const unsubscribe = db.collection('posts')
+                .where('uid', '==', userLogged.uid)
+                .orderBy('timestamp', "desc")
+                .limit(5)
+                .onSnapshot( snapshot => {
+                    setPosts(snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        post: doc.data(),
+                    })));
+                })
 
-         const unsubscribe = db.collection('posts')
-            .orderBy('timestamp', "desc")
-            .limit(5)
-            .onSnapshot( snapshot => {
-                setPosts(snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    post: doc.data(),
-                })));
-            })
-
-        return () => {
-             unsubscribe();
+            return () => {
+                unsubscribe();
+            }
         }
     }, [userFollow?.length, userLogged?.uid]);
-
 
 
     function handleRemove(id) {
@@ -131,6 +103,7 @@ export default function NewFeed(props){
                             key={id}
                             id={id}
                             post={post}
+                            userLogged={userLogged}
                             handleRemove={() => handleRemove(id)}
                         />
                     ))

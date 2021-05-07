@@ -101,7 +101,7 @@ function Upload({userLogged}) {
 
                 <div className="upload__picker">
                     <div className="upload__pickerImage">
-                        <input accept="image/*|video/*" type="file" onChange={handleChange} multiple="multiple" id="icon-button-file" className={classes.input}/>
+                        <input accept="image/*|video/*" type="file" onChange={handleChange} onClick={e => (e.target.value = null)} multiple="multiple" id="icon-button-file" className={classes.input}/>
                         <label htmlFor="icon-button-file" className="upload__pickerButton">
                             <PhotoSizeSelectActualIcon className={classes.photoIcon}/>
                             <span className="upload__buttonLabel">Photo</span>

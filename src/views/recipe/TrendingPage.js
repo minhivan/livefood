@@ -8,6 +8,8 @@ import {makeStyles} from "@material-ui/core/styles";
 import {Rating} from "@material-ui/lab";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Backdrop from "@material-ui/core/Backdrop";
+import AccessTimeRoundedIcon from "@material-ui/icons/AccessTimeRounded";
+import ListRecipe from "../../components/Recipe/ListRecipe";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -65,38 +67,7 @@ const TrendingPage = (props) => {
                                 <div className="list-recipe-grid">
                                     {
                                         listRecipe.map(({id, post, postAuthor}) => (
-                                            <div key={id} className="list-recipe-item">
-                                                <div className="list-recipe-wrap">
-                                                    <div className="inner-wrap">
-                                                        <Link to="" className='text-link'>
-                                                            <img
-                                                                src={post?.mediaUrl} alt=""/>
-                                                        </Link>
-                                                    </div>
-                                                    <div className="tile-content">
-                                                        <div className="details">
-                                                            <h2 className="title" title={post?.caption}>
-                                                                <Link to={`/p/${id}`}>{post?.caption}</Link>
-                                                            </h2>
-                                                            {
-                                                                post.rating ? (
-                                                                    <div className={classes.rating}>
-                                                                        <Rating style={{marginRight: "5px"}} name="read-only" value={post?.rating} precision={0.1} readOnly /> ({parseFloat(post?.rating).toFixed(1, 2)})
-                                                                    </div>
-                                                                ) : null
-                                                            }
-
-                                                            <div className="recipe-data">
-                                                                <div className="author"><span className="name">By <Link to={`/profile/${post?.uid}`}>{postAuthor?.displayName}</Link></span></div>
-                                                                <div className="meta-data">
-                                                                    <div className="fd-rating">
-                                                                        <span><FavoriteRoundedIcon style={{color: "red", marginRight: 5}}/> {post?.likeBy?.length}</span></div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <ListRecipe key={id} id={id} postAuthor={postAuthor} post={post}/>
                                         ))
                                     }
                                 </div>

@@ -58,7 +58,6 @@ const SinglePage = (props) => {
     let { id } = useParams();
     const [postSnapshot, loading] = useDocument(db.collection("posts").doc(id));
 
-    window.scroll({top: 0, left: 0, behavior: 'smooth' });
 
     return (
         <Page

@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function PostRecipeData({id, postData, expanded, rating}){
+export default function PostRecipeData({postId, postData, expanded, rating}){
     const classes = useStyles();
 
     return(
@@ -38,9 +38,13 @@ export default function PostRecipeData({id, postData, expanded, rating}){
                     <Collapse in={expanded} timeout="auto" unmountOnExit >
                         <div className="recipe_layout">
                             <CardContent className="recipe_layout__content-left">
-                                <Typography paragraph className={classes.paragraphHead} style={{display: "flex", lineHeight: "30px"}}>Rating:
-                                    <Rating style={{marginLeft: "5px"}} name="read-only" value={rating} precision={0.1} readOnly />
-                                </Typography>
+                                {
+                                    rating ? (
+                                        <Typography paragraph className={classes.paragraphHead} style={{display: "flex", lineHeight: "30px"}}>Rating:
+                                            <Rating style={{marginLeft: "5px"}} name="read-only" value={rating} precision={0.1} readOnly />
+                                        </Typography>
+                                    ) : null
+                                }
 
                                 <div className="recipe_layout__facts">
                                     <div className="recipe-facts__info">
@@ -56,7 +60,7 @@ export default function PostRecipeData({id, postData, expanded, rating}){
                                             className="theme-color">{postData?.serve}</a></div>
                                     </div>
                                 </div>
-                                <Typography paragraph className={classes.paragraphHead} >Category: <Link style={{textDecoration: "underline"}} to={`/topic/${postData?.category?.toLowerCase()}`}>{postData?.category}</Link></Typography>
+                                <Typography paragraph className={classes.paragraphHead} >Category: <Link style={{textDecoration: "underline"}} to={`/recipe/topic/${postData?.category?.toLowerCase()}`}>{postData?.category}</Link></Typography>
                                 <Typography paragraph className={classes.paragraphHead}>Ingredients:</Typography>
                                 <Typography paragraph className={classes.paragraph}>{postData?.ingredient}</Typography>
                             </CardContent>
@@ -82,7 +86,7 @@ export default function PostRecipeData({id, postData, expanded, rating}){
 
 
 PostRecipeData.propTypes = {
-    id: PropTypes.string,
+    postId: PropTypes.string,
     postData: PropTypes.object,
     expanded: PropTypes.bool,
     rating: PropTypes.number

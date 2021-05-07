@@ -6,7 +6,7 @@ import {Link} from "react-router-dom";
 import {makeStyles} from "@material-ui/core/styles";
 import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
-import {Switch, TextField} from "@material-ui/core";
+import {Select,TextField} from "@material-ui/core";
 import {useDocument} from "react-firebase-hooks/firestore";
 import {db} from "../../../firebase";
 import {
@@ -82,16 +82,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const MapWithAMarker = withScriptjs(withGoogleMap(props =>
-    <GoogleMap
-        defaultZoom={8}
-        defaultCenter={{ lat: props.lat, lng: props.lng }}
-    >
-        <Marker
-            position={{ lat: props.lat, lng: props.lng }}
-        />
-    </GoogleMap>
-));
+
 
 export default function EditAbout(props){
     const classes = useStyles();
@@ -99,30 +90,28 @@ export default function EditAbout(props){
     const [bio, setBio] = useState('');
     const [opening, setOpening] = useState('')
     const [closed, setClosed] = useState('')
-    const [state, setState] = React.useState(true);
+    const [userProvince, setUserProvince] = React.useState("");
     // const [lat, setLat] = useState('');
     // const [lng, setLng] = useState('');
-
+    const [province, setProvince] = useState([]);
 
     const [userData] = useDocument(userLogged &&  db.collection("users").doc(userLogged.uid));
 
     useEffect(() => {
+
+        fetch('https://vapi.vnappmob.com/api/province/')
+            .then(res => res.json()).then(res => {
+            if (res.results && res.results.length > 0) {
+                setProvince(res.results)
+            }
+        });
+
         setBio(userData?.data()?.aboutRestaurant?.bio ?? '');
         setOpening(userData?.data()?.aboutRestaurant?.opening ?? '07:30')
         setClosed(userData?.data()?.aboutRestaurant?.closed ?? '21:30')
-        if (navigator.geolocation) {
-            navigator.geolocation.watchPosition(function(position) {
-                // setLng(position.coords.longitude);
-                // setLat( position.coords.latitude)
-                // console.log("Latitude is :", position.coords.latitude);
-                // console.log("Longitude is :", position.coords.longitude);
-            });
-        }
+        setUserProvince(userData?.data()?.aboutRestaurant?.location ?? '')
     }, [userData]);
 
-    const handleChange = (event) => {
-        setState((state) => !state);
-    };
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -130,7 +119,8 @@ export default function EditAbout(props){
             aboutRestaurant: {
                 bio: bio,
                 opening: opening,
-                closed: closed
+                closed: closed,
+                location: userProvince
             },
         }).then(function() {
             setOpenSnack(true);
@@ -146,6 +136,7 @@ export default function EditAbout(props){
         setClosed(event.target.value);
     }
 
+    console.log(province)
 
     return (
         <article className="edit_account__content">
@@ -240,28 +231,22 @@ export default function EditAbout(props){
                             <label htmlFor="pepLocation" style={{fontWeight: "bold", fontSize: "18px"}}>Location</label>
                         </aside>
                         <div className={classes.input}>
-                            <div className={classes.description}>
-                                <Switch
-                                    checked={state}
-                                    onChange={handleChange}
-                                    color="primary"
-                                    name="checkedB"
-                                    inputProps={{ 'aria-label': 'primary checkbox' }}
-                                />
-                                <span className={classes.descriptionText}>Coming soon !!!</span>
-                            </div>
+                            <Select
+                                native
+                                id="pepLocation"
+                                value={userProvince}
+                                onChange={event => setUserProvince(event.target.value)}
+                            >
+                                <option aria-label="None" value="" disabled/>
+                                {
+                                    province?.map((doc) => (
+                                        <option key={doc.province_id} value={doc.province_name}>{doc.province_name}</option>
+                                    ))
+                                }
+                            </Select>
                         </div>
                     </div>
-                    {/*<div className={classes.holder} style={{height: "500px", width: "100%"}}>*/}
-                    {/*    <MapWithAMarker*/}
-                    {/*        lat={lat}*/}
-                    {/*        lng={lng}*/}
-                    {/*        googleMapURL="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=AIzaSyA96Zjro6Buw-BPKzSf_iO0qfT1Uzh-J1o"*/}
-                    {/*        loadingElement={<div style={{ height: `100%`, width: `100%` }} />}*/}
-                    {/*        containerElement={<div style={{height: `100%`, width: `100%`  }} />}*/}
-                    {/*        mapElement={<div style={{ height: `100%`, width: `100%`  }} />}*/}
-                    {/*    />*/}
-                    {/*</div>*/}
+
                     <div className={classes.submit}>
                         <Button variant="contained" color="primary" onClick={handleSubmit}>Update</Button>
                     </div>

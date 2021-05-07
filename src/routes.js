@@ -17,6 +17,8 @@ import ExploreVideo from "./views/explore/ExploreVideoPage";
 import RecipePage from "./views/recipe/RecipePage";
 import TopicPage from "./views/recipe/TopicPage";
 import TrendingPage from "./views/recipe/TrendingPage";
+import ResultRecipePace from "./views/recipe/ResultRecipePace";
+import LocationPage from "./views/LocationPage";
 
 
 const routes = (isLoggedIn)  => [
@@ -26,12 +28,10 @@ const routes = (isLoggedIn)  => [
         element: <MainLayout />,
         children: [
             { path: 'p/:id', element: <SinglePage userLogged={isLoggedIn} type="post" />},
-            { path: 'recipe/', element: <RecipePage userLogged={isLoggedIn}/>},
-            { path: 'topic/:name', element: <TopicPage userLogged={isLoggedIn}/>},
-            { path: 'trending/', element: <TrendingPage userLogged={isLoggedIn}/>},
+            { path: 'location', element: <LocationPage userLogged={isLoggedIn} />},
             { path: '/', element: isLoggedIn ? <HomePage userLogged={isLoggedIn}/> : <Navigate to="/explore" />  },
             { path: '404', element: <NotFoundView /> },
-            // { path: '*', element: <Navigate to="/404" /> }
+            { path: '*', element: <Navigate to="/404" /> }
         ]
     },
     {
@@ -41,6 +41,16 @@ const routes = (isLoggedIn)  => [
             { path: 'login', element: <Login /> },
             { path: 'register', element: <SignUp /> },
             { path: 'forgot', element: <Forgot /> }
+        ]
+    },
+    {
+        path: '/recipe',
+        element: <MainLayout/>,
+        children: [
+            { path: '/', element: <RecipePage userLogged={isLoggedIn}/>},
+            { path: 'topic/:name/', element: <TopicPage userLogged={isLoggedIn}/>},
+            { path: 'trending/', element: <TrendingPage userLogged={isLoggedIn}/>},
+            { path: 'search/', element: <ResultRecipePace userLogged={isLoggedIn}/>},
         ]
     },
     {

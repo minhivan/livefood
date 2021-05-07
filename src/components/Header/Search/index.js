@@ -54,27 +54,37 @@ function HeaderSearch() {
     const [query, setQuery] = useState("")
     const navigate = useNavigate();
 
-    const location = useLocation();
+    const location = useLocation().pathname;
 
     function handleSubmit(e) {
         e.preventDefault()
         if(query){
-            navigate({
-                pathname: location.pathname,
-                search: `?${createSearchParams({
-                    search: query
-                })}`
-            });
+            if(location !== "/explore/people"){
+                navigate({
+                    pathname: "/recipe/search",
+                    search: `?${createSearchParams({
+                        q: query.toLowerCase()
+                    })}`
+                });
+            }
+            else{
+                navigate({
+                    pathname: location,
+                    search: `?${createSearchParams({
+                        q: query.toLowerCase()
+                    })}`
+                });
+            }
         }
     }
 
-    useEffect(() => {
-        if(!query){
-            navigate({
-                pathname: location.pathname
-            });
-        }
-    }, [query])
+    // useEffect(() => {
+    //     if(!query){
+    //         navigate({
+    //             pathname: location
+    //         });
+    //     }
+    // }, [query])
 
     return (
         <Hidden smDown>

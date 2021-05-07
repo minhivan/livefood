@@ -14,10 +14,13 @@ import React from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import {blue} from "@material-ui/core/colors";
 import {checkMyFollowingList} from "../../hooks/services";
+import IconButton from "@material-ui/core/IconButton";
+import AddCircleTwoToneIcon from "@material-ui/icons/AddCircleTwoTone";
 
 const useStyles = makeStyles((theme) => ({
     root: {
         borderRadius: "16px",
+
     },
     avatar: {
         backgroundColor: blue[100],
@@ -57,10 +60,12 @@ const useStyles = makeStyles((theme) => ({
     dialog: {
         maxWidth: "600px",
         width: "420px",
-        padding: "10px"
+        padding: "10px",
+        maxHeight : "500px"
     },
     dialogTitle: {
-        textAlign: "center"
+        textAlign: "center",
+        fontWeight: "bold"
     },
     displayName: {
         maxWidth: "120px",
@@ -79,9 +84,9 @@ const useStyles = makeStyles((theme) => ({
 
 
 export default function ListUserInProfile(props) {
-    const classes = useStyles();
-    const { handleClose, type, open, data, userLogged, authFollowingList} = props;
 
+    const classes = useStyles();
+    const { handleClose, type, open, data, userLogged, authFollowingList, countUser, handleLoadMore} = props;
     return (
         <Dialog
             open={open}
@@ -147,7 +152,20 @@ export default function ListUserInProfile(props) {
                         ))) : null
                     }
                 </List>
+                {
+                    data ? (
+                        data?.length < countUser && (
+                            <div className="comment__see-more-btn">
+                                <IconButton aria-label="see more" onClick={() => handleLoadMore(type, data?.length)}>
+                                    <AddCircleTwoToneIcon />
+                                </IconButton>
+                            </div>
+                        )
+                    ) : null
+                }
             </DialogContent>
         </Dialog>
     );
 }
+
+// 30 =>

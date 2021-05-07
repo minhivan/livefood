@@ -8,6 +8,7 @@ import Button from "@material-ui/core/Button";
 import {makeStyles} from "@material-ui/core/styles";
 import {auth} from "../../../firebase";
 import firebase from "firebase";
+import AlertPopup from "../../Popup/AlertPopup";
 
 
 
@@ -63,6 +64,9 @@ const EditPassword = (props) => {
     const [newPass, setNewPass] = useState('');
     const [rePass, setRePass] = useState('');
     const [disable, setDisable] = useState(true);
+    const [open, setOpen] = useState(false);
+    const [message, setMessage] = useState('')
+
 
     useEffect(() => {
         if(oldPass.length >= 8 && newPass.length >= 8 && rePass.length >= 8){
@@ -82,6 +86,10 @@ const EditPassword = (props) => {
     //     console.log(error)
     // });
 
+    const handleClosePopup = (event) => {
+        setOpen(false);
+    };
+
     const handleChangePassword = () => {
         var user = firebase.auth().currentUser;
 
@@ -93,6 +101,8 @@ const EditPassword = (props) => {
             setOldPass('');
         }).catch(function(error) {
             // An error happened.
+            setOpen(true);
+            setMessage(error.message)
             console.log(error)
         });
     }
@@ -176,6 +186,7 @@ const EditPassword = (props) => {
                 </div>
 
             </form>
+            <AlertPopup open={open} handleClose={handleClosePopup} title="LiveFood" message={message}/>
 
         </article>
     )

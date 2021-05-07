@@ -17,7 +17,6 @@ import Previewer from "../../MediaViewer/Preview";
 import AddDishes from "../../Upload/AddDishes";
 
 import {handleDeleteMenuItem} from "../../../hooks/services";
-
 const useStyles = makeStyles((theme) => ({
     root: {
         width: '100%',
@@ -74,7 +73,6 @@ const EditShop = ({userLogged, setOpenSnack}) => {
     const [open, setOpen] = useState(false);
     const [openAdd, setOpenAdd] = useState(false);
 
-
     const [menu, SetMenu] = useState([]);
 
     const handleOpen = (data) => {
@@ -101,6 +99,7 @@ const EditShop = ({userLogged, setOpenSnack}) => {
     }
 
     useEffect(() => {
+
         const unsubscribe = db.collection("users").doc(userLogged.uid)
             .collection("menu")
             .orderBy('timestamp', "desc")
@@ -118,6 +117,7 @@ const EditShop = ({userLogged, setOpenSnack}) => {
             unsubscribe();
         }
     }, [userLogged])
+
 
     return(
         <article className="edit_account__content">

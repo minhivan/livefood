@@ -7,9 +7,9 @@ import {useDocument} from "react-firebase-hooks/firestore";
 import SentimentSatisfiedRoundedIcon from "@material-ui/icons/SentimentSatisfiedRounded";
 import {Popover, TextField} from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
-import AddCircleTwoToneIcon from '@material-ui/icons/AddCircleTwoTone';
-import AddPhotoAlternateTwoToneIcon from '@material-ui/icons/AddPhotoAlternateTwoTone';
-import RoomTwoToneIcon from '@material-ui/icons/RoomTwoTone';
+// import AddCircleTwoToneIcon from '@material-ui/icons/AddCircleTwoTone';
+// import AddPhotoAlternateTwoToneIcon from '@material-ui/icons/AddPhotoAlternateTwoTone';
+// import RoomTwoToneIcon from '@material-ui/icons/RoomTwoTone';
 
 import 'emoji-mart/css/emoji-mart.css'
 import { Picker } from 'emoji-mart'
@@ -90,17 +90,17 @@ const ChatInput = ({roomID, chatRef}) => {
     return(
         <div className="chat__input" >
             <form autoComplete="off">
-                <div className="chat__button-left">
-                    <IconButton  aria-label="Add ">
-                        <AddCircleTwoToneIcon />
-                    </IconButton>
-                    <IconButton  aria-label="Add ">
-                        <AddPhotoAlternateTwoToneIcon />
-                    </IconButton>
-                    <IconButton aria-label="Add ">
-                        <RoomTwoToneIcon />
-                    </IconButton>
-                </div>
+                {/*<div className="chat__button-left">*/}
+                {/*    <IconButton  aria-label="Add ">*/}
+                {/*        <AddCircleTwoToneIcon />*/}
+                {/*    </IconButton>*/}
+                {/*    <IconButton  aria-label="Add ">*/}
+                {/*        <AddPhotoAlternateTwoToneIcon />*/}
+                {/*    </IconButton>*/}
+                {/*    <IconButton aria-label="Add ">*/}
+                {/*        <RoomTwoToneIcon />*/}
+                {/*    </IconButton>*/}
+                {/*</div>*/}
                 <div className="chat__holder">
                     <TextField
                         rowsMax={4}

@@ -12,6 +12,9 @@ import firebase from "firebase";
 import Divider from "@material-ui/core/Divider";
 import ListUserInProfile from "../Popup/ListUserInProfile";
 import {checkMyFollowingList} from "../../hooks/services";
+import LocationOnRoundedIcon from '@material-ui/icons/LocationOnRounded';
+
+
 const useStyles = makeStyles((theme) => ({
     root: {
         borderRadius: "16px",
@@ -82,39 +85,72 @@ const useStyles = makeStyles((theme) => ({
         display: "flex",
         alignItems: "center",
         color: "#65676B",
-        padding: "20px 0"
     },
+    about: {
+        padding: "20px 0",
+        display: "flex",
+        gap: "20px"
+    }
 }));
 
 
 const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged, authFollowingList,  ...rest}) => {
-
+    const classes = useStyles();
     const [userFollowing, setUserFollowing] = useState([]);
     const [userFollower, setUserFollower] = useState([]);
-    const [data, setData] = useState([]);
-    const [open, setOpen] = useState(false);
-    const [type, setType] = useState('');
+    const [openFollower, setOpenFollower] = useState(false);
+    const [openFollowing, setOpenFollowing] = useState(false);
 
-
-    const handleOpenPopUp = (data, type) => {
-        setData(data);
-        setType(type);
-        setOpen(true);
+    const handleOpenFollower = () => {
+        setOpenFollower(true);
     }
 
-    const handleClose = () => {
-        setOpen(false);
-        setData(null);
-        setType('')
+    const handleCloseFollower = () => {
+        setOpenFollower(false);
+    }
+
+    const handleOpenFollowing = () => {
+        setOpenFollowing(true);
+    }
+
+    const handleCloseFollowing = () => {
+        setOpenFollowing(false);
+    }
+
+    const handleLoadMore = (type, length) => {
+
+        if(type === `1`){
+            return db.collection("users")
+                .where(firebase.firestore.FieldPath.documentId(), 'in', userSnapshot.following.slice(length,length+9))
+                .get().then(snapshot => {
+                    const temp = snapshot.docs.map((doc => ({
+                        id: doc.id,
+                        data: doc.data(),
+                    })))
+
+                    setUserFollowing([...userFollowing, ...temp]);
+                })
+        }
+        else{
+            return db.collection("users")
+                .where(firebase.firestore.FieldPath.documentId(), 'in', userSnapshot.follower.slice(length,length+9))
+                .get().then(snapshot => {
+                    const temp = snapshot.docs.map((doc => ({
+                        id: doc.id,
+                        data: doc.data(),
+                    })))
+
+                    setUserFollower([...userFollower, ...temp]);
+                })
+        }
     }
 
     // Your data
-
-
     useEffect(() => {
         if(typeof userSnapshot?.follower !== 'undefined' && userSnapshot?.follower?.length > 0){
+
             db.collection("users")
-                .where(firebase.firestore.FieldPath.documentId(), 'in', userSnapshot.follower)
+                .where(firebase.firestore.FieldPath.documentId(), 'in', userSnapshot.follower.slice(0,9))
                 .get().then(snapshot => {
                     setUserFollower(
                         snapshot.docs.map((doc => ({
@@ -125,8 +161,9 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged, authFoll
                 })
         }
         if(typeof userSnapshot?.following !== 'undefined' && userSnapshot?.following?.length > 0){
+
             db.collection("users")
-                .where(firebase.firestore.FieldPath.documentId(), 'in', userSnapshot.following)
+                .where(firebase.firestore.FieldPath.documentId(), 'in', userSnapshot.following.slice(0,9))
                 .get().then(snapshot => {
                 setUserFollowing(
                     snapshot.docs.map((doc => ({
@@ -139,8 +176,6 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged, authFoll
 
     }, [userSnapshot])
 
-
-    const classes = useStyles();
     return (
         <div className="profile__header">
             <div className="profile__bio">
@@ -228,13 +263,26 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged, authFoll
                             userSnapshot?.aboutRestaurant ? (
                                 <>
                                     <Divider />
-                                    <h4 className={classes.opening}>
-                                        <AccessTimeRoundedIcon style={{marginRight: "5px"}}/>
-                                        Opening:
-                                        <span style={{marginLeft: "5px"}}>
-                                            {userSnapshot?.aboutRestaurant?.opening} - {userSnapshot?.aboutRestaurant?.closed}
-                                        </span>
-                                    </h4>
+                                    <div className={classes.about}>
+                                        {
+                                            userSnapshot?.aboutRestaurant?.opening ? (
+                                                <h4 className={classes.opening}>
+                                                    <AccessTimeRoundedIcon style={{marginRight: "5px"}}/>
+                                                    Opening:
+                                                    <span style={{marginLeft: "5px"}}>{userSnapshot?.aboutRestaurant?.opening} - {userSnapshot?.aboutRestaurant?.closed}</span>
+                                                </h4>
+                                            ) : null
+                                        }
+                                        {
+                                            userSnapshot?.aboutRestaurant?.location ? (
+                                                <h4 className={classes.opening}>
+                                                    <LocationOnRoundedIcon style={{marginRight: "5px"}}/>
+                                                    Location:
+                                                    <span style={{marginLeft: "5px"}}>{userSnapshot?.aboutRestaurant?.location}</span>
+                                                </h4>
+                                            ) : null
+                                        }
+                                    </div>
                                     <Divider />
                                 </>
 
@@ -245,14 +293,14 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged, authFoll
                         <h2 className="count-infos">
                             <div className="number"><strong title="Likes">{ count ?? '0'}</strong><span
                                 className="unit">Post</span></div>
-                            <div className="number"><strong title="Following">{userFollowing.length}</strong><a className="unit" onClick={() => handleOpenPopUp(userFollowing, 1)}>Following</a></div>
-                            <div className="number"><strong title="Followers">{userFollower.length}</strong><a className="unit" onClick={() => handleOpenPopUp(userFollower, 2)}>Follower</a></div>
+                            <div className="number"><strong title="Following">{userSnapshot?.followingCount}</strong><a className="unit" onClick={handleOpenFollowing}>Following</a></div>
+                            <div className="number"><strong title="Followers">{userSnapshot?.followerCount}</strong><a className="unit" onClick={handleOpenFollower}>Follower</a></div>
                         </h2>
                     </div>
                 </div>
-
             </div>
-            <ListUserInProfile open={open} handleClose={handleClose} data={data} type={type} userLogged={userLogged} authFollowingList={authFollowingList}/>
+            <ListUserInProfile open={openFollowing} handleClose={handleCloseFollowing} data={userFollowing} type={`1`} userLogged={userLogged} authFollowingList={authFollowingList} countUser={userSnapshot?.followingCount} handleLoadMore={handleLoadMore}/>
+            <ListUserInProfile open={openFollower} handleClose={handleCloseFollower} data={userFollower} type={`2`} userLogged={userLogged} authFollowingList={authFollowingList} countUser={userSnapshot?.followerCount} handleLoadMore={handleLoadMore}/>
         </div>
     )
 }

@@ -419,7 +419,7 @@ function MediaViewer(props){
                                                             className="theme-color">{props?.post?.data?.serve}</a></div>
                                                     </div>
                                                 </div>
-                                                <Typography paragraph className={classes.paragraphHead} >Category: <Link style={{textDecoration: "underline"}} to={`/topic/${post?.data?.category?.toLowerCase()}`}>{post?.data?.category}</Link></Typography>
+                                                <Typography paragraph className={classes.paragraphHead} >Category: <Link style={{textDecoration: "underline"}} to={`/recipe/topic/${post?.data?.category?.toLowerCase()}`}>{post?.data?.category}</Link></Typography>
                                                 <Typography paragraph className={classes.paragraphHead}>Ingredients:</Typography>
                                                 <Typography paragraph className={classes.paragraph}>{props?.post?.data?.ingredient}</Typography>
                                             </CardContent>

@@ -50,11 +50,11 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export default function PostAction({id, uid, postLike, postSave, expanded, setExpanded, hasData}){
+export default function PostAction({postId, uid, postLike, postSave, expanded, setExpanded, hasData, handleFocus}){
     const classes = useStyles();
     const [selected, setSelected] = useState(false);
     const [saveSelected, setSaveSelected] = useState(false);
-    const [likeCount, setLikeCount] = useState(parseInt(postLike.length));
+    const [likeCount, setLikeCount] = useState(parseInt(postLike?.length));
 
 
     const handleExpandClick = () => {
@@ -64,26 +64,26 @@ export default function PostAction({id, uid, postLike, postSave, expanded, setEx
     // Handle like and dislike action
     const likePost = () => {
         setSelected(true);
-        handleLikePost(id, uid)
+        handleLikePost(postId, uid)
         setLikeCount((likes) => (selected ? likes - 1 : likes + 1));
     }
 
     const dislikePost = () => {
         setSelected(false);
-        handleDislikePost(id, uid)
+        handleDislikePost(postId, uid)
         setLikeCount((likes) => (selected ? likes - 1 : likes + 1));
     }
 
     const savePost = () => {
         // Save post id to user data, and push to post data
         setSaveSelected(true);
-        handleSavePost(id, uid);
+        handleSavePost(postId, uid);
     }
 
     const unsavedPost = () => {
         // Save post id to user data, and push to post data
         setSaveSelected(false);
-        handleUnSavedPost(id, uid);
+        handleUnSavedPost(postId, uid);
     }
 
     useEffect(() => {
@@ -94,7 +94,7 @@ export default function PostAction({id, uid, postLike, postSave, expanded, setEx
         if(typeof postSave !== 'undefined' && postSave.includes(uid)){
             setSaveSelected(true);
         }
-    }, [])
+    }, [postLike, postSave, uid])
 
 
 
@@ -122,7 +122,7 @@ export default function PostAction({id, uid, postLike, postSave, expanded, setEx
                         </ToggleButton>
                     </div>
                     <div className="action__comment">
-                        <IconButton aria-label="comment">
+                        <IconButton aria-label="comment" onClick={handleFocus}>
                             <ModeCommentOutlinedIcon/>
                         </IconButton>
                     </div>
@@ -168,9 +168,9 @@ export default function PostAction({id, uid, postLike, postSave, expanded, setEx
             </CardActions>
 
             {
-                likeCount > 0 ? (
+                postLike.length > 0 ? (
                     <div className={classes.displayLike}>
-                        <span><b>{likeCount} {likeCount === 1 ? 'Like' : 'Likes'}</b></span>
+                        <span><b>{postLike.length} {postLike.length === 1 ? 'Like' : 'Likes'}</b></span>
                     </div>
                 ) : null
             }
@@ -180,7 +180,7 @@ export default function PostAction({id, uid, postLike, postSave, expanded, setEx
 }
 
 PostAction.propTypes = {
-    id: PropTypes.string.isRequired,
+    postId: PropTypes.string.isRequired,
     uid: PropTypes.string.isRequired,
     postLike: PropTypes.array,
     postSave: PropTypes.array,

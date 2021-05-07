@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, {useRef, useState} from "react";
 
 import PostComment from "../Comments";
 import Card from '@material-ui/core/Card';
 import {makeStyles} from "@material-ui/core/styles";
 import {auth, db} from "../../firebase";
 import {useAuthState} from "react-firebase-hooks/auth";
-import PostUtil from "./Util";
+import PostUtil from "../Popup/PostUtil";
 import PostAction from "./Action";
 import PostContent from "./Content";
 import PostHeader from "./Header";
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function Post( {id, post, handleRemove, handleReport, isSinglePage, ...rest} ) {
+function Post({id, post, handleRemove, handleReport, isSinglePage, ...rest}) {
 
 	const classes = useStyles();
 	const [expanded, setExpanded] = useState(true);
@@ -34,6 +34,17 @@ function Post( {id, post, handleRemove, handleReport, isSinglePage, ...rest} ) {
 
 	const [postAuthor] = useDocument(post.uid && db.collection('users').doc(post.uid))
 	const author = postAuthor?.data();
+
+	const searchInput = useRef(null)
+
+
+	function handleFocus(){
+		searchInput.current.focus();
+		searchInput.current.scrollIntoView({
+			behavior: "smooth",
+			block : "center"
+		})
+	}
 
 	const handleClickOpen = () => {
 		setOpen(true);
@@ -52,16 +63,21 @@ function Post( {id, post, handleRemove, handleReport, isSinglePage, ...rest} ) {
 				{/*Media*/}
 				<PostContent author={author} mediaUrl={post.mediaUrl} caption={post.caption} mediaType={post.mediaType}/>
 				{/* Post Action*/}
-				<PostAction id={id} uid={user.uid} postLike={post.likeBy} postSave={post.saveBy} expanded={expanded} setExpanded={setExpanded} hasData={!!post?.data} />
+				<PostAction postId={id} uid={user.uid} postLike={post.likeBy} postSave={post.saveBy} expanded={expanded} setExpanded={setExpanded} hasData={!!post?.data} handleFocus={handleFocus}/>
 				{/* Recipe data */}
-				<PostRecipeData id={id} postData={post.data} expanded={expanded}  rating={post?.rating}/>
+				<PostRecipeData postId={id} postData={post.data} expanded={expanded} rating={post?.rating}/>
 				{/* Comments */}
-				<PostComment id={id} isSinglePage={isSinglePage}/>
+				<PostComment postId={id} isSinglePage={isSinglePage} postUid={post.uid} userLogged={user}/>
 				{/* Comments input */}
-				<CommentInput user={user} id={id} type={post.type}/>
+				{
+					user ? (
+						<CommentInput postAuthor={post.uid} user={user} postId={id} type={post.type} refInput={searchInput}/>
+					) : null
+				}
 			</Card>
 
 			<PostUtil open={open} handleClose={handleClose} uid={user.uid} opponentID={post.uid} postID={id} handleReport={handleReport} handleRemove={handleRemove} isSave={false} />
+
 		</div>
 	)
 }

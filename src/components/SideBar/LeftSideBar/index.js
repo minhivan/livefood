@@ -103,7 +103,7 @@ const NavBar = (props) => {
             title: 'Recipe'
         },
         {
-            href: '/trending',
+            href: '/recipe/trending',
             icon: TrendingUpIcon,
             title: 'Trending'
         },
@@ -130,7 +130,7 @@ const NavBar = (props) => {
             title: 'Recipe'
         },
         {
-            href: '/trending',
+            href: '/recipe/trending',
             icon: TrendingUpIcon,
             title: 'Trending'
         },

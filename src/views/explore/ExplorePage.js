@@ -44,7 +44,7 @@ const Explore = (props) => {
         postDoc
             .orderBy('timestamp', "desc")
 
-            .limit(20)
+            .limit(12)
             .get().then(snapshot => {
                 let temp = []
                 snapshot.forEach(data => {
@@ -59,6 +59,7 @@ const Explore = (props) => {
 
     }, []);
 
+
     const classes = useStyles();
     return (
         <Page
@@ -72,7 +73,7 @@ const Explore = (props) => {
                     {
                         explore.length > 0 ? (
                             explore.map(({id, post, authorProfile}) => (
-                                <ExploreItem key={id} id={id} post={post} postAuthor={authorProfile} />
+                                <ExploreItem key={id} id={id} post={post} postAuthor={authorProfile} userLogged={userLogged}/>
                             ))
                         ) : (
                             <div className={classes.wrapper}>

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState} from "react";
 import {Box, TextField} from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
 import {db} from "../../firebase";
@@ -29,12 +29,12 @@ const useStyles = makeStyles({
     }
 });
 
-export default function CommentInput({user, id, type, path}){
+export default function CommentInput({user, postId, type, path, refInput, postAuthor}){
     const classes = useStyles();
     const [value, setValue] = React.useState(null);
     const [hover, setHover] = React.useState(-1);
     const [comment, setComment] = useState('');
-    const postRef = db.collection('posts').doc(id);
+    const postRef = db.collection('posts').doc(postId);
     const [postSnapshot] = useDocument(postRef);
     let rating = postSnapshot?.data()?.rating
 
@@ -52,18 +52,18 @@ export default function CommentInput({user, id, type, path}){
         if(comment){
             if(value){
                 if(typeof rating == 'undefined'){
-                    db.collection("posts").doc(id).update({
+                    db.collection("posts").doc(postId).update({
                         rating: value
                     })
                 }
                 else{
                     let avg = parseFloat((parseFloat(rating) + parseFloat(value)) / 2);
-                    db.collection("posts").doc(id).update({
+                    db.collection("posts").doc(postId).update({
                         rating: avg
                     })
                 }
 
-                db.collection("posts").doc(id).collection("comments").add({
+                db.collection("posts").doc(postId).collection("comments").add({
                     text: comment,
                     user: db.doc('users/' + user.uid),
                     uid: user.uid,
@@ -72,7 +72,7 @@ export default function CommentInput({user, id, type, path}){
                 });
             }
             else {
-                db.collection("posts").doc(id).collection("comments").add({
+                db.collection("posts").doc(postId).collection("comments").add({
                     text: comment,
                     user: db.doc('users/' + user.uid),
                     uid: user.uid,
@@ -92,7 +92,7 @@ export default function CommentInput({user, id, type, path}){
                 }
                 <div className={classes.root}>
                     {
-                        type==='recipe' && comment ? (
+                        type ==='recipe' && comment && postAuthor !== user?.uid ? (
                             <div className={classes.rating}>
                                 <Rating
                                     name="hover-feedback"
@@ -112,6 +112,7 @@ export default function CommentInput({user, id, type, path}){
 
                     <form onSubmit={postComment}>
                         <TextField
+                            ref={refInput}
                             className="comment__input"
                             placeholder="Leave a comment ... "
                             value={comment}

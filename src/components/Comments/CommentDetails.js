@@ -9,6 +9,7 @@ import {makeStyles} from "@material-ui/core/styles";
 import {useDocument} from "react-firebase-hooks/firestore";
 import {db} from "../../firebase";
 import FavoriteBorderRoundedIcon from '@material-ui/icons/FavoriteBorderRounded';
+import CommentUtil from "../Popup/CommentUtil";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -28,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 function PostComment (props) {
-    const {comment, isPopup} =  props
+    const {comment, isPopup, postId, postUid, commentId, userLogged} =  props
     const classes = useStyles();
 
     const [postAuthor] = useDocument(comment.uid && db.collection('users').doc(comment.uid))
@@ -39,8 +40,19 @@ function PostComment (props) {
         setIsReadMore(!isReadMore);
     };
 
+    const [open, setOpen] = React.useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+
     return (
-        <div className="commentDetails" key={comment.id}>
+        <div className="commentDetails">
             <Avatar alt={commentAuthor?.displayName} src={commentAuthor?.photoURL}/>
             <div className="comment__content">
                 <div className="comment__block">
@@ -59,7 +71,7 @@ function PostComment (props) {
                                 </div>
                             ) : null
                         }
-                        <IconButton className={classes.more} aria-label="delete" >
+                        <IconButton className={classes.more} aria-label="Util" onClick={handleClickOpen}>
                             <MoreHorizRoundedIcon />
                         </IconButton>
                     </div>
@@ -78,7 +90,7 @@ function PostComment (props) {
                     </div>
                 </div>
             </div>
-
+            <CommentUtil open={open} handleClose={handleClose} postId={postId} postUid={postUid} commentId={commentId} commentUid={comment.uid} userLogged={userLogged}/>
         </div>
     )
 

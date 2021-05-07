@@ -5,13 +5,13 @@ import {Link} from "react-router-dom";
 import IconButton from "@material-ui/core/IconButton";
 import AddCircleTwoToneIcon from '@material-ui/icons/AddCircleTwoTone';
 
-function Comment({id, isSinglePage, isPopup}){
+function Comment({postId, isSinglePage, isPopup, postUid, userLogged}){
     const [comments, setComments] = useState([])
 	const [limit] = useState(5);
 	const [lastIdx, setLastIdx] = useState(5);
 
     useEffect(() => {
-        const unsubscribe = db.collection("posts").doc(id)
+        const unsubscribe = db.collection("posts").doc(postId)
             .collection("comments")
         	.orderBy('timestamp', "desc")
 			.limit(15)
@@ -27,12 +27,13 @@ function Comment({id, isSinglePage, isPopup}){
 		return () => {
         	unsubscribe();
 		}
-    }, [id, limit])
+    }, [postId, limit])
 
 
 	const handleClickSeeMore = () => {
 		setLastIdx(lastIdx => lastIdx + 5);
 	}
+
     return(
         <div className="listComments">
 
@@ -42,7 +43,7 @@ function Comment({id, isSinglePage, isPopup}){
 						{
 							comments.length > 3 && (
 								<p className="comment__see-more">
-									<Link to={`/p/${id}`}>View more comments ?</Link>
+									<Link to={`/p/${postId}`}>View more comments ?</Link>
 								</p>
 							)
 						}
@@ -52,6 +53,10 @@ function Comment({id, isSinglePage, isPopup}){
 								<PostComment
 									key={id}
 									comment={comment}
+									commentId={id}
+									postId={postId}
+									postUid={postUid}
+									userLogged={userLogged}
 								/>
 							))
 						}
@@ -63,7 +68,11 @@ function Comment({id, isSinglePage, isPopup}){
 								<PostComment
 									key={id}
 									comment={comment}
+									commentId={id}
 									isPopup={isPopup}
+									postId={postId}
+									postUid={postUid}
+									userLogged={userLogged}
 								/>
 							))
 						}
