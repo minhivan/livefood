@@ -27,7 +27,7 @@ function Comment({postId, isSinglePage, isPopup, postUid, userLogged}){
 		return () => {
         	unsubscribe();
 		}
-    }, [postId, limit])
+    }, [postId])
 
 
 	const handleClickSeeMore = () => {

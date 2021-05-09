@@ -29,7 +29,7 @@ const routes = (isLoggedIn)  => [
         children: [
             { path: 'p/:id', element: <SinglePage userLogged={isLoggedIn} type="post" />},
             { path: 'location', element: <LocationPage userLogged={isLoggedIn} />},
-            { path: '/', element: isLoggedIn ? <HomePage userLogged={isLoggedIn}/> : <Navigate to="/explore" />  },
+            { path: '/', element: <HomePage userLogged={isLoggedIn}/> },
             { path: '404', element: <NotFoundView /> },
             { path: '*', element: <Navigate to="/404" /> }
         ]
@@ -84,7 +84,7 @@ const routes = (isLoggedIn)  => [
     },
     {
         path: '/profile',
-        element: <MainLayout pageProfile={true}/>,
+        element: isLoggedIn ? <MainLayout/> : <Navigate to="/login" />,
         children: [
             { path: '/:id', element: <UserProfilePage userLogged={isLoggedIn} pagePath="feed"/> },
             { path: '/channel/:id', element: <UserProfilePage userLogged={isLoggedIn} pagePath="channel"/> },

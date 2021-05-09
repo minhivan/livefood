@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, {useState} from "react";
 import {Box, TextField} from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
 import {db} from "../../firebase";
@@ -30,6 +30,7 @@ const useStyles = makeStyles({
 });
 
 export default function CommentInput({user, postId, type, path, refInput, postAuthor}){
+
     const classes = useStyles();
     const [value, setValue] = React.useState(null);
     const [hover, setHover] = React.useState(-1);
@@ -79,8 +80,8 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 });
             }
+            setComment('');
         }
-        setComment('');
     }
 
     return(

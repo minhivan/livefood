@@ -170,21 +170,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function MediaViewer(props){
-    const {open, handleClose, id, post, postAuthor} = props;
+
+    const {open, handleClose, postId, post, postAuthor, userLogged} = props;
     const classes = useStyles();
     const [modalStyle] = useState(getModalStyle);
     const [selected, setSelected] = useState(false);
     const [expanded, setExpanded] = useState(true);
-    const [user] = useAuthState(auth);
-    const postRef = db.collection('posts').doc(props.id);
-
-    const [postSnapshot] = useDocument(postRef);
     const [saveSelected, setSaveSelected] = useState(false);
-
-    let likeCount = 0
-    if(typeof postSnapshot?.data()?.likeBy !== 'undefined'){
-        likeCount = postSnapshot.data().likeBy.length;
-    }
+    const [likeCount, setLikeCount] = useState(post?.likeBy?.length)
 
     const [isReadMore, setIsReadMore] = useState(true);
     const toggleReadMore = () => {
@@ -195,8 +188,8 @@ function MediaViewer(props){
     dayjs.extend(relativeTime);
     let postCreated  = null;
 
-    if(props?.post?.timestamp){
-        postCreated = new Date(props?.post?.timestamp.seconds * 1000).toLocaleString();
+    if(post?.timestamp){
+        postCreated = new Date(post?.timestamp.seconds * 1000).toLocaleString();
     }
 
     const handleExpandClick = () => {
@@ -206,27 +199,27 @@ function MediaViewer(props){
     // Handle like and dislike action
     const likePost = () => {
         setSelected(true);
-        handleLikePost(id, user.uid)
+        handleLikePost(postId, userLogged.uid)
+        setLikeCount((likes) => (selected ? likes - 1 : likes + 1));
     }
 
     const dislikePost = () => {
         setSelected(false);
-        handleDislikePost(id, user.uid)
+        handleDislikePost(postId, userLogged.uid)
+        setLikeCount((likes) => (selected ? likes - 1 : likes + 1));
     }
 
     const savePost = () => {
         // Save post id to user data, and push to post data
         setSaveSelected(true);
-        handleSavePost(id, user.uid);
+        handleSavePost(postId, userLogged.uid);
     }
 
     const unsavedPost = () => {
         // Save post id to user data, and push to post data
         setSaveSelected(false);
-        handleUnSavedPost(id, user.uid);
+        handleUnSavedPost(postId, userLogged.uid);
     }
-
-
 
     let media;
 
@@ -244,18 +237,15 @@ function MediaViewer(props){
 
 
     useEffect(() => {
-        if(id && user) {
-
-            if(typeof post.likeBy !== 'undefined' && post.likeBy.includes(user.uid)){
+        if(userLogged){
+            if(typeof post.likeBy !== 'undefined' && post.likeBy.includes(userLogged.uid)){
                 setSelected(true);
             }
-
-            if(typeof post.saveBy !== 'undefined' && post.saveBy.includes(user.uid)){
+            if(typeof post.saveBy !== 'undefined' && post.saveBy.includes(userLogged.uid)){
                 setSaveSelected(true);
             }
         }
-
-    }, [id])
+    }, [post.likeBy, post.saveBy, userLogged])
 
     return (
         <Modal
@@ -276,7 +266,7 @@ function MediaViewer(props){
                         <div className={classes.modalHeader}>
                             <CardHeader
                                 avatar={
-                                    <Avatar alt={postAuthor?.displayName} src={postAuthor.photoURL}/>
+                                    <Avatar alt={postAuthor?.displayName} src={postAuthor?.photoURL}/>
                                 }
                                 title={
                                     <Link to={`/profile/${postAuthor?.uid}`} style={{fontWeight: "bold"}}>{postAuthor?.displayName}</Link>
@@ -315,7 +305,7 @@ function MediaViewer(props){
                             {/* Card action */}
                             <CardActions disableSpacing>
                                 {
-                                    user ? (
+                                    userLogged ? (
                                         <div className="post__button">
                                             <div className="action__like">
                                                 <ToggleButton
@@ -366,7 +356,7 @@ function MediaViewer(props){
                                 }
 
                                 {
-                                    props?.post?.data ? (
+                                    post?.data ? (
                                         <div className="action__expand">
                                             <IconButton
                                                 className={clsx(classes.expand, {
@@ -389,8 +379,7 @@ function MediaViewer(props){
                             {
                                 likeCount > 0 ? (
                                     <div className={classes.displayLike}>
-                                        <span><b>{likeCount.toLocaleString()} Likes</b></span>
-
+                                        <span><b>{likeCount.toLocaleString()} {likeCount  === 1 ? 'Like' : 'Likes'}</b></span>
                                     </div>
                                 ) : null
                             }
@@ -398,7 +387,7 @@ function MediaViewer(props){
 
                             {/*Posts*/}
                             {
-                                props?.post?.data ? (
+                                post?.data ? (
                                     <Collapse in={expanded} timeout="auto" unmountOnExit style={{minHeight: "auto"}}>
                                         <>
                                             <CardContent className="recipe_layout__content-left">
@@ -408,24 +397,24 @@ function MediaViewer(props){
                                                 <div className="recipe_layout__facts">
                                                     <div className="recipe-facts__info">
                                                         <div className="recipe-facts__details recipe-facts__prepare"><span
-                                                            className="recipe-facts__title">Prepare in:</span> <span>{props?.post?.data?.prepTime} {props?.post?.data?.prepUnit}</span></div>
+                                                            className="recipe-facts__title">Prepare in:</span> <span>{post?.data?.prepTime} {post?.data?.prepUnit}</span></div>
                                                         <div className="recipe-facts__details recipe-facts__cooking"><span
                                                             className="recipe-facts__title">Cook in:</span> <a
-                                                            className="theme-color">{props?.post?.data?.cookTime} {props?.post?.data?.cookUnit}</a></div>
+                                                            className="theme-color">{post?.data?.cookTime} {post?.data?.cookUnit}</a></div>
                                                     </div>
                                                     <div className="recipe-facts__info">
                                                         <div className="recipe-facts__details recipe-facts__servings"><span
                                                             className="recipe-facts__title">Serves:</span> <a
-                                                            className="theme-color">{props?.post?.data?.serve}</a></div>
+                                                            className="theme-color">{post?.data?.serve}</a></div>
                                                     </div>
                                                 </div>
                                                 <Typography paragraph className={classes.paragraphHead} >Category: <Link style={{textDecoration: "underline"}} to={`/recipe/topic/${post?.data?.category?.toLowerCase()}`}>{post?.data?.category}</Link></Typography>
                                                 <Typography paragraph className={classes.paragraphHead}>Ingredients:</Typography>
-                                                <Typography paragraph className={classes.paragraph}>{props?.post?.data?.ingredient}</Typography>
+                                                <Typography paragraph className={classes.paragraph}>{post?.data?.ingredient}</Typography>
                                             </CardContent>
                                             <CardContent className="recipe_layout__content-right">
                                                 <Typography paragraph className={classes.paragraphHead}>Direction:</Typography>
-                                                <Typography paragraph className={classes.paragraph}>{props?.post?.data?.direction}</Typography>
+                                                <Typography paragraph className={classes.paragraph}>{post?.data?.direction}</Typography>
                                             </CardContent>
                                         </>
                                         <Divider />
@@ -434,10 +423,10 @@ function MediaViewer(props){
                             }
 
                             {/* Comment*/}
-                            <ListComment id={id} isPopup={`true`} />
+                            <ListComment postId={postId} isPopup={`true`} />
 
                         </div>
-                        <CommentInput user={user} id={id} type={post.type} path={'preview'}/>
+                        <CommentInput user={userLogged} postId={postId} type={post.type} path={'preview'}  postAuthor={post.uid}/>
 
                     </div>
                 </div>

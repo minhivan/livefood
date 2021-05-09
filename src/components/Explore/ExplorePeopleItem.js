@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
         width: '100%',
         backgroundColor: theme.palette.background.paper,
         marginLeft: "10px",
-        borderRadius: "8px",
+        borderRadius: "16px",
         padding: 0,
         boxShadow: "0px 0px 5px 0px #ddc4c4bf",
         overflow: "hidden"
@@ -90,12 +90,11 @@ export default function ExplorePeopleItem(props) {
 
     // List user
     useEffect(() => {
-        var followingList = {};
         if(typeof userFollowingList !== 'undefined' && userFollowingList?.length > 0){
+            var followingList;
             followingList = userSnapshot.data().following
             userLogged.uid && followingList.push(userLogged.uid);
             return db.collection("users")
-                .limit(15)
                 .get().then(snapshot => {
                     let data = [];
                     snapshot.forEach(function(doc) {

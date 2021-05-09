@@ -4,6 +4,7 @@ import { db} from "../../../firebase";
 import ExploreItem from "../../Explore/ExploreItem";
 import {makeStyles} from "@material-ui/core/styles";
 import {Camera as CameraIcon} from "react-feather";
+import {useDocument} from "react-firebase-hooks/firestore";
 
 const useStyles = makeStyles((theme) => ({
     icon: {
@@ -35,31 +36,27 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-const ProfileFeed = ({uid}) => {
+const ProfileFeed = ({uid, userLogged}) => {
     const classes = useStyles();
     const [feed, setFeed] = useState([]);
-    const [loadingFeed, setLoadingFeed] = useState(true);
 
     useEffect(() => {
-        window.scroll({top: 0, left: 0, behavior: 'smooth' });
-        let postDoc = db.collection('posts');
-        postDoc
-            .where('uid', "==", uid)
+        return db.collection('posts')
+            .where('uid', '==', uid)
             .orderBy('timestamp', 'desc')
             .limit(12)
             .get().then(snapshot => {
                 let temp = []
-                    snapshot.forEach(data => {
-                        var userProfile = {};
-
-                        data.data().user.get().then( author => {
-                            Object.assign(userProfile, author.data());
-                        })
-                        temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
+                snapshot.forEach(data => {
+                    var userProfile = {};
+                    data.data().user.get().then( author => {
+                        Object.assign(userProfile, author.data());
                     })
-                    setFeed(temp);
-                    setLoadingFeed(false);
+                    temp.push({id: data.id, post: data.data(), postAuthor: userProfile })
+                })
+                setFeed(temp);
             })
+
     }, [uid]);
 
     return(
@@ -68,8 +65,14 @@ const ProfileFeed = ({uid}) => {
                 {
 
                     feed.length > 0 ? (
-                        feed.map(({id, post, authorProfile}) => (
-                            <ExploreItem key={id} id={id} post={post} postAuthor={authorProfile} />
+                        feed.map(({id, post, postAuthor}) => (
+                            <ExploreItem
+                                key={id}
+                                postId={id}
+                                post={post}
+                                postAuthor={postAuthor}
+                                userLogged={userLogged}
+                            />
                         ))
                     ) : (
                         <div className={classes.wrapper}>

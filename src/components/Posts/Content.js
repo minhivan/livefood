@@ -68,14 +68,13 @@ const useStyles = makeStyles((theme) => ({
 
 export default function PostContent({mediaUrl, caption, mediaType, author, ...rest}) {
     const classes = useStyles();
-
+    let media;
     const [isReadMore, setIsReadMore] = useState(true);
+
     const toggleReadMore = () => {
         setIsReadMore(!isReadMore);
     };
 
-
-    let media;
     if(mediaType === "video/mp4"){
         media = <div className="post__content">
             <video controls className="post__contentImage" muted="muted" >
@@ -85,12 +84,15 @@ export default function PostContent({mediaUrl, caption, mediaType, author, ...re
     } else {
         media = <div className="post__content">
             <img
+
                 alt=""
                 className="post__contentImage"
                 src={mediaUrl}
             />
         </div>
     }
+
+
     return (
         <>
             {
@@ -106,9 +108,9 @@ export default function PostContent({mediaUrl, caption, mediaType, author, ...re
                     <div className="post__caption">
                         <Link to={`profile/${author?.uid}`} className="post__user">{author?.displayName}</Link>
                         {
-                            caption.length > 50 ? (
+                            caption.length > 100 ? (
                                 <span className={classes.captionText} >
-                                    {isReadMore ? caption.slice(0, 50) : caption}
+                                    {isReadMore ? caption.slice(0, 100) : caption}
                                     <span onClick={toggleReadMore} style={{fontWeight: "bold", cursor: "pointer", color: "#8e8e8e"}}>
                                         {isReadMore ? "...read more" : null}
                                     </span>

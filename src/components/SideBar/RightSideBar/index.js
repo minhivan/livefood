@@ -45,7 +45,7 @@ function RightSideBar(props) {
     const { userLogged } = props;
     const [chat, setChat] = useState([]);
 
-    const userRef = userLogged.uid && db.collection('users').doc(userLogged.uid);
+    const userRef = userLogged?.uid && db.collection('users').doc(userLogged.uid);
     const [userSnapshot, loading] = useDocument(userRef);
     const authFollowingList = userSnapshot?.data()?.following;
     // List user
@@ -68,7 +68,7 @@ function RightSideBar(props) {
                 })
         }else{
              return db.collection("users")
-                .where(firebase.firestore.FieldPath.documentId() ,'!=' , userLogged.uid )
+                .where(firebase.firestore.FieldPath.documentId() ,'!=' , userLogged?.uid )
                 .limit(4)
                  .get().then(snapshot => {
                     setUsers(snapshot.docs.map(doc => ({

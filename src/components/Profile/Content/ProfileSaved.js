@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-const ProfileSaved = ({uid}) => {
+const ProfileSaved = ({uid, userLogged}) => {
     const classes = useStyles();
     const [savedPost, setSavedPost] = useState([]);
 
@@ -74,7 +74,13 @@ const ProfileSaved = ({uid}) => {
                 {
                     savedPost.length > 0 ? (
                         savedPost.map(({id, post, authorProfile}) => (
-                            <ExploreItem key={id} id={id} post={post} postAuthor={authorProfile} />
+                            <ExploreItem
+                                key={id}
+                                postId={id}
+                                post={post}
+                                postAuthor={authorProfile}
+                                userLogged={userLogged}
+                            />
                         ))
                     ) : (
                         <div className={classes.wrapper}>

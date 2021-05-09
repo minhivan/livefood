@@ -140,7 +140,7 @@ function MenuHeader() {
                 </Link>
 
                 <IconButton aria-label="11 new notifications" color="inherit" onClick={handleNotice}>
-                    <Badge badgeContent={24} max={20} color="error">
+                    <Badge color="error">
                         <NotificationsActiveTwoToneIcon className={classes.icon}/>
                     </Badge>
                 </IconButton>

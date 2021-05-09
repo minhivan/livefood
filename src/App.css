@@ -9,7 +9,7 @@
     margin: 0;
     /*font-family: 'Rubik', sans-serif;*/
     /*font-family: 'Quicksand', sans-serif;*/
-    font-family: -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,Helvetica,ヒラギノ角ゴ Pro W3,Hiragino Kaku Gothic Pro,メイリオ,Meiryo,ＭＳ Ｐゴシック,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
     /*font-family: 'Roboto', sans-serif;*/
     box-sizing: border-box;
     letter-spacing: normal;
@@ -193,7 +193,7 @@ input:focus{
     padding: 30px;
     background: #fafcff;
     border: none;
-    border-radius: 8px;
+    border-radius: 16px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, .1), 0 8px 16px rgba(0, 0, 0, .1);
     margin: 40px 0 0;
 }
@@ -253,6 +253,25 @@ input:focus{
     display: flex;
     justify-content: center;
     align-items: flex-start;
+}
+
+.explore__root .explore__masonry-container{
+    max-width: 990px;
+    padding-left: 32px;
+    width: 100%;
+}
+
+.explore__root .explore__masonry-content{
+    width: 100%;
+    column-count: 3;
+    column-gap: 16px;
+}
+
+.explore__root .explore__masonry-content .explore__masonry-item{
+    margin-bottom: 16px;
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
 }
 
 .explore__root .explore__container{
@@ -540,9 +559,9 @@ input:focus{
 
 
 .list-recipe-item{
-    width: calc(100% / 4);
+    width: calc(100% / 3);
     padding: 0 10px 20px;
-    height: 420px;
+    height: 450px;
     position: relative;
 }
 .list-recipe-wrap{
@@ -550,9 +569,11 @@ input:focus{
     border-bottom: 4px solid #892074;
     background-color: #fff;
     box-shadow: 0px 0px 5px 0px #ddc4c4bf;
+    border-radius: 16px;
+    overflow: hidden;
 }
 .inner-wrap{
-    height: 200px;
+    height: 250px;
     width: 100%;
     overflow: hidden;
 }
@@ -577,7 +598,7 @@ input:focus{
 }
 
 .list-recipe-item .tile-content{
-    height: calc(100% - 200px);
+    height: calc(100% - 250px);
     width: 100%;
 }
 .list-recipe-item .tile-content .details{
@@ -1199,6 +1220,10 @@ input:focus{
     box-shadow: unset;
 }
 
+/*  =========== SURVEY ==========*/
+.survey__title{
+    font-size: 1.5rem;
+}
 
 
 /*============= Responsive ===================*/

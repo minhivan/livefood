@@ -54,7 +54,6 @@ export default function PostAction({postId, uid, postLike, postSave, expanded, s
     const classes = useStyles();
     const [selected, setSelected] = useState(false);
     const [saveSelected, setSaveSelected] = useState(false);
-    const [likeCount, setLikeCount] = useState(parseInt(postLike?.length));
 
 
     const handleExpandClick = () => {
@@ -65,13 +64,11 @@ export default function PostAction({postId, uid, postLike, postSave, expanded, s
     const likePost = () => {
         setSelected(true);
         handleLikePost(postId, uid)
-        setLikeCount((likes) => (selected ? likes - 1 : likes + 1));
     }
 
     const dislikePost = () => {
         setSelected(false);
         handleDislikePost(postId, uid)
-        setLikeCount((likes) => (selected ? likes - 1 : likes + 1));
     }
 
     const savePost = () => {
@@ -87,11 +84,11 @@ export default function PostAction({postId, uid, postLike, postSave, expanded, s
     }
 
     useEffect(() => {
-        if(typeof postLike !== 'undefined' && postLike.includes(uid)){
+        if(typeof postLike !== 'undefined' && postLike?.includes(uid)){
             setSelected(true);
         }
 
-        if(typeof postSave !== 'undefined' && postSave.includes(uid)){
+        if(typeof postSave !== 'undefined' && postSave?.includes(uid)){
             setSaveSelected(true);
         }
     }, [postLike, postSave, uid])
@@ -168,9 +165,9 @@ export default function PostAction({postId, uid, postLike, postSave, expanded, s
             </CardActions>
 
             {
-                postLike.length > 0 ? (
+                postLike?.length > 0 ? (
                     <div className={classes.displayLike}>
-                        <span><b>{postLike.length} {postLike.length === 1 ? 'Like' : 'Likes'}</b></span>
+                        <span><b>{postLike?.length} {postLike?.length === 1 ? 'Like' : 'Likes'}</b></span>
                     </div>
                 ) : null
             }

@@ -66,18 +66,20 @@ const useStyles = makeStyles((theme) => ({
 
 
 const PostUtil = (props) => {
+    const {open, handleClose, uid, opponentID, postID, handleRemove, handleReport, isSave} = props;
+
     const [modalStyle] = useState(getModalStyle);
     const classes = useStyles();
 
     let isYourPost  = false;
-    if(props.uid === props.opponentID){
+    if(uid === opponentID){
         isYourPost = true;
     }
 
     return (
         <Modal
-            open={props.open}
-            onClose={props.handleClose}
+            open={open}
+            onClose={handleClose}
             aria-labelledby="simple-modal-title"
             aria-describedby="simple-modal-description"
         >
@@ -94,9 +96,9 @@ const PostUtil = (props) => {
                                     }}
                                     onClick={
                                         () => {
-                                            handleDeletePost(props.id);
-                                            props.handleRemove(props.id);
-                                            props.handleClose(true);
+                                            handleDeletePost(postID);
+                                            handleRemove(postID);
+                                            handleClose(true);
                                         }
                                     }
                                 >
@@ -113,8 +115,8 @@ const PostUtil = (props) => {
                                     }}
                                     onClick={
                                         () => {
-                                            // handleUserUnfollow(props.uid, props.opponentID);
-                                            props.handleClose(true);
+                                            // handleUserUnfollow(uid, opponentID);
+                                            handleClose(true);
                                         }
                                     }
                                 >
@@ -133,9 +135,9 @@ const PostUtil = (props) => {
                                     }}
                                     onClick={
                                         () => {
-                                            handleReportPost(props.uid, props.id);
-                                            props.handleRemove(props.id);
-                                            props.handleClose(true);
+                                            handleReportPost(uid, postID);
+                                            handleRemove(postID);
+                                            handleClose(true);
                                         }
                                     }
                                 >
@@ -151,9 +153,9 @@ const PostUtil = (props) => {
                                     }}
                                     onClick={
                                         () => {
-                                            handleUserUnfollow(props.uid, props.opponentID);
-                                            props.handleRemove(props.id);
-                                            props.handleClose(true);
+                                            handleUserUnfollow(uid, opponentID);
+                                            handleRemove(postID);
+                                            handleClose(true);
                                         }
                                     }
                                 >
@@ -169,7 +171,7 @@ const PostUtil = (props) => {
                 <div className={classes.btnAction}>
                     <Button
                         component={Link}
-                        to={`p/${props.postID}`}
+                        to={`p/${postID}`}
                         classes={{
                             root: classes.btnNormal,
                             label: classes.btnLabel,
@@ -181,7 +183,7 @@ const PostUtil = (props) => {
                 <Divider />
 
                 {
-                    !props.isSave ? (
+                    !isSave ? (
                         <>
                             <div className={classes.btnAction}>
                                 <Button
@@ -205,7 +207,7 @@ const PostUtil = (props) => {
                             root: classes.btnNormal,
                             label: classes.btnLabel,
                         }}
-                        onClick={props.handleClose}
+                        onClick={handleClose}
                     >
                         Cancel
                     </Button>

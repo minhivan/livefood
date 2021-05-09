@@ -1,7 +1,7 @@
 import React from "react";
 import NavBar from "../components/SideBar/LeftSideBar";
-import RightSideBar from "../components/SideBar/RightSideBar";
 import Page from "../components/Page";
+import Survey from "../components/Popup/Survey";
 
 export default function LocationPage(props){
     return (
@@ -11,9 +11,8 @@ export default function LocationPage(props){
         >
             <NavBar userLogged={props.userLogged}/>
             <div className="app__post">
-
+                <Survey />
             </div>
-            <RightSideBar userLogged={props.userLogged}/>
         </Page>
     )
 }

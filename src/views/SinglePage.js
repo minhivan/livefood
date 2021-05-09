@@ -97,7 +97,11 @@ const SinglePage = (props) => {
 
 
             </div>
-            <RightSideBar userLogged={props.userLogged}/>
+            {
+                props.userLogged ? (
+                    <RightSideBar userLogged={props.userLogged}/>
+                ) : null
+            }
         </Page>
     )
 }

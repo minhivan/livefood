@@ -102,7 +102,6 @@ export const checkMyFollowingList = (myFollowerList, oppID) => {
 }
 
 export const handleDeleteComment = (postId, commentId) => {
-    console.log(postId + " - " + commentId)
     db.collection("posts").doc(postId).collection("comments").doc(commentId).delete().then(() => {
         console.log("Document successfully deleted!");
         // Remove image from storage

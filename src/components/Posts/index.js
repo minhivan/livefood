@@ -97,7 +97,7 @@ export default function NewFeed(props){
                 ) : null
             }
             {
-                posts ? (
+                posts?.length > 0 ? (
                     posts.map(({id, post, postAuthor }) => (
                         <Post
                             key={id}

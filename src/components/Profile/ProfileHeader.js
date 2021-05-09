@@ -13,6 +13,7 @@ import Divider from "@material-ui/core/Divider";
 import ListUserInProfile from "../Popup/ListUserInProfile";
 import {checkMyFollowingList} from "../../hooks/services";
 import LocationOnRoundedIcon from '@material-ui/icons/LocationOnRounded';
+import {useDocument} from "react-firebase-hooks/firestore";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -94,12 +95,15 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged, authFollowingList,  ...rest}) => {
+const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest}) => {
     const classes = useStyles();
     const [userFollowing, setUserFollowing] = useState([]);
     const [userFollower, setUserFollower] = useState([]);
     const [openFollower, setOpenFollower] = useState(false);
     const [openFollowing, setOpenFollowing] = useState(false);
+
+    const [authData] = useDocument(userLogged.uid && db.collection('users').doc(userLogged.uid));
+    const authFollowingList = authData?.data()?.following;
 
     const handleOpenFollower = () => {
         setOpenFollower(true);
@@ -176,6 +180,7 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged, authFoll
 
     }, [userSnapshot])
 
+
     return (
         <div className="profile__header">
             <div className="profile__bio">
@@ -212,7 +217,7 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged, authFoll
                                     <div className="share-follow-container">
                                         {/* Checking if followed */}
                                         {
-                                            checkMyFollowingList(authFollowingList, userSnapshot.uid) ? (
+                                            userSnapshot?.follower?.includes(userLogged.uid) ? (
                                                 <Button
                                                     variant="outlined"
                                                     className={classes.buttonUnfollow}
@@ -229,7 +234,6 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged, authFoll
                                                         Follow
                                                     </Button>
                                                 )
-
                                         }
                                         <Button
                                             variant="contained"

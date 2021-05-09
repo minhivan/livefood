@@ -16,8 +16,8 @@ const useStyles = makeStyles((theme) => ({
         objectFit: "cover",
         width: "100%",
         height: "100%",
+        minHeight: "250px",
         cursor: "pointer",
-        boxShadow: "0px 0px 5px 0px #ddc4c4bf",
         borderRadius: "16px"
     },
     icon: {
@@ -44,6 +44,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ExploreItem(props) {
 
+    const {postId, post, userLogged, postAuthor, classPath} = props;
+
     const classes = useStyles();
     // const [postPic, setPostPic] = useState([]);
     const [open, setOpen] = React.useState(false);
@@ -57,7 +59,7 @@ export default function ExploreItem(props) {
     };
 
     let media;
-    if(props.post.mediaType === "video/mp4"){
+    if(post.mediaType === "video/mp4"){
         media =
             <>
                 <video
@@ -65,7 +67,7 @@ export default function ExploreItem(props) {
                     muted="muted"
                     onClick={() => handleOpen()}
                 >
-                    <source src={props.post.mediaUrl} type="video/mp4"/>
+                    <source src={post.mediaUrl} type="video/mp4"/>
                 </video>
                 <div className={classes.none}>
                     <PlayIcon
@@ -78,16 +80,16 @@ export default function ExploreItem(props) {
         media = <img
                 alt=""
                 className={classes.img}
-                src={props.post.mediaUrl}
+                src={post.mediaUrl}
                 onClick={() => handleOpen()}
             />
     }
 
     return (
-            <div className="explore__gridSmall" key={props.id}>
+            <div className={`explore__gridSmall ${classPath}`} key={postId}>
                 {/*<img src={props.post.mediaUrl}  alt="" className={classes.img} onClick={() => handleOpen(props.post, props.id)} />*/}
                 {media}
-                <MediaViewer open={open} id={props.id} post={props.post} postAuthor={props.postAuthor} handleClose={handleClose}  />
+                <MediaViewer userLogged={userLogged} open={open} postId={postId} post={post} postAuthor={postAuthor} handleClose={handleClose}  />
             </div>
     );
 }

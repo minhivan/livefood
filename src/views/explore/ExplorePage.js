@@ -5,6 +5,7 @@ import { db} from "../../firebase";
 import {Image as ImageIcon} from "react-feather";
 import {makeStyles} from "@material-ui/core/styles";
 import NavBar from "../../components/SideBar/LeftSideBar";
+import MediaViewer from "../../components/MediaViewer";
 
 const useStyles = makeStyles((theme) => ({
     icon: {
@@ -39,13 +40,30 @@ const Explore = (props) => {
     window.scroll({top: 0, left: 0, behavior: 'smooth' })
 
     useEffect(() => {
-
         let postDoc = db.collection('posts');
-        postDoc
-            .orderBy('timestamp', "desc")
-
-            .limit(12)
-            .get().then(snapshot => {
+        if(userLogged?.uid){
+            return postDoc
+                .orderBy('timestamp', "desc")
+                .limit(10)
+                .get().then(snapshot => {
+                let temp = []
+                snapshot.forEach(data => {
+                    var userProfile = {};
+                    if(data.data().uid !== userLogged.uid){
+                        data.data().user.get().then( author => {
+                            Object.assign(userProfile, author.data());
+                        })
+                        temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
+                    }
+                })
+                setExplore(temp);
+            })
+        }
+        else{
+            postDoc
+                .orderBy('timestamp', "desc")
+                .limit(10)
+                .get().then(snapshot => {
                 let temp = []
                 snapshot.forEach(data => {
                     var userProfile = {};
@@ -55,8 +73,8 @@ const Explore = (props) => {
                     temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
                 })
                 setExplore(temp);
-        })
-
+            })
+        }
     }, []);
 
 
@@ -69,12 +87,23 @@ const Explore = (props) => {
 
             <div className="explore__root">
                 <NavBar userLogged={props.userLogged}/>
-                <div className="explore__container">
+                <div className="explore__masonry-container">
                     {
                         explore.length > 0 ? (
-                            explore.map(({id, post, authorProfile}) => (
-                                <ExploreItem key={id} id={id} post={post} postAuthor={authorProfile} userLogged={userLogged}/>
-                            ))
+                            <div className="explore__masonry-content">
+                                {
+                                    explore.map(({id, post, authorProfile}) => (
+                                        <ExploreItem
+                                            key={id}
+                                            postId={id}
+                                            post={post}
+                                            postAuthor={authorProfile}
+                                            userLogged={userLogged}
+                                            classPath={`explore__masonry-item`}
+                                        />
+                                    ))
+                                }
+                            </div>
                         ) : (
                             <div className={classes.wrapper}>
                                 <div className={classes.none}>

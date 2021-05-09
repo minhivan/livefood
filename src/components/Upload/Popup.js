@@ -126,7 +126,6 @@ function Popup(props){
     let media;
     if(props.image){
         if(props.image.type === "video/mp4" ){
-
             media =
                 <>
                     <video controls className={classes.reviewImg} muted="muted">

@@ -45,10 +45,6 @@ const useStyles = makeStyles((theme: Theme) =>
         root: {
             width: '100%',
         },
-        button: {
-            marginTop: theme.spacing(1),
-            marginRight: theme.spacing(1),
-        },
         actionsContainer: {
             marginBottom: theme.spacing(2),
         },
@@ -132,7 +128,39 @@ const useStyles = makeStyles((theme: Theme) =>
         selectInput: {
             textTransform: "uppercase",
             fontWeight: "bold"
-        }
+        },
+        backButton: {
+            marginTop: theme.spacing(2),
+            marginRight: theme.spacing(1),
+            width: "30%",
+            minHeight: "48px",
+            borderRadius: "16px",
+            fontWeight: "bold",
+        },
+        nextButton: {
+            marginTop: theme.spacing(2),
+            backgroundColor: "#5e52d7",
+            color: "#fff",
+            width: "30%",
+            minHeight: "48px",
+            borderRadius: "16px",
+            fontWeight: "bold",
+            "&:hover": {
+                backgroundColor: "#3d42a7"
+            },
+        },
+        finishButton: {
+            marginTop: theme.spacing(2),
+            backgroundColor: "#e60023",
+            color: "#fff",
+            width: "30%",
+            minHeight: "48px",
+            borderRadius: "16px",
+            fontWeight: "bold",
+            "&:hover": {
+                backgroundColor: "#a3021a"
+            },
+        },
     }),
 
 );
@@ -140,8 +168,6 @@ const useStyles = makeStyles((theme: Theme) =>
 function getSteps() {
     return ['Recipe details', 'Select category', 'Ingredients', 'Directions', 'Gallery'];
 }
-
-
 
 export default function RecipeStepper(props) {
     const classes = useStyles();
@@ -523,7 +549,7 @@ export default function RecipeStepper(props) {
                                                 <Button
                                                     disabled={activeStep === 0}
                                                     onClick={handleBack}
-                                                    className={classes.button}
+                                                    className={classes.backButton}
                                                 >
                                                     Back
                                                 </Button>
@@ -533,7 +559,7 @@ export default function RecipeStepper(props) {
                                                             variant="contained"
                                                             color="primary"
                                                             onClick={handleNext}
-                                                            className={classes.button}
+                                                            className={classes.finishButton}
                                                             disabled={disable}
                                                         >
                                                             Finish
@@ -543,7 +569,7 @@ export default function RecipeStepper(props) {
                                                             variant="contained"
                                                             color="primary"
                                                             onClick={handleNext}
-                                                            className={classes.button}
+                                                            className={classes.nextButton}
                                                         >
                                                             Next
                                                         </Button>

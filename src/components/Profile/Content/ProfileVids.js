@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-const ProfileVids = ({uid}) => {
+const ProfileVids = ({uid, userLogged}) => {
     const classes = useStyles();
     const [vid, setVid] = useState([]);
 
@@ -66,7 +66,13 @@ const ProfileVids = ({uid}) => {
                 {
                     vid.length > 0 ? (
                         vid.map(({id, post, authorVid}) => (
-                            <ExploreItem key={id} post={post} postAuthor={authorVid} />
+                            <ExploreItem
+                                key={id}
+                                postId={id}
+                                post={post}
+                                postAuthor={authorVid}
+                                userLogged={userLogged}
+                            />
                         ))
                     ) : (
                         <div className={classes.wrapper}>

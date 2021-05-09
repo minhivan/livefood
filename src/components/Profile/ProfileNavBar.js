@@ -79,25 +79,6 @@ const ProfileNavBar = ({userSnapshot}) => {
                     <span className={classes.title}>Post</span>
                 </Button>
             </ListItem>
-
-            <ListItem
-                className={classes.item}
-                disableGutters
-            >
-                <Button
-                    activeClassName={classes.active}
-                    className={classes.button}
-                    component={RouterLink}
-                    to={`/profile/channel/${userSnapshot?.uid}`}
-                >
-                    <VideoIcon
-                        className={classes.icon}
-                        size="20"
-                    />
-                    <span className={classes.title}>Video</span>
-                </Button>
-            </ListItem>
-
             {
                 userSnapshot?.accountType === "foodshop" ? (
                     <>
@@ -121,6 +102,23 @@ const ProfileNavBar = ({userSnapshot}) => {
                     </>
                 ) : null
             }
+            <ListItem
+                className={classes.item}
+                disableGutters
+            >
+                <Button
+                    activeClassName={classes.active}
+                    className={classes.button}
+                    component={RouterLink}
+                    to={`/profile/channel/${userSnapshot?.uid}`}
+                >
+                    <VideoIcon
+                        className={classes.icon}
+                        size="20"
+                    />
+                    <span className={classes.title}>Video</span>
+                </Button>
+            </ListItem>
 
             {
                 userSnapshot?.uid === authUser?.uid ? (

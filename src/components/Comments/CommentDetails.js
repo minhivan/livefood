@@ -90,7 +90,11 @@ function PostComment (props) {
                     </div>
                 </div>
             </div>
-            <CommentUtil open={open} handleClose={handleClose} postId={postId} postUid={postUid} commentId={commentId} commentUid={comment.uid} userLogged={userLogged}/>
+            {
+                userLogged ? (
+                    <CommentUtil open={open} handleClose={handleClose} postId={postId} postUid={postUid} commentId={commentId} commentUid={comment.uid} userLogged={userLogged}/>
+                ) : null
+            }
         </div>
     )
 

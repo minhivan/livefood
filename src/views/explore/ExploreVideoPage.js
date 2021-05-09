@@ -68,12 +68,22 @@ const ExploreVideo = (props) => {
         >
             <div className="explore__root">
                 <NavBar userLogged={props.userLogged}/>
-                <div className="explore__container">
+                <div className="explore__masonry-container">
                     {
                         exploreVid.length > 0 ? (
-                            exploreVid.map(({id, post, authorProfile}) => (
-                                <ExploreItem key={id} id={id} post={post} postAuthor={authorProfile} />
-                            ))
+                            <div className="explore__masonry-content">
+                                {
+                                    exploreVid.map(({id, post, authorProfile}) => (
+                                        <ExploreItem
+                                            key={id}
+                                            postId={id}
+                                            post={post}
+                                            postAuthor={authorProfile}
+                                            classPath={`explore__masonry-item`}
+                                        />
+                                    ))
+                                }
+                            </div>
                         ) : (
                             <div className={classes.wrapper}>
                                 <div className={classes.none}>

@@ -1,7 +1,6 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import Page from "../../components/Page";
-import {useAuthState} from "react-firebase-hooks/auth";
-import {auth, db} from "../../firebase";
+import {db} from "../../firebase";
 import ProfileHeader from "../../components/Profile/ProfileHeader";
 import {useParams} from "react-router";
 import {useCollection, useDocument} from "react-firebase-hooks/firestore";
@@ -18,16 +17,16 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Backdrop from "@material-ui/core/Backdrop";
 
 
-function content(action, id){
+function content(action, id, userLogged, userSnapshot){
     switch (action){
         case "feed":
-            return <ProfileFeed uid={id} type="post"/>
+            return <ProfileFeed uid={id} userLogged={userLogged} type="post"/>
         case "channel":
-            return <ProfileVids uid={id} type="video"/>
+            return <ProfileVids uid={id} userLogged={userLogged} type="video"/>
         case "saved":
-            return <ProfileSaved uid={id} type="saved"/>
+            return <ProfileSaved uid={id} userLogged={userLogged} type="saved"/>
         case "dishes":
-            return <ProfileMenuList uid={id} type="dishes"/>
+            return <ProfileMenuList uid={id} userLogged={userLogged} type="dishes"/>
         default:
             return <></>
     }
@@ -69,23 +68,20 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const UserProfilePage = (props) => {
-    const [userLogged] = useAuthState(auth);
+    const {userLogged} = props;
     let { id } = useParams();
     let isAuthProfile = false;
+    const classes = useStyles();
+    const [userData, loading] = useDocument(id && db.collection('users').doc(id));
+    const userSnapshot = userData?.data();
+    // const [userPost] = useCollection(id && db.collection("posts").where("uid", '==', id));
+
+
 
     if(id === userLogged?.uid){
         isAuthProfile = true;
     }
     window.scroll({top: 0, left: 0, behavior: 'smooth' });
-    const classes = useStyles();
-    const [userData, loading] = useDocument(id && db.collection('users').doc(id));
-    const userSnapshot = userData?.data();
-    const [userPost] = useCollection(id && db.collection("posts").where("uid", '==', id));
-
-    const [authData] = useDocument(userLogged.uid && db.collection('users').doc(userLogged.uid));
-    const authFollowingList = authData?.data()?.following;
-
-
 
     return(
 
@@ -102,11 +98,11 @@ const UserProfilePage = (props) => {
                     userSnapshot ? (
                         <div className="profile">
                             {/* User profile */}
-                            <ProfileHeader isAuthProfile={isAuthProfile} userSnapshot={userSnapshot} count={userPost?.size} userLogged={userLogged} authFollowingList={authFollowingList}/>
+                            <ProfileHeader isAuthProfile={isAuthProfile} userSnapshot={userSnapshot} count={userData?.data()?.post?.length} userLogged={userLogged}/>
                             {/*  User content  */}
                             <ProfileNavBar userSnapshot={userSnapshot}/>
                             <Divider />
-                            {content(props.pagePath, id)}
+                            {content(props.pagePath, id, userLogged)}
                         </div>
                     ) : (
                         <>

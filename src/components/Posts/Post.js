@@ -63,7 +63,11 @@ function Post({id, post, handleRemove, handleReport, isSinglePage, ...rest}) {
 				{/*Media*/}
 				<PostContent author={author} mediaUrl={post.mediaUrl} caption={post.caption} mediaType={post.mediaType}/>
 				{/* Post Action*/}
-				<PostAction postId={id} uid={user.uid} postLike={post.likeBy} postSave={post.saveBy} expanded={expanded} setExpanded={setExpanded} hasData={!!post?.data} handleFocus={handleFocus}/>
+				{
+					user ? (
+						<PostAction postId={id} uid={user.uid} postLike={post.likeBy} postSave={post.saveBy} expanded={expanded} setExpanded={setExpanded} hasData={!!post?.data} handleFocus={handleFocus}/>
+					) : null
+				}
 				{/* Recipe data */}
 				<PostRecipeData postId={id} postData={post.data} expanded={expanded} rating={post?.rating}/>
 				{/* Comments */}
@@ -75,8 +79,11 @@ function Post({id, post, handleRemove, handleReport, isSinglePage, ...rest}) {
 					) : null
 				}
 			</Card>
-
-			<PostUtil open={open} handleClose={handleClose} uid={user.uid} opponentID={post.uid} postID={id} handleReport={handleReport} handleRemove={handleRemove} isSave={false} />
+			{
+				user ? (
+					<PostUtil open={open} handleClose={handleClose} uid={user.uid} opponentID={post.uid} postID={id} handleReport={handleReport} handleRemove={handleRemove} isSave={false} />
+				) : null
+			}
 
 		</div>
 	)

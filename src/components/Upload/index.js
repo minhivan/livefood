@@ -64,6 +64,7 @@ function Upload({userLogged}) {
     };
 
     const handleChange = (event) => {
+
         if(event.target.files[0]){
             setImage(event.target.files[0]);
             if(!openStep){
@@ -92,7 +93,7 @@ function Upload({userLogged}) {
             <div className="upload__container">
                 <div className="upload__caption_test">
                     <div className="caption__holder" onClick={handleOpen}>
-                        <CreateTwoToneIcon />
+                        <CreateTwoToneIcon />0 10px 20px
                         <span>
                             What's new, {userLogged.displayName} ?
                         </span>

@@ -35,7 +35,7 @@ export default function ListRecipe({id, post, postAuthor}){
                             {
                                 post.rating ? (
                                     <div className={classes.rating}>
-                                        <Rating style={{margin: "0 5px 5px 0"}} name="read-only" value={post?.rating} precision={0.1} readOnly /> ({parseFloat(post?.rating).toFixed(1, 2)})
+                                        <Rating style={{margin: "0 5px 10px 0"}} name="read-only" value={post?.rating} precision={0.1} readOnly /> ({parseFloat(post?.rating).toFixed(1, 2)})
                                     </div>
                                 ) : null
                             }
