@@ -61,13 +61,11 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export default function PostAction({postId, uid, postLike, postSave, expanded, setExpanded, hasData, handleFocus, userLogged}){
+export default function PostAction({postId, post, expanded, setExpanded, handleFocus, userLogged}){
     const classes = useStyles();
     const [selected, setSelected] = useState(false);
     const [saveSelected, setSaveSelected] = useState(false);
     const [openLikesList, setOpenLikesList] = useState(false);
-    const [likesList, setLikesList] = useState([]);
-
 
     const handleOpenLikesList = () => {
         setOpenLikesList(true);
@@ -85,62 +83,35 @@ export default function PostAction({postId, uid, postLike, postSave, expanded, s
     // Handle like and dislike action
     const likePost = () => {
         setSelected(true);
-        handleLikePost(postId, uid)
+        handleLikePost(postId, userLogged.uid)
     }
 
     const dislikePost = () => {
         setSelected(false);
-        handleDislikePost(postId, uid)
+        handleDislikePost(postId, userLogged.uid)
     }
 
     const savePost = () => {
         // Save post id to user data, and push to post data
         setSaveSelected(true);
-        handleSavePost(postId, uid);
+        handleSavePost(postId, userLogged.uid);
     }
 
     const unsavedPost = () => {
         // Save post id to user data, and push to post data
         setSaveSelected(false);
-        handleUnSavedPost(postId, uid);
+        handleUnSavedPost(postId, userLogged.uid);
     }
 
     useEffect(() => {
-        if(typeof postLike !== 'undefined' && postLike?.includes(uid)){
+        if(typeof post?.likeBy !== 'undefined' && post?.likeBy?.includes(userLogged.uid)){
             setSelected(true);
         }
 
-        if(typeof postSave !== 'undefined' && postSave?.includes(uid)){
+        if(typeof post?.saveBy !== 'undefined' && post?.saveBy?.includes(userLogged.uid)){
             setSaveSelected(true);
         }
-    }, [postLike, postSave, uid])
-
-    useEffect(() => {
-        db.collection("users")
-            .where(firebase.firestore.FieldPath.documentId(), 'in', postLike.slice(0,9))
-            .get().then(snapshot => {
-            setLikesList(
-                snapshot.docs.map((doc => ({
-                    id: doc.id,
-                    data: doc.data(),
-                })))
-            );
-        })
-    }, [])
-
-    const handleLoadMore = (length) => {
-
-        return db.collection("users")
-            .where(firebase.firestore.FieldPath.documentId(), 'in', postLike.slice(length,length+9))
-            .get().then(snapshot => {
-                const temp = snapshot.docs.map((doc => ({
-                    id: doc.id,
-                    data: doc.data(),
-                })))
-                setLikesList([...likesList, ...temp]);
-            })
-    }
-
+    }, [post?.likeBy, post?.saveBy, userLogged.uid])
 
 
     return(
@@ -195,7 +166,7 @@ export default function PostAction({postId, uid, postLike, postSave, expanded, s
                     </div>
                 </div>
                 {
-                     hasData ? (
+                     post?.data ? (
                         <div className="action__expand">
                             <IconButton
                                 className={clsx(classes.expand, {
@@ -213,21 +184,25 @@ export default function PostAction({postId, uid, postLike, postSave, expanded, s
             </CardActions>
 
             {
-                postLike?.length > 0 ? (
+                post?.likeCount > 0 ? (
                     <div className={classes.displayLike}>
-                        <span className={classes.likesCount} onClick={handleOpenLikesList}><b>{postLike?.length.toLocaleString()} {postLike?.length === 1 ? 'Like' : 'Likes'}</b></span>
+                        <span className={classes.likesCount} onClick={handleOpenLikesList}><b>{post?.likeCount?.toLocaleString()} {post?.likeCount === 1 ? 'Like' : 'Likes'}</b></span>
                     </div>
                 ) : null
             }
 
-            <ListUserLikePost open={openLikesList} handleClose={handleCloseLikesList} userLogged={userLogged} countLike={postLike?.length} data={likesList} handleLoadMore={handleLoadMore}/>
+            {
+                openLikesList ? (
+                    <ListUserLikePost open={openLikesList} handleClose={handleCloseLikesList} userLogged={userLogged} postLike={post?.likeBy} likesCount={post?.likeCount}/>
+                ) : null
+            }
         </>
     )
 }
 
-PostAction.propTypes = {
-    postId: PropTypes.string.isRequired,
-    uid: PropTypes.string.isRequired,
-    postLike: PropTypes.array,
-    postSave: PropTypes.array,
-};
+// PostAction.propTypes = {
+//     postId: PropTypes.string.isRequired,
+//     uid: PropTypes.string.isRequired,
+//     postLike: PropTypes.array,
+//     postSave: PropTypes.array,
+// };

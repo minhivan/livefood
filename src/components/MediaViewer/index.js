@@ -417,7 +417,7 @@ function MediaViewer(props){
                             }
 
                             {/* Comment*/}
-                            <ListComment postId={postId} isPopup={`true`} />
+                            <ListComment postId={postId} isPopup={`true`} commentsCount={post?.commentsCount}/>
 
                         </div>
                         <CommentInput user={userLogged} postId={postId} type={post.type} path={'preview'}  postAuthor={post.uid}/>

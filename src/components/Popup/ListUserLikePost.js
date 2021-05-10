@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Divider from "@material-ui/core/Divider";
@@ -18,6 +18,7 @@ import {makeStyles} from "@material-ui/core/styles";
 import {blue} from "@material-ui/core/colors";
 import {useDocument} from "react-firebase-hooks/firestore";
 import {db} from "../../firebase";
+import firebase from "firebase";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -87,10 +88,39 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ListUserLikePost(props){
     const classes = useStyles();
-    const { open, handleClose, data, userLogged, countLike ,handleLoadMore } = props;
+    const { open, handleClose, userLogged, likesCount, postLike } = props;
 
     const [authData] = useDocument(userLogged.uid && db.collection('users').doc(userLogged.uid));
     const authFollowingList = authData?.data()?.following;
+    const [likesList, setLikesList] = useState([]);
+
+
+
+    useEffect(() => {
+        db.collection("users")
+            .where(firebase.firestore.FieldPath.documentId(), 'in', postLike.slice(0,9))
+            .get().then(snapshot => {
+            setLikesList(
+                snapshot.docs.map((doc => ({
+                    id: doc.id,
+                    data: doc.data(),
+                })))
+            );
+        })
+    }, [postLike])
+
+    const handleLoadMore = (length) => {
+
+        return db.collection("users")
+            .where(firebase.firestore.FieldPath.documentId(), 'in', postLike.slice(length,length+9))
+            .get().then(snapshot => {
+                const temp = snapshot.docs.map((doc => ({
+                    id: doc.id,
+                    data: doc.data(),
+                })))
+                setLikesList([...likesList, ...temp]);
+            })
+    }
 
     return (
         <Dialog
@@ -111,7 +141,7 @@ export default function ListUserLikePost(props){
             <DialogContent className={classes.dialog}>
                 <List>
                     {
-                        data ? (data.map(({id, data}) => (
+                        likesList ? (likesList.map(({id, data}) => (
                             <ListItem key={id}>
                                 <>
                                     <ListItemAvatar>
@@ -150,10 +180,10 @@ export default function ListUserLikePost(props){
                     }
                 </List>
                 {
-                    data ? (
-                        data?.length < countLike && (
+                    likesList ? (
+                        likesList?.length < likesCount && (
                             <div className="comment__see-more-btn">
-                                <IconButton aria-label="see more" onClick={() => handleLoadMore(data?.length)}>
+                                <IconButton aria-label="see more" onClick={() => handleLoadMore(likesList?.length)}>
                                     <AddCircleTwoToneIcon />
                                 </IconButton>
                             </div>

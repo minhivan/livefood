@@ -50,7 +50,7 @@ export default function NewFeed(props){
             userFollow.push(userLogged.uid);
             const unsubscribe = db.collection('posts')
                 .orderBy('timestamp', "desc")
-                .limit(5)
+                .limit(7)
                 .onSnapshot((snapshot) => {
                     var data = [];
                     snapshot.forEach((doc) => {
@@ -68,7 +68,7 @@ export default function NewFeed(props){
             const unsubscribe = db.collection('posts')
                 .where('uid', '==', userLogged.uid)
                 .orderBy('timestamp', "desc")
-                .limit(5)
+                .limit(7)
                 .onSnapshot( snapshot => {
                     setPosts(snapshot.docs.map(doc => ({
                         id: doc.id,

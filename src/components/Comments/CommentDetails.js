@@ -8,7 +8,6 @@ import MoreHorizRoundedIcon from '@material-ui/icons/MoreHorizRounded';
 import {makeStyles} from "@material-ui/core/styles";
 import {useDocument} from "react-firebase-hooks/firestore";
 import {db} from "../../firebase";
-import FavoriteBorderRoundedIcon from '@material-ui/icons/FavoriteBorderRounded';
 import CommentUtil from "../Popup/CommentUtil";
 
 

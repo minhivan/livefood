@@ -70,7 +70,11 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
                     uid: user.uid,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                     rating: value
-                });
+                }).then(() => {
+                    db.collection('posts').doc(postId).update({
+                        commentsCount: firebase.firestore.FieldValue.increment(1)
+                    })
+                })
             }
             else {
                 db.collection("posts").doc(postId).collection("comments").add({
@@ -78,6 +82,10 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
                     user: db.doc('users/' + user.uid),
                     uid: user.uid,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                }).then(() => {
+                    db.collection('posts').doc(postId).update({
+                        commentsCount: firebase.firestore.FieldValue.increment(1)
+                    })
                 });
             }
             setComment('');

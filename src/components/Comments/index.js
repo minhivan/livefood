@@ -5,16 +5,16 @@ import {Link} from "react-router-dom";
 import IconButton from "@material-ui/core/IconButton";
 import AddCircleTwoToneIcon from '@material-ui/icons/AddCircleTwoTone';
 
-function Comment({postId, isSinglePage, isPopup, postUid, userLogged}){
+function Comment({postId, isSinglePage, isPopup, postUid, userLogged, commentsCount}){
     const [comments, setComments] = useState([])
-	const [limit] = useState(5);
 	const [lastIdx, setLastIdx] = useState(5);
+
 
     useEffect(() => {
         const unsubscribe = db.collection("posts").doc(postId)
             .collection("comments")
         	.orderBy('timestamp', "desc")
-			.limit(15)
+			.limit(lastIdx)
         	.onSnapshot((snapshot ) => {
 				setComments(
         			snapshot.docs.map((doc => ({
@@ -27,8 +27,7 @@ function Comment({postId, isSinglePage, isPopup, postUid, userLogged}){
 		return () => {
         	unsubscribe();
 		}
-    }, [postId])
-
+    }, [lastIdx, postId])
 
 	const handleClickSeeMore = () => {
 		setLastIdx(lastIdx => lastIdx + 5);
@@ -64,7 +63,7 @@ function Comment({postId, isSinglePage, isPopup, postUid, userLogged}){
 				) : (
 					<>
 						{
-							comments.slice(0,lastIdx).map(({id, comment}) => (
+							comments.map(({id, comment}) => (
 								<PostComment
 									key={id}
 									comment={comment}
@@ -76,11 +75,17 @@ function Comment({postId, isSinglePage, isPopup, postUid, userLogged}){
 								/>
 							))
 						}
-						<div className="comment__see-more-btn">
-							<IconButton aria-label="see more" onClick={handleClickSeeMore}>
-								<AddCircleTwoToneIcon />
-							</IconButton>
-						</div>
+						{
+							comments?.length === commentsCount ? null : (
+								<div className="comment__see-more-btn">
+									<IconButton aria-label="see more" onClick={handleClickSeeMore}>
+										<AddCircleTwoToneIcon />
+									</IconButton>
+								</div>
+							)
+						}
+
+
 					</>
 				)
 			}

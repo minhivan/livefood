@@ -119,7 +119,7 @@ const useStyles = makeStyles((theme) => ({
         width: "100%",
         flexWrap: "wrap",
         overflowY: "auto",
-        gap: "20px"
+        padding: "20px",
     },
     optionImg: {
         width: "144px",
@@ -230,7 +230,7 @@ export default function Survey() {
                         </div>
                         <div className={classes.stepContent} style={{flex: "0"}}>
                             <div className={classes.pickerContainer}>
-                                <Chip variant="outlined" color="primary" deleteIcon={<DoneIcon />} onDelete={handleDelete} label="Custom delete icon"/>
+                                <Chip color="primary" deleteIcon={<DoneIcon />} onDelete={handleDelete} label="Custom delete icon"/>
                             </div>
                         </div>
                     </div>
