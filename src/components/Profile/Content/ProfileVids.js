@@ -62,18 +62,21 @@ const ProfileVids = ({uid, userLogged}) => {
 
     return(
         <div className="explore__root" style={{paddingTop: "20px"}}>
-            <div className="explore__container">
                 {
                     vid.length > 0 ? (
-                        vid.map(({id, post, authorVid}) => (
-                            <ExploreItem
-                                key={id}
-                                postId={id}
-                                post={post}
-                                postAuthor={authorVid}
-                                userLogged={userLogged}
-                            />
-                        ))
+                        <div className="explore__container" style={{padding: "0"}}>
+                            {
+                                vid.map(({id, post, authorVid}) => (
+                                    <ExploreItem
+                                        key={id}
+                                        postId={id}
+                                        post={post}
+                                        postAuthor={authorVid}
+                                        userLogged={userLogged}
+                                    />
+                                ))
+                            }
+                        </div>
                     ) : (
                         <div className={classes.wrapper}>
                             <div className={classes.none}>
@@ -87,7 +90,6 @@ const ProfileVids = ({uid, userLogged}) => {
                         </div>
                     )
                 }
-            </div>
         </div>
     )
 }

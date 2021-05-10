@@ -1,9 +1,7 @@
 import React, {useEffect, useState} from "react";
-import {Button, CardContent, Collapse, IconButton, Modal, TextField} from "@material-ui/core";
+import {CardContent, Collapse, IconButton, Modal} from "@material-ui/core";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 import {makeStyles} from "@material-ui/core/styles";
-// import {db} from "../../firebase";
-// import ListComment from "../Posts/Comments";
 import CardHeader from "@material-ui/core/CardHeader";
 import Avatar from "@material-ui/core/Avatar";
 import {Link} from "react-router-dom";
@@ -19,12 +17,8 @@ import CardActions from "@material-ui/core/CardActions";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import clsx from "clsx";
 import Typography from "@material-ui/core/Typography";
-import {useAuthState} from "react-firebase-hooks/auth";
 
-import {auth, db} from "../../firebase";
-import firebase from "firebase";
 import ListComment from "../Comments";
-import {useDocument} from "react-firebase-hooks/firestore";
 import BookmarkRoundedIcon from "@material-ui/icons/BookmarkRounded";
 import {handleSavePost, handleUnSavedPost, handleLikePost, handleDislikePost} from "../../hooks/services";
 import CommentInput from "../Comments/CommentInput";

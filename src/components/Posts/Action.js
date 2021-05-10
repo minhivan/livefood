@@ -13,6 +13,9 @@ import BookmarkBorderOutlinedIcon from "@material-ui/icons/BookmarkBorderOutline
 
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import CardActions from "@material-ui/core/CardActions";
+import ListUserLikePost from "../Popup/ListUserLikePost";
+import {db} from "../../firebase";
+import firebase from "firebase";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -46,14 +49,33 @@ const useStyles = makeStyles((theme) => ({
         padding: "0 0 20px 20px",
         borderBottom: "1px solid rgba(var(--b6a,219,219,219),1)"
     },
+    likesCount: {
+        cursor: "pointer",
+        '&:hover': {
+            textDecoration: "underline",
+        }
+    }
+
+
 }));
 
 
 
-export default function PostAction({postId, uid, postLike, postSave, expanded, setExpanded, hasData, handleFocus}){
+export default function PostAction({postId, uid, postLike, postSave, expanded, setExpanded, hasData, handleFocus, userLogged}){
     const classes = useStyles();
     const [selected, setSelected] = useState(false);
     const [saveSelected, setSaveSelected] = useState(false);
+    const [openLikesList, setOpenLikesList] = useState(false);
+    const [likesList, setLikesList] = useState([]);
+
+
+    const handleOpenLikesList = () => {
+        setOpenLikesList(true);
+    }
+
+    const handleCloseLikesList = () => {
+        setOpenLikesList(false);
+    }
 
 
     const handleExpandClick = () => {
@@ -92,6 +114,32 @@ export default function PostAction({postId, uid, postLike, postSave, expanded, s
             setSaveSelected(true);
         }
     }, [postLike, postSave, uid])
+
+    useEffect(() => {
+        db.collection("users")
+            .where(firebase.firestore.FieldPath.documentId(), 'in', postLike.slice(0,9))
+            .get().then(snapshot => {
+            setLikesList(
+                snapshot.docs.map((doc => ({
+                    id: doc.id,
+                    data: doc.data(),
+                })))
+            );
+        })
+    }, [])
+
+    const handleLoadMore = (length) => {
+
+        return db.collection("users")
+            .where(firebase.firestore.FieldPath.documentId(), 'in', postLike.slice(length,length+9))
+            .get().then(snapshot => {
+                const temp = snapshot.docs.map((doc => ({
+                    id: doc.id,
+                    data: doc.data(),
+                })))
+                setLikesList([...likesList, ...temp]);
+            })
+    }
 
 
 
@@ -167,11 +215,12 @@ export default function PostAction({postId, uid, postLike, postSave, expanded, s
             {
                 postLike?.length > 0 ? (
                     <div className={classes.displayLike}>
-                        <span><b>{postLike?.length} {postLike?.length === 1 ? 'Like' : 'Likes'}</b></span>
+                        <span className={classes.likesCount} onClick={handleOpenLikesList}><b>{postLike?.length.toLocaleString()} {postLike?.length === 1 ? 'Like' : 'Likes'}</b></span>
                     </div>
                 ) : null
             }
 
+            <ListUserLikePost open={openLikesList} handleClose={handleCloseLikesList} userLogged={userLogged} countLike={postLike?.length} data={likesList} handleLoadMore={handleLoadMore}/>
         </>
     )
 }

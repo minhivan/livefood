@@ -71,6 +71,13 @@ const useStyles = makeStyles((theme) => ({
         "&:hover": {
             textDecoration: "underline"
         },
+    },
+    container: {
+        display: "grid",
+        gridTemplateColumns: "repeat(1, 1fr)",
+        width: "100%",
+        maxWidth: "990px",
+        marginLeft: "16px"
     }
 }));
 
@@ -140,7 +147,7 @@ export default function ExplorePeopleItem(props) {
     }
 
     return (
-        <div className="explore__container" >
+        <div className={classes.container} >
             <List className={classes.root}>
                 {
                     users?.map(({id, user}) => (

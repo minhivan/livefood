@@ -156,13 +156,13 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
             db.collection("users")
                 .where(firebase.firestore.FieldPath.documentId(), 'in', userSnapshot.follower.slice(0,9))
                 .get().then(snapshot => {
-                    setUserFollower(
-                        snapshot.docs.map((doc => ({
-                            id: doc.id,
-                            data: doc.data(),
-                        })))
-                    );
-                })
+                setUserFollower(
+                    snapshot.docs.map((doc => ({
+                        id: doc.id,
+                        data: doc.data(),
+                    })))
+                );
+            })
         }
         if(typeof userSnapshot?.following !== 'undefined' && userSnapshot?.following?.length > 0){
 
@@ -187,7 +187,7 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
                 <div className={classes.bioAvt}>
                     {
                         userSnapshot? (
-                                <Avatar alt={userSnapshot?.displayName} src={userSnapshot?.photoURL} className={classes.userPhoto}/>
+                            <Avatar alt={userSnapshot?.displayName} src={userSnapshot?.photoURL} className={classes.userPhoto}/>
                         ): (
                             <Skeleton animation="wave" variant="circle" width={120} height={120} />
                         )
@@ -200,7 +200,7 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
                         <h2 className="share-title">{userSnapshot?.displayName}</h2>
                         <h1 className="share-sub-title">{userSnapshot?.fullName ?? ''}</h1>
                         {
-                            isAuthProfile ? (
+                            userSnapshot?.uid === userLogged.uid ? (
                                 <div className="share-follow-container">
                                     {/* Checking if followed */}
                                     <Link to="/account/edit">
@@ -226,14 +226,14 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
                                                     Unfollow
                                                 </Button>
                                             ) : (
-                                                    <Button
-                                                        variant="contained"
-                                                        className={classes.button}
-                                                        onClick={() => handleUserFollow(userLogged.uid, userSnapshot.uid)}
-                                                    >
-                                                        Follow
-                                                    </Button>
-                                                )
+                                                <Button
+                                                    variant="contained"
+                                                    className={classes.button}
+                                                    onClick={() => handleUserFollow(userLogged.uid, userSnapshot.uid)}
+                                                >
+                                                    Follow
+                                                </Button>
+                                            )
                                         }
                                         <Button
                                             variant="contained"
@@ -297,8 +297,8 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
                         <h2 className="count-infos">
                             <div className="number"><strong title="Likes">{ count ?? '0'}</strong><span
                                 className="unit">Post</span></div>
-                            <div className="number"><strong title="Following">{userSnapshot?.followingCount}</strong><a className="unit" onClick={handleOpenFollowing}>Following</a></div>
-                            <div className="number"><strong title="Followers">{userSnapshot?.followerCount}</strong><a className="unit" onClick={handleOpenFollower}>Follower</a></div>
+                            <div className="number"><strong title="Following">{userSnapshot?.followingCount ?? "0"}</strong><a className="unit" onClick={handleOpenFollowing}>Following</a></div>
+                            <div className="number"><strong title="Followers">{userSnapshot?.followerCount ?? "0"}</strong><a className="unit" onClick={handleOpenFollower}>Follower</a></div>
                         </h2>
                     </div>
                 </div>

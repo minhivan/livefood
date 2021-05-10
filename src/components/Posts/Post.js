@@ -65,7 +65,7 @@ function Post({id, post, handleRemove, handleReport, isSinglePage, ...rest}) {
 				{/* Post Action*/}
 				{
 					user ? (
-						<PostAction postId={id} uid={user.uid} postLike={post.likeBy} postSave={post.saveBy} expanded={expanded} setExpanded={setExpanded} hasData={!!post?.data} handleFocus={handleFocus}/>
+						<PostAction postId={id} uid={user.uid} userLogged={user} postLike={post.likeBy} postSave={post.saveBy} expanded={expanded} setExpanded={setExpanded} hasData={!!post?.data} handleFocus={handleFocus}/>
 					) : null
 				}
 				{/* Recipe data */}

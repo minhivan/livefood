@@ -70,18 +70,22 @@ const ProfileSaved = ({uid, userLogged}) => {
 
     return(
         <div className="explore__root" style={{paddingTop: "20px"}}>
-            <div className="explore__container" style={{padding: "0"}}>
+
                 {
                     savedPost.length > 0 ? (
-                        savedPost.map(({id, post, authorProfile}) => (
-                            <ExploreItem
-                                key={id}
-                                postId={id}
-                                post={post}
-                                postAuthor={authorProfile}
-                                userLogged={userLogged}
-                            />
-                        ))
+                        <div className="explore__container" style={{padding: "0"}}>
+                            {
+                                savedPost.map(({id, post, authorProfile}) => (
+                                    <ExploreItem
+                                        key={id}
+                                        postId={id}
+                                        post={post}
+                                        postAuthor={authorProfile}
+                                        userLogged={userLogged}
+                                    />
+                                ))
+                            }
+                        </div>
                     ) : (
                         <div className={classes.wrapper}>
                             <div className={classes.none}>
@@ -96,7 +100,6 @@ const ProfileSaved = ({uid, userLogged}) => {
                     )
                 }
 
-            </div>
         </div>
     )
 }

@@ -5,7 +5,6 @@ import { db} from "../../firebase";
 import {Image as ImageIcon} from "react-feather";
 import {makeStyles} from "@material-ui/core/styles";
 import NavBar from "../../components/SideBar/LeftSideBar";
-import MediaViewer from "../../components/MediaViewer";
 
 const useStyles = makeStyles((theme) => ({
     icon: {
@@ -37,45 +36,72 @@ const useStyles = makeStyles((theme) => ({
 const Explore = (props) => {
     const {userLogged} = props;
     const [explore, setExplore] = useState([]);
-    window.scroll({top: 0, left: 0, behavior: 'smooth' })
+    const [lastVisible, setLastVisible] = useState('');
 
     useEffect(() => {
-        let postDoc = db.collection('posts');
-        if(userLogged?.uid){
-            return postDoc
+        if(userLogged){
+            return db.collection('posts')
                 .orderBy('timestamp', "desc")
-                .limit(10)
                 .get().then(snapshot => {
-                let temp = []
-                snapshot.forEach(data => {
-                    var userProfile = {};
-                    if(data.data().uid !== userLogged.uid){
+                    let temp = []
+                    snapshot.forEach(data => {
+                        var userProfile = {};
+                        if(data.data().uid !== userLogged.uid){
+                            data.data().user.get().then( author => {
+                                Object.assign(userProfile, author.data());
+                            })
+                            temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
+                        }
+                    })
+                    setExplore(temp);
+                    setLastVisible(snapshot.docs[snapshot.docs.length-1]);
+                })
+        }
+        else{
+            return db.collection('posts')
+                .orderBy('timestamp', "desc")
+                .get().then(snapshot => {
+                    let temp = []
+                    snapshot.forEach(data => {
+                        var userProfile = {};
                         data.data().user.get().then( author => {
                             Object.assign(userProfile, author.data());
                         })
                         temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
-                    }
-                })
-                setExplore(temp);
-            })
-        }
-        else{
-            postDoc
-                .orderBy('timestamp', "desc")
-                .limit(10)
-                .get().then(snapshot => {
-                let temp = []
-                snapshot.forEach(data => {
-                    var userProfile = {};
-                    data.data().user.get().then( author => {
-                        Object.assign(userProfile, author.data());
                     })
-                    temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
+                    setExplore(temp);
+                    setLastVisible(snapshot.docs[snapshot.docs.length-1]);
                 })
-                setExplore(temp);
-            })
         }
-    }, []);
+    }, [userLogged]);
+
+    const loadMore = () => {
+        db.collection('posts')
+            .orderBy('timestamp', "desc")
+            .startAfter(lastVisible)
+            .limit(5)
+            .get().then(snapshot => {
+            let temp = []
+            snapshot.forEach(data => {
+                var userProfile = {};
+                data.data().user.get().then( author => {
+                    Object.assign(userProfile, author.data());
+                })
+                temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
+            })
+            setExplore([...explore, ...temp]);
+            setLastVisible(snapshot.docs[snapshot.docs.length-1]);
+        })
+    }
+
+    // window.onscroll = function () {
+    //     if(window.innerHeight + document.documentElement.scrollTop
+    //         === document.documentElement.offsetHeight){
+    //         loadMore();
+    //     }
+    // }
+    // console.log(window.innerHeight);
+    // console.log(document.documentElement.offsetHeight)
 
 
     const classes = useStyles();
@@ -90,7 +116,7 @@ const Explore = (props) => {
                 <div className="explore__masonry-container">
                     {
                         explore.length > 0 ? (
-                            <div className="explore__masonry-content">
+                            <div className="explore__masonry" id="list_explore">
                                 {
                                     explore.map(({id, post, authorProfile}) => (
                                         <ExploreItem
@@ -99,10 +125,11 @@ const Explore = (props) => {
                                             post={post}
                                             postAuthor={authorProfile}
                                             userLogged={userLogged}
-                                            classPath={`explore__masonry-item`}
+                                            masonry={true}
                                         />
                                     ))
                                 }
+
                             </div>
                         ) : (
                             <div className={classes.wrapper}>

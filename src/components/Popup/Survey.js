@@ -5,12 +5,16 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import {InputLabel, Modal, Select} from "@material-ui/core";
+import {Chip, InputLabel, Modal, TextField} from "@material-ui/core";
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
+
+import {Autocomplete} from "@material-ui/lab";
+import DoneIcon from '@material-ui/icons/Done';
+
+
 
 function getModalStyle() {
     const top = 50 ;
@@ -54,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
     },
     paper: {
         position: 'absolute',
-        width: 600,
+        maxWidth: 900,
         backgroundColor: theme.palette.background.paper,
         boxShadow: theme.shadows[5],
         padding: theme.spacing(2, 3, 3),
@@ -74,7 +78,8 @@ const useStyles = makeStyles((theme) => ({
     },
     stepContainer: {
         width : "100%",
-        height: "450px",
+        minHeight: "400px",
+        minWidth: "600px",
         display: "flex",
         flexDirection: "column"
     },
@@ -92,10 +97,34 @@ const useStyles = makeStyles((theme) => ({
         gap: "30px"
     },
     genderSelect: {
-        padding: "50px"
+        padding: "20px 50px"
     },
     selectInput: {
         fontWeight: "bold"
+    },
+    label: {
+        display: "flex",
+        position: "relative"
+    },
+    labelText: {
+        position: "absolute",
+        fontWeight: "bold",
+        fontSize: "20px",
+        bottom: "10px",
+        left: "10px",
+        color: "#fff"
+    },
+    pickerContainer: {
+        display: "flex",
+        width: "100%",
+        flexWrap: "wrap",
+        overflowY: "auto",
+        gap: "20px"
+    },
+    optionImg: {
+        width: "144px",
+        height: "144px",
+        borderRadius: "16px",
     }
 }));
 
@@ -113,7 +142,17 @@ export default function Survey() {
     const [modalStyle] = useState(getModalStyle);
     const [gender, setGender] = React.useState('female');
     const [province, setProvince] = useState([]);
-    const [region, setRegion] = useState('');
+    const [region, setRegion] = useState(null);
+
+    const handleDelete = () => {
+        console.info('You clicked the delete icon.');
+    };
+
+    const handleClick = () => {
+        console.info('You clicked the Chip.');
+    };
+
+
 
     const handleChangeGender = (event) => {
         setGender(event.target.value);
@@ -167,56 +206,32 @@ export default function Survey() {
                             <h2 className="survey__title">Pick your region</h2>
                         </div>
                         <div className={classes.stepContent}>
-                            <FormControl fullWidth variant="outlined">
-                                <InputLabel htmlFor="region">Region</InputLabel>
-                                <Select
-                                    native
-                                    labelId="region"
-                                    fullWidth
-                                    value={region}
-                                    onChange={event => setRegion(event.target.value)}
-                                    label="Category"
-                                    classes={{
-                                        root: classes.selectInput
-                                    }}
-                                >
-                                    {
-                                        province?.map((doc) => (
-                                            <option key={doc.province_id} value={doc.province_name}>{doc.province_name}</option>
-                                        ))
-                                    }
-                                </Select>
-                            </FormControl>
+                            <Autocomplete
+                                fullWidth
+                                autoHighlight
+                                options={province}
+                                getOptionLabel={(option) => option.province_name}
+                                value={region}
+                                onChange={(event, newValue) => {
+                                    setRegion(newValue);
+                                }}
+                                style={{ padding: "20px"}}
+                                className={classes.selectInput}
+                                renderInput={(params) => <TextField {...params} label="Region" variant="outlined" />}
+                            />
                         </div>
                     </div>
                 );
             case 3:
                 return (
-                    <div className={classes.stepContainer}>
+                    <div className={classes.stepContainer} style={{width: "800px"}}>
                         <div className={classes.stepHeader}>
                             <h2 className="survey__title">Last step! Tell us what you're interested in</h2>
                         </div>
-                        <div className={classes.stepContent}>
-                            <FormControl fullWidth variant="outlined">
-                                <InputLabel htmlFor="region">Region</InputLabel>
-                                <Select
-                                    native
-                                    labelId="region"
-                                    fullWidth
-                                    value={region}
-                                    onChange={event => setRegion(event.target.value)}
-                                    label="Category"
-                                    classes={{
-                                        root: classes.selectInput
-                                    }}
-                                >
-                                    {
-                                        province?.map((doc) => (
-                                            <option key={doc.province_id} value={doc.province_name}>{doc.province_name}</option>
-                                        ))
-                                    }
-                                </Select>
-                            </FormControl>
+                        <div className={classes.stepContent} style={{flex: "0"}}>
+                            <div className={classes.pickerContainer}>
+                                <Chip variant="outlined" color="primary" deleteIcon={<DoneIcon />} onDelete={handleDelete} label="Custom delete icon"/>
+                            </div>
                         </div>
                     </div>
                 );
@@ -242,6 +257,8 @@ export default function Survey() {
         setActiveStep(0);
     };
 
+
+    console.log(region?.province_name);
     return (
         <Modal
             open={open}

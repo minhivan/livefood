@@ -61,19 +61,23 @@ const ProfileFeed = ({uid, userLogged}) => {
 
     return(
         <div className="explore__root" style={{paddingTop: "20px"}}>
-            <div className="explore__container" style={{padding: "0"}} >
-                {
 
+                {
                     feed.length > 0 ? (
-                        feed.map(({id, post, postAuthor}) => (
-                            <ExploreItem
-                                key={id}
-                                postId={id}
-                                post={post}
-                                postAuthor={postAuthor}
-                                userLogged={userLogged}
-                            />
-                        ))
+                        <div className="explore__container" style={{padding: "0"}} >
+                            {
+                                feed.map(({id, post, postAuthor}) => (
+                                    <ExploreItem
+                                        key={id}
+                                        postId={id}
+                                        post={post}
+                                        postAuthor={postAuthor}
+                                        userLogged={userLogged}
+                                    />
+                                ))
+                            }
+                        </div>
+
                     ) : (
                         <div className={classes.wrapper}>
                             <div className={classes.none}>
@@ -87,7 +91,6 @@ const ProfileFeed = ({uid, userLogged}) => {
                     )
                 }
 
-            </div>
         </div>
     )
 }

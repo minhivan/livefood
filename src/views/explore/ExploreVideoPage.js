@@ -71,7 +71,7 @@ const ExploreVideo = (props) => {
                 <div className="explore__masonry-container">
                     {
                         exploreVid.length > 0 ? (
-                            <div className="explore__masonry-content">
+                            <div className="explore__masonry" id="list_explore">
                                 {
                                     exploreVid.map(({id, post, authorProfile}) => (
                                         <ExploreItem
@@ -79,7 +79,7 @@ const ExploreVideo = (props) => {
                                             postId={id}
                                             post={post}
                                             postAuthor={authorProfile}
-                                            classPath={`explore__masonry-item`}
+                                            masonry={true}
                                         />
                                     ))
                                 }

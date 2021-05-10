@@ -1,3 +1,4 @@
+import React from "react";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Divider from "@material-ui/core/Divider";
@@ -8,14 +9,15 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import ListItemText from "@material-ui/core/ListItemText";
 import {Link} from "react-router-dom";
+import {checkMyFollowingList, handleUserFollow, handleUserUnfollow} from "../../hooks/services";
 import Button from "@material-ui/core/Button";
-import {handleUserFollow, handleUserUnfollow} from "../../hooks/services";
-import React from "react";
-import {makeStyles} from "@material-ui/core/styles";
-import {blue} from "@material-ui/core/colors";
-import {checkMyFollowingList} from "../../hooks/services";
 import IconButton from "@material-ui/core/IconButton";
 import AddCircleTwoToneIcon from "@material-ui/icons/AddCircleTwoTone";
+import PropTypes from "prop-types";
+import {makeStyles} from "@material-ui/core/styles";
+import {blue} from "@material-ui/core/colors";
+import {useDocument} from "react-firebase-hooks/firestore";
+import {db} from "../../firebase";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -83,9 +85,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function ListUserInProfile(props) {
+export default function ListUserLikePost(props){
     const classes = useStyles();
-    const { handleClose, type, open, data, userLogged, authFollowingList, countUser, handleLoadMore} = props;
+    const { open, handleClose, data, userLogged, countLike ,handleLoadMore } = props;
+
+    const [authData] = useDocument(userLogged.uid && db.collection('users').doc(userLogged.uid));
+    const authFollowingList = authData?.data()?.following;
 
     return (
         <Dialog
@@ -99,17 +104,9 @@ export default function ListUserInProfile(props) {
             }}
             className={classes.root}
         >
-            {
-                type === 1 ? (
-                    <DialogTitle id="simple-dialog-title" className={classes.dialogTitle}>
-                        Following
-                    </DialogTitle>
-                ) : (
-                    <DialogTitle id="simple-dialog-title" className={classes.dialogTitle}>
-                        Follower
-                    </DialogTitle>
-                )
-            }
+            <DialogTitle id="simple-dialog-title" className={classes.dialogTitle}>
+                Likes
+            </DialogTitle>
             <Divider />
             <DialogContent className={classes.dialog}>
                 <List>
@@ -154,9 +151,9 @@ export default function ListUserInProfile(props) {
                 </List>
                 {
                     data ? (
-                        data?.length < countUser && (
+                        data?.length < countLike && (
                             <div className="comment__see-more-btn">
-                                <IconButton aria-label="see more" onClick={() => handleLoadMore(type, data?.length)}>
+                                <IconButton aria-label="see more" onClick={() => handleLoadMore(data?.length)}>
                                     <AddCircleTwoToneIcon />
                                 </IconButton>
                             </div>
@@ -165,7 +162,16 @@ export default function ListUserInProfile(props) {
                 }
             </DialogContent>
         </Dialog>
-    );
+    )
 }
 
-// 30 =>
+// const { open, handleClose, data, userLogged, authFollowingList, countLike ,handleLoadMore } = props;
+
+// ListUserLikePost.propTypes = {
+//     open: PropTypes.bool.isRequired,
+//     handleClose: PropTypes.bool.isRequired,
+//     userLogged: PropTypes.object,
+//     authFollowingList: PropTypes.array,
+//     countLike: PropTypes.number,
+//     handleLoadMore : PropTypes.func,
+// };

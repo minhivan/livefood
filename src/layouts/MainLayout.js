@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import LayoutAppBar from "../components/Header";
 
 const MainLayout = (props) => {
+    window.scroll({top: 0, left: 0, behavior: 'smooth' });
     return (
         <div className="app">
             <LayoutAppBar/>

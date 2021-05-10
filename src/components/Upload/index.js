@@ -93,7 +93,7 @@ function Upload({userLogged}) {
             <div className="upload__container">
                 <div className="upload__caption_test">
                     <div className="caption__holder" onClick={handleOpen}>
-                        <CreateTwoToneIcon />0 10px 20px
+                        <CreateTwoToneIcon />
                         <span>
                             What's new, {userLogged.displayName} ?
                         </span>

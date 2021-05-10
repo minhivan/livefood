@@ -53,6 +53,11 @@ const useStyles = makeStyles((theme) => ({
         fontWeight: "bold",
         color: "red",
         letterSpacing: "1px"
+    },
+    container: {
+        display: "grid",
+        gridTemplateColumns: "repeat(1, 1fr)",
+        width: "100%",
     }
 
 }));
@@ -98,7 +103,7 @@ export default function ProfileMenuList(props){
     //
     return(
         <div className="explore__root" style={{paddingTop: "20px"}}>
-            <div className="explore__container" style={{padding: "0"}} >
+            <div className={classes.container} style={{padding: "0"}} >
 
                 <div className="item-restaurant-row">
                     <List className={classes.root}>

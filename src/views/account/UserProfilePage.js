@@ -70,18 +70,10 @@ const useStyles = makeStyles((theme) => ({
 const UserProfilePage = (props) => {
     const {userLogged} = props;
     let { id } = useParams();
-    let isAuthProfile = false;
     const classes = useStyles();
     const [userData, loading] = useDocument(id && db.collection('users').doc(id));
     const userSnapshot = userData?.data();
-    // const [userPost] = useCollection(id && db.collection("posts").where("uid", '==', id));
 
-
-
-    if(id === userLogged?.uid){
-        isAuthProfile = true;
-    }
-    window.scroll({top: 0, left: 0, behavior: 'smooth' });
 
     return(
 
@@ -98,7 +90,7 @@ const UserProfilePage = (props) => {
                     userSnapshot ? (
                         <div className="profile">
                             {/* User profile */}
-                            <ProfileHeader isAuthProfile={isAuthProfile} userSnapshot={userSnapshot} count={userData?.data()?.post?.length} userLogged={userLogged}/>
+                            <ProfileHeader userSnapshot={userSnapshot} count={userData?.data()?.post?.length} userLogged={userLogged}/>
                             {/*  User content  */}
                             <ProfileNavBar userSnapshot={userSnapshot}/>
                             <Divider />

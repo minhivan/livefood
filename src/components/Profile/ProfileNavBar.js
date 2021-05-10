@@ -60,6 +60,8 @@ const ProfileNavBar = ({userSnapshot}) => {
     const classes = useStyles();
     const [authUser] = useAuthState(auth);
 
+
+
     return(
         <List className={classes.list}>
             <ListItem

@@ -16,9 +16,8 @@ const useStyles = makeStyles((theme) => ({
         objectFit: "cover",
         width: "100%",
         height: "100%",
-        minHeight: "250px",
+        minHeight: "220px",
         cursor: "pointer",
-        borderRadius: "16px"
     },
     icon: {
         color: "#050505",
@@ -44,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ExploreItem(props) {
 
-    const {postId, post, userLogged, postAuthor, classPath} = props;
+    const {postId, post, userLogged, postAuthor, masonry} = props;
 
     const classes = useStyles();
     // const [postPic, setPostPic] = useState([]);
@@ -85,8 +84,10 @@ export default function ExploreItem(props) {
             />
     }
 
+    console.log();
+
     return (
-            <div className={`explore__gridSmall ${classPath}`} key={postId}>
+            <div className={`explore__gridSmall ${masonry ? "explore__masonry-item" : ""}`} key={postId}>
                 {/*<img src={props.post.mediaUrl}  alt="" className={classes.img} onClick={() => handleOpen(props.post, props.id)} />*/}
                 {media}
                 <MediaViewer userLogged={userLogged} open={open} postId={postId} post={post} postAuthor={postAuthor} handleClose={handleClose}  />
