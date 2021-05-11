@@ -16,6 +16,7 @@
     "emoji-mart": "^3.0.1",
     "firebase": "^8.2.2",
     "firebase-admin": "^9.5.0",
+    "formik": "^2.2.6",
     "google-map-react": "^2.1.9",
     "history": "^5.0.0",
     "material-ui-popup-state": "^1.7.2",

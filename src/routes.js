@@ -1,7 +1,7 @@
 import React from "react";
 import { Navigate } from 'react-router-dom';
-import MainLayout from "./layouts/MainLayout";
-import DefaultLayout from "./layouts/DefaultLayout";
+import MainLayout from "./components/MainLayout";
+import DefaultLayout from "./components/DefaultLayout";
 import Login from "./views/auth/SignInPage";
 import HomePage from "./views/HomePage";
 import NotFoundView from "./views/NotFoundPage"
