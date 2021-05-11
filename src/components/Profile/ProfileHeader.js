@@ -11,9 +11,9 @@ import { blue } from '@material-ui/core/colors';
 import firebase from "firebase";
 import Divider from "@material-ui/core/Divider";
 import ListUserInProfile from "../Popup/ListUserInProfile";
-import {checkMyFollowingList} from "../../hooks/services";
 import LocationOnRoundedIcon from '@material-ui/icons/LocationOnRounded';
 import {useDocument} from "react-firebase-hooks/firestore";
+import MapRoundedIcon from '@material-ui/icons/MapRounded';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -152,7 +152,6 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
     // Your data
     useEffect(() => {
         if(typeof userSnapshot?.follower !== 'undefined' && userSnapshot?.follower?.length > 0){
-
             db.collection("users")
                 .where(firebase.firestore.FieldPath.documentId(), 'in', userSnapshot.follower.slice(0,9))
                 .get().then(snapshot => {
@@ -272,7 +271,7 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
                                             userSnapshot?.aboutRestaurant?.opening ? (
                                                 <h4 className={classes.opening}>
                                                     <AccessTimeRoundedIcon style={{marginRight: "5px"}}/>
-                                                    Opening:
+                                                    Opening :
                                                     <span style={{marginLeft: "5px"}}>{userSnapshot?.aboutRestaurant?.opening} - {userSnapshot?.aboutRestaurant?.closed}</span>
                                                 </h4>
                                             ) : null
@@ -281,12 +280,21 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
                                             userSnapshot?.aboutRestaurant?.location ? (
                                                 <h4 className={classes.opening}>
                                                     <LocationOnRoundedIcon style={{marginRight: "5px"}}/>
-                                                    Location:
+                                                    Location :
                                                     <span style={{marginLeft: "5px"}}>{userSnapshot?.aboutRestaurant?.location}</span>
                                                 </h4>
                                             ) : null
                                         }
                                     </div>
+                                    {
+                                        userSnapshot?.aboutRestaurant?.address ? (
+                                            <h4 className={classes.opening} style={{paddingBottom: "20px"}}>
+                                                <MapRoundedIcon style={{marginRight: "5px"}}/>
+                                                Address :
+                                                <span style={{marginLeft: "5px"}}>{userSnapshot?.aboutRestaurant?.address}</span>
+                                            </h4>
+                                        ) : null
+                                    }
                                     <Divider />
                                 </>
 

@@ -1,14 +1,10 @@
 import React, {useEffect, useState} from "react";
 import Page from "../../components/Page";
-import {Link} from "react-router-dom";
-import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
 import Divider from "@material-ui/core/Divider";
 import {db} from "../../firebase";
 import {makeStyles} from "@material-ui/core/styles";
-import {Rating} from "@material-ui/lab";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Backdrop from "@material-ui/core/Backdrop";
-import AccessTimeRoundedIcon from "@material-ui/icons/AccessTimeRounded";
 import ListRecipe from "../../components/Recipe/ListRecipe";
 
 
@@ -64,7 +60,7 @@ const TrendingPage = (props) => {
                         <Divider />
                         <div className="recipe__content">
                             <div className="list-recipe">
-                                <div className="list-recipe-grid">
+                                <div className="list-recipe-grid" style={{gridGap: "24px"}}>
                                     {
                                         listRecipe.map(({id, post, postAuthor}) => (
                                             <ListRecipe key={id} id={id} postAuthor={postAuthor} post={post}/>

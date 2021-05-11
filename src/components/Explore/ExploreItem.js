@@ -84,13 +84,15 @@ export default function ExploreItem(props) {
             />
     }
 
-    console.log();
-
     return (
             <div className={`explore__gridSmall ${masonry ? "explore__masonry-item" : ""}`} key={postId}>
                 {/*<img src={props.post.mediaUrl}  alt="" className={classes.img} onClick={() => handleOpen(props.post, props.id)} />*/}
                 {media}
-                <MediaViewer userLogged={userLogged} open={open} postId={postId} post={post} postAuthor={postAuthor} handleClose={handleClose}  />
+                {
+                    open ? (
+                        <MediaViewer userLogged={userLogged} open={open} postId={postId} post={post} postAuthor={postAuthor} handleClose={handleClose}  />
+                    ) : null
+                }
             </div>
     );
 }

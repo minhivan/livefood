@@ -1,11 +1,12 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {auth, provider } from "../../firebase";
 import {Button, TextField} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import {Link, Navigate} from "react-router-dom";
-import checkFirebaseAuth from "../../hooks/firebaseAuth";
+import {checkSignInWithGoogle, checkFirebaseAuth} from "../../hooks/services";
 import {useAuthState} from "react-firebase-hooks/auth"; //import Redirect first
-
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -63,20 +64,49 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
+const validationSchema = yup.object({
+    email: yup
+        .string('Enter your email')
+        .email('Enter a valid email')
+        .required('Email is required'),
+    username: yup
+        .string('Enter your display name')
+        .min(6, 'Display name should be of minimum 6 characters length')
+        .required('Display name is required'),
+    password: yup
+        .string('Enter your password')
+        .min(8, 'Password should be of minimum 8 characters length')
+        .required('Password is required')
+
+});
+
+
 
 function PageLogin() {
     const classes = useStyles();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [username, setUsername] = useState('');
     const [user] = useAuthState(auth);
 
-    const signUp = (event) => {
+    const formik = useFormik({
+        initialValues: {
+            email: '',
+            password: '',
+            username: '',
+        },
+        validationSchema: validationSchema,
+        onSubmit: (values) => {
+            // console.log(values.email);
+            signUp(values.email, values.password, values.username);
+        },
+    });
+
+
+    const signUp = (email, password, username) => {
         auth.createUserWithEmailAndPassword(email, password)
             .then((authUser) => {
                 return authUser.user.updateProfile({
                     displayName: username
                 }).then(function (){
+                    console.log(authUser.user);
                     checkFirebaseAuth(authUser.user);
                 })
             })
@@ -85,8 +115,8 @@ function PageLogin() {
 
     const signUpGoogle = (event) => {
         event.preventDefault();
-        auth.signInWithPopup(provider).then((result) => {
-            checkFirebaseAuth(result.user);
+        auth.signInWithPopup(provider).then(async (result) => {
+            await checkSignInWithGoogle(result.user);
         }).catch((error) =>{
             alert(error.message)
         })
@@ -122,63 +152,65 @@ function PageLogin() {
                         <div className={classes.divider} />
 
                         <div className={classes.form}>
+                            <form onSubmit={formik.handleSubmit} style={{width: "100%"}}>
+                                <TextField
+                                    name="username"
+                                    label="User name"
+                                    value={formik.values.username}
+                                    onChange={formik.handleChange}
+                                    error={formik.touched.username && Boolean(formik.errors.username)}
+                                    helperText={formik.touched.username && formik.errors.username}
+                                    variant="outlined"
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    id="username"
+                                    placeholder="User name"
+                                    autoFocus
+                                />
+                                <TextField
+                                    name="email"
+                                    label="Email"
+                                    value={formik.values.email}
+                                    onChange={formik.handleChange}
+                                    error={formik.touched.email && Boolean(formik.errors.email)}
+                                    helperText={formik.touched.email && formik.errors.email}
+                                    variant="outlined"
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    id="email"
+                                    placeholder="Email address"
+                                    autoComplete="email"
+                                    autoFocus
+                                />
+                                <TextField
+                                    id="password"
+                                    name="password"
+                                    label="Password"
+                                    type="password"
+                                    value={formik.values.password}
+                                    onChange={formik.handleChange}
+                                    error={formik.touched.password && Boolean(formik.errors.password)}
+                                    helperText={formik.touched.password && formik.errors.password}
+                                    variant="outlined"
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    placeholder="Password"
+                                    autoComplete="current-password"
+                                />
 
-                            <TextField
-                                variant="outlined"
-                                margin="normal"
-                                required
-                                fullWidth
-                                label="Username"
-                                id="username"
-                                placeholder="Username"
-                                value={username}
-                                name="username"
-                                autoComplete="false"
-                                autoFocus
-                                onChange={(e) => setUsername(e.target.value)}
-
-                            />
-                            <TextField
-                                variant="outlined"
-                                margin="normal"
-                                required
-                                fullWidth
-                                label="Email address"
-                                id="email"
-                                placeholder="Email address"
-                                value={email}
-                                name="email"
-                                autoComplete="email"
-                                autoFocus
-                                onChange={(e) => setEmail(e.target.value)}
-
-                            />
-                            <TextField
-                                variant="outlined"
-                                margin="normal"
-                                required
-                                label="Password"
-                                fullWidth
-                                name="password"
-                                value={password}
-                                placeholder="Password"
-                                type="password"
-                                id="password"
-                                autoComplete="current-password"
-                                onChange={(e) => setPassword(e.target.value)}
-
-                            />
-
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                color="primary"
-                                className={classes.button}
-                                onClick={signUp}
-                            >
-                                Sign up
-                            </Button>
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    color="primary"
+                                    className={classes.button}
+                                >
+                                    Sign up
+                                </Button>
+                            </form>
                         </div>
                         <div className={classes.divider} />
                         <div className={classes.SignUpHolder}>

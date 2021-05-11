@@ -109,3 +109,37 @@ export const handleDeleteComment = (postId, commentId) => {
         console.error("Error removing document: ", error);
     });
 }
+
+
+export function checkSignInWithGoogle(authUser){
+    const docRef = db.collection("users").doc(authUser.uid);
+    return docRef.get().then((doc) => {
+        if(!doc.exists){
+            docRef.set({
+                email: authUser.email,
+                emailVerified: authUser.emailVerified,
+                phoneNumber: authUser.phoneNumber,
+                displayName: authUser.displayName,
+                photoURL: authUser.photoURL,
+                uid: authUser.uid
+            }).then(() => {
+                console.log("Updated")
+            })
+        }
+    })
+}
+
+
+export const checkFirebaseAuth = (authUser) => {
+    db.collection("users").doc(authUser.uid).set({
+        email: authUser.email,
+        emailVerified: authUser.emailVerified,
+        phoneNumber: authUser.phoneNumber,
+        displayName: authUser.displayName,
+        photoURL: authUser.photoURL,
+        uid: authUser.uid
+    }).then(() => {
+        console.log('Successfully');
+    });
+}
+

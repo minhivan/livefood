@@ -94,7 +94,7 @@ export default function EditAbout(props){
     // const [lat, setLat] = useState('');
     // const [lng, setLng] = useState('');
     const [province, setProvince] = useState([]);
-
+    const [address, setAddress] = useState('');
     const [userData] = useDocument(userLogged &&  db.collection("users").doc(userLogged.uid));
 
     useEffect(() => {
@@ -120,8 +120,10 @@ export default function EditAbout(props){
                 bio: bio,
                 opening: opening,
                 closed: closed,
-                location: userProvince
+                location: userProvince,
+                address: address
             },
+
         }).then(function() {
             setOpenSnack(true);
             console.log("Setting new data !");
@@ -136,7 +138,6 @@ export default function EditAbout(props){
         setClosed(event.target.value);
     }
 
-    console.log(province)
 
     return (
         <article className="edit_account__content">
@@ -244,6 +245,20 @@ export default function EditAbout(props){
                                     ))
                                 }
                             </Select>
+                        </div>
+                    </div>
+
+                    <div className={classes.holder}>
+                        <aside className={classes.label}>
+                            <label htmlFor="pepAddress" style={{fontWeight: "bold", fontSize: "18px"}}>Address</label>
+                        </aside>
+                        <div className={classes.input}>
+                            <input
+                                value={address}
+                                onChange={event => setAddress(event.target.value)}
+                                className={classes.inputField}
+                                id="pepAddress" placeholder="Ex: 400/8B Ung Văn Khiêm, Phường 25" type="text"
+                            />
                         </div>
                     </div>
 

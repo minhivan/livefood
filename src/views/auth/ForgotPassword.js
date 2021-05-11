@@ -1,12 +1,9 @@
 import React, {useState} from "react";
-import {auth, provider} from "../../firebase";
+import {auth} from "../../firebase";
 import {Button, TextField} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import {Link, Navigate} from "react-router-dom";
-//import FacebookIcon from '../../icons/Facebook';
-import GoogleIcon from '../../images/icons/Google';
 import Page from "../../components/Page";
-import checkFirebaseAuth from "../../hooks/firebaseAuth";
 import {useAuthState} from "react-firebase-hooks/auth";
 import AlertPopup from "../../components/Popup/AlertPopup";
 import firebase from "firebase";

@@ -22,6 +22,7 @@ import ListComment from "../Comments";
 import BookmarkRoundedIcon from "@material-ui/icons/BookmarkRounded";
 import {handleSavePost, handleUnSavedPost, handleLikePost, handleDislikePost} from "../../hooks/services";
 import CommentInput from "../Comments/CommentInput";
+import ListUserLikePost from "../Popup/ListUserLikePost";
 
 
 
@@ -160,6 +161,12 @@ const useStyles = makeStyles((theme) => ({
     },
     data: {
         overflowY: "auto"
+    },
+    likesCount: {
+        cursor: "pointer",
+        '&:hover': {
+            textDecoration: "underline",
+        }
     }
 }));
 
@@ -172,8 +179,17 @@ function MediaViewer(props){
     const [expanded, setExpanded] = useState(true);
     const [saveSelected, setSaveSelected] = useState(false);
     const [likeCount, setLikeCount] = useState(post?.likeBy?.length)
-
+    const [openLikesList, setOpenLikesList] = useState(false);
     const [isReadMore, setIsReadMore] = useState(true);
+
+    const handleOpenLikesList = () => {
+        setOpenLikesList(true);
+    }
+
+    const handleCloseLikesList = () => {
+        setOpenLikesList(false);
+    }
+
     const toggleReadMore = () => {
         setIsReadMore(!isReadMore);
     };
@@ -373,7 +389,7 @@ function MediaViewer(props){
                             {
                                 likeCount > 0 ? (
                                     <div className={classes.displayLike}>
-                                        <span><b>{likeCount.toLocaleString()} {likeCount  === 1 ? 'Like' : 'Likes'}</b></span>
+                                        <span className={classes.likesCount} onClick={handleOpenLikesList}><b>{likeCount.toLocaleString()} {likeCount  === 1 ? 'Like' : 'Likes'}</b></span>
                                     </div>
                                 ) : null
                             }
@@ -421,7 +437,11 @@ function MediaViewer(props){
 
                         </div>
                         <CommentInput user={userLogged} postId={postId} type={post.type} path={'preview'}  postAuthor={post.uid}/>
-
+                        {
+                            openLikesList ? (
+                                <ListUserLikePost open={openLikesList} handleClose={handleCloseLikesList} userLogged={userLogged} postLike={post?.likeBy} likesCount={post?.likeCount}/>
+                            ) : null
+                        }
                     </div>
                 </div>
             </div>

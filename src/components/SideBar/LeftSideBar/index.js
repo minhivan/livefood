@@ -83,19 +83,19 @@ const NavBar = (props) => {
             title: 'Explore'
         },
         {
+            href: '/explore/watch',
+            icon: VideoIcon,
+            title: 'Watch'
+        },
+        {
             href: '/explore/people',
             icon: UsersIcon,
-            title: 'Followers'
+            title: 'People'
         },
         {
             href: '/profile/saved/' + props.userLogged?.uid,
             icon: BookmarkIcon,
             title: 'Saves'
-        },
-        {
-            href: '/explore/watch',
-            icon: VideoIcon,
-            title: 'Watch'
         },
         {
             href: '/recipe',
@@ -115,7 +115,7 @@ const NavBar = (props) => {
     ];
     const itemsWithoutAuth = [
         {
-            href: '/explore',
+            href: '/explore/news',
             icon: BellIcon,
             title: 'Explore'
         },

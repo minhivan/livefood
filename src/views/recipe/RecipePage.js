@@ -168,12 +168,15 @@ const RecipePage = (props) => {
                         </Select>
                     </FormControl>
                     <div className="list-recipe">
-                        <div className="list-recipe-grid">
                             {
                                 listRecipe.length > 0 ? (
-                                    listRecipe.map(({id, post, postAuthor}) => (
-                                        <ListRecipe key={id} id={id} post={post} postAuthor={postAuthor}/>
-                                    ))
+                                    <div className="list-recipe-grid" style={{gridGap: "24px"}}>
+                                        {
+                                            listRecipe.map(({id, post, postAuthor}) => (
+                                                <ListRecipe key={id} id={id} post={post} postAuthor={postAuthor}/>
+                                            ))
+                                        }
+                                    </div>
                                 ) : (
                                     <div className={classes.wrapper}>
                                         <div className={classes.none}>
@@ -186,7 +189,6 @@ const RecipePage = (props) => {
                                     </div>
                                 )
                             }
-                        </div>
                     </div>
                 </div>
             </div>

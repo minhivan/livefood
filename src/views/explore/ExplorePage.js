@@ -110,7 +110,6 @@ const Explore = (props) => {
             title="Explore | LiveFood"
             className="app__bodyContainer"
         >
-
             <div className="explore__root">
                 <NavBar userLogged={props.userLogged}/>
                 <div className="explore__masonry-container">

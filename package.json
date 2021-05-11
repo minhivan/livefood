@@ -37,7 +37,8 @@
     "styled-components": "^5.2.1",
     "timeago-react": "^3.0.2",
     "uuid": "^8.3.2",
-    "web-vitals": "^0.2.4"
+    "web-vitals": "^0.2.4",
+    "yup": "^0.32.9"
   },
   "scripts": {
     "start": "react-scripts start",

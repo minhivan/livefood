@@ -6,7 +6,7 @@ import {Link, Navigate} from "react-router-dom";
 //import FacebookIcon from '../../icons/Facebook';
 import GoogleIcon from '../../images/icons/Google';
 import Page from "../../components/Page";
-import checkFirebaseAuth from "../../hooks/firebaseAuth";
+import {checkSignInWithGoogle} from "../../hooks/services";
 import {useAuthState} from "react-firebase-hooks/auth";
 
 const useStyles = makeStyles((theme) => ({
@@ -86,8 +86,8 @@ function PageLogin() {
 
     const signUpGoogle = (event) => {
         event.preventDefault();
-        auth.signInWithPopup(provider).then((result) => {
-            checkFirebaseAuth(result.user);
+        auth.signInWithPopup(provider).then(async (result) => {
+             await checkSignInWithGoogle(result.user);
         }).catch((error) =>{
             alert(error.message)
         })

@@ -76,15 +76,16 @@ function Comment({postId, isSinglePage, isPopup, postUid, userLogged, commentsCo
 							))
 						}
 						{
-							comments?.length === commentsCount ? null : (
-								<div className="comment__see-more-btn">
-									<IconButton aria-label="see more" onClick={handleClickSeeMore}>
-										<AddCircleTwoToneIcon />
-									</IconButton>
-								</div>
+							comments?.length === 0 ? null : (
+								comments?.length === commentsCount ? null : (
+									<div className="comment__see-more-btn">
+										<IconButton aria-label="see more" onClick={handleClickSeeMore}>
+											<AddCircleTwoToneIcon />
+										</IconButton>
+									</div>
+								)
 							)
 						}
-
 
 					</>
 				)
