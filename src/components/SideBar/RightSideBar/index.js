@@ -48,6 +48,19 @@ function RightSideBar(props) {
     const userRef = userLogged?.uid && db.collection('users').doc(userLogged.uid);
     const [userSnapshot, loading] = useDocument(userRef);
     const authFollowingList = userSnapshot?.data()?.following;
+
+    const [userLoggedData, setUserLoggedData] = useState({});
+
+    useEffect(() => {
+        if(userLogged){
+            setUserLoggedData({
+                uid: userLogged.uid,
+                photoURL: userLogged.photoURL,
+                displayName: userLogged.displayName
+            })
+        }
+    }, [userLogged])
+
     // List user
     useEffect(() => {
         var followingList = {};
@@ -154,7 +167,7 @@ function RightSideBar(props) {
                                         variant="outlined"
                                         color="primary"
                                         className="followBtn"
-                                        onClick={() => handleUserFollow(userLogged.uid, opponent.uid)}
+                                        onClick={() => handleUserFollow(userLoggedData, opponent.uid)}
                                     >
                                         Follow
                                     </Button>

@@ -34,59 +34,63 @@ export function handleDislikePost(postId, uid) {
 export const handleSavePost = (postId, uid) => {
     db.collection('posts').doc(postId).update({
         saveBy: firebase.firestore.FieldValue.arrayUnion(uid)
+    }).then(() => {
+        db.collection('users').doc(uid).update({
+            postSave: firebase.firestore.FieldValue.arrayUnion(postId)
+        })
     });
-
-    db.collection('users').doc(uid).update({
-        postSave: firebase.firestore.FieldValue.arrayUnion(postId)
-    })
 }
 
 export const handleUnSavedPost = (postId, uid) => {
     db.collection('posts').doc(postId).update({
         saveBy: firebase.firestore.FieldValue.arrayRemove(uid)
+    }).then(() => {
+        db.collection('users').doc(uid).update({
+            postSave: firebase.firestore.FieldValue.arrayRemove(postId)
+        })
     });
-
-    db.collection('users').doc(uid).update({
-        postSave: firebase.firestore.FieldValue.arrayRemove(postId)
-    })
 }
 
-export const handleUserFollow = (uid, id) => {
+export const handleUserFollow = (userData, id) => {
     // Add opponent to following array
-    db.collection('users').doc(uid).update({
+    db.collection('users').doc(userData.uid).update({
         following: firebase.firestore.FieldValue.arrayUnion(id),
         followingCount: firebase.firestore.FieldValue.increment(1)
+    }).then(() => {
+        // Add your id to opponent follower array
+        db.collection('users').doc(id).update({
+            follower: firebase.firestore.FieldValue.arrayUnion(userData.uid),
+            followerCount: firebase.firestore.FieldValue.increment(1)
+        }).then(() => {
+            db.collection('users').doc(id).collection("notifications").add({
+                reference: "user",
+                type : "follow",
+                message: "started to follow you",
+                from : userData.displayName,
+                avatar: userData.photoURL,
+                path : "/profile/" + userData.uid,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                status: "unread"
+            })
+        });
     });
-    // Add your id to opponent follower array
-    db.collection('users').doc(id).update({
-        follower: firebase.firestore.FieldValue.arrayUnion(uid),
-        followerCount: firebase.firestore.FieldValue.increment(1)
-    })
-    //     .then(() => {
-    //     db.collection('users').doc(id).collection("notifications").add({
-    //         reference: "user",
-    //         type : "follow",
-    //         message: "started to follow you",
-    //         // from : user.displayName,
-    //         // avatar: user.photoURL,
-    //         // path : "/p/" + postId,
-    //         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    //         status: "unread"
-    //     })
-    // });
 }
 
 export const handleUserUnfollow = (uid, id) => {
-    // Remove
+    // Update following
     db.collection('users').doc(uid).update({
         following: firebase.firestore.FieldValue.arrayRemove(id),
         followingCount: firebase.firestore.FieldValue.increment(-1)
+    }).then(() => {
+        // Update opponent follower
+        db.collection('users').doc(id).update({
+            follower: firebase.firestore.FieldValue.arrayRemove(uid),
+            followerCount: firebase.firestore.FieldValue.increment(-1)
+        }).then(() => {
+            console.log("Success");
+        });
     });
-    // Update opponent follower
-    db.collection('users').doc(id).update({
-        follower: firebase.firestore.FieldValue.arrayRemove(uid),
-        followerCount: firebase.firestore.FieldValue.increment(-1)
-    });
+
 }
 
 

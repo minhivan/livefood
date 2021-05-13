@@ -82,15 +82,23 @@ const useStyles = makeStyles((theme) => ({
 
 export default function LocationPage(props){
     const {userLogged} = props;
-
+    const classes = useStyles();
     const [listRestaurantCate, setListRestaurantCate] = useState([]);
     const [restaurantCate, setRestaurantCate] = useState('');
     const [userProvince, setUserProvince] = useState("");
     const [province, setProvince] = useState([]);
     const [listRestaurant, setListRestaurant] = useState([]);
+    const [userLoggedData, setUserLoggedData] = useState({});
 
-
-    const classes = useStyles();
+    useEffect(() => {
+        if(userLogged){
+            setUserLoggedData({
+                uid: userLogged.uid,
+                photoURL: userLogged.photoURL,
+                displayName: userLogged.displayName
+            })
+        }
+    }, [userLogged])
 
     useEffect(() => {
         fetch('https://vapi.vnappmob.com/api/province/')
@@ -263,7 +271,7 @@ export default function LocationPage(props){
                                                                             color="primary"
                                                                             style={{textTransform: "capitalize"}}
                                                                             className={classes.button}
-                                                                            onClick={() => handleUserFollow(userLogged.uid, id)}
+                                                                            onClick={() => handleUserFollow(userLoggedData, id)}
                                                                         >
                                                                             Follow
                                                                         </Button>

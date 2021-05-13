@@ -104,6 +104,8 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
 
     const [authData] = useDocument(userLogged.uid && db.collection('users').doc(userLogged.uid));
     const authFollowingList = authData?.data()?.following;
+    const [userLoggedData, setUserLoggedData] = useState({});
+
 
     const handleOpenFollower = () => {
         setOpenFollower(true);
@@ -122,7 +124,6 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
     }
 
     const handleLoadMore = (type, length) => {
-
         if(type === `1`){
             return db.collection("users")
                 .where(firebase.firestore.FieldPath.documentId(), 'in', userSnapshot.following.slice(length,length+9))
@@ -148,6 +149,16 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
                 })
         }
     }
+
+    useEffect(() => {
+        if(userLogged){
+            setUserLoggedData({
+                uid: userLogged.uid,
+                photoURL: userLogged.photoURL,
+                displayName: userLogged.displayName
+            })
+        }
+    }, [userLogged])
 
     // Your data
     useEffect(() => {
@@ -228,7 +239,7 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
                                                 <Button
                                                     variant="contained"
                                                     className={classes.button}
-                                                    onClick={() => handleUserFollow(userLogged.uid, userSnapshot.uid)}
+                                                    onClick={() => handleUserFollow(userLoggedData, userSnapshot.uid)}
                                                 >
                                                     Follow
                                                 </Button>

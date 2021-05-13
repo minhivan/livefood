@@ -93,7 +93,17 @@ export default function ListUserLikePost(props){
     const [authData] = useDocument(userLogged.uid && db.collection('users').doc(userLogged.uid));
     const authFollowingList = authData?.data()?.following;
     const [likesList, setLikesList] = useState([]);
+    const [userLoggedData, setUserLoggedData] = useState({});
 
+    useEffect(() => {
+        if(userLogged){
+            setUserLoggedData({
+                uid: userLogged.uid,
+                photoURL: userLogged.photoURL,
+                displayName: userLogged.displayName
+            })
+        }
+    }, [userLogged])
 
 
     useEffect(() => {
@@ -168,7 +178,7 @@ export default function ListUserLikePost(props){
                                             <Button
                                                 variant="contained"
                                                 className={classes.button}
-                                                onClick={() => handleUserFollow(userLogged.uid, id)}
+                                                onClick={() => handleUserFollow(userLoggedData, id)}
                                             >
                                                 Follow
                                             </Button>

@@ -661,12 +661,13 @@ input:focus{
 }
 .upload .upload__container .upload__picker{
     padding-top: 20px;
-    display: flex;
-    justify-content: space-around;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 16px
 }
 .upload .upload__container .upload__picker .upload__pickerImage,
 .upload .upload__container .upload__picker .upload__pickButton{
-    width: calc(100% /3 - 10px);
+    width: 100%;
 }
 .upload .upload__container .upload__picker .upload__pickerButton{
     display: flex;

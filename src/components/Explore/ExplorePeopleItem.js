@@ -86,17 +86,23 @@ export default function ExplorePeopleItem(props) {
     const classes = useStyles();
     const [users, setUsers] = useState([])
     const {userLogged} = props;
-
     const userRef = userLogged && db.collection('users').doc(userLogged.uid);
     const [userSnapshot] = useDocument(userRef);
-
+    const [userLoggedData, setUserLoggedData] = useState({});
+    let query = new URLSearchParams(useLocation().search).get("q");
     let userFollowingList = userSnapshot?.data()?.following;
     let userFollowerList = userSnapshot?.data()?.follower;
 
-    let query = new URLSearchParams(useLocation().search).get("q");
 
-
-
+    useEffect(() => {
+        if(userLogged){
+            setUserLoggedData({
+                uid: userLogged.uid,
+                photoURL: userLogged.photoURL,
+                displayName: userLogged.displayName
+            })
+        }
+    }, [userLogged])
 
 
     // List user
@@ -192,7 +198,7 @@ export default function ExplorePeopleItem(props) {
                                         color="primary"
                                         style={{textTransform: "capitalize"}}
                                         className={classes.button}
-                                        onClick={() => handleUserFollow(userLogged.uid, id)}
+                                        onClick={() => handleUserFollow(userLoggedData, id)}
                                     >
                                         Follow
                                     </Button>

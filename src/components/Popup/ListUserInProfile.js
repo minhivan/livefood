@@ -10,7 +10,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import {Link} from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import {handleUserFollow, handleUserUnfollow} from "../../hooks/services";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import {blue} from "@material-ui/core/colors";
 import {checkMyFollowingList} from "../../hooks/services";
@@ -86,6 +86,17 @@ const useStyles = makeStyles((theme) => ({
 export default function ListUserInProfile(props) {
     const classes = useStyles();
     const { handleClose, type, open, data, userLogged, authFollowingList, countUser, handleLoadMore} = props;
+    const [userLoggedData, setUserLoggedData] = useState({});
+
+    useEffect(() => {
+        if(userLogged){
+            setUserLoggedData({
+                uid: userLogged.uid,
+                photoURL: userLogged.photoURL,
+                displayName: userLogged.displayName
+            })
+        }
+    }, [userLogged])
 
     return (
         <Dialog
@@ -141,7 +152,7 @@ export default function ListUserInProfile(props) {
                                             <Button
                                                 variant="contained"
                                                 className={classes.button}
-                                                onClick={() => handleUserFollow(userLogged.uid, id)}
+                                                onClick={() => handleUserFollow(userLoggedData, id)}
                                             >
                                                 Follow
                                             </Button>

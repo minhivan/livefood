@@ -61,7 +61,8 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.background.paper,
         maxHeight: "calc(100vh - 100px)",
         overflowY: "auto",
-        minHeight: "200px"
+        minHeight: "200px",
+        padding: "8px"
     },
     inline: {
         display: 'inline',
@@ -88,6 +89,13 @@ const useStyles = makeStyles((theme) => ({
         borderRadius: "50%",
         margin: "50px 0 20px 0"
     },
+    notiItem: {
+        maxHeight: "100px",
+        borderRadius: " 8px",
+        "&:hover": {
+            backgroundColor: "rgba(38, 50, 56, 0.1)",
+        },
+    }
 }));
 
 
@@ -209,42 +217,39 @@ function MenuHeader(props) {
                         {
                             notifications.length > 0  ? (
                                 notifications.map(({id, data}) => (
-                                    <div key={id}>
-                                        <ListItem alignItems="center">
-                                            <ListItemAvatar>
-                                                <Link to={`/profile/${data?.opponentId}`} >
-                                                    <Avatar alt={data?.displayName} src={data?.avatar} />
-                                                </Link>
-                                            </ListItemAvatar>
-                                            <Link
-                                                to={data?.path}
-                                                style={{flex: "1 1 auto", paddingRight: "10px"}}
-                                                onClick={() => {
-                                                    handleSeenNotification(userLogged.uid, id);
-                                                    handleCloseNotice();
-                                                }}
-                                            >
-                                                <ListItemText
-                                                    primary={
-                                                        <React.Fragment>
-                                                            <span style={{fontWeight: "bold", marginRight: "5px"}}>{data?.from}</span>
-                                                            <span>{data?.message}</span>
-                                                        </React.Fragment>
-                                                    }
-                                                    secondary={
-                                                        dayjs(new Date(data?.timestamp.seconds * 1000).toLocaleString()).fromNow()
-                                                    }
-                                                />
+                                    <ListItem alignItems="center" className={classes.notiItem} key={id}>
+                                        <ListItemAvatar>
+                                            <Link to={`/profile/${data?.opponentId}`} >
+                                                <Avatar alt={data?.displayName} src={data?.avatar} />
                                             </Link>
-                                            {
-                                                data?.status === "unread" ? (
-                                                    <div id="new" className="style-scope ytd-notification-renderer "/>
-                                                ) : null
-                                            }
+                                        </ListItemAvatar>
+                                        <Link
+                                            to={data?.path}
+                                            style={{flex: "1 1 auto", paddingRight: "10px"}}
+                                            onClick={() => {
+                                                handleSeenNotification(userLogged.uid, id);
+                                                handleCloseNotice();
+                                            }}
+                                        >
+                                            <ListItemText
+                                                primary={
+                                                    <React.Fragment>
+                                                        <span style={{fontWeight: "bold", marginRight: "5px"}}>{data?.from}</span>
+                                                        <span>{data?.message}</span>
+                                                    </React.Fragment>
+                                                }
+                                                secondary={
+                                                    dayjs(new Date(data?.timestamp.seconds * 1000).toLocaleString()).fromNow()
+                                                }
+                                            />
+                                        </Link>
+                                        {
+                                            data?.status === "unread" ? (
+                                                <div id="new" className="style-scope ytd-notification-renderer "/>
+                                            ) : null
+                                        }
 
-                                        </ListItem>
-                                        <Divider variant="inset" component="li" />
-                                    </div>
+                                    </ListItem>
                                 ))
                             ) : (
                                 <div className={classes.wrapper}>
