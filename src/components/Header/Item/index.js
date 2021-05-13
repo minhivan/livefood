@@ -27,6 +27,7 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import {handleSeenNotification} from "../../../hooks/services";
+import {blue} from "@material-ui/core/colors";
 
 
 
@@ -45,6 +46,9 @@ const useStyles = makeStyles((theme) => ({
     },
     userPopover: {
         width: "400px"
+    },
+    userPopoverItem: {
+        padding: "10px 20px"
     },
     iconBtn: {
         marginRight: theme.spacing(1),
@@ -95,7 +99,12 @@ const useStyles = makeStyles((theme) => ({
         "&:hover": {
             backgroundColor: "rgba(38, 50, 56, 0.1)",
         },
-    }
+    },
+    avatar: {
+        backgroundColor: blue[100],
+        color: blue[600],
+        cursor: "pointer"
+    },
 }));
 
 
@@ -219,7 +228,7 @@ function MenuHeader(props) {
                                 notifications.map(({id, data}) => (
                                     <ListItem alignItems="center" className={classes.notiItem} key={id}>
                                         <ListItemAvatar>
-                                            <Link to={`/profile/${data?.opponentId}`} >
+                                            <Link to={`/profile/${data?.uid}`} >
                                                 <Avatar alt={data?.displayName} src={data?.avatar} />
                                             </Link>
                                         </ListItemAvatar>
@@ -267,7 +276,7 @@ function MenuHeader(props) {
                 </Popover>
 
                 <IconButton onClick={handleClick}>
-                    <Avatar alt={userLogged?.displayName} src={userLogged?.photoURL} />
+                    <Avatar alt={userLogged?.displayName} src={userLogged?.photoURL} className={classes.avatar}/>
                 </IconButton>
                 <Popover
                     className={classes.userPopover}
@@ -285,9 +294,9 @@ function MenuHeader(props) {
                         horizontal: 'center',
                     }}
                 >
-                    <MenuList autoFocusItem={open} id="menu-list-grow" style={{padding: "0", minWidth: 130}} >
+                    <MenuList autoFocusItem={open} id="menu-list-grow" style={{padding: "0", minWidth: 200}} >
                         <Link to={{pathname:`/profile/${userLogged?.uid}`}} >
-                            <MenuItem onClick={handleClose}>
+                            <MenuItem onClick={handleClose} className={classes.userPopoverItem}>
                                 <UserIcon
                                     className={classes.iconBtnCircle}
                                     size="15"
@@ -296,7 +305,7 @@ function MenuHeader(props) {
                             </MenuItem>
                         </Link>
                         <Link to={{pathname:`/profile/saved/${userLogged?.uid}`}} >
-                            <MenuItem onClick={handleClose}>
+                            <MenuItem onClick={handleClose} className={classes.userPopoverItem}>
                                 <BookmarkIcon
                                     className={classes.iconBtn}
                                     size="15"
@@ -305,7 +314,7 @@ function MenuHeader(props) {
                             </MenuItem>
                         </Link>
                         <Link to={{pathname:`/account/edit`}} >
-                            <MenuItem onClick={handleClose}>
+                            <MenuItem onClick={handleClose} className={classes.userPopoverItem}>
                                 <SettingIcon
                                     className={classes.iconBtn}
                                     size="15"
@@ -314,7 +323,7 @@ function MenuHeader(props) {
                             </MenuItem>
                         </Link>
                         <Divider />
-                        <MenuItem onClick={() => auth.signOut()}>
+                        <MenuItem onClick={() => auth.signOut()} className={classes.userPopoverItem}>
                             <LogoutIcon
                                 className={classes.iconBtn}
                                 size="15"

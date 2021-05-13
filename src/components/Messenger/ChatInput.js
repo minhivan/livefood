@@ -7,9 +7,6 @@ import {useDocument} from "react-firebase-hooks/firestore";
 import SentimentSatisfiedRoundedIcon from "@material-ui/icons/SentimentSatisfiedRounded";
 import {Popover, TextField} from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
-// import AddCircleTwoToneIcon from '@material-ui/icons/AddCircleTwoTone';
-// import AddPhotoAlternateTwoToneIcon from '@material-ui/icons/AddPhotoAlternateTwoTone';
-// import RoomTwoToneIcon from '@material-ui/icons/RoomTwoTone';
 
 import 'emoji-mart/css/emoji-mart.css'
 import { Picker } from 'emoji-mart'

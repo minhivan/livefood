@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ExploreVideo = (props) => {
     const classes = useStyles();
-
+    const {userLogged} = props;
     const [exploreVid, setExploreVid] = useState([]);
 
     useEffect(() => {
@@ -67,7 +67,7 @@ const ExploreVideo = (props) => {
             className="app__bodyContainer"
         >
             <div className="explore__root">
-                <NavBar userLogged={props.userLogged}/>
+                <NavBar userLogged={userLogged}/>
                 <div className="explore__masonry-container">
                     {
                         exploreVid.length > 0 ? (
@@ -79,6 +79,7 @@ const ExploreVideo = (props) => {
                                             postId={id}
                                             post={post}
                                             postAuthor={authorProfile}
+                                            userLogged={userLogged}
                                             masonry={true}
                                         />
                                     ))

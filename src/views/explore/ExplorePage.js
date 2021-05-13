@@ -45,7 +45,7 @@ const Explore = (props) => {
                 .get().then(snapshot => {
                     let temp = []
                     snapshot.forEach(data => {
-                        var userProfile = {};
+                        let userProfile = {};
                         if(data.data().uid !== userLogged.uid){
                             data.data().user.get().then( author => {
                                 Object.assign(userProfile, author.data());
@@ -63,7 +63,7 @@ const Explore = (props) => {
                 .get().then(snapshot => {
                     let temp = []
                     snapshot.forEach(data => {
-                        var userProfile = {};
+                        let userProfile = {};
                         data.data().user.get().then( author => {
                             Object.assign(userProfile, author.data());
                         })
@@ -83,7 +83,7 @@ const Explore = (props) => {
             .get().then(snapshot => {
             let temp = []
             snapshot.forEach(data => {
-                var userProfile = {};
+                let userProfile = {};
                 data.data().user.get().then( author => {
                     Object.assign(userProfile, author.data());
                 })

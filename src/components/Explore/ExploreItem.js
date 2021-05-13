@@ -77,22 +77,22 @@ export default function ExploreItem(props) {
             </>
     } else{
         media = <img
-                alt=""
-                className={classes.img}
-                src={post.mediaUrl}
-                onClick={() => handleOpen()}
-            />
+            alt=""
+            className={classes.img}
+            src={post.mediaUrl}
+            onClick={() => handleOpen()}
+        />
     }
 
     return (
-            <div className={`explore__gridSmall ${masonry ? "explore__masonry-item" : ""}`} key={postId}>
-                {/*<img src={props.post.mediaUrl}  alt="" className={classes.img} onClick={() => handleOpen(props.post, props.id)} />*/}
-                {media}
-                {
-                    open ? (
-                        <MediaViewer userLogged={userLogged} open={open} postId={postId} post={post} postAuthor={postAuthor} handleClose={handleClose}  />
-                    ) : null
-                }
-            </div>
+        <div className={`explore__gridSmall ${masonry ? "explore__masonry-item" : ""}`} key={postId}>
+            {/*<img src={props.post.mediaUrl}  alt="" className={classes.img} onClick={() => handleOpen(props.post, props.id)} />*/}
+            {media}
+            {
+                open ? (
+                    <MediaViewer userLogged={userLogged} open={open} postId={postId} post={post} postAuthor={postAuthor} handleClose={handleClose}  />
+                ) : null
+            }
+        </div>
     );
 }

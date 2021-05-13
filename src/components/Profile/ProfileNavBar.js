@@ -144,9 +144,6 @@ const ProfileNavBar = ({userSnapshot}) => {
                 ) : null
             }
 
-
-
-
         </List>
 
     )

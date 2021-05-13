@@ -20,6 +20,7 @@ import {
 import NavItem from './NavItem';
 import {useDocument} from "react-firebase-hooks/firestore";
 import {db} from "../../../firebase";
+import {blue} from "@material-ui/core/colors";
 
 
 
@@ -36,9 +37,11 @@ const useStyles = makeStyles(() => ({
         border: "none",
     },
     avatar: {
-        cursor: 'pointer',
         width: 56,
         height: 56,
+        backgroundColor: blue[100],
+        color: blue[600],
+        cursor: "pointer"
     },
     name: {
         fontWeight: "600",

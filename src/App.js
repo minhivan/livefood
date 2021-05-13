@@ -45,7 +45,7 @@ function App() {
 		}
 	}, [userLogged])
 
-	//
+	// //
 	// useEffect(() => {
 	// 	if (navigator.geolocation) {
 	// 		navigator.geolocation.watchPosition(function(position) {
@@ -60,6 +60,8 @@ function App() {
 			<AppLoading />
 		)
 	}
+
+
 	return (
 		<ThemeProvider theme={theme}>
 			<GlobalStyles />

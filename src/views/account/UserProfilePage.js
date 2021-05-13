@@ -92,6 +92,7 @@ const UserProfilePage = (props) => {
                             {/* User profile */}
                             <ProfileHeader userSnapshot={userSnapshot} count={userData?.data()?.post?.length} userLogged={userLogged}/>
                             {/*  User content  */}
+                            <Divider />
                             <ProfileNavBar userSnapshot={userSnapshot}/>
                             <Divider />
                             {content(props.pagePath, id, userLogged)}

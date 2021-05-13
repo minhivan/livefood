@@ -23,6 +23,8 @@ import BookmarkRoundedIcon from "@material-ui/icons/BookmarkRounded";
 import {handleSavePost, handleUnSavedPost, handleLikePost, handleDislikePost} from "../../hooks/services";
 import CommentInput from "../Comments/CommentInput";
 import ListUserLikePost from "../Popup/ListUserLikePost";
+import {db} from "../../firebase";
+import {useDocument} from "react-firebase-hooks/firestore";
 
 
 
@@ -178,10 +180,11 @@ function MediaViewer(props){
     const [selected, setSelected] = useState(false);
     const [expanded, setExpanded] = useState(true);
     const [saveSelected, setSaveSelected] = useState(false);
-    const [likeCount, setLikeCount] = useState(post?.likeBy?.length)
     const [openLikesList, setOpenLikesList] = useState(false);
     const [isReadMore, setIsReadMore] = useState(true);
     const [userLoggedData, setUserLoggedData] = useState({});
+
+    const [postSnapshot] = useDocument(postId && db.collection('posts').doc(postId));
 
     useEffect(() => {
         if(userLogged){
@@ -192,9 +195,6 @@ function MediaViewer(props){
             })
         }
     }, [userLogged])
-
-
-
 
     const handleOpenLikesList = () => {
         setOpenLikesList(true);
@@ -224,13 +224,11 @@ function MediaViewer(props){
     const likePost = () => {
         setSelected(true);
         handleLikePost(postId, userLoggedData, post.uid)
-        setLikeCount((likes) => (selected ? likes - 1 : likes + 1));
     }
 
     const dislikePost = () => {
         setSelected(false);
         handleDislikePost(postId, userLogged.uid, post.uid)
-        setLikeCount((likes) => (selected ? likes - 1 : likes + 1));
     }
 
     const savePost = () => {
@@ -315,9 +313,9 @@ function MediaViewer(props){
                                             <span className={classes.captionText} >
                                                 {
                                                     isReadMore ? post.caption.slice(0, 50) : post.caption}
-                                                    <span onClick={toggleReadMore} style={{fontWeight: "bold", cursor: "pointer", color: "#8e8e8e"}}>
+                                                <span onClick={toggleReadMore} style={{fontWeight: "bold", cursor: "pointer", color: "#8e8e8e"}}>
                                                     {isReadMore ? "...read more" : null
-                                                }
+                                                    }
                                             </span>
                                             </span>
                                         ) : post.caption
@@ -401,9 +399,9 @@ function MediaViewer(props){
 
                             {/* Like count */}
                             {
-                                likeCount > 0 ? (
+                                postSnapshot?.data()?.likeCount > 0 ? (
                                     <div className={classes.displayLike}>
-                                        <span className={classes.likesCount} onClick={handleOpenLikesList}><b>{likeCount.toLocaleString()} {likeCount  === 1 ? 'Like' : 'Likes'}</b></span>
+                                        <span className={classes.likesCount} onClick={handleOpenLikesList}><b>{postSnapshot?.data()?.likeCount.toLocaleString()} {postSnapshot?.data()?.likeCount  === 1 ? 'Like' : 'Likes'}</b></span>
                                     </div>
                                 ) : null
                             }
@@ -453,7 +451,7 @@ function MediaViewer(props){
                         <CommentInput user={userLogged} postId={postId} type={post.type} path={'preview'}  postAuthor={post.uid}/>
                         {
                             openLikesList ? (
-                                <ListUserLikePost open={openLikesList} handleClose={handleCloseLikesList} userLogged={userLogged} postLike={post?.likeBy} likesCount={post?.likeCount}/>
+                                <ListUserLikePost open={openLikesList} handleClose={handleCloseLikesList} userLogged={userLogged} postLike={postSnapshot?.data()?.likeBy} likesCount={postSnapshot?.data()?.likeCount}/>
                             ) : null
                         }
                     </div>

@@ -1,6 +1,7 @@
 import firebase from "firebase";
 import {db} from "../firebase";
 
+
 export function handleLikePost(postId, userData, postAuthor) {
     db.collection('posts').doc(postId).update({
         likeBy: firebase.firestore.FieldValue.arrayUnion(userData.uid),
@@ -13,7 +14,7 @@ export function handleLikePost(postId, userData, postAuthor) {
                 message: "love your post",
                 from : userData.displayName,
                 avatar: userData.photoURL,
-                opponentId: userData.uid,
+                uid: userData.uid,
                 path : "/p/" + postId,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 status: "unread"
@@ -67,6 +68,7 @@ export const handleUserFollow = (userData, id) => {
                 type : "follow",
                 message: "started to follow you",
                 from : userData.displayName,
+                uid: userData.uid,
                 avatar: userData.photoURL,
                 path : "/profile/" + userData.uid,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),

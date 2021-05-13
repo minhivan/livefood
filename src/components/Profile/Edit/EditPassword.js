@@ -6,9 +6,9 @@ import {Link} from "react-router-dom";
 import Button from "@material-ui/core/Button";
 
 import {makeStyles} from "@material-ui/core/styles";
-import {auth} from "../../../firebase";
 import firebase from "firebase";
 import AlertPopup from "../../Popup/AlertPopup";
+import {blue} from "@material-ui/core/colors";
 
 
 
@@ -17,6 +17,8 @@ const useStyles = makeStyles((theme) => ({
         width: 100,
         height: 100,
         margin: "0 20px",
+        backgroundColor: blue[100],
+        color: blue[600],
     },
     avatarHolder: {
         padding: "16px 32px"

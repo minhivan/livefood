@@ -107,16 +107,19 @@ export default function ListUserLikePost(props){
 
 
     useEffect(() => {
-        db.collection("users")
+        const unsubscribe = db.collection("users")
             .where(firebase.firestore.FieldPath.documentId(), 'in', postLike.slice(0,9))
-            .get().then(snapshot => {
-            setLikesList(
-                snapshot.docs.map((doc => ({
-                    id: doc.id,
-                    data: doc.data(),
-                })))
-            );
+            .onSnapshot(snapshot => {
+                setLikesList(
+                    snapshot.docs.map((doc => ({
+                        id: doc.id,
+                        data: doc.data(),
+                    })))
+                );
         })
+        return () => {
+            unsubscribe();
+        }
     }, [postLike])
 
     const handleLoadMore = (length) => {

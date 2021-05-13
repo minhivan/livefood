@@ -17,6 +17,7 @@ import Previewer from "../../MediaViewer/Preview";
 import AddDishes from "../../Upload/AddDishes";
 
 import {handleDeleteMenuItem} from "../../../hooks/services";
+import {blue} from "@material-ui/core/colors";
 const useStyles = makeStyles((theme) => ({
     root: {
         width: '100%',
@@ -29,6 +30,8 @@ const useStyles = makeStyles((theme) => ({
         width: 100,
         height: 100,
         margin: "0 20px",
+        backgroundColor: blue[100],
+        color: blue[600],
     },
     avatarHolder: {
         padding: "16px 32px"

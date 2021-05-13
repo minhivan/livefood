@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Box, TextField} from "@material-ui/core";
+import {Box, Popover, TextField} from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
 import {db} from "../../firebase";
 import firebase from "firebase";
@@ -7,6 +7,9 @@ import Button from "@material-ui/core/Button";
 import {Rating} from "@material-ui/lab";
 import {makeStyles} from "@material-ui/core/styles";
 import {useDocument} from "react-firebase-hooks/firestore";
+import SentimentSatisfiedRoundedIcon from "@material-ui/icons/SentimentSatisfiedRounded";
+import IconButton from "@material-ui/core/IconButton";
+import {Picker} from "emoji-mart";
 
 const labels = {
     1: 'Useless',
@@ -26,7 +29,7 @@ const useStyles = makeStyles({
         display: 'flex',
         paddingLeft: "15px",
         alignItems: "center"
-    }
+    },
 });
 
 export default function CommentInput({user, postId, type, path, refInput, postAuthor}){
@@ -46,6 +49,23 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
         }
         return rs;
     }
+
+    const [anchorElPicker, setAnchorElPicker] = useState(null);
+
+    const openEmoji = Boolean(anchorElPicker);
+    const id = openEmoji ? 'simple-popover-picker' : undefined;
+
+    const handleClickEmoji = (event) => {
+        setAnchorElPicker(event.currentTarget);
+    }
+    const handleCloseEmoji = () => {
+        setAnchorElPicker(null);
+    };
+    const addEmoji = (event) => {
+        let emoji = event.native;
+        setComment(comment + emoji);
+    }
+
 
 
     const postComment = (event) => {
@@ -78,10 +98,10 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
                         postAuthor && db.collection('users').doc(postAuthor).collection("notifications").add({
                             reference: "post",
                             type : "comment",
-                            message: "commented on your post",
+                            message: "rating on your post",
                             from : user.displayName,
                             avatar: user.photoURL,
-                            opponentId: user.uid,
+                            uid: user.uid,
                             path : "/p/" + postId,
                             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                             status: "unread"
@@ -147,14 +167,39 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
 
                     <form onSubmit={postComment}>
                         <TextField
+                            rowsMax={4}
+                            multiline
                             ref={refInput}
                             className="comment__input"
                             placeholder="Leave a comment ... "
                             value={comment}
                             onChange={event => setComment(event.target.value)}
                             InputProps={{ disableUnderline: true}}
-
                         />
+                        <IconButton className="chat__iconPicker" aria-label="Add " onClick={handleClickEmoji}>
+                            <SentimentSatisfiedRoundedIcon />
+                        </IconButton>
+                        <Popover
+
+                            id={id}
+                            open={openEmoji}
+                            anchorEl={anchorElPicker}
+                            onClose={handleCloseEmoji}
+                            anchorOrigin={{
+                                vertical: 'top',
+                                horizontal: 'left',
+                            }}
+                            transformOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'center',
+                            }}
+                        >
+                            <Picker
+                                onSelect={addEmoji}
+                                title="Livefood"
+                            />
+                        </Popover>
+
                         <Button variant="contained" disabled={checkEmpty(comment)} onClick={postComment}>
                             Post
                         </Button>
