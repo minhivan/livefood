@@ -8,6 +8,9 @@ import GoogleIcon from '../../images/icons/Google';
 import Page from "../../components/Page";
 import {checkSignInWithGoogle} from "../../hooks/services";
 import {useAuthState} from "react-firebase-hooks/auth";
+import AlertPopup from "../../components/Popup/AlertPopup";
+import {useFormik} from "formik";
+import * as yup from "yup";
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -77,27 +80,58 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
+
+const validationSchema = yup.object({
+    email: yup
+        .string('Enter your email')
+        .email('Enter a valid email')
+        .required('Email is required'),
+    password: yup
+        .string('Enter your password')
+        .min(8, 'Password should be of minimum 8 characters length')
+        .required('Password is required')
+
+});
+
+
 function PageLogin() {
     const classes = useStyles();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     const [user] = useAuthState(auth);
+    const [open, setOpen] = useState(false);
+    const [message, setMessage] = useState('')
 
+    const handleClosePopup = (event) => {
+        setOpen(false);
+    };
+
+    const formik = useFormik({
+        initialValues: {
+            email: '',
+            password: '',
+        },
+        validationSchema: validationSchema,
+        onSubmit: (values) => {
+            console.log(values.email);
+            signIn(values.email, values.password);
+        },
+    });
 
     const signUpGoogle = (event) => {
         event.preventDefault();
         auth.signInWithPopup(provider).then(async (result) => {
              await checkSignInWithGoogle(result.user);
         }).catch((error) =>{
-            alert(error.message)
+            setOpen(true);
+            setMessage(error.message)
         })
     }
 
-    const signIn = (event) => {
-        event.preventDefault();
+    const signIn = (email, password) => {
         auth.signInWithEmailAndPassword(email, password)
             .catch((error) => {
-                alert(error.message);
+                // alert(error.message);
+                setOpen(true);
+                setMessage(error.message)
             });
     }
 
@@ -121,47 +155,52 @@ function PageLogin() {
                                 />
                             </div>
                             <div className={classes.form} >
-                                <TextField
-                                    variant="outlined"
-                                    margin="normal"
-                                    required
-                                    fullWidth
-                                    label="Email address"
-                                    id="email"
-                                    placeholder="Email address"
-                                    value={email}
-                                    name="email"
-                                    autoComplete="email"
-                                    autoFocus
-                                    onChange={(e) => setEmail(e.target.value)}
+                                <form onSubmit={formik.handleSubmit} style={{width: "100%"}}>
+                                    <TextField
+                                        variant="outlined"
+                                        margin="normal"
+                                        required
+                                        fullWidth
+                                        label="Email address"
+                                        id="email"
+                                        placeholder="Email address"
+                                        value={formik.values.email}
+                                        onChange={formik.handleChange}
+                                        error={formik.touched.email && Boolean(formik.errors.email)}
+                                        helperText={formik.touched.email && formik.errors.email}
+                                        name="email"
+                                        autoComplete="email"
+                                        autoFocus
 
-                                />
-                                <TextField
-                                    variant="outlined"
-                                    margin="normal"
-                                    required
-                                    label="Password"
-                                    fullWidth
-                                    name="password"
-                                    value={password}
-                                    placeholder="Password"
-                                    type="password"
-                                    id="password"
-                                    autoComplete="current-password"
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    />
+                                    <TextField
+                                        variant="outlined"
+                                        margin="normal"
+                                        required
+                                        label="Password"
+                                        fullWidth
+                                        name="password"
+                                        value={formik.values.password}
+                                        onChange={formik.handleChange}
+                                        error={formik.touched.password && Boolean(formik.errors.password)}
+                                        helperText={formik.touched.password && formik.errors.password}
+                                        placeholder="Password"
+                                        type="password"
+                                        id="password"
+                                        autoComplete="current-password"
 
-                                />
+                                    />
 
-                                <Button
-                                    type="submit"
-                                    fullWidth
-                                    variant="contained"
-                                    color="primary"
-                                    className={classes.button}
-                                    onClick={signIn}
-                                >
-                                    Log in
-                                </Button>
+                                    <Button
+                                        type="submit"
+                                        fullWidth
+                                        variant="contained"
+                                        color="primary"
+                                        className={classes.button}
+                                    >
+                                        Log in
+                                    </Button>
+                                </form>
                             </div>
 
                             <div className={classes.dividerSection}>
@@ -189,6 +228,7 @@ function PageLogin() {
                     </div>
                 </div>
             </div>
+            <AlertPopup open={open} handleClose={handleClosePopup} title="LiveFood" message={message}/>
         </Page>
 
     )

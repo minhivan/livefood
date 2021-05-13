@@ -155,7 +155,7 @@ function PageLogin() {
                             <form onSubmit={formik.handleSubmit} style={{width: "100%"}}>
                                 <TextField
                                     name="username"
-                                    label="User name"
+                                    label="Display name"
                                     value={formik.values.username}
                                     onChange={formik.handleChange}
                                     error={formik.touched.username && Boolean(formik.errors.username)}

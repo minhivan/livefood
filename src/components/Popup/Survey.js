@@ -216,6 +216,7 @@ export default function Survey({userLogged}) {
             aboutMe: {
                 favorites: selectedChip.map((data) => data.label),
                 location: region.province_name,
+                locationId: region.province_id,
                 gender: gender
             },
         }).then(function() {

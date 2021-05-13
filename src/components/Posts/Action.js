@@ -14,8 +14,6 @@ import BookmarkBorderOutlinedIcon from "@material-ui/icons/BookmarkBorderOutline
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import CardActions from "@material-ui/core/CardActions";
 import ListUserLikePost from "../Popup/ListUserLikePost";
-import {db} from "../../firebase";
-import firebase from "firebase";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -66,6 +64,17 @@ export default function PostAction({postId, post, expanded, setExpanded, handleF
     const [selected, setSelected] = useState(false);
     const [saveSelected, setSaveSelected] = useState(false);
     const [openLikesList, setOpenLikesList] = useState(false);
+    const [userLoggedData, setUserLoggedData] = useState({});
+
+    useEffect(() => {
+        if(userLogged){
+            setUserLoggedData({
+                uid: userLogged.uid,
+                photoURL: userLogged.photoURL,
+                displayName: userLogged.displayName
+            })
+        }
+    }, [userLogged])
 
     const handleOpenLikesList = () => {
         setOpenLikesList(true);
@@ -83,7 +92,7 @@ export default function PostAction({postId, post, expanded, setExpanded, handleF
     // Handle like and dislike action
     const likePost = () => {
         setSelected(true);
-        handleLikePost(postId, userLogged.uid)
+        handleLikePost(postId, userLoggedData, post.uid)
     }
 
     const dislikePost = () => {

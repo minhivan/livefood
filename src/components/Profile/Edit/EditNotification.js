@@ -160,67 +160,68 @@ const EditNotification = (props) => {
 
     console.log(state);
     return(
-        <article className="edit_account__content">
-            <form method="POST" onSubmit={event => event.preventDefault()}>
-                <div className={classes.holder}>
-                    <aside className={classes.label}>
-                        <label htmlFor="comments" style={{fontWeight: "bold", fontSize: "18px"}}>Comments</label>
-                    </aside>
-                    <div className={classes.input}>
-                        <Switch
-                            checked={state}
-                            onChange={handleChange}
-                            inputProps={{ 'aria-label': 'secondary checkbox' }}
-                            id="comments"
-                        />
+        <article className="edit_account__content" style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
+            <h3>This section still on develop mode</h3>
+            {/*<form method="POST" onSubmit={event => event.preventDefault()}>*/}
+            {/*    <div className={classes.holder}>*/}
+            {/*        <aside className={classes.label}>*/}
+            {/*            <label htmlFor="comments" style={{fontWeight: "bold", fontSize: "18px"}}>Comments</label>*/}
+            {/*        </aside>*/}
+            {/*        <div className={classes.input}>*/}
+            {/*            <Switch*/}
+            {/*                checked={state}*/}
+            {/*                onChange={handleChange}*/}
+            {/*                inputProps={{ 'aria-label': 'secondary checkbox' }}*/}
+            {/*                id="comments"*/}
+            {/*            />*/}
 
-                        <div className={classes.description}>
-                            <span className={classes.descriptionText}>Someone commented: "Nice shot!"</span>
-                        </div>
-                    </div>
-                </div>
+            {/*            <div className={classes.description}>*/}
+            {/*                <span className={classes.descriptionText}>Someone commented: "Nice shot!"</span>*/}
+            {/*            </div>*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
 
-                <div className={classes.holder}>
-                    <aside className={classes.label}>
-                        <label htmlFor="request" style={{fontWeight: "bold", fontSize: "18px"}}>Follow Requests</label>
-                    </aside>
-                    <div className={classes.input}>
-                        <Switch
-                            checked={state}
-                            onChange={handleChange}
-                            inputProps={{ 'aria-label': 'secondary checkbox' }}
-                            id="request"
-                        />
+            {/*    <div className={classes.holder}>*/}
+            {/*        <aside className={classes.label}>*/}
+            {/*            <label htmlFor="request" style={{fontWeight: "bold", fontSize: "18px"}}>Follow Requests</label>*/}
+            {/*        </aside>*/}
+            {/*        <div className={classes.input}>*/}
+            {/*            <Switch*/}
+            {/*                checked={state}*/}
+            {/*                onChange={handleChange}*/}
+            {/*                inputProps={{ 'aria-label': 'secondary checkbox' }}*/}
+            {/*                id="request"*/}
+            {/*            />*/}
 
-                        <div className={classes.description}>
-                            <span className={classes.descriptionText}>Someone started to follow you</span>
-                        </div>
-                    </div>
-                </div>
+            {/*            <div className={classes.description}>*/}
+            {/*                <span className={classes.descriptionText}>Someone started to follow you</span>*/}
+            {/*            </div>*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
 
-                <div className={classes.holder}>
-                    <aside className={classes.label}>
-                        <label htmlFor="email" style={{fontWeight: "bold", fontSize: "18px"}}>Feedback Email</label>
-                    </aside>
-                    <div className={classes.input}>
-                        <Switch
-                            checked={state}
-                            onChange={handleChange}
-                            inputProps={{ 'aria-label': 'secondary checkbox' }}
-                            id="email"
-                        />
+            {/*    <div className={classes.holder}>*/}
+            {/*        <aside className={classes.label}>*/}
+            {/*            <label htmlFor="email" style={{fontWeight: "bold", fontSize: "18px"}}>Feedback Email</label>*/}
+            {/*        </aside>*/}
+            {/*        <div className={classes.input}>*/}
+            {/*            <Switch*/}
+            {/*                checked={state}*/}
+            {/*                onChange={handleChange}*/}
+            {/*                inputProps={{ 'aria-label': 'secondary checkbox' }}*/}
+            {/*                id="email"*/}
+            {/*            />*/}
 
-                        <div className={classes.description}>
-                            <span className={classes.descriptionText}>Give feedback on our app</span>
-                        </div>
-                    </div>
-                </div>
+            {/*            <div className={classes.description}>*/}
+            {/*                <span className={classes.descriptionText}>Give feedback on our app</span>*/}
+            {/*            </div>*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
 
-                <div className={classes.submit}>
-                    <Button variant="contained" color="primary" onClick={handleSubmit}>Update</Button>
-                </div>
+            {/*    <div className={classes.submit}>*/}
+            {/*        <Button variant="contained" color="primary" onClick={handleSubmit}>Update</Button>*/}
+            {/*    </div>*/}
 
-            </form>
+            {/*</form>*/}
 
         </article>
 

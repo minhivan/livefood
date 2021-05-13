@@ -74,6 +74,19 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
                     db.collection('posts').doc(postId).update({
                         commentsCount: firebase.firestore.FieldValue.increment(1)
                     })
+                    if(postAuthor !== user?.uid) {
+                        postAuthor && db.collection('users').doc(postAuthor).collection("notifications").add({
+                            reference: "post",
+                            type : "comment",
+                            message: "commented on your post",
+                            from : user.displayName,
+                            avatar: user.photoURL,
+                            opponentId: user.uid,
+                            path : "/p/" + postId,
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                            status: "unread"
+                        })
+                    }
                 })
             }
             else {
@@ -86,6 +99,19 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
                     db.collection('posts').doc(postId).update({
                         commentsCount: firebase.firestore.FieldValue.increment(1)
                     })
+                    if(postAuthor !== user?.uid) {
+                        postAuthor && db.collection('users').doc(postAuthor).collection("notifications").add({
+                            reference: "post",
+                            type : "comment",
+                            message: "commented on your post",
+                            from : user.displayName,
+                            avatar: user.photoURL,
+                            opponentId: user.uid,
+                            path : "/p/" + postId,
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                            status: "unread"
+                        })
+                    }
                 });
             }
             setComment('');

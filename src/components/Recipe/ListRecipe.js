@@ -9,7 +9,8 @@ const useStyles = makeStyles((theme) => ({
     rating: {
         display: "flex",
         alignItems: "center",
-        width: "100%"
+        width: "100%",
+        paddingBottom: "10px"
     }
 }));
 
@@ -35,7 +36,7 @@ export default function ListRecipe({id, post, postAuthor}){
                             {
                                 post.rating ? (
                                     <div className={classes.rating}>
-                                        <Rating style={{margin: "0 5px 10px 0"}} name="read-only" value={post?.rating} precision={0.1} readOnly /> ({parseFloat(post?.rating).toFixed(1, 2)})
+                                        <Rating style={{marginRight: "5px"}} name="read-only" value={post?.rating} precision={0.1} readOnly /> ({parseFloat(post?.rating).toFixed(1, 2)})
                                     </div>
                                 ) : null
                             }

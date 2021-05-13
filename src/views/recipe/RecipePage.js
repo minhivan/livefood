@@ -56,13 +56,10 @@ const useStyles = makeStyles((theme) => ({
 
 const RecipePage = (props) => {
     const classes = useStyles();
-
     const [type, setType] = React.useState('newest');
     const [newest, setNewest] = useState([]);
     const [listRecipe, setListRecipe] = useState([]);
     const [cate] = useCollection(db.collection("category"))
-
-
     window.scroll({top: 0, left: 0, behavior: 'smooth' });
 
 

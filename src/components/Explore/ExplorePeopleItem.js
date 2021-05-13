@@ -95,6 +95,10 @@ export default function ExplorePeopleItem(props) {
 
     let query = new URLSearchParams(useLocation().search).get("q");
 
+
+
+
+
     // List user
     useEffect(() => {
         if(typeof userFollowingList !== 'undefined' && userFollowingList?.length > 0){

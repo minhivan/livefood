@@ -6,7 +6,7 @@ import {Link} from "react-router-dom";
 import {makeStyles} from "@material-ui/core/styles";
 import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
-import {Select,TextField} from "@material-ui/core";
+import {InputLabel, MenuItem, Select, TextField} from "@material-ui/core";
 import {useDocument} from "react-firebase-hooks/firestore";
 import {db} from "../../../firebase";
 import {
@@ -15,6 +15,7 @@ import {
     GoogleMap,
     Marker,
 } from "react-google-maps";
+import FormControl from "@material-ui/core/FormControl";
 
 const useStyles = makeStyles((theme) => ({
     avatar: {
@@ -95,23 +96,37 @@ export default function EditAbout(props){
     // const [lng, setLng] = useState('');
     const [province, setProvince] = useState([]);
     const [address, setAddress] = useState('');
+    const [listRestaurantCate, setListRestaurantCate] = useState([]);
+    const [restaurantCate, setRestaurantCate] = useState('');
+
     const [userData] = useDocument(userLogged &&  db.collection("users").doc(userLogged.uid));
 
     useEffect(() => {
-
         fetch('https://vapi.vnappmob.com/api/province/')
             .then(res => res.json()).then(res => {
             if (res.results && res.results.length > 0) {
                 setProvince(res.results)
             }
         });
-
+        setAddress(userData?.data()?.aboutRestaurant?.address ?? '')
+        setRestaurantCate(userData?.data()?.aboutRestaurant?.modelId ?? '')
         setBio(userData?.data()?.aboutRestaurant?.bio ?? '');
         setOpening(userData?.data()?.aboutRestaurant?.opening ?? '07:30')
         setClosed(userData?.data()?.aboutRestaurant?.closed ?? '21:30')
-        setUserProvince(userData?.data()?.aboutRestaurant?.location ?? '')
+        setUserProvince(userData?.data()?.aboutRestaurant?.locationId ?? '')
+
     }, [userData]);
 
+    useEffect(() => {
+        return db.collection('restaurantCategory')
+            .orderBy('title', 'asc')
+            .get().then( snapshot => {
+            setListRestaurantCate(snapshot.docs.map(doc => ({
+                id: doc.id,
+                title: doc.data().title,
+            })));
+        })
+    }, [])
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -120,8 +135,11 @@ export default function EditAbout(props){
                 bio: bio,
                 opening: opening,
                 closed: closed,
-                location: userProvince,
-                address: address
+                locationId: userProvince,
+                location: province.find(o => o.province_id === userProvince).province_name,
+                address: address,
+                modelId: restaurantCate,
+                model: listRestaurantCate.find(o => o.id === restaurantCate).title
             },
 
         }).then(function() {
@@ -138,7 +156,8 @@ export default function EditAbout(props){
         setClosed(event.target.value);
     }
 
-
+    // console.log(userProvince)
+    // console.log(province.find(o => o.province_name === userProvince))
     return (
         <article className="edit_account__content">
             <div className={classes.profile}>
@@ -161,6 +180,31 @@ export default function EditAbout(props){
                 />
                 <Divider />
                 <form method="POST" onSubmit={event => event.preventDefault()}>
+                    <div className={classes.holder}>
+                        <aside className={classes.label}>
+                            <label htmlFor="pepBio" style={{fontWeight: "bold", fontSize: "18px"}}>Business model
+                            </label>
+                        </aside>
+                        <div className={classes.input}>
+                            <Select
+                                style={{minWidth: "200px"}}
+                                labelId="restaurant_category_label"
+                                id="restaurant_category"
+                                value={restaurantCate}
+                                onChange={(event) => setRestaurantCate(event.target.value)}
+                                label="Category"
+                            >
+                                <MenuItem value="" disabled>
+                                    <em>None</em>
+                                </MenuItem>
+                                {
+                                    listRestaurantCate.map(({id, title}) => (
+                                        <MenuItem key={id} value={id}>{title}</MenuItem>
+                                    ))
+                                }
+                            </Select>
+                        </div>
+                    </div>
                     <div className={classes.holder}>
                         <aside className={classes.label}>
                             <label htmlFor="pepBio" style={{fontWeight: "bold", fontSize: "18px"}}>Bio</label>
@@ -233,6 +277,7 @@ export default function EditAbout(props){
                         </aside>
                         <div className={classes.input}>
                             <Select
+                                style={{minWidth: "200px"}}
                                 native
                                 id="pepLocation"
                                 value={userProvince}
@@ -241,7 +286,7 @@ export default function EditAbout(props){
                                 <option aria-label="None" value="" disabled/>
                                 {
                                     province?.map((doc) => (
-                                        <option key={doc.province_id} value={doc.province_name}>{doc.province_name}</option>
+                                        <option key={doc.province_id} value={doc.province_id}>{doc.province_name}</option>
                                     ))
                                 }
                             </Select>
@@ -265,7 +310,6 @@ export default function EditAbout(props){
                     <div className={classes.submit}>
                         <Button variant="contained" color="primary" onClick={handleSubmit}>Update</Button>
                     </div>
-
                 </form>
             </div>
         </article>

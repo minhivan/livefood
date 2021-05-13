@@ -432,7 +432,7 @@ input:focus{
     border-radius: 100%;
     position: absolute;
     right: 1rem;
-
+    z-index: 999;
 }
 
 /* Recipe page */
@@ -576,10 +576,12 @@ input:focus{
 }
 
 
-.list-recipe-item{
+.list-recipe-item,
+.list-users-item{
     position: relative;
 }
-.list-recipe-wrap{
+.list-recipe-wrap,
+.list-users-wrap{
     height: 100%;
     border-bottom: 4px solid #892074;
     background-color: #fff;
@@ -592,12 +594,17 @@ input:focus{
     width: 100%;
     overflow: hidden;
 }
-.list-recipe-wrap .inner-wrap img{
+
+.list-recipe-wrap .inner-wrap img,
+.list-users-wrap .inner-wrap img{
     height: 100%;
     width: 100%;
     object-fit: cover;
 }
-.list-recipe-item .list-recipe-wrap .tile-content{
+
+.list-recipe-item .list-recipe-wrap .tile-content,
+.list-users-item .list-users-wrap .tile-content
+{
     padding: 15px;
 }
 .list-recipe-item  h2.title{
@@ -911,6 +918,7 @@ input:focus{
     display: inline-block;
     text-rendering: optimizeLegibility;
     width: 100%;
+    line-height: 22px;
 }
 .post__caption .post__user{
     color: #262626;
@@ -1250,6 +1258,8 @@ input:focus{
     display: flex;
     justify-content: center;
     align-items: flex-start;
+    max-width: 990px;
+    flex-wrap: wrap;
 }
 .list-users__header{
     min-height: 60px;
@@ -1257,11 +1267,69 @@ input:focus{
     width: 100%;
     padding: 10px;
     margin-left: 32px;
-    border-radius: 8px;
+    border-radius: 16px;
     display: flex;
     justify-content: flex-end;
+    box-shadow: 0px 0px 5px 0px #ddc4c4bf;
 }
 
+.list-users__container{
+    width: 100%;
+    margin: 16px 0 0 32px;
+    border-radius: 16px;
+    display: grid;
+    grid-gap: 16px;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 400px;
+    grid-auto-flow: dense;
+    box-sizing: border-box;
+}
+
+.list-users-item h2.title{
+    width: 100%;
+    font-size: 20px;
+    line-height: 25px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    letter-spacing: 1px;
+    height: 75px;
+    white-space: normal;
+}
+
+.list-users-item .tile-content{
+    height: calc(100% - 220px);
+    width: 100%;
+}
+.list-users-item .tile-content .details{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.list-users-item .tile-content .details h2.title a{
+    width: 100%;
+    display: inline-block;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+}
+.user-location{
+    font-size: 12px;
+    color: #888;
+    font-weight: 500;
+}
+.list-users-item .follow-me{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+/*.{*/
+/*    height: 250px;*/
+/*    width: 100%;*/
+/*    overflow: hidden;*/
+/*}*/
 /*============= Responsive ===================*/
 @media (max-width: 767px) {
     .header{

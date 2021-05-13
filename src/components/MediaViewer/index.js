@@ -181,6 +181,20 @@ function MediaViewer(props){
     const [likeCount, setLikeCount] = useState(post?.likeBy?.length)
     const [openLikesList, setOpenLikesList] = useState(false);
     const [isReadMore, setIsReadMore] = useState(true);
+    const [userLoggedData, setUserLoggedData] = useState({});
+
+    useEffect(() => {
+        if(userLogged){
+            setUserLoggedData({
+                uid: userLogged.uid,
+                photoURL: userLogged.photoURL,
+                displayName: userLogged.displayName
+            })
+        }
+    }, [userLogged])
+
+
+
 
     const handleOpenLikesList = () => {
         setOpenLikesList(true);
@@ -209,13 +223,13 @@ function MediaViewer(props){
     // Handle like and dislike action
     const likePost = () => {
         setSelected(true);
-        handleLikePost(postId, userLogged.uid)
+        handleLikePost(postId, userLoggedData, post.uid)
         setLikeCount((likes) => (selected ? likes - 1 : likes + 1));
     }
 
     const dislikePost = () => {
         setSelected(false);
-        handleDislikePost(postId, userLogged.uid)
+        handleDislikePost(postId, userLogged.uid, post.uid)
         setLikeCount((likes) => (selected ? likes - 1 : likes + 1));
     }
 

@@ -1,11 +1,25 @@
 import firebase from "firebase";
 import {db} from "../firebase";
 
-export function handleLikePost(postId, uid) {
+export function handleLikePost(postId, userData, postAuthor) {
     db.collection('posts').doc(postId).update({
-        likeBy: firebase.firestore.FieldValue.arrayUnion(uid),
+        likeBy: firebase.firestore.FieldValue.arrayUnion(userData.uid),
         likeCount: firebase.firestore.FieldValue.increment(1)
-    })
+    }).then(() => {
+        if(postAuthor !== userData.uid) {
+            postAuthor && db.collection('users').doc(postAuthor).collection("notifications").add({
+                reference: "post",
+                type : "like",
+                message: "love your post",
+                from : userData.displayName,
+                avatar: userData.photoURL,
+                opponentId: userData.uid,
+                path : "/p/" + postId,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                status: "unread"
+            })
+        }
+    });
 }
 
 
@@ -13,7 +27,7 @@ export function handleDislikePost(postId, uid) {
     db.collection('posts').doc(postId).update({
         likeBy: firebase.firestore.FieldValue.arrayRemove(uid),
         likeCount: firebase.firestore.FieldValue.increment(-1)
-    });
+    })
 }
 
 
@@ -47,7 +61,19 @@ export const handleUserFollow = (uid, id) => {
     db.collection('users').doc(id).update({
         follower: firebase.firestore.FieldValue.arrayUnion(uid),
         followerCount: firebase.firestore.FieldValue.increment(1)
-    });
+    })
+    //     .then(() => {
+    //     db.collection('users').doc(id).collection("notifications").add({
+    //         reference: "user",
+    //         type : "follow",
+    //         message: "started to follow you",
+    //         // from : user.displayName,
+    //         // avatar: user.photoURL,
+    //         // path : "/p/" + postId,
+    //         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    //         status: "unread"
+    //     })
+    // });
 }
 
 export const handleUserUnfollow = (uid, id) => {
@@ -79,8 +105,6 @@ export const handleReportPost = (uid, id) => {
         reportBy: firebase.firestore.FieldValue.arrayUnion(uid)
     });
 }
-
-
 
 export const handleDeleteMenuItem = (uid, id) => {
     // Remove
@@ -141,5 +165,21 @@ export const checkFirebaseAuth = (authUser) => {
     }).then(() => {
         console.log('Successfully');
     });
+}
+
+// export const pushUserNotification = (userId, type, data) => {
+//     return db.collection('users').doc(id).collection("notifications").add({
+//         type : "follow",
+//         from : uid,
+//         path : "/profile/" + uid,
+//         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+//         status: "unread"
+//     })
+// }
+
+export const handleSeenNotification = (uid, notiId) => {
+    db.collection('users').doc(uid).collection("notifications").doc(notiId).update({
+        status: "read"
+    })
 }
 

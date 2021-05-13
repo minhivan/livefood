@@ -82,7 +82,7 @@ const AppLoading = () => {
 				 src="/static/images/brand.png"
 			/>
 			<Spinner
-				name="cube-grid"
+				name="circle"
 				color="red"
 				fadeIn="none"
 			/>

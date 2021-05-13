@@ -8,7 +8,6 @@ import {useAuthState} from "react-firebase-hooks/auth";
 
 
 function Header() {
-
     const [ user ] = useAuthState(auth);
 
     return(
@@ -19,7 +18,7 @@ function Header() {
                 <div className="header__auth">
                     {
                         user ? (
-                            <MenuHeader user={user}/>
+                            <MenuHeader userLogged={user}/>
                         ) : (
                             <div className="header__loginContainer">
                                 <Button variant="contained" color="primary" href="/login">
