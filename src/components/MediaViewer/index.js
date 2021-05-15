@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {CardContent, Collapse, IconButton, Modal} from "@material-ui/core";
+import {Button, CardContent, Collapse, IconButton, Modal, useTheme} from "@material-ui/core";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 import {makeStyles} from "@material-ui/core/styles";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -25,6 +25,10 @@ import CommentInput from "../Comments/CommentInput";
 import ListUserLikePost from "../Popup/ListUserLikePost";
 import {db} from "../../firebase";
 import {useDocument} from "react-firebase-hooks/firestore";
+import MobileStepper from "@material-ui/core/MobileStepper";
+import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
+import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
+import Skeleton from "@material-ui/lab/Skeleton";
 
 
 
@@ -90,7 +94,8 @@ const useStyles = makeStyles((theme) => ({
     },
     leftPanel: {
         height: "100%",
-        maxWidth: "600px"
+        maxWidth: "600px",
+        position: "relative"
     },
     rightPanel: {
         width: "350px",
@@ -169,6 +174,28 @@ const useStyles = makeStyles((theme) => ({
         '&:hover': {
             textDecoration: "underline",
         }
+    },
+    buttonNext: {
+        position: "absolute",
+        top: "50%",
+        right: "10px",
+        borderRadius: "50%",
+        padding: "5px",
+        backgroundColor: "#fff",
+        '&:hover': {
+            backgroundColor: "#fff"
+        }
+    },
+    buttonBack: {
+        position: "absolute",
+        top: "50%",
+        left: "10px",
+        borderRadius: "50%",
+        padding: "5px",
+        backgroundColor: "#fff",
+        '&:hover': {
+            backgroundColor: "#fff"
+        }
     }
 }));
 
@@ -183,8 +210,21 @@ function MediaViewer(props){
     const [openLikesList, setOpenLikesList] = useState(false);
     const [isReadMore, setIsReadMore] = useState(true);
     const [userLoggedData, setUserLoggedData] = useState({});
-
     const [postSnapshot] = useDocument(postId && db.collection('posts').doc(postId));
+
+    const [activeStep, setActiveStep] = React.useState(0);
+    const maxSteps = post?.media?.length;
+    const theme = useTheme();
+
+    const handleNext = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    };
+
+    const handleBack = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    };
+
+
 
     useEffect(() => {
         if(userLogged){
@@ -243,31 +283,28 @@ function MediaViewer(props){
         handleUnSavedPost(postId, userLogged.uid);
     }
 
-    let media;
+    // let media;
 
-    if(post.mediaType === "video/mp4"){
-        media = <div className={classes.imgHolder}>
-            <video controls className={classes.img} muted="muted" onClick={e => e.target.play()}>
-                <source src={post.mediaUrl} type="video/mp4"/>
-            </video>
-        </div>
-    } else{
-        media = <div className={classes.imgHolder}>
-            <img src={post.mediaUrl} alt="" className={classes.img}/>
-        </div>
-    }
-
+    // if(post.mediaType === "video/mp4"){
+    //     media = <div className={classes.imgHolder}>
+    //         <video controls className={classes.img} muted="muted" onClick={e => e.target.play()}>
+    //             <source src={post.mediaUrl} type="video/mp4"/>
+    //         </video>
+    //     </div>
+    // } else{
+    //     media = <div className={classes.imgHolder}>
+    //         <img src={post.mediaUrl} alt="" className={classes.img}/>
+    //     </div>
+    // }
 
     useEffect(() => {
-        if(userLogged){
-            if(typeof post.likeBy !== 'undefined' && post.likeBy.includes(userLogged.uid)){
-                setSelected(true);
-            }
-            if(typeof post.saveBy !== 'undefined' && post.saveBy.includes(userLogged.uid)){
-                setSaveSelected(true);
-            }
+        if(typeof postSnapshot?.data()?.likeBy !== 'undefined' && postSnapshot?.data()?.likeBy.includes(userLogged.uid)){
+            setSelected(true);
         }
-    }, [post.likeBy, post.saveBy, userLogged])
+        if(typeof postSnapshot?.data()?.saveBy !== 'undefined' && postSnapshot?.data()?.saveBy.includes(userLogged.uid)){
+            setSaveSelected(true);
+        }
+    }, [postSnapshot, userLogged])
 
     return (
         <Modal
@@ -279,7 +316,49 @@ function MediaViewer(props){
         >
             <div style={modalStyle} className={classes.paper}>
                 <div className={classes.leftPanel}>
-                    {media}
+                    {
+                        post?.media?.length > 0 ? (
+                            <>
+                                {
+                                    post?.media[activeStep]?.type === "video/mp4" ? (
+                                        <div className={classes.imgHolder}>
+                                            <video controls className={classes.img} muted="muted" onClick={e => e.target.play()}>
+                                                <source src={post?.media[activeStep]?.mediaPath} type="video/mp4"/>
+                                            </video>
+                                        </div>
+                                    ) : (
+                                        <div className={classes.imgHolder}>
+                                            <img src={post?.media[activeStep]?.mediaPath} alt="" className={classes.img}/>
+                                        </div>
+                                    )
+                                }
+                                <IconButton onClick={handleNext} aria-label="Next" disabled={activeStep === maxSteps - 1} className={classes.buttonNext}>
+                                    <KeyboardArrowRight />
+                                </IconButton>
+
+                                <IconButton onClick={handleBack} disabled={activeStep === 0} className={classes.buttonBack} aria-label="Back">
+                                    <KeyboardArrowLeft />
+                                </IconButton>
+                                {/*<MobileStepper*/}
+                                {/*    variant="dots"*/}
+                                {/*    steps={maxSteps}*/}
+                                {/*    position="static"*/}
+                                {/*    activeStep={activeStep}*/}
+                                {/*    nextButton={*/}
+                                {/*        <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}>*/}
+                                {/*            {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}*/}
+                                {/*        </Button>*/}
+                                {/*    }*/}
+                                {/*    backButton={*/}
+                                {/*        <Button size="small" onClick={handleBack} disabled={activeStep === 0}>*/}
+                                {/*            {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}*/}
+                                {/*        </Button>*/}
+                                {/*    }*/}
+                                {/*/>*/}
+
+                            </>
+                        ) : <Skeleton animation="wave" variant="rect" className={classes.media} />
+                    }
                 </div>
                 <Divider orientation="vertical" flexItem />
                 <div className={classes.rightPanel}>

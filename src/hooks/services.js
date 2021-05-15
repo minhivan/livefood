@@ -106,9 +106,11 @@ export const handleDeletePost = (id) => {
 
 }
 
-export const handleReportPost = (uid, id) => {
+// Report (Spam, violence + dangerous, Nudity or sexual activity)
+export const handleReportPost = (uid, id, ) => {
     db.collection('posts').doc(id).update({
-        reportBy: firebase.firestore.FieldValue.arrayUnion(uid)
+        reportBy: firebase.firestore.FieldValue.arrayUnion(uid),
+        reportCount: firebase.firestore.FieldValue.increment(1)
     });
 }
 
@@ -188,4 +190,3 @@ export const handleSeenNotification = (uid, notiId) => {
         status: "read"
     })
 }
-

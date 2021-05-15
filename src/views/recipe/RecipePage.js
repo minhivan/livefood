@@ -60,9 +60,6 @@ const RecipePage = (props) => {
     const [newest, setNewest] = useState([]);
     const [listRecipe, setListRecipe] = useState([]);
     const [cate] = useCollection(db.collection("category"))
-    window.scroll({top: 0, left: 0, behavior: 'smooth' });
-
-
 
     const handleChange = (event) => {
         setType(event.target.value);

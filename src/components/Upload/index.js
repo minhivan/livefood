@@ -64,25 +64,14 @@ function Upload({userLogged}) {
     };
 
     const handleChange = (event) => {
-
-        if(event.target.files[0]){
-            setImage(event.target.files[0]);
+        const imageList = event.target.files
+        if(event.target.files){
+            setImage(Array.from(imageList));
             if(!openStep){
                 setOpen(true);
             }
         }
-
-        // if(event.target.files[0]){
-        //     const reader = new FileReader();
-        //     reader.onload = _handlerReaderLoaded.bind(this);
-        //     reader.readAsBinaryString(event.target.files[0]);
-        // }
     }
-
-    // const _handlerReaderLoaded = (readerEvt) => {
-    //     let binaryString = readerEvt.target.result;
-    //     console.log(btoa(binaryString));
-    // }
 
     const handleCloseSnack = (event) => {
         setOpenSnack(false);
@@ -122,23 +111,34 @@ function Upload({userLogged}) {
                     </div>
                 </div>
             </div>
+            {
+                open ? (
+                    <Popup open={open} image={image}  handleClose={handleClose} setImage={setImage} setOpenSnack={setOpenSnack} />
+                ) : null
+            }
+            {
+                openStep ? (
+                    <RecipeStepper open={openStep} image={image} setImage={setImage} handleClose={handleCloseStep} setOpenSnack={setOpenSnack}/>
+                ) : null
+            }
 
-            <Popup open={open} image={image}  handleClose={handleClose} setImage={setImage} setOpenSnack={setOpenSnack} />
-            <RecipeStepper open={openStep} image={image} setImage={setImage} handleClose={handleCloseStep} setOpenSnack={setOpenSnack}/>
-
-            <Snackbar
-                open={openSnack}
-                autoHideDuration={6000}
-                onClose={handleCloseSnack}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-            >
-                <Alert variant="filled" onClose={handleCloseSnack} severity="success">
-                    Upload successfully !
-                </Alert>
-            </Snackbar>
+            {
+                openSnack ? (
+                    <Snackbar
+                        open={openSnack}
+                        autoHideDuration={6000}
+                        onClose={handleCloseSnack}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left',
+                        }}
+                    >
+                        <Alert variant="filled" onClose={handleCloseSnack} severity="success">
+                            Upload successfully !
+                        </Alert>
+                    </Snackbar>
+                ) : null
+            }
         </div>
     )
 }

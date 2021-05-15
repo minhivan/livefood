@@ -26,7 +26,6 @@ const TopicPage = (props) => {
     let { name } = useParams();
     const [topic, setTopic] = useState([]);
 
-    window.scroll({top: 0, left: 0, behavior: 'smooth' });
 
     useEffect( () => {
         // if(query) {

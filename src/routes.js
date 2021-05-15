@@ -19,6 +19,7 @@ import TopicPage from "./views/recipe/TopicPage";
 import TrendingPage from "./views/recipe/TrendingPage";
 import ResultRecipePace from "./views/recipe/ResultRecipePace";
 import LocationPage from "./views/LocationPage";
+import LandingPage from "./views/LandingPage";
 
 
 const routes = (isLoggedIn)  => [
@@ -40,7 +41,8 @@ const routes = (isLoggedIn)  => [
         children: [
             { path: 'login', element: <Login /> },
             { path: 'register', element: <SignUp /> },
-            { path: 'forgot', element: <Forgot /> }
+            { path: 'forgot', element: <Forgot /> },
+            { path: 'landing', element: <LandingPage /> },
         ]
     },
     {

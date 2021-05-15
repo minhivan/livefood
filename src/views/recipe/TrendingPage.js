@@ -24,7 +24,6 @@ const useStyles = makeStyles((theme) => ({
 const TrendingPage = (props) => {
     const classes = useStyles();
     const [listRecipe, setListRecipe] = useState([]);
-    window.scroll({top: 0, left: 0, behavior: 'smooth' });
 
     useEffect( () => {
         // Set all post

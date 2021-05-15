@@ -13,6 +13,7 @@ import {useAuthState} from "react-firebase-hooks/auth";
 import {auth, db} from "./firebase";
 import firebase from "firebase";
 import Survey from "./components/Popup/Survey";
+import ScrollToTop from "./hooks/scrollToTop";
 
 // import styled from 'styled-components';
 
@@ -63,15 +64,18 @@ function App() {
 
 
 	return (
-		<ThemeProvider theme={theme}>
-			<GlobalStyles />
-			{routing}
-			{
-				survey ? (
-					<Survey userLogged={userLogged}/>
-				) : null
-			}
-		</ThemeProvider>
+		<>
+			<ScrollToTop />
+			<ThemeProvider theme={theme}>
+				<GlobalStyles />
+				{routing}
+				{
+					survey ? (
+						<Survey userLogged={userLogged}/>
+					) : null
+				}
+			</ThemeProvider>
+		</>
 	);
 }
 

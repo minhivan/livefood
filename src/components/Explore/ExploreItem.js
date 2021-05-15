@@ -57,37 +57,28 @@ export default function ExploreItem(props) {
         setOpen(false);
     };
 
-    let media;
-    if(post.mediaType === "video/mp4"){
-        media =
-            <>
-                <video
-                    className={classes.img}
-                    muted="muted"
-                    onClick={() => handleOpen()}
-                >
-                    <source src={post.mediaUrl} type="video/mp4"/>
-                </video>
-                <div className={classes.none}>
-                    <PlayIcon
-                        className={classes.icon}
-                        size="15"
-                    />
-                </div>
-            </>
-    } else{
-        media = <img
-            alt=""
-            className={classes.img}
-            src={post.mediaUrl}
-            onClick={() => handleOpen()}
-        />
-    }
+
+
 
     return (
         <div className={`explore__gridSmall ${masonry ? "explore__masonry-item" : ""}`} key={postId}>
-            {/*<img src={props.post.mediaUrl}  alt="" className={classes.img} onClick={() => handleOpen(props.post, props.id)} />*/}
-            {media}
+
+            {
+                post?.media[0]?.type === "video/mp4" ? (
+                    <video className={classes.img}
+                           muted="muted"
+                           onClick={() => handleOpen()}>
+                        <source src={post?.media[0]?.mediaPath} type="video/mp4"/>
+                    </video>
+                ) : (
+                    <img
+                        alt=""
+                        className={classes.img}
+                        onClick={() => handleOpen()}
+                        src={post?.media[0]?.mediaPath}
+                    />
+                )
+            }
             {
                 open ? (
                     <MediaViewer userLogged={userLogged} open={open} postId={postId} post={post} postAuthor={postAuthor} handleClose={handleClose}  />

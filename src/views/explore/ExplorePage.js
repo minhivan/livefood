@@ -5,6 +5,7 @@ import { db} from "../../firebase";
 import {Image as ImageIcon} from "react-feather";
 import {makeStyles} from "@material-ui/core/styles";
 import NavBar from "../../components/SideBar/LeftSideBar";
+import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles((theme) => ({
     icon: {
@@ -29,6 +30,11 @@ const useStyles = makeStyles((theme) => ({
         borderStyle: "solid",
         borderRadius: "50%",
         margin: "50px 0 20px 0"
+    },
+    buttonLoadMore: {
+        display: "flex",
+        width: "100%",
+        justifyContent: "center"
     }
 }));
 
@@ -40,26 +46,29 @@ const Explore = (props) => {
 
     useEffect(() => {
         if(userLogged){
-            return db.collection('posts')
+             db.collection('posts')
                 .orderBy('timestamp', "desc")
+                .limit(8)
                 .get().then(snapshot => {
                     let temp = []
                     snapshot.forEach(data => {
                         let userProfile = {};
-                        if(data.data().uid !== userLogged.uid){
-                            data.data().user.get().then( author => {
-                                Object.assign(userProfile, author.data());
-                            })
-                            temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
-                        }
+                        // if(data.data().uid !== userLogged.uid){
+                        //
+                        // }
+                        data.data().user.get().then( author => {
+                            Object.assign(userProfile, author.data());
+                        })
+                        temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
                     })
                     setExplore(temp);
                     setLastVisible(snapshot.docs[snapshot.docs.length-1]);
                 })
         }
         else{
-            return db.collection('posts')
+             db.collection('posts')
                 .orderBy('timestamp', "desc")
+                .limit(8)
                 .get().then(snapshot => {
                     let temp = []
                     snapshot.forEach(data => {
@@ -73,35 +82,39 @@ const Explore = (props) => {
                     setLastVisible(snapshot.docs[snapshot.docs.length-1]);
                 })
         }
+
     }, [userLogged]);
 
-    const loadMore = () => {
-        db.collection('posts')
-            .orderBy('timestamp', "desc")
-            .startAfter(lastVisible)
-            .limit(5)
-            .get().then(snapshot => {
-            let temp = []
-            snapshot.forEach(data => {
-                let userProfile = {};
-                data.data().user.get().then( author => {
-                    Object.assign(userProfile, author.data());
-                })
-                temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
-            })
-            setExplore([...explore, ...temp]);
-            setLastVisible(snapshot.docs[snapshot.docs.length-1]);
-        })
+
+    window.onscroll = function () {
+        if(window.scrollY + window.innerHeight >=
+            document.documentElement.scrollHeight){
+            loadMore()
+        }
     }
 
-    // window.onscroll = function () {
-    //     if(window.innerHeight + document.documentElement.scrollTop
-    //         === document.documentElement.offsetHeight){
-    //         loadMore();
-    //     }
-    // }
-    // console.log(window.innerHeight);
-    // console.log(document.documentElement.offsetHeight)
+    const loadMore = () => {
+        if(lastVisible){
+            db.collection('posts')
+                .orderBy('timestamp', "desc")
+                .startAfter(lastVisible)
+                .limit(8)
+                .get().then(snapshot => {
+                    let temp = []
+                    snapshot.forEach(data => {
+                        let userProfile = {};
+                        data.data().user.get().then( author => {
+                            Object.assign(userProfile, author.data());
+                        })
+                        temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
+                    })
+                    setExplore([...explore, ...temp]);
+                    setLastVisible(snapshot.docs[snapshot.docs.length-1]);
+            })
+        }
+    }
+
+
 
 
     const classes = useStyles();
@@ -114,22 +127,38 @@ const Explore = (props) => {
                 <NavBar userLogged={props.userLogged}/>
                 <div className="explore__masonry-container">
                     {
-                        explore.length > 0 ? (
-                            <div className="explore__masonry" id="list_explore">
-                                {
-                                    explore.map(({id, post, authorProfile}) => (
-                                        <ExploreItem
-                                            key={id}
-                                            postId={id}
-                                            post={post}
-                                            postAuthor={authorProfile}
-                                            userLogged={userLogged}
-                                            masonry={true}
-                                        />
-                                    ))
-                                }
+                        explore ? (
+                            <>
+                                <div className="explore__masonry" id="list_explore">
+                                    {
+                                        explore.map(({id, post, authorProfile}) => (
+                                            <ExploreItem
+                                                key={id}
+                                                postId={id}
+                                                post={post}
+                                                postAuthor={authorProfile}
+                                                userLogged={userLogged}
+                                                masonry={true}
+                                            />
+                                        ))
+                                    }
+                                </div>
+                                {/*{*/}
+                                {/*    explore.length  ?? (*/}
+                                {/*        <div className={classes.buttonLoadMore}>*/}
+                                {/*            <Button*/}
+                                {/*                onClick={loadMore}*/}
+                                {/*                style={{textTransform: "capitalize", fontSize: "16px"}}*/}
+                                {/*                color="primary"*/}
+                                {/*                variant="contained"*/}
+                                {/*            >*/}
+                                {/*                Explore more*/}
+                                {/*            </Button>*/}
+                                {/*        </div>*/}
+                                {/*    )*/}
+                                {/*}*/}
+                            </>
 
-                            </div>
                         ) : (
                             <div className={classes.wrapper}>
                                 <div className={classes.none}>

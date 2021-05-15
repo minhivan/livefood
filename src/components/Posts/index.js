@@ -41,7 +41,7 @@ export default function NewFeed(props){
     const [posts, setPosts] = useState([]);
     const userRef = userLogged && db.collection('users').doc(userLogged.uid);
     const [userSnapshot] = useDocument(userRef);
-
+    const [limit, setLimit] = useState(5);
     let userFollow = userSnapshot?.data()?.following;
 
     //Get post
@@ -50,7 +50,7 @@ export default function NewFeed(props){
             userFollow.push(userLogged.uid);
             const unsubscribe = db.collection('posts')
                 .orderBy('timestamp', "desc")
-                .limit(10)
+                .limit(1)
                 .onSnapshot((snapshot) => {
                     var data = [];
                     snapshot.forEach((doc) => {
@@ -68,7 +68,7 @@ export default function NewFeed(props){
             const unsubscribe = db.collection('posts')
                 .where('uid', '==', userLogged.uid)
                 .orderBy('timestamp', "desc")
-                .limit(10)
+                .limit(1)
                 .onSnapshot( snapshot => {
                     setPosts(snapshot.docs.map(doc => ({
                         id: doc.id,
@@ -87,6 +87,20 @@ export default function NewFeed(props){
         const newList = posts.filter((item) => item.id !== id);
         setPosts(newList);
     }
+
+
+    // window.onscroll = function () {
+    //     if(window.scrollY + window.innerHeight >=
+    //         document.documentElement.scrollHeight){
+    //         loadMore()
+    //     }
+    // }
+    //
+    // const loadMore = () => {
+    //     setLimit(limit => limit + 5);
+    //     console.log(limit);
+    // }
+
 
 
     return(

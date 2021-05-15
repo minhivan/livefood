@@ -61,7 +61,7 @@ function Post({id, post, handleRemove, handleReport, isSinglePage, ...rest}) {
 			<Card className={classes.root} >
 				<PostHeader author={author} handleClickOpen={handleClickOpen} postDate={post.timestamp} type={post.type} />
 				{/*Media*/}
-				<PostContent author={author} mediaUrl={post.mediaUrl} caption={post.caption} mediaType={post.mediaType}/>
+				<PostContent author={author} mediaUrl={post.mediaUrl} caption={post.caption} mediaType={post.mediaType} postMedia={post?.media}/>
 				{/* Post Action*/}
 				{
 					user ? (

@@ -3,6 +3,11 @@ import Skeleton from "@material-ui/lab/Skeleton";
 import {Link} from "react-router-dom";
 import PropTypes from "prop-types";
 import {makeStyles} from "@material-ui/core/styles";
+import {Button, IconButton, useTheme} from "@material-ui/core";
+import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
+import MobileStepper from "@material-ui/core/MobileStepper";
+import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
+import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -62,44 +67,78 @@ const useStyles = makeStyles((theme) => ({
     },
     comment:{
         display: "block"
+    },
+    buttonNext: {
+        position: "absolute",
+        top: "50%",
+        right: "10px",
+        borderRadius: "50%",
+        padding: "5px",
+        backgroundColor: "#fff",
+        '&:hover': {
+            backgroundColor: "#fff"
+        }
+    },
+    buttonBack: {
+        position: "absolute",
+        top: "50%",
+        left: "10px",
+        borderRadius: "50%",
+        padding: "5px",
+        backgroundColor: "#fff",
+        '&:hover': {
+            backgroundColor: "#fff"
+        }
     }
 }));
 
 
-export default function PostContent({mediaUrl, caption, mediaType, author, ...rest}) {
+export default function PostContent({mediaUrl, caption, mediaType, author, postMedia,  ...rest}) {
     const classes = useStyles();
-    let media;
+    // let media;
+    const [activeStep, setActiveStep] = React.useState(0);
+    const maxSteps = postMedia?.length;
+
+    const handleNext = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    };
+
+    const handleBack = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    };
     const [isReadMore, setIsReadMore] = useState(true);
 
     const toggleReadMore = () => {
         setIsReadMore(!isReadMore);
     };
 
-    if(mediaType === "video/mp4"){
-        media = <div className="post__content">
-            <video controls className="post__contentImage" muted="muted" >
-                <source src={mediaUrl} type="video/mp4"/>
-            </video>
-        </div>
-    } else {
-        media = <div className="post__content">
-            <img
-
-                alt=""
-                className="post__contentImage"
-                src={mediaUrl}
-            />
-        </div>
-    }
-
-
     return (
         <>
             {
-                mediaUrl ? (
-                    media
-                ) : <Skeleton animation="wave" variant="rect" className={classes.media} />
+                postMedia.length > 0 ? (
+                        <div className="post__content">
+                        {
+                            postMedia[activeStep]?.type === "video/mp4" ? (
+                                <video controls className="post__contentImage" muted="muted" >
+                                    <source src={postMedia[activeStep]?.mediaPath} type="video/mp4"/>
+                                </video>
+                            ) : (
+                                <img
+                                    alt=""
+                                    className="post__contentImage"
+                                    src={postMedia[activeStep]?.mediaPath}
+                                />
+                            )
+                        }
+                            <IconButton onClick={handleNext} aria-label="Next" disabled={activeStep === maxSteps - 1} className={classes.buttonNext}>
+                                <KeyboardArrowRight />
+                            </IconButton>
 
+                            <IconButton onClick={handleBack} disabled={activeStep === 0} className={classes.buttonBack} aria-label="Back">
+                                <KeyboardArrowLeft />
+                            </IconButton>
+                    </div>
+                ) : <Skeleton animation="wave" variant="rect" className={classes.media} />
             }
 
             {/* Caption */}
@@ -130,7 +169,7 @@ export default function PostContent({mediaUrl, caption, mediaType, author, ...re
 }
 
 PostContent.propTypes = {
-    mediaUrl: PropTypes.string.isRequired,
+    // mediaUrl: PropTypes.string.isRequired,
     caption: PropTypes.string.isRequired,
     mediaType: PropTypes.string,
 };

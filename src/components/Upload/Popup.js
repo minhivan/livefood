@@ -1,10 +1,20 @@
 import React, {useEffect, useState} from "react";
-import {Avatar, Badge, Button, CircularProgress, IconButton, Modal, TextField, Tooltip} from "@material-ui/core";
+import {
+    Avatar,
+    Badge,
+    Button,
+    CircularProgress,
+    IconButton,
+    Modal,
+    TextField,
+    Tooltip,
+    useTheme
+} from "@material-ui/core";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 import CardHeader from "@material-ui/core/CardHeader";
 import {makeStyles} from "@material-ui/core/styles";
 import PhotoCameraTwoToneIcon from "@material-ui/icons/PhotoCameraTwoTone";
-import VideoCallTwoToneIcon from "@material-ui/icons/VideoCallTwoTone";
+// import VideoCallTwoToneIcon from "@material-ui/icons/VideoCallTwoTone";
 import LocationOnTwoToneIcon from '@material-ui/icons/LocationOnTwoTone';
 import {auth, db, storage} from "../../firebase";
 import firebase from "firebase";
@@ -12,6 +22,13 @@ import {useAuthState} from "react-firebase-hooks/auth";
 import {green} from "@material-ui/core/colors";
 import {v4 as uuidv4} from "uuid";
 // import {useCollection} from "react-firebase-hooks/firestore";
+import MobileStepper from '@material-ui/core/MobileStepper';
+// import Paper from '@material-ui/core/Paper';
+// import Typography from '@material-ui/core/Typography';
+import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
+import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
+
+
 
 function getModalStyle() {
     const top = 50 ;
@@ -102,130 +119,199 @@ const useStyles = makeStyles((theme) => ({
         position: "absolute",
         top: "0px",
         right: "0"
-    }
+    },
+    header: {
+        display: 'flex',
+        alignItems: 'center',
+        height: 50,
+        paddingLeft: theme.spacing(4),
+        backgroundColor: theme.palette.background.default,
+    },
+    img: {
+        height: 255,
+        maxWidth: 400,
+        overflow: 'hidden',
+        display: 'block',
+        width: '100%',
+    },
 }));
 
 
-
 function Popup(props){
+    const {open, image, setImage, handleClose, setOpenSnack} = props;
     const [user] = useAuthState(auth);
     const classes = useStyles();
     const [modalStyle] = useState(getModalStyle);
+    const theme = useTheme();
+
     const [caption, setCaption] = useState('');
     const [progress, setProgress] = useState('');
     const [loading, setLoading] = useState(false);
     const [disable, setDisable] = useState(true);
+    const [activeStep, setActiveStep] = React.useState(0);
+    const [maxSteps, setMaxSteps] = useState(image ? image.length : 0);
 
 
-    const removeImage = () => {
-        props.setImage('');
-    }
+    const handleNext = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    };
 
+    const handleBack = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    };
 
-    // const [post] = useCollection()
-    let media;
-    if(props.image){
-        if(props.image.type === "video/mp4" ){
-            media =
-                <>
-                    <video controls className={classes.reviewImg} muted="muted">
-                        <source src={window.URL.createObjectURL(props.image)} type="video/mp4"/>
-                    </video>
-                    <div className={classes.buttonRemove}>
-                        <IconButton aria-label="Cancel" color="inherit" onClick={removeImage} >
-                            <CancelTwoToneIcon />
-                        </IconButton>
-                    </div>
-                </>
-        } else {
-            media =
-                <>
-                    <img className={classes.reviewImg} src={window.URL.createObjectURL(props.image)} alt="" />
-                    <div className={classes.buttonRemove}>
-                        <IconButton aria-label="Cancel" color="inherit" onClick={removeImage} >
-                            <CancelTwoToneIcon />
-                        </IconButton>
-                    </div>
-                </>
+    // useEffect(() => {
+    //     if(image.length){
+    //         setMaxSteps(image.length);
+    //     }
+    // }, [image.length])
 
+    const removeImage = (step) => {
+        if(image.length === 1){
+            setImage('');
+            setActiveStep(0);
+            setMaxSteps(0)
+        }
+        else{
+            image.splice(step, 1);
+            setImage(image);
+            setActiveStep(0);
+            setMaxSteps(image.length)
         }
     }
 
 
-    const handleUpload = () => {
-        if(props.image) {
-            const imageName = uuidv4();
-            const uploadTask = storage.ref(`media/${user.uid}/${imageName}`).put(props.image);
-            uploadTask.on(
-                "state_changed",
-                (snapshot => {
-                    const progressData = Math.round(
-                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-                    );
-                    setProgress(progressData);
-                    setLoading(true);
-                }),
-                (error => {
-                    console.log(error);
-                }),
-                () => {
-                    storage
-                        .ref(`media/${user.uid}/`)
-                        .child(imageName)
-                        .getDownloadURL()
-                        .then(url => {
-                            db.collection("posts").add({
-                                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                                hasImage: true,
-                                caption: caption,
-                                mediaUrl: url,
-                                user: db.doc('users/' + user.uid),
-                                mediaType: props.image.type,
-                                uid: user.uid
-                            })
-                                .then(function(docRef) {
-                                    console.log("Document written with ID: ", docRef.id);
-                                    db.collection("users").doc(user.uid).update({
-                                        post: firebase.firestore.FieldValue.arrayUnion(docRef.id)
-                                    })
-                                })
-                                .catch(function(error) {
-                                    console.error("Error adding document: ", error);
+    const newUpload = async () => {
+        await Promise.all(image.map(item =>
+            new Promise((resolve, reject) => {
+                const imageName = uuidv4();
+                storage.ref(`media/${user.uid}/${imageName}`)
+                    .put(item)
+                    .on('state_changed', (snapshot) => {
+                            // progress function ....
+                            setProgress(Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100));
+                            setLoading(true);
+                        },
+                        reject,
+                        () => {
+                            // complete function ....
+                            storage.ref(`media/${user.uid}/`)
+                                .child(imageName)
+                                .getDownloadURL()
+                                .then(url => {
+                                    resolve({
+                                        mediaPath: url,
+                                        type: item.type
+                                    });
                                 });
-                            props.setOpenSnack(true);
-                            props.setImage(null);
-                            props.handleClose(true);
-                            setProgress('0');
-                            setCaption("");
-                            setLoading(false);
-                        })
-                }
-            )
-        }
+                        });
+            })
+        )).then((values) => {
+            db.collection("posts").add({
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                hasImage: true,
+                caption: caption,
+                media: values,
+                user: db.doc('users/' + user.uid),
+                uid: user.uid
+            })
+                .then(function(docRef) {
+                    console.log("Document written with ID: ", docRef.id);
+                    db.collection("users").doc(user.uid).update({
+                        post: firebase.firestore.FieldValue.arrayUnion(docRef.id)
+                    })
+                    setOpenSnack(true);
+                    setImage('');
+                    handleClose(true);
+                    setProgress('0');
+                    setCaption("");
+                    setLoading(false);
+                    setImage('');
+                    setActiveStep(0);
+                    setMaxSteps(0)
+                })
+                .catch(function(error) {
+                    console.error("Error adding document: ", error);
+                });
+        })
+
     }
 
+
+    // const handleUpload = () => {
+    //     if(image) {
+    //         const imageName = uuidv4();
+    //         const uploadTask = storage.ref(`media/${user.uid}/${imageName}`).put(image);
+    //         uploadTask.on(
+    //             "state_changed",
+    //             (snapshot => {
+    //                 const progressData = Math.round(
+    //                     (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+    //                 );
+    //                 setProgress(progressData);
+    //                 setLoading(true);
+    //             }),
+    //             (error => {
+    //                 console.log(error);
+    //             }),
+    //             () => {
+    //                 storage
+    //                     .ref(`media/${user.uid}/`)
+    //                     .child(imageName)
+    //                     .getDownloadURL()
+    //                     .then(url => {
+    //                         db.collection("posts").add({
+    //                             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    //                             hasImage: true,
+    //                             caption: caption,
+    //                             mediaUrl: url,
+    //                             user: db.doc('users/' + user.uid),
+    //                             mediaType: image.type,
+    //                             uid: user.uid
+    //                         })
+    //                             .then(function(docRef) {
+    //                                 console.log("Document written with ID: ", docRef.id);
+    //                                 db.collection("users").doc(user.uid).update({
+    //                                     post: firebase.firestore.FieldValue.arrayUnion(docRef.id)
+    //                                 })
+    //                             })
+    //                             .catch(function(error) {
+    //                                 console.error("Error adding document: ", error);
+    //                             });
+    //                         setOpenSnack(true);
+    //                         setImage(null);
+    //                         handleClose(true);
+    //                         setProgress('0');
+    //                         setCaption("");
+    //                         setLoading(false);
+    //                     })
+    //             }
+    //         )
+    //     }
+    // }
 
     useEffect(() => {
-        if(caption.length > 0 && props.image){
+        if(caption.length > 0 && image){
             setDisable(false);
         }else {
             setDisable(true)
         }
-    },[caption, caption.length, props.image])
+    },[caption, caption.length, image])
 
-
+    console.log()
     return (
         <Modal
-            open={props.open}
-            onClose={props.handleClose}
+            open={open}
+            onClose={handleClose}
             aria-labelledby="simple-modal-title"
             aria-describedby="simple-modal-description"
         >
             <div style={modalStyle} className={classes.paper}>
+
                 <div className={classes.modalHeader}>
                     <h2>What's on your mind ?</h2>
                     <div className={classes.buttonClose}>
-                        <IconButton aria-label="Cancel" color="inherit" onClick={props.handleClose} >
+                        <IconButton aria-label="Cancel" color="inherit" onClick={handleClose} >
                             <CancelTwoToneIcon />
                         </IconButton>
                     </div>
@@ -255,9 +341,39 @@ function Popup(props){
                         />
                     </div>
                     {
-                        props.image ? (
+                        image.length > 0 ? (
                             <div className="popup__review">
-                                {media}
+                                {
+                                    image[activeStep]?.type === "video/mp4" ? (
+                                        <video controls className={classes.reviewImg} muted="muted">
+                                            <source src={window.URL.createObjectURL(image[activeStep])} type="video/mp4"/>
+                                        </video>
+                                    ) : (
+                                        <img className={classes.reviewImg} src={window.URL.createObjectURL(image[activeStep])} alt="" />
+                                    )
+                                }
+                                <div className={classes.buttonRemove}>
+                                    <IconButton aria-label="Cancel" color="inherit" onClick={() => removeImage(activeStep)} >
+                                        <CancelTwoToneIcon />
+                                    </IconButton>
+                                </div>
+                                <MobileStepper
+                                    variant="dots"
+                                    steps={maxSteps}
+                                    position="static"
+                                    activeStep={activeStep}
+                                    nextButton={
+                                        <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}>
+                                            {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+                                        </Button>
+                                    }
+                                    backButton={
+                                        <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
+                                            {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+                                        </Button>
+                                    }
+                                />
+
                             </div>
                         ) : null
                     }
@@ -293,12 +409,12 @@ function Popup(props){
                             disabled: classes.buttonDisable
                         }}
                         type="submit"
-                        onClick={handleUpload}
-                        disabled={disable}
+                        onClick={newUpload}
+                        // disabled={disable}
                     >
-                        POST
+                        Create Now
                     </Button>
-                    {loading && <CircularProgress size={24} value={parseInt(progress)} className={classes.buttonProgress} /> }
+                    {loading && <CircularProgress size={24} value={progress} className={classes.buttonProgress} /> }
                 </div>
 
             </div>
