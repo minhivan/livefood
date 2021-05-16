@@ -74,12 +74,12 @@ const ProfileVideo = ({uid, userLogged}) => {
     useEffect(() => {
         let postDoc = db.collection('posts');
 
-        return postDoc
+        const unsubscribe =  postDoc
             .where('uid', "==", uid)
             .where('type', '==', 'video')
             .orderBy('timestamp', 'desc')
             .limit(12)
-            .get().then(snapshot => {
+            .onSnapshot(snapshot => {
                 let temp = []
                 snapshot.forEach(data => {
                     var authorVid = {};
@@ -90,6 +90,9 @@ const ProfileVideo = ({uid, userLogged}) => {
                 })
                 setVid(temp);
             })
+        return () => {
+            unsubscribe();
+        }
     }, [uid]);
 
     return(
@@ -146,6 +149,7 @@ const ProfileVideo = ({uid, userLogged}) => {
                                             style={{textTransform: "capitalize", fontSize: "16px", marginTop: "20px"}}
                                             color="primary"
                                             variant="contained"
+                                            onClick={handleOpen}
                                         >
                                             Upload
                                         </Button>

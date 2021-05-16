@@ -150,7 +150,7 @@ function Popup(props){
     const [loading, setLoading] = useState(false);
     const [disable, setDisable] = useState(true);
     const [activeStep, setActiveStep] = React.useState(0);
-    const [maxSteps, setMaxSteps] = useState(0);
+    const [maxSteps, setMaxSteps] = useState(image ? image.length : 0);
     const [anchorElPicker, setAnchorElPicker] = useState(null);
 
     const openEmoji = Boolean(anchorElPicker);
@@ -174,12 +174,6 @@ function Popup(props){
     const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
-
-    useEffect(() => {
-        if(image.length){
-            setMaxSteps(image.length);
-        }
-    }, [image.length])
 
     const removeImage = (step) => {
         if(image.length === 1){
@@ -408,14 +402,14 @@ function Popup(props){
                                             position="static"
                                             activeStep={activeStep}
                                             nextButton={
-                                                <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}>
-                                                    {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-                                                </Button>
+                                                <IconButton onClick={handleNext} aria-label="Next" disabled={activeStep === maxSteps - 1} >
+                                                    <KeyboardArrowRight />
+                                                </IconButton>
                                             }
                                             backButton={
-                                                <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
-                                                    {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-                                                </Button>
+                                                <IconButton onClick={handleBack} disabled={activeStep === 0}  aria-label="Back">
+                                                    <KeyboardArrowLeft />
+                                                </IconButton>
                                             }
                                         />
                                     ) : null
@@ -437,15 +431,6 @@ function Popup(props){
                                     </Badge>
                                 </IconButton>
                             </label>
-                        </div>
-                        <div>
-                            <Tooltip title="Location">
-                                <IconButton color="inherit" component="span">
-                                    <Badge color="secondary">
-                                        <LocationOnTwoToneIcon className={classes.popIcon}/>
-                                    </Badge>
-                                </IconButton>
-                            </Tooltip>
                         </div>
                     </div>
                 </div>

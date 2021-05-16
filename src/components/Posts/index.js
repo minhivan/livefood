@@ -52,7 +52,7 @@ export default function NewFeed(props){
                 .orderBy('timestamp', "desc")
                 .limit(10)
                 .onSnapshot((snapshot) => {
-                    var data = [];
+                    let data = [];
                     snapshot.forEach((doc) => {
                         if(userFollow.includes(doc.data().uid)){
                             data.push({id: doc.id, post: doc.data()})

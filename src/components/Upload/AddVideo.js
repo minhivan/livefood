@@ -185,6 +185,7 @@ function AddVideo(props){
                     );
                     setProgress(progressData);
                     setLoading(true);
+                    setDisable(true);
                 }),
                 (error => {
                     console.log(error);

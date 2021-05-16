@@ -12,6 +12,9 @@ import PostHeader from "./Header";
 import PostRecipeData from "./RecipeData";
 import CommentInput from "../Comments/CommentInput";
 import {useDocument} from "react-firebase-hooks/firestore";
+import EditPost from "../Popup/EditPost";
+import Snackbar from "@material-ui/core/Snackbar";
+import {Alert} from "@material-ui/lab";
 
 
 
@@ -30,13 +33,21 @@ function Post({id, post, handleRemove, handleReport, isSinglePage, ...rest}) {
 	const [expanded, setExpanded] = useState(true);
 	// auth user data
 	const [user] = useAuthState(auth);
-	const [open, setOpen] = React.useState(false);
-
+	const [openSnack, setOpenSnack] = useState(false);
+	const [open, setOpen] = useState(false);
+	const [openEdit, setOpenEdit] = useState(false);
 	const [postAuthor] = useDocument(post.uid && db.collection('users').doc(post.uid))
 	const author = postAuthor?.data();
 
 	const searchInput = useRef(null)
 
+
+	const handleCloseEdit = () => {
+		setOpenEdit(false);
+	};
+	const handleOpenEdit = () => {
+		setOpenEdit(true)
+	}
 
 	function handleFocus(){
 		searchInput.current.focus();
@@ -54,6 +65,9 @@ function Post({id, post, handleRemove, handleReport, isSinglePage, ...rest}) {
 		setOpen(false);
 	};
 
+	const handleCloseSnack = (event) => {
+		setOpenSnack(false);
+	};
 
 
 	return (
@@ -81,12 +95,36 @@ function Post({id, post, handleRemove, handleReport, isSinglePage, ...rest}) {
 			</Card>
 			{
 				user && open ? (
-					<PostUtil open={open} handleClose={handleClose} uid={user.uid} opponentID={post.uid} postID={id} handleReport={handleReport} handleRemove={handleRemove} isSave={false} />
+					<PostUtil open={open} handleClose={handleClose} handleOpenEdit={handleOpenEdit} uid={user.uid} opponentID={post.uid} postID={id} handleReport={handleReport} handleRemove={handleRemove}  />
 				) : null
 			}
+			{
+				openEdit ? (
+					<EditPost open={openEdit} handleClose={handleCloseEdit} post={post} postId={id} setOpenSnack={setOpenSnack}/>
+				) : null
+			}
+
+			{
+				openSnack ? (
+					<Snackbar
+						open={openSnack}
+						autoHideDuration={6000}
+						onClose={handleCloseSnack}
+						anchorOrigin={{
+							vertical: 'bottom',
+							horizontal: 'left',
+						}}
+					>
+						<Alert variant="filled" onClose={handleCloseSnack} severity="success">
+							Upload successfully !
+						</Alert>
+					</Snackbar>
+				) : null
+			}
+
 
 		</div>
 	)
 }
 
-export default Post
+export default Post;

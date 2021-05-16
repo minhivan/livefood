@@ -45,7 +45,7 @@ const Explore = (props) => {
     const [lastVisible, setLastVisible] = useState('');
     useEffect(() => {
         if(userLogged){
-             db.collection('posts')
+             return db.collection('posts')
                 .orderBy('timestamp', "desc")
                 .limit(8)
                 .get().then(snapshot => {
@@ -65,7 +65,7 @@ const Explore = (props) => {
                 })
         }
         else{
-             db.collection('posts')
+            return db.collection('posts')
                 .orderBy('timestamp', "desc")
                 .limit(8)
                 .get().then(snapshot => {
@@ -126,7 +126,7 @@ const Explore = (props) => {
                 <NavBar userLogged={props.userLogged}/>
                 <div className="explore__masonry-container">
                     {
-                        explore ? (
+                        explore?.length > 0 ? (
                             <>
                                 <div className="explore__masonry" id="list_explore">
                                     {

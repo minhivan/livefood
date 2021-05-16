@@ -66,15 +66,11 @@ const useStyles = makeStyles((theme) => ({
 
 
 const PostUtil = (props) => {
-    const {open, handleClose, uid, opponentID, postID, handleRemove, handleReport, isSave} = props;
+    const {open, handleClose, uid, opponentID, postID, handleRemove, handleReport, handleOpenEdit, isSave} = props;
 
     const [modalStyle] = useState(getModalStyle);
     const classes = useStyles();
 
-    let isYourPost  = false;
-    if(uid === opponentID){
-        isYourPost = true;
-    }
 
     return (
         <Modal
@@ -86,7 +82,7 @@ const PostUtil = (props) => {
             <div style={modalStyle} className={classes.paper}>
                 <Divider />
                 {
-                    isYourPost ? (
+                    uid === opponentID ? (
                         <>
                             <div className={classes.btnAction}>
                                 <Button
@@ -97,7 +93,7 @@ const PostUtil = (props) => {
                                     onClick={
                                         () => {
                                             handleDeletePost(postID);
-                                            handleRemove(postID);
+                                            // handleRemove(postID);
                                             handleClose(true);
                                         }
                                     }
@@ -116,6 +112,7 @@ const PostUtil = (props) => {
                                     onClick={
                                         () => {
                                             // handleUserUnfollow(uid, opponentID);
+                                            handleOpenEdit();
                                             handleClose(true);
                                         }
                                     }
@@ -136,7 +133,7 @@ const PostUtil = (props) => {
                                     onClick={
                                         () => {
                                             handleReportPost(uid, postID);
-                                            handleRemove(postID);
+                                            // handleRemove(postID);
                                             handleClose(true);
                                         }
                                     }

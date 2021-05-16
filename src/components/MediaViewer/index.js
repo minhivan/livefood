@@ -46,8 +46,6 @@ function getModalStyle() {
     };
 }
 
-
-
 const useStyles = makeStyles((theme) => ({
     root: {
         fontSize: "0.875rem"
@@ -520,7 +518,7 @@ function MediaViewer(props){
                         }
                         {
                             userLogged && openUtil ? (
-                                <PostUtil open={openUtil} handleClose={handleCloseUtil} uid={userLogged.uid} opponentID={post.uid} postID={postId}  />
+                                <PostUtil open={openUtil} handleClose={handleCloseUtil} uid={userLogged.uid} opponentID={post.uid} postID={postId} isSave={saveSelected} />
                             ) : null
                         }
                     </div>
