@@ -4,7 +4,7 @@ import {db} from "../../firebase";
 import ProfileHeader from "../../components/Profile/ProfileHeader";
 import {useParams} from "react-router";
 import {useCollection, useDocument} from "react-firebase-hooks/firestore";
-import ProfileVids from "../../components/Profile/Content/ProfileVids";
+import ProfileVideo from "../../components/Profile/Content/ProfileVideo";
 import ProfileNavBar from "../../components/Profile/ProfileNavBar";
 import {Divider} from "@material-ui/core";
 
@@ -22,7 +22,7 @@ function content(action, id, userLogged, userSnapshot){
         case "feed":
             return <ProfileFeed uid={id} userLogged={userLogged} type="post"/>
         case "channel":
-            return <ProfileVids uid={id} userLogged={userLogged} type="video"/>
+            return <ProfileVideo uid={id} userLogged={userLogged} type="video"/>
         case "saved":
             return <ProfileSaved uid={id} userLogged={userLogged} type="saved"/>
         case "dishes":

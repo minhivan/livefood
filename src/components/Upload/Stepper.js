@@ -24,6 +24,9 @@ import {useCollection} from "react-firebase-hooks/firestore";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {green} from "@material-ui/core/colors";
 import { v4 as uuidv4 } from 'uuid';
+import MobileStepper from "@material-ui/core/MobileStepper";
+import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
+import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 
 
 
@@ -170,6 +173,8 @@ function getSteps() {
 }
 
 export default function RecipeStepper(props) {
+    const {open, image, setImage, handleClose, setOpenSnack} = props;
+
     const classes = useStyles();
     const [activeStep, setActiveStep] = React.useState(0);
     const steps = getSteps();
@@ -189,14 +194,36 @@ export default function RecipeStepper(props) {
     const [direction, setDirection] = useState('');
     const [progress, setProgress] = useState('');
     const [postLoading, setPostLoading] = useState(false);
-
     const [disable, setDisable] = useState(true);
-
     const [cate] = useCollection(db.collection("category").orderBy('title', 'asc'))
 
-    const removeImage = () => {
-        props.setImage('');
+    const [activeMedia, setActiveMedia] = React.useState(0);
+    const [maxSteps, setMaxSteps] = useState(image ? image.length : 0);
+
+
+    const handleNextMedia = () => {
+        setActiveMedia((prevActiveStep) => prevActiveStep + 1);
+    };
+
+    const handleBackMedia = () => {
+        setActiveMedia((prevActiveStep) => prevActiveStep - 1);
+    };
+
+
+    const removeImage = (step) => {
+        if(image.length === 1){
+            setImage('');
+            setActiveMedia(0);
+            setMaxSteps(0)
+        }
+        else{
+            image.splice(step, 1);
+            setImage(image);
+            setActiveMedia(0);
+            setMaxSteps(image.length)
+        }
     }
+
 
     const GetStepContent = (step) => {
         const classes = useStyles();
@@ -323,10 +350,6 @@ export default function RecipeStepper(props) {
                                         <option key={doc.id} value={doc.data().title} style={{textTransform: "uppercase"}}>{doc.data().title}</option>
                                     ))
                                 }
-                                {/*<optgroup label="Category 1">*/}
-                                {/*    <option value={1}>Option 1</option>*/}
-                                {/*    <option value={2}>Option 2</option>*/}
-                                {/*</optgroup>*/}
                             </Select>
                         </FormControl>
                     </div>
@@ -371,15 +394,42 @@ export default function RecipeStepper(props) {
                 return (
                     <>
                         {
-                            props.image ? (
+                            image ? (
                                 <div className="popup__review">
-                                    {/*<img className={classes.reviewImg} src={URL.createObjectURL(props.image)} alt="" />*/}
-                                    {media}
-                                    {/*<div className={classes.buttonClose}>*/}
-                                    {/*    <IconButton aria-label="Cancel" color="inherit" >*/}
-                                    {/*        <CancelTwoToneIcon />*/}
-                                    {/*    </IconButton>*/}
-                                    {/*</div>*/}
+                                    {
+                                        image[activeMedia]?.type === "video/mp4" ? (
+                                            <video controls className={classes.reviewImg} muted="muted">
+                                                <source src={window.URL.createObjectURL(image[activeMedia])} type="video/mp4"/>
+                                            </video>
+                                        ) : (
+                                            <img className={classes.reviewImg} src={window.URL.createObjectURL(image[activeMedia])} alt="" />
+                                        )
+                                    }
+                                    <div className={classes.buttonRemove}>
+                                        <IconButton aria-label="Cancel" color="inherit" onClick={() => removeImage(activeMedia)} >
+                                            <CancelTwoToneIcon />
+                                        </IconButton>
+                                    </div>
+                                    {
+                                        image.length > 1 ? (
+                                            <MobileStepper
+                                                variant="dots"
+                                                steps={maxSteps}
+                                                position="static"
+                                                activeStep={activeMedia}
+                                                nextButton={
+                                                    <IconButton onClick={handleNextMedia} aria-label="Next" disabled={activeMedia === maxSteps - 1} >
+                                                        <KeyboardArrowRight />
+                                                    </IconButton>
+                                                }
+                                                backButton={
+                                                    <IconButton onClick={handleBackMedia} disabled={activeMedia === 0}  aria-label="Back">
+                                                        <KeyboardArrowLeft />
+                                                    </IconButton>
+                                                }
+                                            />
+                                        ) : null
+                                    }
                                 </div>
                             ) : null
                         }
@@ -413,25 +463,6 @@ export default function RecipeStepper(props) {
     }
 
 
-    let media;
-    if(props.image){
-        if(props.image.type === "video/mp4" ){
-            media = <video controls className={classes.reviewImg} muted="muted">
-                <source src={window.URL.createObjectURL(props.image)} type="video/mp4"/>
-            </video>
-        } else {
-            media = <>
-                <img className={classes.reviewImg} src={window.URL.createObjectURL(props.image)} alt="" />
-                <div className={classes.buttonRemove}>
-                    <IconButton aria-label="Cancel" color="inherit" onClick={removeImage} >
-                        <CancelTwoToneIcon />
-                    </IconButton>
-                </div>
-            </>
-        }
-    }
-
-
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
     };
@@ -442,86 +473,90 @@ export default function RecipeStepper(props) {
 
     const handleReset = () => {
         setActiveStep(0);
-        setCategory(''); setDirection(''); setIngredient(''); setCook(''); setDesc(''); setServe(''); setPrep(''); setTitle('');
+        setCategory(''); setDirection(''); setIngredient(''); setCook(''); setDesc(''); setServe(''); setPrep(''); setTitle(''); setImage('');
     };
 
-    const handleUpload = (event) => {
+    const handleUpload = async (event) => {
         event.preventDefault();
-        const imageName = uuidv4();
-        const uploadTask = storage.ref(`media/${authUser.uid}/${imageName}`).put(props.image);
-        uploadTask.on(
-            "state_changed",
-            (snapshot => {
-                const progressData = Math.round(
-                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-                );
-                setProgress(parseInt(progressData));
-                setPostLoading(true);
-            }),
-            (error => {
-                console.log(error);
-            }),
-            () => {
-                storage
-                    .ref(`media/${authUser.uid}/`)
-                    .child(imageName)
-                    .getDownloadURL()
-                    .then(url => {
-                        db.collection("posts").add({
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                            hasImage: true,
-                            caption: title,
-                            captionToLowerCase: title.toLowerCase(),
-                            type: "recipe",
-                            data: {
-                                title: title,
-                                note: desc,
-                                ingredient: ingredient,
-                                direction: direction,
-                                cookTime: cook,
-                                cookUnit: cookUnit,
-                                prepTime: prep,
-                                prepUnit: prepUnit,
-                                serve: serve,
-                                category: category,
-                            },
-                            mediaUrl: url,
-                            user: db.doc('users/' + authUser.uid),
-                            mediaType: props.image.type,
-                            uid: authUser.uid
-                        })
-                            .then(function(docRef) {
-                                console.log("Document written with ID: ", docRef.id);
-                                db.collection("users").doc(authUser.uid).update({
-                                    post: firebase.firestore.FieldValue.arrayUnion(docRef.id)
-                                })
-                            })
-                            .catch(function(error) {
-                                console.error("Error adding document: ", error);
-                            });
-                        props.setOpenSnack(true);
-                        props.setImage(null);
-                        props.handleClose(true);
-                        setProgress('0');
-                        handleReset();
-                    })
-            }
-        )
+        await Promise.all(image.map(item =>
+            new Promise((resolve, reject) => {
+                const imageName = uuidv4();
+                storage.ref(`media/${authUser.uid}/${imageName}`)
+                    .put(item)
+                    .on('state_changed', (snapshot) => {
+                            // progress function ....
+                            setProgress(Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100));
+                            setPostLoading(true);
+                        },
+                        reject,
+                        () => {
+                            // complete function ....
+                            storage.ref(`media/${authUser.uid}/`)
+                                .child(imageName)
+                                .getDownloadURL()
+                                .then(url => {
+                                    resolve({
+                                        mediaPath: url,
+                                        type: item.type
+                                    });
+                                });
+                        });
+            })
+        )).then((values) => {
+            db.collection("posts").add({
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                caption: title,
+                captionToLowerCase: title.toLowerCase(),
+                type: "recipe",
+                data: {
+                    title: title,
+                    note: desc,
+                    ingredient: ingredient,
+                    direction: direction,
+                    cookTime: cook,
+                    cookUnit: cookUnit,
+                    prepTime: prep,
+                    prepUnit: prepUnit,
+                    serve: serve,
+                    category: category,
+                },
+                media: values,
+                user: db.doc('users/' + authUser.uid),
+                uid: authUser.uid
+            })
+                .then(function(docRef) {
+                    console.log("Document written with ID: ", docRef.id);
+                    db.collection("users").doc(authUser.uid).update({
+                        post: firebase.firestore.FieldValue.arrayUnion(docRef.id)
+                    });
+                    setOpenSnack(true);
+                    setImage(null);
+                    handleClose(true);
+                    setProgress('0');
+                    handleReset();
+                })
+                .catch(function(error) {
+                    console.error("Error adding document: ", error);
+                });
+        })
+
     }
 
 
+
+
     useEffect(() => {
-        if(category && title && direction && ingredient && props.image){
+        if(category && title && direction && ingredient && image){
             setDisable(false);
         }else {
             setDisable(true)
         }
-    },[category, direction, ingredient, props.image, title])
+    },[category, direction, ingredient, image, title])
 
     return (
         <Modal
-            open={props.open}
-            onClose={props.handleClose}
+            open={open}
+            onClose={handleClose}
             aria-labelledby="simple-modal-title"
             aria-describedby="simple-modal-description"
         >
@@ -529,7 +564,7 @@ export default function RecipeStepper(props) {
                 <div className={classes.modalHeader}>
                     <h2>Add a recipe</h2>
                     <div className={classes.buttonClose}>
-                        <IconButton aria-label="Cancel" color="inherit" onClick={props.handleClose} >
+                        <IconButton aria-label="Cancel" color="inherit" onClick={handleClose} >
                             <CancelTwoToneIcon />
                         </IconButton>
                     </div>

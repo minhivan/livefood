@@ -2,8 +2,11 @@ import React, { useState} from "react";
 import { makeStyles } from '@material-ui/core/styles';
 
 import MediaViewer from "../MediaViewer";
-import {Play as PlayIcon} from "react-feather";
-import {Modal} from "@material-ui/core";
+import {
+    Play as PlayIcon,
+    Copy as CopyIcon
+} from "react-feather";
+// import {Modal} from "@material-ui/core";
 
 
 
@@ -33,8 +36,8 @@ const useStyles = makeStyles((theme) => ({
         borderStyle: "solid",
         borderRadius: "50%",
         position: "absolute",
-        top: "20px",
-        right: "20px",
+        top: "10px",
+        right: "10px",
         zIndex: "99",
         backgroundColor: "#fff"
     }
@@ -65,18 +68,40 @@ export default function ExploreItem(props) {
 
             {
                 post?.media[0]?.type === "video/mp4" ? (
-                    <video className={classes.img}
-                           muted="muted"
-                           onClick={() => handleOpen()}>
-                        <source src={post?.media[0]?.mediaPath} type="video/mp4"/>
-                    </video>
+                    <>
+                        <video
+                            className={classes.img}
+                               // muted="muted"
+                            onClick={() => handleOpen()}
+                        >
+                            <source src={post?.media[0]?.mediaPath} type="video/mp4"/>
+                        </video>
+                        <div className={classes.none}>
+                            <PlayIcon
+                                className={classes.icon}
+                                size="15"
+                            />
+                        </div>
+                    </>
                 ) : (
-                    <img
-                        alt=""
-                        className={classes.img}
-                        onClick={() => handleOpen()}
-                        src={post?.media[0]?.mediaPath}
-                    />
+                    <>
+                        <img
+                            alt=""
+                            className={classes.img}
+                            onClick={() => handleOpen()}
+                            src={post?.media[0]?.mediaPath}
+                        />
+                        {
+                            post?.media.length >= 2  ? (
+                                <div className={classes.none}>
+                                    <CopyIcon
+                                        className={classes.icon}
+                                        size="15"
+                                    />
+                                </div>
+                            ) : null
+                        }
+                    </>
                 )
             }
             {

@@ -171,7 +171,7 @@ const PostUtil = (props) => {
                 <div className={classes.btnAction}>
                     <Button
                         component={Link}
-                        to={`p/${postID}`}
+                        to={`/p/${postID}`}
                         classes={{
                             root: classes.btnNormal,
                             label: classes.btnLabel,

@@ -61,7 +61,7 @@ function Post({id, post, handleRemove, handleReport, isSinglePage, ...rest}) {
 			<Card className={classes.root} >
 				<PostHeader author={author} handleClickOpen={handleClickOpen} postDate={post.timestamp} type={post.type} />
 				{/*Media*/}
-				<PostContent author={author} mediaUrl={post.mediaUrl} caption={post.caption} mediaType={post.mediaType} postMedia={post?.media}/>
+				<PostContent author={author} caption={post.caption} postMedia={post?.media}/>
 				{/* Post Action*/}
 				{
 					user ? (
@@ -80,7 +80,7 @@ function Post({id, post, handleRemove, handleReport, isSinglePage, ...rest}) {
 				}
 			</Card>
 			{
-				user ? (
+				user && open ? (
 					<PostUtil open={open} handleClose={handleClose} uid={user.uid} opponentID={post.uid} postID={id} handleReport={handleReport} handleRemove={handleRemove} isSave={false} />
 				) : null
 			}

@@ -30,6 +30,10 @@ const useStyles = makeStyles({
         paddingLeft: "15px",
         alignItems: "center"
     },
+    resize: {
+        fontSize: "14px",
+        lineHeight: "22px",
+    }
 });
 
 export default function CommentInput({user, postId, type, path, refInput, postAuthor}){
@@ -167,6 +171,7 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
 
                     <form onSubmit={postComment}>
                         <TextField
+
                             rowsMax={4}
                             multiline
                             ref={refInput}
@@ -174,33 +179,40 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
                             placeholder="Leave a comment ... "
                             value={comment}
                             onChange={event => setComment(event.target.value)}
-                            InputProps={{ disableUnderline: true}}
+                            InputProps={{
+                                disableUnderline: true,
+                                classes: {
+                                    input: classes.resize,
+                                }}}
                         />
                         <IconButton className="chat__iconPicker" aria-label="Add " onClick={handleClickEmoji}>
                             <SentimentSatisfiedRoundedIcon />
                         </IconButton>
-                        <Popover
+                        {
+                            openEmoji ? (
+                                <Popover
+                                    id={id}
+                                    open={openEmoji}
+                                    anchorEl={anchorElPicker}
+                                    onClose={handleCloseEmoji}
+                                    anchorOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'left',
+                                    }}
+                                    transformOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'center',
+                                    }}
+                                >
+                                    <Picker
+                                        onSelect={addEmoji}
+                                        title="Livefood"
+                                    />
+                                </Popover>
 
-                            id={id}
-                            open={openEmoji}
-                            anchorEl={anchorElPicker}
-                            onClose={handleCloseEmoji}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'left',
-                            }}
-                            transformOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'center',
-                            }}
-                        >
-                            <Picker
-                                onSelect={addEmoji}
-                                title="Livefood"
-                            />
-                        </Popover>
-
-                        <Button variant="contained" disabled={checkEmpty(comment)} onClick={postComment}>
+                            ) : null
+                        }
+                        <Button variant="contained" disabled={checkEmpty(comment)} onClick={postComment} style={{textTransform: "capitalize"}}>
                             Post
                         </Button>
                     </form>

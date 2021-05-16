@@ -88,7 +88,6 @@ function Upload({userLogged}) {
                         </span>
                     </div>
                 </div>
-
                 <div className="upload__picker">
                     <div className="upload__pickerImage">
                         <input accept="image/*|video/*" type="file" onChange={handleChange} onClick={e => (e.target.value = null)} multiple="multiple" id="icon-button-file" className={classes.input}/>

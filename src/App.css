@@ -117,7 +117,7 @@ input:focus{
 }
 
 .app__body .app__post{
-    flex-basis: 680px;
+    flex-basis: 614px;
     margin: 0 32px;
     z-index: 1;
 }
@@ -707,6 +707,12 @@ input:focus{
     font-size: 1rem;
 }
 /* Popup */
+.popup__text{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+}
 .popup__caption{
     flex: 1;
     overflow-y: auto;
@@ -898,14 +904,16 @@ input:focus{
     display: block;
     background-color: rgb(232, 231, 224);
     position: relative;
+    max-height: 730px;
+    overflow: hidden;
 }
 .post__contentImage{
-    /*height: 100%;*/
+    height: 100%;
     width: 100%;
     object-fit: contain;
-    height: 650px;
-    /*border-top: 1px solid rgb(235, 238, 240);*/
-    /*border-bottom: 1px solid rgb(235, 238, 240);*/
+    max-height: 730px;
+    border-top: 1px solid rgb(235, 238, 240);
+    border-bottom: 1px solid rgb(235, 238, 240);
 }
 .post__header{
     display: flex;
@@ -978,9 +986,11 @@ input:focus{
 }
 .comment__caption p{
     padding: 10px;
+    font-size: 14px;
     text-align: justify;
     word-break: break-word;
-    line-height: 20px;
+    line-height: 24px;
+    white-space: pre-wrap;
 }
 .comment__content{
     padding: 0 10px;

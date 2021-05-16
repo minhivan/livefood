@@ -5,6 +5,7 @@ import {Video as VideoIcon} from "react-feather";
 import {makeStyles} from "@material-ui/core/styles";
 import ExploreItem from "../../components/Explore/ExploreItem";
 import NavBar from "../../components/SideBar/LeftSideBar";
+import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles((theme) => ({
     icon: {
@@ -38,13 +39,15 @@ const ExploreVideo = (props) => {
     const classes = useStyles();
     const {userLogged} = props;
     const [exploreVid, setExploreVid] = useState([]);
+    window.scroll({top: 0, left: 0, behavior: 'smooth' });
 
     useEffect(() => {
         window.scroll({top: 0, left: 0, behavior: 'smooth' });
 
         let postVideos = db.collection('posts');
         postVideos
-            .where('mediaType', '==', 'video/mp4')
+            .where('type', '==', 'video')
+            .orderBy('timestamp', 'desc')
             .limit(20)
             .get().then(snapshot => {
                 let tempVid = []

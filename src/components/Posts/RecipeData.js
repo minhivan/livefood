@@ -49,9 +49,9 @@ export default function PostRecipeData({postId, postData, expanded, rating}){
                                 <div className="recipe_layout__facts">
                                     <div className="recipe-facts__info">
                                         <div className="recipe-facts__details recipe-facts__prepare"><span
-                                            className="recipe-facts__title">Prepare in:</span> <span>{postData?.prepTime} {postData?.prepUnit}</span></div>
+                                            className="recipe-facts__title">Prepare:</span> <span>{postData?.prepTime} {postData?.prepUnit}</span></div>
                                         <div className="recipe-facts__details recipe-facts__cooking"><span
-                                            className="recipe-facts__title">Cook in:</span> <a
+                                            className="recipe-facts__title">Cook:</span> <a
                                             className="theme-color">{postData?.cookTime} {postData?.cookUnit}</a></div>
                                     </div>
                                     <div className="recipe-facts__info">

@@ -43,7 +43,6 @@ const Explore = (props) => {
     const {userLogged} = props;
     const [explore, setExplore] = useState([]);
     const [lastVisible, setLastVisible] = useState('');
-
     useEffect(() => {
         if(userLogged){
              db.collection('posts')

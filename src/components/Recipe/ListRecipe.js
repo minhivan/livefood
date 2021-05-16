@@ -23,7 +23,7 @@ export default function ListRecipe({id, post, postAuthor}){
                 <div className="inner-wrap">
                     <Link to="" className='text-link'>
                         <img
-                            src={post?.mediaUrl} alt=""/>
+                            src={post?.media[0]?.mediaPath} alt=""/>
                     </Link>
                 </div>
                 <div className="tile-content">

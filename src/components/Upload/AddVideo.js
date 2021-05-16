@@ -7,8 +7,7 @@ import {
     IconButton,
     Modal, Popover,
     TextField,
-    Tooltip,
-    useTheme
+    Tooltip
 } from "@material-ui/core";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -25,8 +24,6 @@ import {v4 as uuidv4} from "uuid";
 import MobileStepper from '@material-ui/core/MobileStepper';
 // import Paper from '@material-ui/core/Paper';
 // import Typography from '@material-ui/core/Typography';
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
-import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import SentimentSatisfiedRoundedIcon from "@material-ui/icons/SentimentSatisfiedRounded";
 import {Picker} from "emoji-mart";
 
@@ -138,19 +135,16 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function Popup(props){
-    const {open, image, setImage, handleClose, setOpenSnack} = props;
+function AddVideo(props){
+    const {open, videoUpload, setVideoUpload, handleClose} = props;
     const [user] = useAuthState(auth);
     const classes = useStyles();
     const [modalStyle] = useState(getModalStyle);
-    const theme = useTheme();
 
     const [caption, setCaption] = useState('');
     const [progress, setProgress] = useState('');
     const [loading, setLoading] = useState(false);
     const [disable, setDisable] = useState(true);
-    const [activeStep, setActiveStep] = React.useState(0);
-    const [maxSteps, setMaxSteps] = useState(0);
     const [anchorElPicker, setAnchorElPicker] = useState(null);
 
     const openEmoji = Boolean(anchorElPicker);
@@ -167,150 +161,74 @@ function Popup(props){
         setCaption(caption + emoji);
     }
 
-    const handleNext = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    };
-
-    const handleBack = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    };
-
-    useEffect(() => {
-        if(image.length){
-            setMaxSteps(image.length);
-        }
-    }, [image.length])
-
-    const removeImage = (step) => {
-        if(image.length === 1){
-            setImage('');
-            setActiveStep(0);
-            setMaxSteps(0)
-        }
-        else{
-            image.splice(step, 1);
-            setImage(image);
-            setActiveStep(0);
-            setMaxSteps(image.length)
-        }
+    const removeImage = () => {
+        setVideoUpload('');
     }
 
+    const handleReset = () => {
+        handleClose(true);
+        setProgress('0');
+        setCaption("");
+        setLoading(false);
+        setVideoUpload("");
+    }
 
-    const newUpload = async () => {
-        await Promise.all(image.map(item =>
-            new Promise((resolve, reject) => {
-                const imageName = uuidv4();
-                storage.ref(`media/${user.uid}/${imageName}`)
-                    .put(item)
-                    .on('state_changed', (snapshot) => {
-                            // progress function ....
-                            setProgress(Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100));
-                            setLoading(true);
-                        },
-                        reject,
-                        () => {
-                            // complete function ....
-                            storage.ref(`media/${user.uid}/`)
-                                .child(imageName)
-                                .getDownloadURL()
-                                .then(url => {
-                                    resolve({
-                                        mediaPath: url,
-                                        type: item.type
-                                    });
+    const handleUpload = () => {
+        if(videoUpload) {
+            const imageName = uuidv4();
+            const uploadTask = storage.ref(`videos/${user.uid}/${imageName}`).put(videoUpload);
+            uploadTask.on(
+                "state_changed",
+                (snapshot => {
+                    const progressData = Math.round(
+                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                    );
+                    setProgress(progressData);
+                    setLoading(true);
+                }),
+                (error => {
+                    console.log(error);
+                }),
+                () => {
+                    storage
+                        .ref(`videos/${user.uid}/`)
+                        .child(imageName)
+                        .getDownloadURL()
+                        .then(url => {
+                            db.collection("posts").add({
+                                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                                caption: caption,
+                                media: [{
+                                    mediaPath: url,
+                                    type: videoUpload.type
+                                }],
+                                type: "video",
+                                user: db.doc('users/' + user.uid),
+                                uid: user.uid
+                            })
+                                .then(function(docRef) {
+                                    console.log("Document written with ID: ", docRef.id);
+                                    db.collection("users").doc(user.uid).update({
+                                        post: firebase.firestore.FieldValue.arrayUnion(docRef.id)
+                                    })
+                                    handleReset();
+                                })
+                                .catch(function(error) {
+                                    console.error("Error adding document: ", error);
                                 });
-                        });
-            })
-        )).then((values) => {
-            db.collection("posts").add({
-                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                caption: caption,
-                media: values,
-                user: db.doc('users/' + user.uid),
-                uid: user.uid
-            })
-                .then(function(docRef) {
-                    console.log("Document written with ID: ", docRef.id);
-                    db.collection("users").doc(user.uid).update({
-                        post: firebase.firestore.FieldValue.arrayUnion(docRef.id)
-                    })
-                    setOpenSnack(true);
-                    setImage('');
-                    handleClose(true);
-                    setProgress('0');
-                    setCaption("");
-                    setLoading(false);
-                    setImage('');
-                    setActiveStep(0);
-                    setMaxSteps(0)
-                })
-                .catch(function(error) {
-                    console.error("Error adding document: ", error);
-                });
-        })
-
+                        })
+                }
+            )
+        }
     }
 
-
-    // const handleUpload = () => {
-    //     if(image) {
-    //         const imageName = uuidv4();
-    //         const uploadTask = storage.ref(`media/${user.uid}/${imageName}`).put(image);
-    //         uploadTask.on(
-    //             "state_changed",
-    //             (snapshot => {
-    //                 const progressData = Math.round(
-    //                     (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-    //                 );
-    //                 setProgress(progressData);
-    //                 setLoading(true);
-    //             }),
-    //             (error => {
-    //                 console.log(error);
-    //             }),
-    //             () => {
-    //                 storage
-    //                     .ref(`media/${user.uid}/`)
-    //                     .child(imageName)
-    //                     .getDownloadURL()
-    //                     .then(url => {
-    //                         db.collection("posts").add({
-    //                             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    //                             hasImage: true,
-    //                             caption: caption,
-    //                             mediaUrl: url,
-    //                             user: db.doc('users/' + user.uid),
-    //                             mediaType: image.type,
-    //                             uid: user.uid
-    //                         })
-    //                             .then(function(docRef) {
-    //                                 console.log("Document written with ID: ", docRef.id);
-    //                                 db.collection("users").doc(user.uid).update({
-    //                                     post: firebase.firestore.FieldValue.arrayUnion(docRef.id)
-    //                                 })
-    //                             })
-    //                             .catch(function(error) {
-    //                                 console.error("Error adding document: ", error);
-    //                             });
-    //                         setOpenSnack(true);
-    //                         setImage(null);
-    //                         handleClose(true);
-    //                         setProgress('0');
-    //                         setCaption("");
-    //                         setLoading(false);
-    //                     })
-    //             }
-    //         )
-    //     }
-    // }
-
     useEffect(() => {
-        if(caption.length > 0 && image){
+        if(caption.length > 0 && videoUpload){
             setDisable(false);
         }else {
             setDisable(true)
         }
-    },[caption, caption.length, image])
+    },[caption, caption.length, videoUpload])
 
 
 
@@ -324,7 +242,7 @@ function Popup(props){
             <div style={modalStyle} className={classes.paper}>
 
                 <div className={classes.modalHeader}>
-                    <h2>What's on your mind ?</h2>
+                    <h2>Create your own video now  ?</h2>
                     <div className={classes.buttonClose}>
                         <IconButton aria-label="Cancel" color="inherit" onClick={handleClose} >
                             <CancelTwoToneIcon />
@@ -349,7 +267,7 @@ function Popup(props){
                         <TextField
                             className={classes.inputText}
                             multiline
-                            placeholder="What's on your mind ... "
+                            placeholder="What's on your mind ... ? "
                             value={caption}
                             onChange={event => setCaption(event.target.value)}
                             InputProps={{ disableUnderline: true, style : {fontSize: "1rem"}}}
@@ -384,42 +302,16 @@ function Popup(props){
 
                     </div>
                     {
-                        image ? (
+                        videoUpload ? (
                             <div className="popup__review">
-                                {
-                                    image[activeStep]?.type === "video/mp4" ? (
-                                        <video controls className={classes.reviewImg} muted="muted">
-                                            <source src={window.URL.createObjectURL(image[activeStep])} type="video/mp4"/>
-                                        </video>
-                                    ) : (
-                                        <img className={classes.reviewImg} src={window.URL.createObjectURL(image[activeStep])} alt="" />
-                                    )
-                                }
+                                <video controls className={classes.reviewImg} muted="muted">
+                                    <source src={window.URL.createObjectURL(videoUpload)} type="video/mp4"/>
+                                </video>
                                 <div className={classes.buttonRemove}>
-                                    <IconButton aria-label="Cancel" color="inherit" onClick={() => removeImage(activeStep)} >
+                                    <IconButton aria-label="Cancel" color="inherit" onClick={() => removeImage()} >
                                         <CancelTwoToneIcon />
                                     </IconButton>
                                 </div>
-                                {
-                                    image.length > 1 ? (
-                                        <MobileStepper
-                                            variant="dots"
-                                            steps={maxSteps}
-                                            position="static"
-                                            activeStep={activeStep}
-                                            nextButton={
-                                                <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}>
-                                                    {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-                                                </Button>
-                                            }
-                                            backButton={
-                                                <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
-                                                    {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-                                                </Button>
-                                            }
-                                        />
-                                    ) : null
-                                }
                             </div>
                         ) : null
                     }
@@ -428,24 +320,14 @@ function Popup(props){
                 <div className="popup__picker">
                     <h3 style={{textTransform: "inherit", fontSize: "1rem", letterSpacing: "0"}}>Add to this post </h3>
                     <div className="popup__iconPicker">
-
                         <div>
-                            <label htmlFor="icon-button-file" className="upload__pickerButton">
+                            <label htmlFor="video-upload" className="upload__pickerButton">
                                 <IconButton color="inherit" component="span" >
                                     <Badge color="secondary">
                                         <PhotoCameraTwoToneIcon className={classes.popIcon}/>
                                     </Badge>
                                 </IconButton>
                             </label>
-                        </div>
-                        <div>
-                            <Tooltip title="Location">
-                                <IconButton color="inherit" component="span">
-                                    <Badge color="secondary">
-                                        <LocationOnTwoToneIcon className={classes.popIcon}/>
-                                    </Badge>
-                                </IconButton>
-                            </Tooltip>
                         </div>
                     </div>
                 </div>
@@ -455,7 +337,7 @@ function Popup(props){
                             disabled: classes.buttonDisable
                         }}
                         type="submit"
-                        onClick={newUpload}
+                        onClick={handleUpload}
                         disabled={disable}
                     >
                         Create Now
@@ -467,4 +349,4 @@ function Popup(props){
         </Modal>
     )
 }
-export default Popup
+export default AddVideo

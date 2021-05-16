@@ -130,13 +130,20 @@ export default function PostContent({mediaUrl, caption, mediaType, author, postM
                                 />
                             )
                         }
-                            <IconButton onClick={handleNext} aria-label="Next" disabled={activeStep === maxSteps - 1} className={classes.buttonNext}>
-                                <KeyboardArrowRight />
-                            </IconButton>
+                            {
+                                postMedia.length > 1 ? (
+                                    <>
+                                        <IconButton onClick={handleNext} aria-label="Next" disabled={activeStep === maxSteps - 1} className={classes.buttonNext}>
+                                            <KeyboardArrowRight />
+                                        </IconButton>
 
-                            <IconButton onClick={handleBack} disabled={activeStep === 0} className={classes.buttonBack} aria-label="Back">
-                                <KeyboardArrowLeft />
-                            </IconButton>
+                                        <IconButton onClick={handleBack} disabled={activeStep === 0} className={classes.buttonBack} aria-label="Back">
+                                            <KeyboardArrowLeft />
+                                        </IconButton>
+                                    </>
+                                ) : null
+                            }
+
                     </div>
                 ) : <Skeleton animation="wave" variant="rect" className={classes.media} />
             }

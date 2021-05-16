@@ -10,7 +10,7 @@ export default function NewestRecipe({id, post, postAuthor}){
                 <div className="recipe-inner-wrap">
                     <Link to={`/p/${id}`} className='text-link'>
                         <img
-                            src={post?.mediaUrl} alt=""/>
+                            src={post?.media[0]?.mediaPath} alt=""/>
                     </Link>
                 </div>
                 <div className="tile-content">

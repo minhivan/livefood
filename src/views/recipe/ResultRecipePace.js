@@ -55,9 +55,9 @@ export default function ResultRecipePace() {
                 .orderBy('timestamp', "desc")
                 .limit(12)
                 .get().then(snapshot => {
-                    var data = [];
+                    let data = [];
                     snapshot.forEach(doc => {
-                        var userProfile = {};
+                        let userProfile = {};
                         if(doc.data()?.captionToLowerCase?.includes(query)){
                             doc.data().user.get().then(author => {
                                 (Object.assign(userProfile, author.data()));

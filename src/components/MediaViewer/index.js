@@ -29,6 +29,8 @@ import MobileStepper from "@material-ui/core/MobileStepper";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import Skeleton from "@material-ui/lab/Skeleton";
+import MoreHorizRoundedIcon from "@material-ui/icons/MoreHorizRounded";
+import PostUtil from "../Popup/PostUtil";
 
 
 
@@ -68,13 +70,13 @@ const useStyles = makeStyles((theme) => ({
         overflow: "hidden",
         borderRadius: "16px"
     },
-    modalHeader: {
-        display: "flex",
-        justifyContent: "flex-start",
-    },
+    // modalHeader: {
+    //     display: "flex",
+    //     justifyContent: "flex-start",
+    // },
     buttonClose: {
-        position: "fixed",
-        right: "0",
+        position: "absolute",
+        left: "0",
         top: "0"
     },
     imgHolder: {
@@ -155,9 +157,6 @@ const useStyles = makeStyles((theme) => ({
         alignItems: "center",
         justifyContent: "space-between",
     },
-    cmtButton: {
-
-    },
     cmtButtonLabel: {
         fontWeight: "bold",
         textTransform: "capitalize",
@@ -184,7 +183,8 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: "#fff",
         '&:hover': {
             backgroundColor: "#fff"
-        }
+        },
+
     },
     buttonBack: {
         position: "absolute",
@@ -195,7 +195,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: "#fff",
         '&:hover': {
             backgroundColor: "#fff"
-        }
+        },
     }
 }));
 
@@ -211,10 +211,9 @@ function MediaViewer(props){
     const [isReadMore, setIsReadMore] = useState(true);
     const [userLoggedData, setUserLoggedData] = useState({});
     const [postSnapshot] = useDocument(postId && db.collection('posts').doc(postId));
-
+    const [openUtil, setOpenUtil] = useState(false);
     const [activeStep, setActiveStep] = React.useState(0);
     const maxSteps = post?.media?.length;
-    const theme = useTheme();
 
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -224,6 +223,13 @@ function MediaViewer(props){
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
 
+    const handleClickUtil = () => {
+        setOpenUtil(true);
+    };
+
+    const handleCloseUtil = () => {
+        setOpenUtil(false);
+    };
 
 
     useEffect(() => {
@@ -283,20 +289,6 @@ function MediaViewer(props){
         handleUnSavedPost(postId, userLogged.uid);
     }
 
-    // let media;
-
-    // if(post.mediaType === "video/mp4"){
-    //     media = <div className={classes.imgHolder}>
-    //         <video controls className={classes.img} muted="muted" onClick={e => e.target.play()}>
-    //             <source src={post.mediaUrl} type="video/mp4"/>
-    //         </video>
-    //     </div>
-    // } else{
-    //     media = <div className={classes.imgHolder}>
-    //         <img src={post.mediaUrl} alt="" className={classes.img}/>
-    //     </div>
-    // }
-
     useEffect(() => {
         if(typeof postSnapshot?.data()?.likeBy !== 'undefined' && postSnapshot?.data()?.likeBy.includes(userLogged.uid)){
             setSelected(true);
@@ -332,33 +324,27 @@ function MediaViewer(props){
                                         </div>
                                     )
                                 }
-                                <IconButton onClick={handleNext} aria-label="Next" disabled={activeStep === maxSteps - 1} className={classes.buttonNext}>
-                                    <KeyboardArrowRight />
-                                </IconButton>
+                                {
+                                    post?.media?.length > 1 ? (
+                                        <>
+                                            <IconButton onClick={handleNext} aria-label="Next" disabled={activeStep === maxSteps - 1} className={classes.buttonNext}>
+                                                <KeyboardArrowRight />
+                                            </IconButton>
 
-                                <IconButton onClick={handleBack} disabled={activeStep === 0} className={classes.buttonBack} aria-label="Back">
-                                    <KeyboardArrowLeft />
-                                </IconButton>
-                                {/*<MobileStepper*/}
-                                {/*    variant="dots"*/}
-                                {/*    steps={maxSteps}*/}
-                                {/*    position="static"*/}
-                                {/*    activeStep={activeStep}*/}
-                                {/*    nextButton={*/}
-                                {/*        <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}>*/}
-                                {/*            {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}*/}
-                                {/*        </Button>*/}
-                                {/*    }*/}
-                                {/*    backButton={*/}
-                                {/*        <Button size="small" onClick={handleBack} disabled={activeStep === 0}>*/}
-                                {/*            {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}*/}
-                                {/*        </Button>*/}
-                                {/*    }*/}
-                                {/*/>*/}
-
+                                            <IconButton onClick={handleBack} disabled={activeStep === 0} className={classes.buttonBack} aria-label="Back">
+                                                <KeyboardArrowLeft />
+                                            </IconButton>
+                                        </>
+                                    ) : null
+                                }
                             </>
                         ) : <Skeleton animation="wave" variant="rect" className={classes.media} />
                     }
+                    <div className={classes.buttonClose}>
+                        <IconButton aria-label="Cancel" color="inherit" onClick={handleClose} >
+                            <CancelTwoToneIcon />
+                        </IconButton>
+                    </div>
                 </div>
                 <Divider orientation="vertical" flexItem />
                 <div className={classes.rightPanel}>
@@ -373,12 +359,12 @@ function MediaViewer(props){
                                     <Link to={`/profile/${postAuthor?.uid}`} style={{fontWeight: "bold"}}>{postAuthor?.displayName}</Link>
                                 }
                                 subheader={dayjs(postCreated).fromNow()}
+                                action={
+                                    <IconButton aria-label="settings" onClick={handleClickUtil}>
+                                        <MoreHorizRoundedIcon />
+                                    </IconButton>
+                                }
                             />
-                            <div className={classes.buttonClose}>
-                                <IconButton aria-label="Cancel" color="inherit" onClick={handleClose} >
-                                    <CancelTwoToneIcon />
-                                </IconButton>
-                            </div>
                         </div>
                         <Divider />
 
@@ -386,7 +372,6 @@ function MediaViewer(props){
                             {/* Card body */}
                             <div className={classes.modalBody}>
                                 <div className="post__caption">
-                                    <Link to={`/profile/${postAuthor?.uid}`} className="post__user">{postAuthor?.displayName}</Link>
                                     {
                                         post.caption.length > 50 ? (
                                             <span className={classes.captionText} >
@@ -524,13 +509,18 @@ function MediaViewer(props){
                             }
 
                             {/* Comment*/}
-                            <ListComment postId={postId} isPopup={`true`} commentsCount={post?.commentsCount}/>
+                            <ListComment postId={postId} isPopup={`true`} commentsCount={postSnapshot?.data()?.commentsCount}/>
 
                         </div>
                         <CommentInput user={userLogged} postId={postId} type={post.type} path={'preview'}  postAuthor={post.uid}/>
                         {
                             openLikesList ? (
                                 <ListUserLikePost open={openLikesList} handleClose={handleCloseLikesList} userLogged={userLogged} postLike={postSnapshot?.data()?.likeBy} likesCount={postSnapshot?.data()?.likeCount}/>
+                            ) : null
+                        }
+                        {
+                            userLogged && openUtil ? (
+                                <PostUtil open={openUtil} handleClose={handleCloseUtil} uid={userLogged.uid} opponentID={post.uid} postID={postId}  />
                             ) : null
                         }
                     </div>
