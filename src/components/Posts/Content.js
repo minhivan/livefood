@@ -3,9 +3,7 @@ import Skeleton from "@material-ui/lab/Skeleton";
 import {Link} from "react-router-dom";
 import PropTypes from "prop-types";
 import {makeStyles} from "@material-ui/core/styles";
-import {Button, IconButton, useTheme} from "@material-ui/core";
-import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
-import MobileStepper from "@material-ui/core/MobileStepper";
+import { IconButton} from "@material-ui/core";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 
@@ -150,7 +148,7 @@ export default function PostContent({mediaUrl, caption, mediaType, author, postM
 
             {/* Caption */}
             {
-                caption ? (
+                caption.length > 0 ? (
                     <div className="post__caption">
                         <Link to={`profile/${author?.uid}`} className="post__user">{author?.displayName}</Link>
                         {
@@ -164,13 +162,18 @@ export default function PostContent({mediaUrl, caption, mediaType, author, postM
                             ) : caption
                         }
                     </div>
-                ) : (
-                    <div className="post__caption">
-                        <Skeleton animation="wave" height={10} width="80%" style={{ marginBottom: 6 }} />
-                        <Skeleton animation="wave" height={10} width="80%" />
-                    </div>
-                )
+                ) : null
             }
+            {/*{*/}
+            {/*    caption ? (*/}
+            {/*        */}
+            {/*    ) : (*/}
+            {/*        <div className="post__caption">*/}
+            {/*            <Skeleton animation="wave" height={10} width="100%" style={{ marginBottom: 6 }} />*/}
+            {/*            <Skeleton animation="wave" height={10} width="100%" />*/}
+            {/*        </div>*/}
+            {/*    )*/}
+            {/*}*/}
         </>
     )
 }

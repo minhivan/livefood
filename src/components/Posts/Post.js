@@ -73,7 +73,7 @@ function Post({id, post, handleRemove, handleReport, isSinglePage, ...rest}) {
 	return (
 		<div className="post" id={id}>
 			<Card className={classes.root} >
-				<PostHeader author={author} handleClickOpen={handleClickOpen} postDate={post.timestamp} type={post.type} />
+				<PostHeader author={author} handleClickOpen={handleClickOpen} postDate={post.timestamp} type={post.type} postFelling={post?.felling} />
 				{/*Media*/}
 				<PostContent author={author} caption={post.caption} postMedia={post?.media}/>
 				{/* Post Action*/}
@@ -95,7 +95,7 @@ function Post({id, post, handleRemove, handleReport, isSinglePage, ...rest}) {
 			</Card>
 			{
 				user && open ? (
-					<PostUtil open={open} handleClose={handleClose} handleOpenEdit={handleOpenEdit} uid={user.uid} opponentID={post.uid} postID={id} handleReport={handleReport} handleRemove={handleRemove}  />
+					<PostUtil open={open} handleClose={handleClose} handleOpenEdit={handleOpenEdit} uid={user.uid} opponentID={post.uid} postID={id} handleReport={handleReport} handleRemove={handleRemove}  setOpenSnack={setOpenSnack}/>
 				) : null
 			}
 			{

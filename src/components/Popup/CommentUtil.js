@@ -1,10 +1,10 @@
 import React, {useState} from "react";
 import Divider from "@material-ui/core/Divider";
 import {Button, Modal} from "@material-ui/core";
-import {Link} from "react-router-dom";
+// import {Link} from "react-router-dom";
 import {makeStyles} from "@material-ui/core/styles";
 import {green} from "@material-ui/core/colors";
-import {handleReportPost, handleDeletePost, handleUserUnfollow, handleDeleteComment} from "../../hooks/services";
+import {handleDeleteComment} from "../../hooks/services";
 
 function getModalStyle() {
     const top = 50 ;

@@ -86,7 +86,7 @@ const routes = (isLoggedIn)  => [
     },
     {
         path: '/profile',
-        element: isLoggedIn ? <MainLayout/> : <Navigate to="/login" />,
+        element: <MainLayout/>,
         children: [
             { path: '/:id', element: <UserProfilePage userLogged={isLoggedIn} pagePath="feed"/> },
             { path: '/channel/:id', element: <UserProfilePage userLogged={isLoggedIn} pagePath="channel"/> },

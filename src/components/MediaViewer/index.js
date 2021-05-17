@@ -31,6 +31,7 @@ import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import Skeleton from "@material-ui/lab/Skeleton";
 import MoreHorizRoundedIcon from "@material-ui/icons/MoreHorizRounded";
 import PostUtil from "../Popup/PostUtil";
+import EditPost from "../Popup/EditPost";
 
 
 
@@ -211,6 +212,8 @@ function MediaViewer(props){
     const [postSnapshot] = useDocument(postId && db.collection('posts').doc(postId));
     const [openUtil, setOpenUtil] = useState(false);
     const [activeStep, setActiveStep] = React.useState(0);
+    const [openEdit, setOpenEdit] = useState(false);
+
     const maxSteps = post?.media?.length;
 
     const handleNext = () => {
@@ -228,6 +231,13 @@ function MediaViewer(props){
     const handleCloseUtil = () => {
         setOpenUtil(false);
     };
+
+    const handleCloseEdit = () => {
+        setOpenEdit(false);
+    };
+    const handleOpenEdit = () => {
+        setOpenEdit(true)
+    }
 
 
     useEffect(() => {
@@ -288,11 +298,13 @@ function MediaViewer(props){
     }
 
     useEffect(() => {
-        if(typeof postSnapshot?.data()?.likeBy !== 'undefined' && postSnapshot?.data()?.likeBy.includes(userLogged.uid)){
-            setSelected(true);
-        }
-        if(typeof postSnapshot?.data()?.saveBy !== 'undefined' && postSnapshot?.data()?.saveBy.includes(userLogged.uid)){
-            setSaveSelected(true);
+        if(userLogged){
+            if(typeof postSnapshot?.data()?.likeBy !== 'undefined' && postSnapshot?.data()?.likeBy.includes(userLogged.uid)){
+                setSelected(true);
+            }
+            if(typeof postSnapshot?.data()?.saveBy !== 'undefined' && postSnapshot?.data()?.saveBy.includes(userLogged.uid)){
+                setSaveSelected(true);
+            }
         }
     }, [postSnapshot, userLogged])
 
@@ -483,13 +495,13 @@ function MediaViewer(props){
                                                         <div className="recipe-facts__details recipe-facts__prepare"><span
                                                             className="recipe-facts__title">Prepare in:</span> <span>{post?.data?.prepTime} {post?.data?.prepUnit}</span></div>
                                                         <div className="recipe-facts__details recipe-facts__cooking"><span
-                                                            className="recipe-facts__title">Cook in:</span> <a
-                                                            className="theme-color">{post?.data?.cookTime} {post?.data?.cookUnit}</a></div>
+                                                            className="recipe-facts__title">Cook in:</span> <span
+                                                            className="theme-color">{post?.data?.cookTime} {post?.data?.cookUnit}</span></div>
                                                     </div>
                                                     <div className="recipe-facts__info">
                                                         <div className="recipe-facts__details recipe-facts__servings"><span
-                                                            className="recipe-facts__title">Serves:</span> <a
-                                                            className="theme-color">{post?.data?.serve}</a></div>
+                                                            className="recipe-facts__title">Serves:</span> <span
+                                                            className="theme-color">{post?.data?.serve}</span></div>
                                                     </div>
                                                 </div>
                                                 <Typography paragraph className={classes.paragraphHead} >Category: <Link style={{textDecoration: "underline"}} to={`/recipe/topic/${post?.data?.category?.toLowerCase()}`}>{post?.data?.category}</Link></Typography>
@@ -510,7 +522,11 @@ function MediaViewer(props){
                             <ListComment postId={postId} isPopup={`true`} commentsCount={postSnapshot?.data()?.commentsCount}/>
 
                         </div>
-                        <CommentInput user={userLogged} postId={postId} type={post.type} path={'preview'}  postAuthor={post.uid}/>
+                        {
+                            userLogged ? (
+                                <CommentInput user={userLogged} postId={postId} type={post.type} path={'preview'}  postAuthor={post.uid}/>
+                            ) : null
+                        }
                         {
                             openLikesList ? (
                                 <ListUserLikePost open={openLikesList} handleClose={handleCloseLikesList} userLogged={userLogged} postLike={postSnapshot?.data()?.likeBy} likesCount={postSnapshot?.data()?.likeCount}/>
@@ -518,7 +534,12 @@ function MediaViewer(props){
                         }
                         {
                             userLogged && openUtil ? (
-                                <PostUtil open={openUtil} handleClose={handleCloseUtil} uid={userLogged.uid} opponentID={post.uid} postID={postId} isSave={saveSelected} />
+                                <PostUtil open={openUtil} handleClose={handleCloseUtil} handleOpenEdit={handleOpenEdit} uid={userLogged.uid} opponentID={post.uid} postID={postId} isSave={saveSelected} />
+                            ) : null
+                        }
+                        {
+                            openEdit ? (
+                                <EditPost open={openEdit} handleClose={handleCloseEdit} post={post} postId={postId} />
                             ) : null
                         }
                     </div>

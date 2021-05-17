@@ -4,11 +4,9 @@ import {
     Badge,
     Button,
     CircularProgress,
-    IconButton,
-    Modal, Popover,
+    IconButton, MenuItem,
+    Modal, Popover, Select,
     TextField,
-    Tooltip,
-    useTheme
 } from "@material-ui/core";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -28,6 +26,7 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import SentimentSatisfiedRoundedIcon from "@material-ui/icons/SentimentSatisfiedRounded";
 import {Picker} from "emoji-mart";
+import FormControl from "@material-ui/core/FormControl";
 
 
 
@@ -134,6 +133,14 @@ const useStyles = makeStyles((theme) => ({
         display: 'block',
         width: '100%',
     },
+    inputHead: {
+        display: "flex",
+        alignItems: "flex-start",
+    },
+    fellingSelect: {
+        minWidth: "150px",
+        padding: "16px"
+    }
 }));
 
 
@@ -142,7 +149,6 @@ function EditPost(props){
     const [user] = useAuthState(auth);
     const classes = useStyles();
     const [modalStyle] = useState(getModalStyle);
-
     const [caption, setCaption] = useState(post?.caption ?? '');
     const [progress, setProgress] = useState('');
     const [loading, setLoading] = useState(false);
@@ -151,6 +157,8 @@ function EditPost(props){
     const [maxSteps, setMaxSteps] = useState(post?.media?.length ?? '');
     const [image, setImage] = useState(post?.media ?? '');
     const [newImage, setNewImage] = useState('');
+    const [felling, setFelling] = useState(post?.felling ??'');
+
 
     const [anchorElPicker, setAnchorElPicker] = useState(null);
 
@@ -198,6 +206,7 @@ function EditPost(props){
     }
 
     const newUpload = async () => {
+        setDisable(true);
         if(newImage){
             await Promise.all(newImage.map(item =>
                 new Promise((resolve, reject) => {
@@ -228,38 +237,32 @@ function EditPost(props){
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                     caption: caption,
                     media: values,
+                    felling: felling,
                 }).then(() => {
-                        setImage('');
-                        setNewImage('');
-                        handleClose(true);
-                        setProgress('0');
-                        setCaption("");
-                        setLoading(false);
-                        setActiveStep(0);
-                        setMaxSteps(0);
-                        setOpenSnack(true);
-                    })
+                    handleClose(true);
+                    setLoading(false);
+                    setOpenSnack(true);
+                    setDisable(false);
+                })
                     .catch(function(error) {
+                        setDisable(true);
                         console.error("Error adding document: ", error);
                     });
             })
 
         }
         else{
+            setLoading(true);
             db.collection("posts").doc(postId).update({
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 caption: caption,
+                felling: felling,
             }).then(() => {
-                setOpenSnack(true);
-                setImage('');
                 handleClose(true);
-                setProgress('0');
-                setCaption("");
                 setLoading(false);
-                setImage('');
-                setActiveStep(0);
-                setMaxSteps(0);
+                setOpenSnack(true);
             }).catch(function(error) {
+                setDisable(true);
                 console.error("Error update document: ", error);
             });
         }
@@ -303,18 +306,36 @@ function EditPost(props){
                     </div>
                 </div>
                 <div className="popup__caption">
-                    <CardHeader
-                        avatar={
-                            <Avatar aria-label="recipe" className={classes.avatar} src={user?.photoURL}/>
-                        }
-                        title={
-                            <span className={classes.username}>{user?.displayName}</span>
-                        }
-                        subheader={
-                            <span>Public</span>
-                        }
-                        className={classes.cardHeader}
-                    />
+                    <div className={classes.inputHead}>
+                        <CardHeader
+                            avatar={
+                                <Avatar aria-label="recipe" className={classes.avatar} src={user?.photoURL}/>
+                            }
+                            title={
+                                <span className={classes.username}>{user?.displayName}</span>
+                            }
+                            subheader={
+                                <span>Public</span>
+                            }
+                            className={classes.cardHeader}
+                        />
+                        <FormControl className={classes.fellingSelect}>
+                            <Select
+                                displayEmpty
+                                inputProps={{ 'aria-label': 'Felling' }}
+                                value={felling}
+                                onChange={event => setFelling(event.target.value)}
+                            >
+                                <MenuItem value="">
+                                    <em>Felling</em>
+                                </MenuItem>
+                                <MenuItem value={`happy`}> 🙂 <span style={{paddingLeft: "5px"}}>Happy</span></MenuItem>
+                                <MenuItem value={`sad`}> 😔 <span style={{paddingLeft: "5px"}}>Sad</span></MenuItem>
+                                <MenuItem value={`love`}>🥰 <span style={{paddingLeft: "5px"}}>Loved</span></MenuItem>
+                            </Select>
+
+                        </FormControl>
+                    </div>
 
                     <div className="popup__text">
                         <TextField

@@ -28,18 +28,21 @@ const useStyles = makeStyles({
     rating: {
         display: 'flex',
         paddingLeft: "15px",
-        alignItems: "center"
+        alignItems: "center",
     },
     resize: {
         fontSize: "14px",
         lineHeight: "22px",
+    },
+    iconPicker: {
+        padding: "15px"
     }
 });
 
 export default function CommentInput({user, postId, type, path, refInput, postAuthor}){
 
     const classes = useStyles();
-    const [value, setValue] = React.useState(null);
+    const [value, setValue] = React.useState(4);
     const [hover, setHover] = React.useState(-1);
     const [comment, setComment] = useState('');
     const postRef = db.collection('posts').doc(postId);
@@ -70,11 +73,19 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
         setComment(comment + emoji);
     }
 
+    const checkingKeypress = (event) => {
+        if(event.key === "Enter"){
+            if(!event.shiftKey){
+
+                postComment(event)
+            }
+        }
+    }
 
 
     const postComment = (event) => {
         event.preventDefault();
-        if(comment){
+        if(comment && !checkEmpty(comment)){
             if(value){
                 if(typeof rating == 'undefined'){
                     db.collection("posts").doc(postId).update({
@@ -145,7 +156,7 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
     return(
         <>
 
-            <div className={`commentContainer ${path === "preview" && "commentViewer"}`}>
+            <div className={`commentContainer ${path === "preview" ? "commentViewer" : ""}`}>
                 {
                     path === "preview" ? null : <Avatar alt={user?.displayName} src={user?.photoURL} />
                 }
@@ -169,9 +180,9 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
                         ) : null
                     }
 
-                    <form onSubmit={postComment}>
+                    <form onSubmit={postComment} autoComplete="off">
                         <TextField
-
+                            onKeyPress={event => checkingKeypress(event)}
                             rowsMax={4}
                             multiline
                             ref={refInput}
@@ -185,7 +196,7 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
                                     input: classes.resize,
                                 }}}
                         />
-                        <IconButton className="chat__iconPicker" aria-label="Add " onClick={handleClickEmoji}>
+                        <IconButton className={classes.iconPicker} aria-label="Add " onClick={handleClickEmoji}>
                             <SentimentSatisfiedRoundedIcon />
                         </IconButton>
                         {
@@ -212,9 +223,9 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
 
                             ) : null
                         }
-                        <Button variant="contained" disabled={checkEmpty(comment)} onClick={postComment} style={{textTransform: "capitalize"}}>
-                            Post
-                        </Button>
+                        {/*<Button variant="contained" disabled={checkEmpty(comment)} onClick={postComment} style={{textTransform: "capitalize"}}>*/}
+                        {/*    Post*/}
+                        {/*</Button>*/}
                     </form>
                 </div>
 

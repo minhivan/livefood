@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function PostHeader({author, handleClickOpen, postDate, type}){
+export default function PostHeader({author, handleClickOpen, postDate, type, postFelling}){
     const classes = useStyles();
 
     // day ago
@@ -29,6 +29,20 @@ export default function PostHeader({author, handleClickOpen, postDate, type}){
     if(postDate){
         postCreated = new Date(postDate.seconds * 1000).toLocaleString();
     }
+
+    const fellingTitle = () => {
+        switch (postFelling) {
+            case "happy" :
+                return "happy 🙂";
+            case "sad" :
+                return "sad 😔 ";
+            case "love" :
+                return "loved 🥰";
+            default:
+                return ""
+        }
+    }
+
 
 
     return (
@@ -45,6 +59,11 @@ export default function PostHeader({author, handleClickOpen, postDate, type}){
                 author?.uid ? (
                     <>
                         <Link to={`/profile/${author.uid}`}><span style={{fontWeight: "bold"}}>{author?.displayName}</span></Link>
+                        {
+                            postFelling?.length > 0 ? (
+                                <span style={{paddingLeft: "5px"}}>is feeling {fellingTitle(postFelling)}</span>
+                            ) : null
+                        }
                     </>
                 ) : (
                     <Skeleton animation="wave" height={10} width="30%" style={{ marginBottom: 6 }} />

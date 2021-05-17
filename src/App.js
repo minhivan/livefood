@@ -46,7 +46,7 @@ function App() {
 		}
 	}, [userLogged])
 
-	// //
+	// // //
 	// useEffect(() => {
 	// 	if (navigator.geolocation) {
 	// 		navigator.geolocation.watchPosition(function(position) {
@@ -54,7 +54,7 @@ function App() {
 	// 			console.log("Longitude is :", position.coords.longitude);
 	// 		});
 	// 	}
-	// })
+	// }, [])
 
 	if(loading){
 		return(
@@ -65,9 +65,9 @@ function App() {
 
 	return (
 		<>
-			<ScrollToTop />
 			<ThemeProvider theme={theme}>
 				<GlobalStyles />
+				<ScrollToTop />
 				{routing}
 				{
 					survey ? (

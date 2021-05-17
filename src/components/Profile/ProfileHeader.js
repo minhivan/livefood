@@ -14,6 +14,9 @@ import ListUserInProfile from "../Popup/ListUserInProfile";
 import LocationOnRoundedIcon from '@material-ui/icons/LocationOnRounded';
 import {useDocument} from "react-firebase-hooks/firestore";
 import MapRoundedIcon from '@material-ui/icons/MapRounded';
+import OpenRating from "../Popup/OpenRating";
+import {Rating} from "@material-ui/lab";
+import Typography from "@material-ui/core/Typography";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -31,18 +34,17 @@ const useStyles = makeStyles((theme) => ({
         color: blue[600],
     },
     bioDetails: {
-        marginLeft: "50px",
         overflow: "hidden",
         textOverflow: "ellipsis",
         display: "flex",
-        alignItems: "center"
+        alignItems: "center",
+        // flex: "1"
     },
     bioAvt: {
         overflow: "hidden",
         textOverflow: "ellipsis",
         display: "flex",
         alignItems: "flex-start",
-        paddingTop: "10px"
     },
     button: {
         overflow: "hidden",
@@ -57,7 +59,6 @@ const useStyles = makeStyles((theme) => ({
         "&:hover": {
             backgroundColor: "#0186db",
         },
-        marginRight: "15px",
         textTransform: "capitalize"
     },
     buttonUnfollow: {
@@ -90,7 +91,15 @@ const useStyles = makeStyles((theme) => ({
     about: {
         padding: "20px 0",
         display: "flex",
-        gap: "20px"
+        gap: "10px"
+    },
+    bioContent: {
+        padding: "20px 0"
+    },
+    voteRating : {
+        display: "flex",
+        alignItems: "center",
+        paddingBottom: "15px"
     }
 }));
 
@@ -101,11 +110,19 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
     const [userFollower, setUserFollower] = useState([]);
     const [openFollower, setOpenFollower] = useState(false);
     const [openFollowing, setOpenFollowing] = useState(false);
-
-    const [authData] = useDocument(userLogged.uid && db.collection('users').doc(userLogged.uid));
+    const [openRating, setOpenRating] = useState(false);
+    const [authData] = useDocument(userLogged && db.collection('users').doc(userLogged.uid));
     const authFollowingList = authData?.data()?.following;
     const [userLoggedData, setUserLoggedData] = useState({});
 
+
+    const handleOpenRating = () => {
+        setOpenRating(true);
+    }
+
+    const handleCloseRating = () => {
+        setOpenRating(false);
+    }
 
     const handleOpenFollower = () => {
         setOpenFollower(true);
@@ -210,20 +227,20 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
                         <h2 className="share-title">{userSnapshot?.displayName}</h2>
                         <h1 className="share-sub-title">{userSnapshot?.fullName ?? ''}</h1>
                         {
-                            userSnapshot?.uid === userLogged.uid ? (
-                                <div className="share-follow-container">
-                                    {/* Checking if followed */}
-                                    <Link to="/account/edit">
-                                        <Button
-                                            variant="contained"
-                                            className={classes.button}
-                                        >
-                                            Edit profile
-                                        </Button>
-                                    </Link>
-                                </div>
-                            ) : (
-                                userLogged ? (
+                            userLogged ? (
+                                userSnapshot?.uid === userLogged.uid ? (
+                                    <div className="share-follow-container">
+                                        {/* Checking if followed */}
+                                        <Link to="/account/edit">
+                                            <Button
+                                                variant="contained"
+                                                className={classes.button}
+                                            >
+                                                Edit profile
+                                            </Button>
+                                        </Link>
+                                    </div>
+                                ) : (
                                     <div className="share-follow-container">
                                         {/* Checking if followed */}
                                         {
@@ -251,76 +268,105 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
                                         >
                                             Message
                                         </Button>
-                                    </div>
-                                ) : null
-                            )
-                        }
 
-                        {
-                            userSnapshot?.bio ? (
-                                <h2 className="share-desc mt10">
-                                    {userSnapshot.bio}
-                                </h2>
+                                    </div>
+                                )
                             ) : null
                         }
 
-                        {
-                            userSnapshot?.profileLink ? (
-                                <div className="share-links">
-                                    <a href={userSnapshot.profileLink}>{userSnapshot.profileLink}</a>
-                                </div>
-                            ) : null
-                        }
+                    </div>
+                </div>
+            </div>
 
-
-                        {
-                            userSnapshot?.aboutRestaurant ? (
-                                <>
-                                    <Divider />
-                                    <div className={classes.about}>
-                                        {
-                                            userSnapshot?.aboutRestaurant?.opening ? (
-                                                <h4 className={classes.opening}>
-                                                    <AccessTimeRoundedIcon style={{marginRight: "5px"}}/>
-                                                    Opening :
-                                                    <span style={{marginLeft: "5px"}}>{userSnapshot?.aboutRestaurant?.opening} - {userSnapshot?.aboutRestaurant?.closed}</span>
-                                                </h4>
-                                            ) : null
-                                        }
-                                        {
-                                            userSnapshot?.aboutRestaurant?.location ? (
-                                                <h4 className={classes.opening}>
-                                                    <LocationOnRoundedIcon style={{marginRight: "5px"}}/>
-                                                    Location :
-                                                    <span style={{marginLeft: "5px"}}>{userSnapshot?.aboutRestaurant?.location}</span>
-                                                </h4>
-                                            ) : null
-                                        }
-                                    </div>
+            <div className="profile__about">
+                <div className={classes.countInfo}>
+                    <Divider />
+                    {/* Count info */}
+                    <h2 className="count-infos">
+                        <div className="number"><strong title="Likes">{ count ?? '0'}</strong><span
+                            className="unit">Post</span></div>
+                        <div className="number"><strong title="Following">{userSnapshot?.followingCount ?? "0"}</strong><a className="unit" onClick={handleOpenFollowing}>Following</a></div>
+                        <div className="number"><strong title="Followers">{userSnapshot?.followerCount ?? "0"}</strong><a className="unit" onClick={handleOpenFollower}>Follower</a></div>
+                    </h2>
+                    <Divider />
+                </div>
+                <div className={classes.bioContent}>
+                    {
+                        userSnapshot?.bio ? (
+                            <h2 className="share-desc mt10">
+                                {userSnapshot.bio}
+                            </h2>
+                        ) : null
+                    }
+                    {
+                        userSnapshot?.profileLink ? (
+                            <div className="share-links">
+                                <a href={userSnapshot.profileLink}>{userSnapshot.profileLink}</a>
+                            </div>
+                        ) : null
+                    }
+                    {
+                        userSnapshot?.aboutRestaurant ? (
+                            <>
+                                <div className={classes.about}>
                                     {
-                                        userSnapshot?.aboutRestaurant?.address ? (
-                                            <h4 className={classes.opening} style={{paddingBottom: "20px"}}>
-                                                <MapRoundedIcon style={{marginRight: "5px"}}/>
-                                                Address :
-                                                <span style={{marginLeft: "5px"}}>{userSnapshot?.aboutRestaurant?.address}</span>
+                                        userSnapshot?.aboutRestaurant?.opening ? (
+                                            <h4 className={classes.opening}>
+                                                <AccessTimeRoundedIcon style={{marginRight: "5px"}}/>
+                                                Opening :
+                                                <span style={{marginLeft: "5px"}}>{userSnapshot?.aboutRestaurant?.opening} - {userSnapshot?.aboutRestaurant?.closed}</span>
                                             </h4>
                                         ) : null
                                     }
-                                    <Divider />
-                                </>
-
-                            ) : null
-                        }
-
-                        {/* Count info */}
-                        <h2 className="count-infos">
-                            <div className="number"><strong title="Likes">{ count ?? '0'}</strong><span
-                                className="unit">Post</span></div>
-                            <div className="number"><strong title="Following">{userSnapshot?.followingCount ?? "0"}</strong><a className="unit" onClick={handleOpenFollowing}>Following</a></div>
-                            <div className="number"><strong title="Followers">{userSnapshot?.followerCount ?? "0"}</strong><a className="unit" onClick={handleOpenFollower}>Follower</a></div>
-                        </h2>
-                    </div>
+                                    {
+                                        userSnapshot?.aboutRestaurant?.location ? (
+                                            <h4 className={classes.opening}>
+                                                <LocationOnRoundedIcon style={{marginRight: "5px"}}/>
+                                                Location :
+                                                <span style={{marginLeft: "5px"}}>{userSnapshot?.aboutRestaurant?.location}</span>
+                                            </h4>
+                                        ) : null
+                                    }
+                                </div>
+                                {
+                                    userSnapshot?.aboutRestaurant?.address ? (
+                                        <h4 className={classes.opening} style={{paddingBottom: "20px"}}>
+                                            <MapRoundedIcon style={{marginRight: "5px"}}/>
+                                            Address :
+                                            <span style={{marginLeft: "5px"}}>{userSnapshot?.aboutRestaurant?.address}</span>
+                                        </h4>
+                                    ) : null
+                                }
+                            </>
+                        ) : null
+                    }
+                    {
+                        userSnapshot?.voteRating ? (
+                            <div className={classes.voteRating}>
+                                <Rating name="read-only" value={userSnapshot?.voteRating} precision={0.1} readOnly />
+                                <span style={{paddingLeft: "5px"}}> {userSnapshot?.voteCount} reviews from LiveFood</span>
+                            </div>
+                        ) : null
+                    }
+                    <Divider />
                 </div>
+
+
+                {
+                    userLogged ? (
+                        userSnapshot?.accountType === "foodshop" && userLogged.uid !== userSnapshot?.uid ? (
+                            <Button
+                                style={{width: "150px", margin: "auto"}}
+                                variant="contained"
+                                className={classes.button}
+                                onClick={handleOpenRating}
+                            >
+                                Vote
+                            </Button>
+                        ) : null
+                    ) : null
+                }
+
             </div>
             {
                 openFollowing ? (
@@ -332,8 +378,13 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
                     <ListUserInProfile open={openFollower} handleClose={handleCloseFollower} data={userFollower} type={`2`} userLogged={userLogged} authFollowingList={authFollowingList} countUser={userSnapshot?.followerCount} handleLoadMore={handleLoadMore}/>
                 ) : null
             }
+            {
+                openRating ? (
+                    <OpenRating open={openRating} handleClose={handleCloseRating} userLogged={userLogged} shopId={userSnapshot?.uid} voteRating={userSnapshot?.voteRating}/>
+                ) : null
+            }
         </div>
     )
 }
 
-export default ProfileHeader
+export default ProfileHeader;

@@ -141,19 +141,23 @@ const ProfileVideo = ({uid, userLogged}) => {
                                 />
                             </div>
                             {
-                                uid === userLogged.uid ? (
-                                    <>
-                                        <h2 style={{paddingBottom: "10px"}}>Start Record Video</h2>
-                                        <p>Videos must be between 1 and 60 minutes long.</p>
-                                        <Button
-                                            style={{textTransform: "capitalize", fontSize: "16px", marginTop: "20px"}}
-                                            color="primary"
-                                            variant="contained"
-                                            onClick={handleOpen}
-                                        >
-                                            Upload
-                                        </Button>
-                                    </>
+                                userLogged ? (
+                                    uid === userLogged.uid ? (
+                                        <>
+                                            <h2 style={{paddingBottom: "10px"}}>Start Record Video</h2>
+                                            <p>Videos must be between 1 and 60 minutes long.</p>
+                                            <Button
+                                                style={{textTransform: "capitalize", fontSize: "16px", marginTop: "20px"}}
+                                                color="primary"
+                                                variant="contained"
+                                                onClick={handleOpen}
+                                            >
+                                                Upload
+                                            </Button>
+                                        </>
+                                    ) : (
+                                        <h2 style={{paddingBottom: "10px"}}>No videos found</h2>
+                                    )
                                 ) : (
                                     <h2 style={{paddingBottom: "10px"}}>No videos found</h2>
                                 )

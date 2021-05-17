@@ -314,15 +314,34 @@ input:focus{
     flex-direction: column;
     display: flex;
 }
-.profile__bio{
-    padding: 20px 0;
-    min-height: 200px;
+.profile__header{
+    flex-direction: column;
     display: flex;
     justify-content: center;
+    width: 100%;
+    align-items: center;
 }
+
+.profile__bio{
+    padding-top: 20px;
+    min-height: 180px;
+    display: flex;
+    align-items: flex-start;
+    gap: 35px;
+}
+.profile__about{
+    padding-bottom: 20px;
+    /* width: 100%; */
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+}
+
 .count-infos{
     display: flex;
     padding: 10px 0;
+    justify-content: center;
+    width: 100%;
 }
 
 
@@ -350,6 +369,7 @@ input:focus{
 .share-follow-container{
     display: flex;
     padding: 15px 0;
+    gap: 15px;
 }
 .share-title{
     font-weight: 700;
@@ -377,6 +397,9 @@ input:focus{
     color: rgb(18, 18, 18);
     white-space: pre-line;
     padding: 10px 0;
+    justify-content: center;
+    display: flex;
+    width: 100%;
 }
 .share-links a {
     font-style: normal;
@@ -722,7 +745,7 @@ input:focus{
     padding: 20px 10px;
     display: flex;
     background-color: #f2f2f2;
-    align-content: center;
+    align-items: center;
     border-radius: 8px;
 }
 .caption__holder svg{
@@ -878,8 +901,8 @@ input:focus{
 }
 
 .suggest__content .followBtn{
-    margin-right: 20px;
-    border-radius: 20px;
+    margin-right: 15px;
+    border-radius: 16px;
 }
 
 
@@ -1080,7 +1103,7 @@ input:focus{
     flex-direction: column;
 }
 .commentViewer{
-    padding: 0;
+    padding: 10px;
     margin-top: auto;
     flex-direction: column;
     align-items: normal;

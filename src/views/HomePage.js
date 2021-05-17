@@ -7,6 +7,7 @@ import {Navigate} from "react-router-dom";
 
 
 const HomePage = (props) => {
+    window.scroll({top: 0, left: 0});
     if (!props.userLogged){
         return <Navigate to="/explore"/>
     }

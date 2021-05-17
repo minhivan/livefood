@@ -34,7 +34,8 @@ const useStyles = makeStyles((theme) => ({
     buttonLoadMore: {
         display: "flex",
         width: "100%",
-        justifyContent: "center"
+        justifyContent: "center",
+        margin: "10px 0 50px 0"
     }
 }));
 
@@ -47,7 +48,7 @@ const Explore = (props) => {
         if(userLogged){
              return db.collection('posts')
                 .orderBy('timestamp', "desc")
-                .limit(8)
+                .limit(9)
                 .get().then(snapshot => {
                     let temp = []
                     snapshot.forEach(data => {
@@ -67,7 +68,7 @@ const Explore = (props) => {
         else{
             return db.collection('posts')
                 .orderBy('timestamp', "desc")
-                .limit(8)
+                .limit(9)
                 .get().then(snapshot => {
                     let temp = []
                     snapshot.forEach(data => {
@@ -85,19 +86,20 @@ const Explore = (props) => {
     }, [userLogged]);
 
 
-    window.onscroll = function () {
-        if(window.scrollY + window.innerHeight >=
-            document.documentElement.scrollHeight){
-            loadMore()
-        }
-    }
+    // window.onscroll = function () {
+    //     if(window.scrollY + window.innerHeight >=
+    //         document.documentElement.scrollHeight){
+    //         loadMore()
+    //     }
+    // }
 
     const loadMore = () => {
+        console.log(lastVisible);
         if(lastVisible){
             db.collection('posts')
                 .orderBy('timestamp', "desc")
                 .startAfter(lastVisible)
-                .limit(8)
+                .limit(9)
                 .get().then(snapshot => {
                     let temp = []
                     snapshot.forEach(data => {
@@ -142,20 +144,20 @@ const Explore = (props) => {
                                         ))
                                     }
                                 </div>
-                                {/*{*/}
-                                {/*    explore.length  ?? (*/}
-                                {/*        <div className={classes.buttonLoadMore}>*/}
-                                {/*            <Button*/}
-                                {/*                onClick={loadMore}*/}
-                                {/*                style={{textTransform: "capitalize", fontSize: "16px"}}*/}
-                                {/*                color="primary"*/}
-                                {/*                variant="contained"*/}
-                                {/*            >*/}
-                                {/*                Explore more*/}
-                                {/*            </Button>*/}
-                                {/*        </div>*/}
-                                {/*    )*/}
-                                {/*}*/}
+                                {
+                                    explore.length > 0 && lastVisible ? (
+                                        <div className={classes.buttonLoadMore}>
+                                            <Button
+                                                onClick={loadMore}
+                                                style={{textTransform: "capitalize", fontSize: "16px"}}
+                                                color="primary"
+                                                variant="contained"
+                                            >
+                                                Explore more
+                                            </Button>
+                                        </div>
+                                    ) : null
+                                }
                             </>
 
                         ) : (

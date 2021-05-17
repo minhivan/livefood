@@ -36,6 +36,16 @@ const useStyles = makeStyles((theme) => ({
         maxHeight: "200px",
         width: "100%"
     },
+    labelButton: {
+        fontSize: "14px",
+        textTransform : "capitalize",
+    },
+    displayName: {
+        maxWidth: "120px",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap",
+    }
 }));
 
 
@@ -97,53 +107,53 @@ function RightSideBar(props) {
             <div className="app__rightSideBar">
                 <div className="sideBar__container">
                     {/* Chat to sasimi */}
-                    <div className="trending__container sideBar__containerBlock">
-                        <div className="trending__header bottomDivider padding-10-20">
-                            <h2>Chat to Sasimi ?</h2>
-                            <IconButton aria-label="comment" >
-                                <SettingsOutlinedIcon />
-                            </IconButton>
-                        </div>
-                        <div className="trending__content bottomDivider">
-                            <div className="chat__container">
-                                {/*<div className="chat__content">*/}
-                                {/*    <div className="chat__message false">*/}
-                                {/*        <div className="chat__details"><span*/}
-                                {/*            className="makeStyles-chat-36">hi broo</span></div>*/}
-                                {/*    </div>*/}
-                                {/*</div>*/}
-                                {/*<div className="chat__content">*/}
-                                {/*    <div className="chat__message sender">*/}
-                                {/*        <div className="chat__details"><span*/}
-                                {/*            className="makeStyles-chat-36">whatsup  asd asd asd asd asd asda sdasd asda sdasd asda dasda sd</span></div>*/}
-                                {/*    </div>*/}
-                                {/*</div>*/}
-                                <div className={classes.wrapper}>
-                                    <div className={classes.none}>
-                                        <CameraIcon
-                                            className={classes.icon}
-                                            size="40"
-                                        />
-                                    </div>
-                                    <h4 style={{paddingBottom: "10px"}}>Chat to Sasimi now</h4>
-                                </div>
-                                <div className="makeStyles-bottom-20" />
-                            </div>
-                        </div>
-                        <div role="button" className="padding-10-20 show-more right-chat-input">
-                            <TextField
-                                className="right-chat-input__holder"
-                                placeholder="What do you want ?"
-                                value={chat}
-                                onChange={event => setChat(event.target.value)}
-                                InputProps={{ disableUnderline: true}}
-                                size="small"
-                            />
-                            <Button variant="contained">
-                                Send
-                            </Button>
-                        </div>
-                    </div>
+                    {/*<div className="trending__container sideBar__containerBlock">*/}
+                    {/*    <div className="trending__header bottomDivider padding-10-20">*/}
+                    {/*        <h2>Chat to Sasimi ?</h2>*/}
+                    {/*        <IconButton aria-label="comment" >*/}
+                    {/*            <SettingsOutlinedIcon />*/}
+                    {/*        </IconButton>*/}
+                    {/*    </div>*/}
+                    {/*    <div className="trending__content bottomDivider">*/}
+                    {/*        <div className="chat__container">*/}
+                    {/*            /!*<div className="chat__content">*!/*/}
+                    {/*            /!*    <div className="chat__message false">*!/*/}
+                    {/*            /!*        <div className="chat__details"><span*!/*/}
+                    {/*            /!*            className="makeStyles-chat-36">hi broo</span></div>*!/*/}
+                    {/*            /!*    </div>*!/*/}
+                    {/*            /!*</div>*!/*/}
+                    {/*            /!*<div className="chat__content">*!/*/}
+                    {/*            /!*    <div className="chat__message sender">*!/*/}
+                    {/*            /!*        <div className="chat__details"><span*!/*/}
+                    {/*            /!*            className="makeStyles-chat-36">whatsup  asd asd asd asd asd asda sdasd asda sdasd asda dasda sd</span></div>*!/*/}
+                    {/*            /!*    </div>*!/*/}
+                    {/*            /!*</div>*!/*/}
+                    {/*            <div className={classes.wrapper}>*/}
+                    {/*                <div className={classes.none}>*/}
+                    {/*                    <CameraIcon*/}
+                    {/*                        className={classes.icon}*/}
+                    {/*                        size="40"*/}
+                    {/*                    />*/}
+                    {/*                </div>*/}
+                    {/*                <h4 style={{paddingBottom: "10px"}}>Chat to Sasimi now</h4>*/}
+                    {/*            </div>*/}
+                    {/*            <div className="makeStyles-bottom-20" />*/}
+                    {/*        </div>*/}
+                    {/*    </div>*/}
+                    {/*    <div role="button" className="padding-10-20 show-more right-chat-input">*/}
+                    {/*        <TextField*/}
+                    {/*            className="right-chat-input__holder"*/}
+                    {/*            placeholder="What do you want ?"*/}
+                    {/*            value={chat}*/}
+                    {/*            onChange={event => setChat(event.target.value)}*/}
+                    {/*            InputProps={{ disableUnderline: true}}*/}
+                    {/*            size="small"*/}
+                    {/*        />*/}
+                    {/*        <Button variant="contained">*/}
+                    {/*            Send*/}
+                    {/*        </Button>*/}
+                    {/*    </div>*/}
+                    {/*</div>*/}
 
                     {/* Suggest user */}
                     <div className="suggest__container sideBar__containerBlock">
@@ -154,6 +164,9 @@ function RightSideBar(props) {
                             users ? (users.slice(0,4).map(({id, opponent}) => (
                                 <div key={id} className="suggest__content  bottomDivider">
                                     <CardHeader
+                                        classes={{
+                                            title: classes.displayName
+                                        }}
                                         className="suggest__user"
                                         avatar={
                                             <Avatar className={classes.avatar} aria-label={opponent.displayName} src={opponent.photoURL} />
@@ -167,6 +180,9 @@ function RightSideBar(props) {
                                         variant="outlined"
                                         color="primary"
                                         className="followBtn"
+                                        classes={{
+                                            label: classes.labelButton
+                                        }}
                                         onClick={() => handleUserFollow(userLoggedData, opponent.uid)}
                                     >
                                         Follow

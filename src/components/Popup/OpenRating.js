@@ -1,32 +1,27 @@
 import React, {useEffect, useState} from "react";
+import {useAuthState} from "react-firebase-hooks/auth";
+import {auth, db, storage} from "../../firebase";
+import {v4 as uuidv4} from "uuid";
+import firebase from "firebase";
 import {
-    Avatar,
-    Badge,
+    Avatar, Box,
     Button,
     CircularProgress,
-    IconButton, MenuItem,
-    Modal, Popover, Select,
-    TextField,
-    Tooltip
+    IconButton,
+    MenuItem,
+    Modal,
+    Popover,
+    Select,
+    TextField
 } from "@material-ui/core";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 import CardHeader from "@material-ui/core/CardHeader";
-import {makeStyles} from "@material-ui/core/styles";
-import PhotoCameraTwoToneIcon from "@material-ui/icons/PhotoCameraTwoTone";
-// import VideoCallTwoToneIcon from "@material-ui/icons/VideoCallTwoTone";
-import LocationOnTwoToneIcon from '@material-ui/icons/LocationOnTwoTone';
-import {auth, db, storage} from "../../firebase";
-import firebase from "firebase";
-import {useAuthState} from "react-firebase-hooks/auth";
-import {green} from "@material-ui/core/colors";
-import {v4 as uuidv4} from "uuid";
-// import {useCollection} from "react-firebase-hooks/firestore";
-import MobileStepper from '@material-ui/core/MobileStepper';
-// import Paper from '@material-ui/core/Paper';
-// import Typography from '@material-ui/core/Typography';
+import FormControl from "@material-ui/core/FormControl";
 import SentimentSatisfiedRoundedIcon from "@material-ui/icons/SentimentSatisfiedRounded";
 import {Picker} from "emoji-mart";
-import FormControl from "@material-ui/core/FormControl";
+import {makeStyles} from "@material-ui/core/styles";
+import {green} from "@material-ui/core/colors";
+import {Rating} from "@material-ui/lab";
 
 
 
@@ -126,27 +121,30 @@ const useStyles = makeStyles((theme) => ({
         paddingLeft: theme.spacing(4),
         backgroundColor: theme.palette.background.default,
     },
-    img: {
-        height: 255,
-        maxWidth: 400,
-        overflow: 'hidden',
-        display: 'block',
-        width: '100%',
-    },
     inputHead: {
         display: "flex",
         alignItems: "flex-start",
     },
-    fellingSelect: {
-        minWidth: "150px",
-        padding: "16px"
+    root: {
+        padding: "16px",
+        width: 200,
+        display: 'flex',
+        alignItems: 'center',
     },
 }));
 
 
-function AddVideo(props){
-    const {open, videoUpload, setVideoUpload, handleClose} = props;
-    const [user] = useAuthState(auth);
+const labels = {
+    1: 'Worst',
+    2: 'Poor',
+    3: 'Ok',
+    4: 'Good',
+    5: 'Excellent',
+};
+
+
+export default function OpenRating(props){
+    const {open, userLogged, handleClose, shopId, voteRating} = props;
     const classes = useStyles();
     const [modalStyle] = useState(getModalStyle);
 
@@ -155,7 +153,9 @@ function AddVideo(props){
     const [loading, setLoading] = useState(false);
     const [disable, setDisable] = useState(true);
     const [anchorElPicker, setAnchorElPicker] = useState(null);
-    const [felling, setFelling] = useState('');
+    const [value, setValue] = React.useState(4);
+    const [hover, setHover] = React.useState(-1);
+
 
     const openEmoji = Boolean(anchorElPicker);
     const id = openEmoji ? 'popup-emoji' : undefined;
@@ -171,77 +171,53 @@ function AddVideo(props){
         setCaption(caption + emoji);
     }
 
-    const removeImage = () => {
-        setVideoUpload('');
-    }
-
     const handleReset = () => {
         handleClose(true);
         setProgress('0');
         setCaption("");
         setLoading(false);
-        setVideoUpload("");
-        setFelling("");
         setDisable(false);
     }
 
     const handleUpload = () => {
-        setDisable(true);
-        if(videoUpload) {
-            const imageName = uuidv4();
-            const uploadTask = storage.ref(`videos/${user.uid}/${imageName}`).put(videoUpload);
-            uploadTask.on(
-                "state_changed",
-                (snapshot => {
-                    const progressData = Math.round(
-                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-                    );
-                    setProgress(progressData);
-                    setLoading(true);
-                }),
-                (error => {
-                    console.log(error);
-                }),
-                () => {
-                    storage
-                        .ref(`videos/${user.uid}/`)
-                        .child(imageName)
-                        .getDownloadURL()
-                        .then(url => {
-                            db.collection("posts").add({
-                                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                                caption: caption ?? "",
-                                media: [{
-                                    mediaPath: url,
-                                    type: videoUpload.type
-                                }],
-                                type: "video",
-                                user: db.doc('users/' + user.uid),
-                                uid: user.uid
-                            })
-                                .then(function(docRef) {
-                                    console.log("Document written with ID: ", docRef.id);
-                                    db.collection("users").doc(user.uid).update({
-                                        post: firebase.firestore.FieldValue.arrayUnion(docRef.id)
-                                    })
-                                    handleReset();
-                                })
-                                .catch(function(error) {
-                                    console.error("Error adding document: ", error);
-                                });
-                        })
+        db.collection("votes").doc(shopId).collection("data").add({
+            user: db.doc('users/' + userLogged.uid),
+            uid: userLogged.uid,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            comment: caption,
+            rating: value,
+        })
+            .then(function(docRef) {
+                // console.log("Document written with ID: ", docRef.id);
+                if(typeof voteRating == 'undefined'){
+                    db.collection("users").doc(shopId).update({
+                        voteRating: value,
+                        voteCount: firebase.firestore.FieldValue.increment(1)
+                    })
+
                 }
-            )
-        }
+                else{
+                    let avg = parseFloat((parseFloat(voteRating) + parseFloat(value)) / 2);
+                    db.collection("users").doc(shopId).update({
+                        voteRating: avg,
+                        voteCount: firebase.firestore.FieldValue.increment(1)
+                    })
+                }
+                handleClose(true);
+                handleReset();
+            })
+            .catch(function(error) {
+                console.error("Error adding document: ", error);
+            });
     }
 
     useEffect(() => {
-        if(videoUpload){
+        if(caption){
             setDisable(false);
         }else {
             setDisable(true)
         }
-    },[videoUpload])
+    },[caption])
 
 
 
@@ -255,7 +231,7 @@ function AddVideo(props){
             <div style={modalStyle} className={classes.paper}>
 
                 <div className={classes.modalHeader}>
-                    <h2>Create your own video now  ?</h2>
+                    <h2>Writing down your vote</h2>
                     <div className={classes.buttonClose}>
                         <IconButton aria-label="Cancel" color="inherit" onClick={handleClose} >
                             <CancelTwoToneIcon />
@@ -266,39 +242,37 @@ function AddVideo(props){
                     <div className={classes.inputHead}>
                         <CardHeader
                             avatar={
-                                <Avatar aria-label="recipe" className={classes.avatar} src={user?.photoURL}/>
+                                <Avatar aria-label="recipe" className={classes.avatar} src={userLogged.photoURL}/>
                             }
                             title={
-                                <span className={classes.username}>{user?.displayName}</span>
+                                <span className={classes.username}>{userLogged.displayName}</span>
                             }
                             subheader={
                                 <span>Public</span>
                             }
                             className={classes.cardHeader}
                         />
-                        <FormControl className={classes.fellingSelect}>
-                            <Select
-                                displayEmpty
-                                inputProps={{ 'aria-label': 'Felling' }}
-                                value={felling}
-                                onChange={event => setFelling(event.target.value)}
-                            >
-                                <MenuItem value="">
-                                    <em>Felling</em>
-                                </MenuItem>
-                                <MenuItem value={`happy`}> 🙂 <span style={{paddingLeft: "5px"}}>Happy</span></MenuItem>
-                                <MenuItem value={`sad`}> 😔 <span style={{paddingLeft: "5px"}}>Sad</span></MenuItem>
-                                <MenuItem value={`love`}>🥰 <span style={{paddingLeft: "5px"}}>Loved</span></MenuItem>
-                            </Select>
-
-                        </FormControl>
+                        <div className={classes.root}>
+                            <Rating
+                                name="hover-feedback"
+                                value={value}
+                                precision={1}
+                                onChange={(event, newValue) => {
+                                    setValue(newValue);
+                                }}
+                                onChangeActive={(event, newHover) => {
+                                    setHover(newHover);
+                                }}
+                            />
+                            {value !== null && <Box ml={2}>{labels[hover !== -1 ? hover : value]}</Box>}
+                        </div>
                     </div>
 
                     <div className="popup__text">
                         <TextField
                             className={classes.inputText}
                             multiline
-                            placeholder="What's on your mind ... ? "
+                            placeholder="What do you think ?"
                             value={caption}
                             onChange={event => setCaption(event.target.value)}
                             InputProps={{ disableUnderline: true, style : {fontSize: "1rem"}}}
@@ -332,35 +306,7 @@ function AddVideo(props){
                         }
 
                     </div>
-                    {
-                        videoUpload ? (
-                            <div className="popup__review">
-                                <video controls className={classes.reviewImg} muted="muted">
-                                    <source src={window.URL.createObjectURL(videoUpload)} type="video/mp4"/>
-                                </video>
-                                <div className={classes.buttonRemove}>
-                                    <IconButton aria-label="Cancel" color="inherit" onClick={() => removeImage()} >
-                                        <CancelTwoToneIcon />
-                                    </IconButton>
-                                </div>
-                            </div>
-                        ) : null
-                    }
 
-                </div>
-                <div className="popup__picker">
-                    <h3 style={{textTransform: "inherit", fontSize: "1rem", letterSpacing: "0"}}>Add or drop video file here</h3>
-                    <div className="popup__iconPicker">
-                        <div>
-                            <label htmlFor="video-upload" className="upload__pickerButton">
-                                <IconButton color="inherit" component="span" >
-                                    <Badge color="secondary">
-                                        <PhotoCameraTwoToneIcon className={classes.popIcon}/>
-                                    </Badge>
-                                </IconButton>
-                            </label>
-                        </div>
-                    </div>
                 </div>
                 <div className="upload__button">
                     <Button
@@ -371,7 +317,7 @@ function AddVideo(props){
                         onClick={handleUpload}
                         disabled={disable}
                     >
-                        Create Now
+                        Vote
                     </Button>
                     {loading && <CircularProgress size={24} value={progress} className={classes.buttonProgress} /> }
                 </div>
@@ -380,4 +326,3 @@ function AddVideo(props){
         </Modal>
     )
 }
-export default AddVideo

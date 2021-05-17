@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 const PostUtil = (props) => {
-    const {open, handleClose, uid, opponentID, postID, handleRemove, handleReport, handleOpenEdit, isSave} = props;
+    const {open, handleClose, uid, opponentID, postID, handleRemove, handleReport, handleOpenEdit, isSave, setOpenSnack} = props;
 
     const [modalStyle] = useState(getModalStyle);
     const classes = useStyles();
@@ -95,6 +95,7 @@ const PostUtil = (props) => {
                                             handleDeletePost(postID);
                                             // handleRemove(postID);
                                             handleClose(true);
+                                            setOpenSnack(true);
                                         }
                                     }
                                 >
@@ -134,7 +135,7 @@ const PostUtil = (props) => {
                                         () => {
                                             handleReportPost(uid, postID);
                                             // handleRemove(postID);
-                                            handleClose(true);
+                                            // handleClose(true);
                                         }
                                     }
                                 >
@@ -152,6 +153,7 @@ const PostUtil = (props) => {
                                         () => {
                                             handleUserUnfollow(uid, opponentID);
                                             handleRemove(postID);
+                                            setOpenSnack(true);
                                             handleClose(true);
                                         }
                                     }
@@ -188,7 +190,9 @@ const PostUtil = (props) => {
                                         root: classes.btnNormal,
                                         label: classes.btnLabel,
                                     }}
-
+                                    onClick={() => {
+                                        setOpenSnack(true);
+                                    }}
                                 >
                                     Save post
                                 </Button>

@@ -90,7 +90,7 @@ export default function ListUserLikePost(props){
     const classes = useStyles();
     const { open, handleClose, userLogged, likesCount, postLike } = props;
 
-    const [authData] = useDocument(userLogged.uid && db.collection('users').doc(userLogged.uid));
+    const [authData] = useDocument(userLogged && db.collection('users').doc(userLogged.uid));
     const authFollowingList = authData?.data()?.following;
     const [likesList, setLikesList] = useState([]);
     const [userLoggedData, setUserLoggedData] = useState({});
@@ -166,27 +166,29 @@ export default function ListUserLikePost(props){
 
                                 </>
                                 {
-                                    checkMyFollowingList(authFollowingList, id) ? (
-                                        userLogged.uid !== id ? (<Button
-                                            variant="outlined"
-                                            className={classes.buttonUnfollow}
-                                            onClick={() => handleUserUnfollow(userLogged.uid, id)}
-                                        >
-                                            Unfollow
-                                        </Button>) : null
-
-
-                                    ) : (
-                                        userLogged.uid !== id ? (
-                                            <Button
-                                                variant="contained"
-                                                className={classes.button}
-                                                onClick={() => handleUserFollow(userLoggedData, id)}
+                                    userLogged ? (
+                                        checkMyFollowingList(authFollowingList, id) ? (
+                                            userLogged.uid !== id ? (<Button
+                                                variant="outlined"
+                                                className={classes.buttonUnfollow}
+                                                onClick={() => handleUserUnfollow(userLogged.uid, id)}
                                             >
-                                                Follow
-                                            </Button>
-                                        ) : null
-                                    )
+                                                Unfollow
+                                            </Button>) : null
+
+
+                                        ) : (
+                                            userLogged.uid !== id ? (
+                                                <Button
+                                                    variant="contained"
+                                                    className={classes.button}
+                                                    onClick={() => handleUserFollow(userLoggedData, id)}
+                                                >
+                                                    Follow
+                                                </Button>
+                                            ) : null
+                                        )
+                                    ) : null
                                 }
                             </ListItem>
                         ))) : null

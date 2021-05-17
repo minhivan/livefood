@@ -4,18 +4,16 @@ import {
     Badge,
     Button,
     CircularProgress,
-    IconButton,
-    Modal, Popover,
+    IconButton, MenuItem,
+    Modal, Popover, Select,
     TextField,
-    Tooltip,
-    useTheme
 } from "@material-ui/core";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 import CardHeader from "@material-ui/core/CardHeader";
 import {makeStyles} from "@material-ui/core/styles";
 import PhotoCameraTwoToneIcon from "@material-ui/icons/PhotoCameraTwoTone";
 // import VideoCallTwoToneIcon from "@material-ui/icons/VideoCallTwoTone";
-import LocationOnTwoToneIcon from '@material-ui/icons/LocationOnTwoTone';
+// import LocationOnTwoToneIcon from '@material-ui/icons/LocationOnTwoTone';
 import {auth, db, storage} from "../../firebase";
 import firebase from "firebase";
 import {useAuthState} from "react-firebase-hooks/auth";
@@ -29,6 +27,7 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import SentimentSatisfiedRoundedIcon from "@material-ui/icons/SentimentSatisfiedRounded";
 import {Picker} from "emoji-mart";
+import FormControl from "@material-ui/core/FormControl";
 
 
 
@@ -91,7 +90,8 @@ const useStyles = makeStyles((theme) => ({
         height: 50
     },
     cardHeader: {
-        padding: "16px 0"
+        padding: "16px 0",
+        marginRight: "15px"
     },
     reviewImg: {
         width: "100%",
@@ -135,6 +135,15 @@ const useStyles = makeStyles((theme) => ({
         display: 'block',
         width: '100%',
     },
+    inputHead: {
+        display: "flex",
+        alignItems: "flex-start",
+    },
+    fellingSelect: {
+        minWidth: "150px",
+        padding: "16px"
+    }
+
 }));
 
 
@@ -143,16 +152,15 @@ function Popup(props){
     const [user] = useAuthState(auth);
     const classes = useStyles();
     const [modalStyle] = useState(getModalStyle);
-    const theme = useTheme();
 
     const [caption, setCaption] = useState('');
     const [progress, setProgress] = useState('');
     const [loading, setLoading] = useState(false);
     const [disable, setDisable] = useState(true);
     const [activeStep, setActiveStep] = React.useState(0);
-    const [maxSteps, setMaxSteps] = useState(image ? image.length : 0);
+    const [maxSteps, setMaxSteps] = useState(image?.length ?? 0);
     const [anchorElPicker, setAnchorElPicker] = useState(null);
-
+    const [felling, setFelling] = useState('');
     const openEmoji = Boolean(anchorElPicker);
     const id = openEmoji ? 'popup-emoji' : undefined;
 
@@ -189,8 +197,18 @@ function Popup(props){
         }
     }
 
+    const handleReset = () => {
+        setImage('');
+        setProgress('0');
+        setCaption("");
+        setLoading(false);
+        setImage('');
+        setActiveStep(0);
+        setMaxSteps(0);
+    }
 
     const newUpload = async () => {
+        setDisable(true);
         await Promise.all(image.map(item =>
             new Promise((resolve, reject) => {
                 const imageName = uuidv4();
@@ -218,10 +236,11 @@ function Popup(props){
         )).then((values) => {
             db.collection("posts").add({
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                caption: caption,
+                caption: caption ?? "",
                 media: values,
                 user: db.doc('users/' + user.uid),
-                uid: user.uid
+                uid: user.uid,
+                felling: felling ?? ""
             })
                 .then(function(docRef) {
                     console.log("Document written with ID: ", docRef.id);
@@ -229,14 +248,8 @@ function Popup(props){
                         post: firebase.firestore.FieldValue.arrayUnion(docRef.id)
                     })
                     setOpenSnack(true);
-                    setImage('');
                     handleClose(true);
-                    setProgress('0');
-                    setCaption("");
-                    setLoading(false);
-                    setImage('');
-                    setActiveStep(0);
-                    setMaxSteps(0)
+                    handleReset();
                 })
                 .catch(function(error) {
                     console.error("Error adding document: ", error);
@@ -246,67 +259,15 @@ function Popup(props){
     }
 
 
-    // const handleUpload = () => {
-    //     if(image) {
-    //         const imageName = uuidv4();
-    //         const uploadTask = storage.ref(`media/${user.uid}/${imageName}`).put(image);
-    //         uploadTask.on(
-    //             "state_changed",
-    //             (snapshot => {
-    //                 const progressData = Math.round(
-    //                     (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-    //                 );
-    //                 setProgress(progressData);
-    //                 setLoading(true);
-    //             }),
-    //             (error => {
-    //                 console.log(error);
-    //             }),
-    //             () => {
-    //                 storage
-    //                     .ref(`media/${user.uid}/`)
-    //                     .child(imageName)
-    //                     .getDownloadURL()
-    //                     .then(url => {
-    //                         db.collection("posts").add({
-    //                             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    //                             hasImage: true,
-    //                             caption: caption,
-    //                             mediaUrl: url,
-    //                             user: db.doc('users/' + user.uid),
-    //                             mediaType: image.type,
-    //                             uid: user.uid
-    //                         })
-    //                             .then(function(docRef) {
-    //                                 console.log("Document written with ID: ", docRef.id);
-    //                                 db.collection("users").doc(user.uid).update({
-    //                                     post: firebase.firestore.FieldValue.arrayUnion(docRef.id)
-    //                                 })
-    //                             })
-    //                             .catch(function(error) {
-    //                                 console.error("Error adding document: ", error);
-    //                             });
-    //                         setOpenSnack(true);
-    //                         setImage(null);
-    //                         handleClose(true);
-    //                         setProgress('0');
-    //                         setCaption("");
-    //                         setLoading(false);
-    //                     })
-    //             }
-    //         )
-    //     }
-    // }
-
     useEffect(() => {
-        if(caption.length > 0 && image){
+        if(image){
             setDisable(false);
-        }else {
+        } else {
             setDisable(true)
         }
-    },[caption, caption.length, image])
+    },[image])
 
-
+    console.log(felling)
 
     return (
         <Modal
@@ -326,18 +287,37 @@ function Popup(props){
                     </div>
                 </div>
                 <div className="popup__caption">
-                    <CardHeader
-                        avatar={
-                            <Avatar aria-label="recipe" className={classes.avatar} src={user?.photoURL}/>
-                        }
-                        title={
-                            <span className={classes.username}>{user?.displayName}</span>
-                        }
-                        subheader={
-                            <span>Public</span>
-                        }
-                        className={classes.cardHeader}
-                    />
+                    <div className={classes.inputHead}>
+                        <CardHeader
+                            avatar={
+                                <Avatar aria-label="recipe" className={classes.avatar} src={user?.photoURL}/>
+                            }
+                            title={
+                                <span className={classes.username}>{user?.displayName}</span>
+                            }
+                            subheader={
+                                <span>Public</span>
+                            }
+                            className={classes.cardHeader}
+                        />
+                        <FormControl className={classes.fellingSelect}>
+                            <Select
+                                displayEmpty
+                                inputProps={{ 'aria-label': 'Felling' }}
+                                value={felling}
+                                onChange={event => setFelling(event.target.value)}
+                            >
+                                <MenuItem value="">
+                                    <em>Felling</em>
+                                </MenuItem>
+                                <MenuItem value={`happy`}> 🙂 <span style={{paddingLeft: "5px"}}>Happy</span></MenuItem>
+                                <MenuItem value={`sad`}> 😔 <span style={{paddingLeft: "5px"}}>Sad</span></MenuItem>
+                                <MenuItem value={`love`}>🥰 <span style={{paddingLeft: "5px"}}>Loved</span></MenuItem>
+                            </Select>
+
+                        </FormControl>
+                    </div>
+
 
                     <div className="popup__text">
                         <TextField
