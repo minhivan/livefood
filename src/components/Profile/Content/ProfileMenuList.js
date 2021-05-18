@@ -10,6 +10,7 @@ import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import {db} from "../../../firebase";
 import Previewer from "../../MediaViewer/Preview";
+import {Navigate} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     icon: {
@@ -71,10 +72,14 @@ export default function ProfileMenuList(props){
     const [dataPreview, setDataPreview] = useState('');
     const [open, setOpen] = useState(false);
 
-
+    useEffect(() => {
+        if(props.userSnapshot?.type !== "foodshop"){
+            return <Navigate to={`/profile/${props.uid}`}/>
+        }
+    }, [props.uid, props.userSnapshot])
 
     useEffect(() => {
-        return db.collection("users").doc(props.uid)
+         return db.collection("users").doc(props.uid)
             .collection("menu")
             .orderBy('timestamp', "desc")
             .get().then((snapshot ) => {
@@ -102,7 +107,7 @@ export default function ProfileMenuList(props){
 
     //
     return(
-        <div className="explore__root" style={{paddingTop: "20px"}}>
+        <div className="explore__root" style={{paddingTop: "20px" , marginBottom: "50px"}}>
             <div className={classes.container} style={{padding: "0"}} >
 
                 <div className="item-restaurant-row">
@@ -158,7 +163,11 @@ export default function ProfileMenuList(props){
                 </div>
 
             </div>
-            <Previewer open={open} handleClose={handleClose} data={dataPreview}/>
+            {
+                open ? (
+                    <Previewer open={open} handleClose={handleClose} data={dataPreview}/>
+                ) : null
+            }
 
         </div>
     )

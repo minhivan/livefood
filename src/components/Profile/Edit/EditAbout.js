@@ -10,6 +10,10 @@ import {MenuItem, Select, TextField} from "@material-ui/core";
 import {useDocument} from "react-firebase-hooks/firestore";
 import {db} from "../../../firebase";
 import {blue} from "@material-ui/core/colors";
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+
+
+import "leaflet/dist/leaflet.css"
 
 
 const useStyles = makeStyles((theme) => ({
@@ -301,6 +305,22 @@ export default function EditAbout(props){
                                 className={classes.inputField}
                                 id="pepAddress" placeholder="Ex: 400/8B Ung Văn Khiêm, Phường 25" type="text"
                             />
+                        </div>
+                    </div>
+
+                    <div className={classes.holder}>
+                        <aside className={classes.label}>
+                            <label htmlFor="pepAddress" style={{fontWeight: "bold", fontSize: "18px"}}>Address</label>
+                        </aside>
+                        <div className={classes.input}>
+                            <div className="about__map">
+                                <MapContainer center={[37.7749, -122.4194]} zoom={13}>
+                                    <TileLayer
+                                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                                    />
+                                </MapContainer>
+                            </div>
                         </div>
                     </div>
 

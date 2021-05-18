@@ -14,7 +14,6 @@ import {auth, db} from "./firebase";
 import firebase from "firebase";
 import Survey from "./components/Popup/Survey";
 import ScrollToTop from "./hooks/scrollToTop";
-
 // import styled from 'styled-components';
 
 // import firebase from "firebase";

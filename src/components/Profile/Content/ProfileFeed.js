@@ -60,7 +60,7 @@ const ProfileFeed = ({uid, userLogged}) => {
     }, [uid]);
 
     return(
-        <div className="explore__root" style={{paddingTop: "20px"}}>
+        <div className="explore__root" style={{paddingTop: "20px" , marginBottom: "50px"}}>
 
                 {
                     feed.length > 0 ? (

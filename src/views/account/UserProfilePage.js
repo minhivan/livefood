@@ -3,7 +3,7 @@ import Page from "../../components/Page";
 import {db} from "../../firebase";
 import ProfileHeader from "../../components/Profile/ProfileHeader";
 import {useParams} from "react-router";
-import {useCollection, useDocument} from "react-firebase-hooks/firestore";
+import {useDocument} from "react-firebase-hooks/firestore";
 import ProfileVideo from "../../components/Profile/Content/ProfileVideo";
 import ProfileNavBar from "../../components/Profile/ProfileNavBar";
 import {Divider} from "@material-ui/core";
@@ -15,6 +15,7 @@ import pic from "../../images/Background/undraw_page_not_found_su7k.svg";
 import {makeStyles} from "@material-ui/core/styles";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Backdrop from "@material-ui/core/Backdrop";
+import ProfileVoteRating from "../../components/Profile/Content/ProfileVoteRating";
 
 
 function content(action, id, userLogged, userSnapshot){
@@ -26,7 +27,9 @@ function content(action, id, userLogged, userSnapshot){
         case "saved":
             return <ProfileSaved uid={id} userLogged={userLogged} type="saved"/>
         case "dishes":
-            return <ProfileMenuList uid={id} userLogged={userLogged} type="dishes"/>
+            return <ProfileMenuList uid={id} userLogged={userLogged} userSnapshot={userSnapshot} type="dishes"/>
+        case "vote":
+            return <ProfileVoteRating uid={id} userLogged={userLogged} userSnapshot={userSnapshot} type="vote"/>
         default:
             return <></>
     }
@@ -73,7 +76,6 @@ const UserProfilePage = (props) => {
     const classes = useStyles();
     const [userData, loading] = useDocument(id && db.collection('users').doc(id));
     const userSnapshot = userData?.data();
-
 
     return(
 

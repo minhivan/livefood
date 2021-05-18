@@ -96,7 +96,7 @@ const ProfileVideo = ({uid, userLogged}) => {
     }, [uid]);
 
     return(
-        <div className="explore__root" style={{paddingTop: "20px"}}>
+        <div className="explore__root" style={{paddingTop: "20px" , marginBottom: "50px"}}>
             <input accept="video/*" type="file" onChange={handleChange} onClick={e => (e.target.value = null)} id="video-upload" className={classes.input}/>
             {
                     vid.length > 0 ? (

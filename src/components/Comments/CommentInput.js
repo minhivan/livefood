@@ -42,7 +42,7 @@ const useStyles = makeStyles({
 export default function CommentInput({user, postId, type, path, refInput, postAuthor}){
 
     const classes = useStyles();
-    const [value, setValue] = React.useState(4);
+    const [value, setValue] = React.useState('');
     const [hover, setHover] = React.useState(-1);
     const [comment, setComment] = useState('');
     const postRef = db.collection('posts').doc(postId);

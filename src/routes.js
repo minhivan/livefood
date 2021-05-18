@@ -91,7 +91,8 @@ const routes = (isLoggedIn)  => [
             { path: '/:id', element: <UserProfilePage userLogged={isLoggedIn} pagePath="feed"/> },
             { path: '/channel/:id', element: <UserProfilePage userLogged={isLoggedIn} pagePath="channel"/> },
             { path: '/saved/:id', element: <UserProfilePage userLogged={isLoggedIn}  pagePath="saved"/> },
-            { path: '/dishes/:id', element: <UserProfilePage userLogged={isLoggedIn}  pagePath="dishes"/> }
+            { path: '/dishes/:id', element: <UserProfilePage userLogged={isLoggedIn}  pagePath="dishes"/> },
+            { path: '/vote/:id', element: <UserProfilePage userLogged={isLoggedIn}  pagePath="vote"/> }
         ]
     },
 

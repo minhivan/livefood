@@ -147,7 +147,6 @@ export default function OpenRating(props){
     const {open, userLogged, handleClose, shopId, voteRating} = props;
     const classes = useStyles();
     const [modalStyle] = useState(getModalStyle);
-
     const [caption, setCaption] = useState('');
     const [progress, setProgress] = useState('');
     const [loading, setLoading] = useState(false);
@@ -156,9 +155,20 @@ export default function OpenRating(props){
     const [value, setValue] = React.useState(4);
     const [hover, setHover] = React.useState(-1);
 
-
     const openEmoji = Boolean(anchorElPicker);
     const id = openEmoji ? 'popup-emoji' : undefined;
+
+
+
+
+    useEffect(() => {
+        if(caption){
+            setDisable(false);
+        }else {
+            setDisable(true)
+        }
+    },[caption])
+
 
     const handleClickEmoji = (event) => {
         setAnchorElPicker(event.currentTarget);
@@ -179,10 +189,13 @@ export default function OpenRating(props){
         setDisable(false);
     }
 
+
     const handleUpload = () => {
         db.collection("votes").doc(shopId).collection("data").add({
             user: db.doc('users/' + userLogged.uid),
             uid: userLogged.uid,
+            avatar: userLogged.photoURL,
+            from: userLogged.displayName,
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             comment: caption,
             rating: value,
@@ -210,16 +223,6 @@ export default function OpenRating(props){
                 console.error("Error adding document: ", error);
             });
     }
-
-    useEffect(() => {
-        if(caption){
-            setDisable(false);
-        }else {
-            setDisable(true)
-        }
-    },[caption])
-
-
 
     return (
         <Modal

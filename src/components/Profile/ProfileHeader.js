@@ -99,7 +99,15 @@ const useStyles = makeStyles((theme) => ({
     voteRating : {
         display: "flex",
         alignItems: "center",
-        paddingBottom: "15px"
+        paddingTop: "15px"
+    },
+    viewMoreRating: {
+        paddingLeft: "5px",
+        color: "#0288d1",
+        "&:hover": {
+            color: "#054063",
+            transition: "0.2s all ease"
+        },
     }
 }));
 
@@ -308,6 +316,16 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
                     {
                         userSnapshot?.aboutRestaurant ? (
                             <>
+                                {
+                                    userSnapshot?.voteRating ? (
+                                        <div className={classes.voteRating}>
+                                            <Rating name="read-only" value={userSnapshot?.voteRating} precision={0.1} readOnly />
+                                            <Link to={`/profile/vote/${userSnapshot?.uid}`}>
+                                                <span  className={classes.viewMoreRating}> {userSnapshot?.voteCount} reviews from LiveFood</span>
+                                            </Link>
+                                        </div>
+                                    ) : null
+                                }
                                 <div className={classes.about}>
                                     {
                                         userSnapshot?.aboutRestaurant?.opening ? (
@@ -337,18 +355,10 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
                                         </h4>
                                     ) : null
                                 }
+                                <Divider />
                             </>
                         ) : null
                     }
-                    {
-                        userSnapshot?.voteRating ? (
-                            <div className={classes.voteRating}>
-                                <Rating name="read-only" value={userSnapshot?.voteRating} precision={0.1} readOnly />
-                                <span style={{paddingLeft: "5px"}}> {userSnapshot?.voteCount} reviews from LiveFood</span>
-                            </div>
-                        ) : null
-                    }
-                    <Divider />
                 </div>
 
 
