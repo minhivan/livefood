@@ -11,9 +11,10 @@ import {useDocument} from "react-firebase-hooks/firestore";
 import {db} from "../../../firebase";
 import {blue} from "@material-ui/core/colors";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+// import "leaflet/dist/leaflet.css"
 
-
-import "leaflet/dist/leaflet.css"
+import markerIconPng from "leaflet/dist/images/marker-icon.png"
+import {Icon} from 'leaflet'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -99,8 +100,26 @@ export default function EditAbout(props){
     const [address, setAddress] = useState('');
     const [listRestaurantCate, setListRestaurantCate] = useState([]);
     const [restaurantCate, setRestaurantCate] = useState('');
+    const [location, setLocation] = useState({});
+
 
     const [userData] = useDocument(userLogged &&  db.collection("users").doc(userLogged.uid));
+    // const [mapLocation, setMapLocation] = useState({});
+
+
+    const handleClickLocation = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.watchPosition(function(position) {
+                console.log(position.coords.latitude);
+                console.log(position.coords.longitude);
+                setLocation({
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                });
+            });
+        }
+    }
+
 
     useEffect(() => {
         fetch('https://vapi.vnappmob.com/api/province/')
@@ -310,14 +329,22 @@ export default function EditAbout(props){
 
                     <div className={classes.holder}>
                         <aside className={classes.label}>
-                            <label htmlFor="pepAddress" style={{fontWeight: "bold", fontSize: "18px"}}>Address</label>
+                            <label style={{fontWeight: "bold", fontSize: "18px"}}>Current Location</label>
                         </aside>
-                        <div className={classes.input}>
+                        <div className={classes.input} style={{width: "100%"}}>
                             <div className="about__map">
-                                <MapContainer center={[37.7749, -122.4194]} zoom={13}>
+                                <MapContainer
+                                    center={[10.770841599999999, 106.6696704]}
+                                    zoom={15}
+                                    scrollWheelZoom={false}
+                                >
                                     <TileLayer
-                                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                    />
+                                    <Marker
+                                        position={[10.770841599999999, 106.6696704]}
+                                        icon={new Icon({iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41]})}
                                     />
                                 </MapContainer>
                             </div>

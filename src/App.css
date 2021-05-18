@@ -447,6 +447,15 @@ input:focus{
     flex-direction: column;
     overflow-y: auto;
 }
+.about__map{
+    height: 300px;
+    width: 100%;
+    background-color: white;
+}
+.about__map .leaflet-container{
+    height: 100%;
+}
+
 
 /* Notification unread */
 .ytd-notification-renderer{

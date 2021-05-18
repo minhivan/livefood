@@ -16,6 +16,10 @@ import Survey from "./components/Popup/Survey";
 import ScrollToTop from "./hooks/scrollToTop";
 // import styled from 'styled-components';
 
+// import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import "leaflet/dist/leaflet.css"
+
+
 // import firebase from "firebase";
 // import {useDispatch} from "react-redux";
 // import {login, logout} from "./features/userSlice";
@@ -45,22 +49,11 @@ function App() {
 		}
 	}, [userLogged])
 
-	// // //
-	// useEffect(() => {
-	// 	if (navigator.geolocation) {
-	// 		navigator.geolocation.watchPosition(function(position) {
-	// 			console.log("Latitude is :", position.coords.latitude);
-	// 			console.log("Longitude is :", position.coords.longitude);
-	// 		});
-	// 	}
-	// }, [])
-
 	if(loading){
 		return(
 			<AppLoading />
 		)
 	}
-
 
 	return (
 		<>

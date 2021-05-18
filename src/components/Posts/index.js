@@ -42,6 +42,7 @@ export default function NewFeed(props){
     const userRef = userLogged && db.collection('users').doc(userLogged.uid);
     const [userSnapshot] = useDocument(userRef);
     const [limit, setLimit] = useState(5);
+    const [lastVisible, setLastVisible] = useState('');
     let userFollow = userSnapshot?.data()?.following;
 
     //Get post
@@ -50,7 +51,7 @@ export default function NewFeed(props){
             userFollow.push(userLogged.uid);
             const unsubscribe = db.collection('posts')
                 .orderBy('timestamp', "desc")
-                .limit(10)
+                .limit(limit)
                 .onSnapshot((snapshot) => {
                     let data = [];
                     snapshot.forEach((doc) => {
@@ -59,6 +60,7 @@ export default function NewFeed(props){
                         }
                     })
                     setPosts(data);
+                    setLastVisible(snapshot.docs[snapshot.docs.length-1]);
                 })
             return () => {
                 unsubscribe();
@@ -68,12 +70,13 @@ export default function NewFeed(props){
             const unsubscribe = db.collection('posts')
                 .where('uid', '==', userLogged.uid)
                 .orderBy('timestamp', "desc")
-                .limit(10)
+                .limit(limit)
                 .onSnapshot( snapshot => {
                     setPosts(snapshot.docs.map(doc => ({
                         id: doc.id,
                         post: doc.data(),
                     })));
+                    setLastVisible(snapshot.docs[snapshot.docs.length-1]);
                 })
 
             return () => {
@@ -89,18 +92,21 @@ export default function NewFeed(props){
     }
 
 
+    //
     // window.onscroll = function () {
     //     if(window.scrollY + window.innerHeight >=
     //         document.documentElement.scrollHeight){
     //         loadMore()
     //     }
     // }
-    //
+    // //
     // const loadMore = () => {
-    //     setLimit(limit => limit + 5);
+    //     if(lastVisible){
+    //         setLimit(limit => limit + 10);
+    //     }
+    //     console.log(lastVisible)
     //     console.log(limit);
     // }
-
 
 
     return(

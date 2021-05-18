@@ -79,7 +79,7 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-export default function ProfileVoteRating(props){``
+export default function ProfileVoteRating(props){
     const classes = useStyles();
     const {uid, userLogged, userSnapshot, type} = props;
     const [listVotes, setListVotes] = useState([]);

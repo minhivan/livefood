@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function Post({id, post, handleRemove, handleReport, isSinglePage, ...rest}) {
+function Post({id, post, handleRemove, handleReport, isSinglePage,...rest}) {
 
 	const classes = useStyles();
 	const [expanded, setExpanded] = useState(true);
@@ -71,7 +71,7 @@ function Post({id, post, handleRemove, handleReport, isSinglePage, ...rest}) {
 
 
 	return (
-		<div className="post" id={id}>
+		<div className={`post `} id={id}>
 			<Card className={classes.root} >
 				<PostHeader author={author} handleClickOpen={handleClickOpen} postDate={post.timestamp} type={post.type} postFelling={post?.felling} />
 				{/*Media*/}

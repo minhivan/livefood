@@ -6,6 +6,8 @@ import {Image as ImageIcon} from "react-feather";
 import {makeStyles} from "@material-ui/core/styles";
 import NavBar from "../../components/SideBar/LeftSideBar";
 import Button from "@material-ui/core/Button";
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 const useStyles = makeStyles((theme) => ({
     icon: {
@@ -44,6 +46,15 @@ const Explore = (props) => {
     const {userLogged} = props;
     const [explore, setExplore] = useState([]);
     const [lastVisible, setLastVisible] = useState('');
+
+
+    useEffect(() => {
+        AOS.init({
+            duration : 500
+        });
+    }, []);
+
+
     useEffect(() => {
         if(userLogged){
              return db.collection('posts')
@@ -94,7 +105,6 @@ const Explore = (props) => {
     // }
 
     const loadMore = () => {
-        console.log(lastVisible);
         if(lastVisible){
             db.collection('posts')
                 .orderBy('timestamp', "desc")
@@ -134,6 +144,7 @@ const Explore = (props) => {
                                     {
                                         explore.map(({id, post, authorProfile}) => (
                                             <ExploreItem
+                                                aos={`zoom-in`}
                                                 key={id}
                                                 postId={id}
                                                 post={post}

@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ExploreItem(props) {
 
-    const {postId, post, userLogged, postAuthor, masonry} = props;
+    const {postId, post, userLogged, postAuthor, masonry, aos} = props;
 
     const classes = useStyles();
     // const [postPic, setPostPic] = useState([]);
@@ -64,8 +64,7 @@ export default function ExploreItem(props) {
 
 
     return (
-        <div className={`explore__gridSmall ${masonry ? "explore__masonry-item" : ""}`} key={postId}>
-
+        <div className={`explore__gridSmall ${masonry ? "explore__masonry-item" : ""}`} key={postId} data-aos={aos}>
             {
                 post?.media[0]?.type === "video/mp4" ? (
                     <>
