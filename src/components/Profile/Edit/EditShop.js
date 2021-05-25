@@ -194,7 +194,7 @@ const EditShop = ({userLogged, setOpenSnack}) => {
             </div>
 
             <div className="addMenu__button">
-                <Button variant="contained" color="primary" onClick={openAddDishes}>Add new</Button>
+                <Button variant="contained" color="primary" onClick={openAddDishes} style={{textTransform: "capitalize"}}>Add new</Button>
             </div>
 
 

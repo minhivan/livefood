@@ -6,29 +6,27 @@ import {
     CircularProgress,
     IconButton, MenuItem,
     Modal, Popover, Select,
-    TextField,
-    Tooltip
+    TextField
 } from "@material-ui/core";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
 import CardHeader from "@material-ui/core/CardHeader";
 import {makeStyles} from "@material-ui/core/styles";
-import PhotoCameraTwoToneIcon from "@material-ui/icons/PhotoCameraTwoTone";
+// import PhotoCameraTwoToneIcon from "@material-ui/icons/PhotoCameraTwoTone";
 // import VideoCallTwoToneIcon from "@material-ui/icons/VideoCallTwoTone";
-import LocationOnTwoToneIcon from '@material-ui/icons/LocationOnTwoTone';
+// import LocationOnTwoToneIcon from '@material-ui/icons/LocationOnTwoTone';
 import {auth, db, storage} from "../../firebase";
 import firebase from "firebase";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {green} from "@material-ui/core/colors";
 import {v4 as uuidv4} from "uuid";
 // import {useCollection} from "react-firebase-hooks/firestore";
-import MobileStepper from '@material-ui/core/MobileStepper';
+// import MobileStepper from '@material-ui/core/MobileStepper';
 // import Paper from '@material-ui/core/Paper';
 // import Typography from '@material-ui/core/Typography';
 import SentimentSatisfiedRoundedIcon from "@material-ui/icons/SentimentSatisfiedRounded";
 import {Picker} from "emoji-mart";
 import FormControl from "@material-ui/core/FormControl";
-
-
+import VideoLibraryRoundedIcon from '@material-ui/icons/VideoLibraryRounded';
 
 function getModalStyle() {
     const top = 50 ;
@@ -225,6 +223,7 @@ function AddVideo(props){
                                         post: firebase.firestore.FieldValue.arrayUnion(docRef.id)
                                     })
                                     handleReset();
+                                    setDisable(false);
                                 })
                                 .catch(function(error) {
                                     console.error("Error adding document: ", error);
@@ -355,7 +354,7 @@ function AddVideo(props){
                             <label htmlFor="video-upload" className="upload__pickerButton">
                                 <IconButton color="inherit" component="span" >
                                     <Badge color="secondary">
-                                        <PhotoCameraTwoToneIcon className={classes.popIcon}/>
+                                        <VideoLibraryRoundedIcon className={classes.popIcon}/>
                                     </Badge>
                                 </IconButton>
                             </label>

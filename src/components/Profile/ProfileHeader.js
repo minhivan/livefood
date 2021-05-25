@@ -14,9 +14,10 @@ import ListUserInProfile from "../Popup/ListUserInProfile";
 import LocationOnRoundedIcon from '@material-ui/icons/LocationOnRounded';
 import {useDocument} from "react-firebase-hooks/firestore";
 import MapRoundedIcon from '@material-ui/icons/MapRounded';
-import OpenRating from "../Popup/OpenRating";
+import RecommendRating from "../Popup/RecommendRating";
 import {Rating} from "@material-ui/lab";
-import Typography from "@material-ui/core/Typography";
+// import Typography from "@material-ui/core/Typography";
+import LinkTwoToneIcon from '@material-ui/icons/LinkTwoTone';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -87,6 +88,11 @@ const useStyles = makeStyles((theme) => ({
         display: "flex",
         alignItems: "center",
         color: "#65676B",
+        cursor : "pointer",
+        "&:hover": {
+            color: "#343438",
+            transition: "0.2s all ease"
+        }
     },
     about: {
         padding: "20px 0",
@@ -108,11 +114,25 @@ const useStyles = makeStyles((theme) => ({
             color: "#054063",
             transition: "0.2s all ease"
         },
+    },
+    countInfo: {
+        display: "block",
+        color: "rgba(18,18,18,0.75)"
+    },
+    linkToAbout: {
+        display: "flex",
+        alignItems: "center",
+        color: "#65676B",
+        cursor : "pointer",
+        "&:hover": {
+            color: "#343438",
+            transition: "0.2s all ease"
+        }
     }
 }));
 
 
-const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest}) => {
+const ProfileHeader = ({userSnapshot, count, userLogged}) => {
     const classes = useStyles();
     const [userFollowing, setUserFollowing] = useState([]);
     const [userFollower, setUserFollower] = useState([]);
@@ -122,7 +142,11 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
     const [authData] = useDocument(userLogged && db.collection('users').doc(userLogged.uid));
     const authFollowingList = authData?.data()?.following;
     const [userLoggedData, setUserLoggedData] = useState({});
+    const [isReadMore, setIsReadMore] = useState(true);
 
+    const toggleReadMore = () => {
+        setIsReadMore(!isReadMore);
+    };
 
     const handleOpenRating = () => {
         setOpenRating(true);
@@ -157,7 +181,6 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
                         id: doc.id,
                         data: doc.data(),
                     })))
-
                     setUserFollowing([...userFollowing, ...temp]);
                 })
         }
@@ -169,7 +192,6 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
                         id: doc.id,
                         data: doc.data(),
                     })))
-
                     setUserFollower([...userFollower, ...temp]);
                 })
         }
@@ -191,25 +213,28 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
             db.collection("users")
                 .where(firebase.firestore.FieldPath.documentId(), 'in', userSnapshot.follower.slice(0,9))
                 .get().then(snapshot => {
-                setUserFollower(
-                    snapshot.docs.map((doc => ({
-                        id: doc.id,
-                        data: doc.data(),
-                    })))
-                );
+                    setUserFollower(
+                        snapshot.docs.map((doc => ({
+                            id: doc.id,
+                            data: doc.data(),
+                            temp: {
+                                photoURL: doc.data()?.photoURL,
+                                displayName: doc.data()?.displayName
+                            }
+                        })))
+                    );
             })
         }
         if(typeof userSnapshot?.following !== 'undefined' && userSnapshot?.following?.length > 0){
-
             db.collection("users")
                 .where(firebase.firestore.FieldPath.documentId(), 'in', userSnapshot.following.slice(0,9))
                 .get().then(snapshot => {
-                setUserFollowing(
-                    snapshot.docs.map((doc => ({
-                        id: doc.id,
-                        data: doc.data(),
-                    })))
-                );
+                    setUserFollowing(
+                        snapshot.docs.map((doc => ({
+                            id: doc.id,
+                            data: doc.data(),
+                        })))
+                    );
             })
         }
 
@@ -302,14 +327,24 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
                     {
                         userSnapshot?.bio ? (
                             <h2 className="share-desc mt10">
-                                {userSnapshot.bio}
+                                {/*{userSnapshot.bio}*/}
+                                {
+                                    userSnapshot.bio?.length > 150 ? (
+                                        <>
+                                            {isReadMore ? userSnapshot.bio.slice(0, 150) : userSnapshot.bio}
+                                            <span onClick={toggleReadMore} style={{fontWeight: "bold", cursor: "pointer", color: "#8e8e8e"}}>
+                                                {isReadMore ? "...read more" : null}
+                                            </span>
+                                        </>
+                                    ) : userSnapshot.bio
+                                }
                             </h2>
                         ) : null
                     }
                     {
                         userSnapshot?.profileLink ? (
                             <div className="share-links">
-                                <a href={userSnapshot.profileLink}>{userSnapshot.profileLink}</a>
+                                <LinkTwoToneIcon style={{marginRight: "5px"}}/><a href={userSnapshot.profileLink} target="_blank">{userSnapshot.profileLink}</a>
                             </div>
                         ) : null
                     }
@@ -336,15 +371,6 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
                                             </h4>
                                         ) : null
                                     }
-                                    {
-                                        userSnapshot?.aboutRestaurant?.location ? (
-                                            <h4 className={classes.opening}>
-                                                <LocationOnRoundedIcon style={{marginRight: "5px"}}/>
-                                                Location :
-                                                <span style={{marginLeft: "5px"}}>{userSnapshot?.aboutRestaurant?.location}</span>
-                                            </h4>
-                                        ) : null
-                                    }
                                 </div>
                                 {
                                     userSnapshot?.aboutRestaurant?.address ? (
@@ -352,6 +378,22 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
                                             <MapRoundedIcon style={{marginRight: "5px"}}/>
                                             Address :
                                             <span style={{marginLeft: "5px"}}>{userSnapshot?.aboutRestaurant?.address}</span>
+                                            {
+                                                userSnapshot?.aboutRestaurant?.location ? (
+                                                    <span style={{marginLeft: "5px"}}> - {userSnapshot?.aboutRestaurant?.location}</span>
+                                                ) : null
+                                            }
+                                        </h4>
+                                    ) : null
+                                }
+                                {
+                                    userSnapshot?.aboutRestaurant?.geolocation ? (
+                                        <h4 className={classes.opening} style={{paddingBottom: "20px"}}>
+                                            <Link to={`/profile/about/${userSnapshot?.uid}`} className={classes.linkToAbout}>
+                                                <LocationOnRoundedIcon />
+                                                <span style={{marginLeft: "5px"}}>Find on map</span>
+                                            </Link>
+
                                         </h4>
                                     ) : null
                                 }
@@ -360,7 +402,6 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
                         ) : null
                     }
                 </div>
-
 
                 {
                     userLogged ? (
@@ -371,7 +412,7 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
                                 className={classes.button}
                                 onClick={handleOpenRating}
                             >
-                                Vote
+                                Review
                             </Button>
                         ) : null
                     ) : null
@@ -390,7 +431,7 @@ const ProfileHeader = ({isAuthProfile, userSnapshot, count, userLogged,  ...rest
             }
             {
                 openRating ? (
-                    <OpenRating open={openRating} handleClose={handleCloseRating} userLogged={userLogged} shopId={userSnapshot?.uid} voteRating={userSnapshot?.voteRating}/>
+                    <RecommendRating open={openRating} handleClose={handleCloseRating} userLogged={userLogged} shopId={userSnapshot?.uid} voteRating={userSnapshot?.voteRating}/>
                 ) : null
             }
         </div>

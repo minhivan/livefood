@@ -82,7 +82,7 @@ const ProfileVideo = ({uid, userLogged}) => {
             .onSnapshot(snapshot => {
                 let temp = []
                 snapshot.forEach(data => {
-                    var authorVid = {};
+                    let authorVid = {};
                     data.data().user.get().then( author => {
                         Object.assign(authorVid, author.data());
                     })
@@ -97,29 +97,35 @@ const ProfileVideo = ({uid, userLogged}) => {
 
     return(
         <div className="explore__root" style={{paddingTop: "20px" , marginBottom: "50px"}}>
-            <input accept="video/*" type="file" onChange={handleChange} onClick={e => (e.target.value = null)} id="video-upload" className={classes.input}/>
+            <input accept="video/*" type="file" onChange={handleChange} onClick={event => (event.target.value = null)} id="video-upload" className={classes.input}/>
             {
                     vid.length > 0 ? (
                         <div className="explore__container" style={{padding: "0"}}>
-                            <div className={classes.addMore}>
-                                <div className={classes.wrapper}>
-                                    <div className={classes.none}>
-                                        <VideoIcon
-                                            className={classes.icon}
-                                            size="40"
-                                        />
-                                    </div>
-                                    <h2 style={{paddingBottom: "10px"}}>Start Record Video</h2>
-                                    <Button
-                                        style={{textTransform: "capitalize", fontSize: "16px", marginTop: "20px"}}
-                                        color="primary"
-                                        variant="contained"
-                                        onClick={handleOpen}
-                                    >
-                                        Upload
-                                    </Button>
-                                </div>
-                            </div>
+                            {
+                                uid === userLogged.uid ? (
+                                    <>
+                                        <div className={classes.addMore}>
+                                            <div className={classes.wrapper}>
+                                                <div className={classes.none}>
+                                                    <VideoIcon
+                                                        className={classes.icon}
+                                                        size="40"
+                                                    />
+                                                </div>
+                                                <h2 style={{paddingBottom: "10px"}}>Start Record Video</h2>
+                                                <Button
+                                                    style={{textTransform: "capitalize", fontSize: "16px", marginTop: "20px"}}
+                                                    color="primary"
+                                                    variant="contained"
+                                                    onClick={handleOpen}
+                                                >
+                                                    Upload
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </>
+                                ) : null
+                            }
                             {
                                 vid.map(({id, post, authorVid}) => (
                                     <ExploreItem

@@ -2,13 +2,16 @@ import React, {useState} from "react";
 import Avatar from "@material-ui/core/Avatar";
 import dayjs from "dayjs";
 import {Link} from "react-router-dom";
-import {Rating} from "@material-ui/lab";
+import {Rating, ToggleButton} from "@material-ui/lab";
 import IconButton from "@material-ui/core/IconButton";
 import MoreHorizRoundedIcon from '@material-ui/icons/MoreHorizRounded';
 import {makeStyles} from "@material-ui/core/styles";
 import {useDocument} from "react-firebase-hooks/firestore";
 import {db} from "../../firebase";
 import CommentUtil from "../Popup/CommentUtil";
+import {Tooltip} from "@material-ui/core";
+import FavoriteRoundedIcon from "@material-ui/icons/FavoriteRounded";
+import FavoriteBorderTwoToneIcon from "@material-ui/icons/FavoriteBorderTwoTone";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -23,6 +26,27 @@ const useStyles = makeStyles((theme) => ({
         whiteSpace: "pre-line",
         lineHeight: "26px"
     },
+    actionButton: {
+        border: "0",
+        backgroundColor: "none",
+        borderRadius: "50%",
+        color: "rgba(0, 0, 0, 0.54)",
+        '&:hover': {
+            color: 'black',
+        }
+    },
+    selected: {
+        backgroundColor: "unset !important"
+    },
+    reply: {
+        color: "rgb(84, 110, 122)",
+        fontSize: "12px !important"
+    },
+    viewMoreReplies:{
+        color: "rgb(84, 110, 122)",
+        fontWeight: 'bold',
+        lineHeight: "14px"
+    }
 }));
 
 
@@ -86,6 +110,34 @@ function PostComment (props) {
                             ) : (<p>{comment.text}</p>)
                         }
 
+                    </div>
+                    <div className="comment__action">
+                        <div className="comment__action-like">
+                            <Tooltip title="Like" arrow>
+                                <ToggleButton
+                                    size="small"
+                                    value="check"
+                                    selected={true}
+                                    // className={classes.likeButton}
+                                    classes={{
+                                        root: classes.actionButton,
+                                        selected: classes.selected,
+                                    }}
+                                >
+                                    {
+                                        1 === 1 ? <FavoriteRoundedIcon style={{color: "red"}} fontSize="inherit"/> : <FavoriteBorderTwoToneIcon />
+                                    }
+                                </ToggleButton>
+                            </Tooltip>
+                            120 likes
+                        </div>
+                        <span className={classes.reply}>Reply</span>
+                    </div>
+                    <div className="comment__see-more">
+                        <div className="comment__see-more-container">
+                            <div className={classes.customDiveder} />
+                            <span className={classes.viewMoreReplies}>View replies (7)</span>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -14,6 +14,7 @@ import BookmarkBorderOutlinedIcon from "@material-ui/icons/BookmarkBorderOutline
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import CardActions from "@material-ui/core/CardActions";
 import ListUserLikePost from "../Popup/ListUserLikePost";
+import {Tooltip} from "@material-ui/core";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -128,47 +129,54 @@ export default function PostAction({postId, post, expanded, setExpanded, handleF
             <CardActions disableSpacing className={classes.action}>
                 <div className="post__button">
                     <div className="action__like">
-                        <ToggleButton
-                            value="check"
-                            selected={selected}
-                            // className={classes.likeButton}
-                            classes={{
-                                root: classes.actionButton,
-                                selected: classes.selected,
-                            }}
-                            onClick={() => {
-                                if(!selected) likePost();
-                                else dislikePost();
-                            }}
-                        >
-                            {
-                                selected ? <FavoriteRoundedIcon style={{color: "red"}}/> : <FavoriteBorderTwoToneIcon />
-                            }
-                        </ToggleButton>
+                        <Tooltip title="Love" arrow>
+                            <ToggleButton
+                                value="check"
+                                selected={selected}
+                                // className={classes.likeButton}
+                                classes={{
+                                    root: classes.actionButton,
+                                    selected: classes.selected,
+                                }}
+                                onClick={() => {
+                                    if(!selected) likePost();
+                                    else dislikePost();
+                                }}
+                            >
+                                {
+                                    selected ? <FavoriteRoundedIcon style={{color: "red"}}/> : <FavoriteBorderTwoToneIcon />
+                                }
+                            </ToggleButton>
+                        </Tooltip>
+
                     </div>
                     <div className="action__comment">
-                        <IconButton aria-label="comment" onClick={handleFocus}>
-                            <ModeCommentOutlinedIcon/>
-                        </IconButton>
+                        <Tooltip title="Comment" arrow>
+                            <IconButton aria-label="comment" onClick={handleFocus}>
+                                <ModeCommentOutlinedIcon/>
+                            </IconButton>
+                        </Tooltip>
                     </div>
-                    <div className="action__share">
-                        <ToggleButton
-                            value="check"
-                            selected={saveSelected}
-                            // className={classes.likeButton}
-                            classes={{
-                                root: classes.actionButton,
-                                selected: classes.selected,
-                            }}
-                            onClick={() => {
-                                if(!saveSelected) savePost();
-                                else unsavedPost();
-                            }}
-                        >
-                            {
-                                saveSelected ? <BookmarkRoundedIcon style={{color: "black"}}/> : <BookmarkBorderOutlinedIcon />
-                            }
-                        </ToggleButton>
+                    <div className="action__save">
+                        <Tooltip title="Save" arrow>
+                            <ToggleButton
+                                value="check"
+                                selected={saveSelected}
+                                // className={classes.likeButton}
+                                classes={{
+                                    root: classes.actionButton,
+                                    selected: classes.selected,
+                                }}
+                                onClick={() => {
+                                    if(!saveSelected) savePost();
+                                    else unsavedPost();
+                                }}
+                            >
+                                {
+                                    saveSelected ? <BookmarkRoundedIcon style={{color: "black"}}/> : <BookmarkBorderOutlinedIcon />
+                                }
+                            </ToggleButton>
+                        </Tooltip>
                         {/*<IconButton aria-label="share">*/}
                         {/*	<BookmarkBorderOutlinedIcon />*/}
                         {/*</IconButton>*/}
@@ -177,16 +185,18 @@ export default function PostAction({postId, post, expanded, setExpanded, handleF
                 {
                      post?.data ? (
                         <div className="action__expand">
-                            <IconButton
-                                className={clsx(classes.expand, {
-                                    [classes.expandOpen]: expanded,
-                                })}
-                                onClick={handleExpandClick}
-                                aria-expanded={expanded}
-                                aria-label="show more"
-                            >
-                                <ExpandMoreIcon />
-                            </IconButton>
+                            <Tooltip title="More" arrow>
+                                <IconButton
+                                    className={clsx(classes.expand, {
+                                        [classes.expandOpen]: expanded,
+                                    })}
+                                    onClick={handleExpandClick}
+                                    aria-expanded={expanded}
+                                    aria-label="show more"
+                                >
+                                    <ExpandMoreIcon />
+                                </IconButton>
+                            </Tooltip>
                         </div>
                     ) : null
                 }

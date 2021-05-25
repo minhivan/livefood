@@ -18,8 +18,12 @@ export function handleLikePost(postId, userData, postAuthor) {
                 path : "/p/" + postId,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 status: "unread"
-            })
+            }).catch((error) => {
+                console.error("Error ", error);
+            });
         }
+    }).catch((error) => {
+        console.error("Error ", error);
     });
 }
 
@@ -48,7 +52,9 @@ export const handleUnSavedPost = (postId, uid) => {
     }).then(() => {
         db.collection('users').doc(uid).update({
             postSave: firebase.firestore.FieldValue.arrayRemove(postId)
-        })
+        }).catch((error) => {
+            console.error("Error ", error);
+        });
     });
 }
 
@@ -90,29 +96,41 @@ export const handleUserUnfollow = (uid, id) => {
             followerCount: firebase.firestore.FieldValue.increment(-1)
         }).then(() => {
             console.log("Success");
+        }).catch((error) => {
+            console.error("Error ", error);
         });
+    }).catch((error) => {
+        console.error("Error ", error);
     });
 
 }
 
 
-export const handleDeletePost = (id) => {
+export const handleDeletePost = (id, uid) => {
     // Remove
     db.collection("posts").doc(id).delete().then(() => {
         console.log("Document successfully deleted!");
+        db.collection("users").doc(uid).update({
+            post: firebase.firestore.FieldValue.arrayRemove(id)
+        }).catch((error) => {
+            console.error("Error removing document: ", error);
+        });
     }).catch((error) => {
         console.error("Error removing document: ", error);
     });
-
 }
 
 // Report (Spam, violence + dangerous, Nudity or sexual activity)
-export const handleReportPost = (uid, id, ) => {
+export const handleReportPost = (uid, id) => {
     db.collection('posts').doc(id).update({
         reportBy: firebase.firestore.FieldValue.arrayUnion(uid),
         reportCount: firebase.firestore.FieldValue.increment(1)
+    }).catch((error) => {
+        console.error("Error ", error);
     });
 }
+
+
 
 export const handleDeleteMenuItem = (uid, id) => {
     // Remove
@@ -135,17 +153,21 @@ export const checkMyFollowingList = (myFollowerList, oppID) => {
 
 export const handleDeleteComment = (postId, commentId) => {
     db.collection("posts").doc(postId).collection("comments").doc(commentId).delete().then(() => {
+        db.collection("posts").doc(postId).update({
+            commentsCount: firebase.firestore.FieldValue.increment(-1)
+        }).catch((error) => {
+            console.error("Error : ", error);
+        });
         console.log("Document successfully deleted!");
-        // Remove image from storage
     }).catch((error) => {
-        console.error("Error removing document: ", error);
+        console.error("Error: ", error);
     });
 }
 
 
 export function checkSignInWithGoogle(authUser){
     const docRef = db.collection("users").doc(authUser.uid);
-    return docRef.get().then((doc) => {
+    docRef.get().then((doc) => {
         if(!doc.exists){
             docRef.set({
                 email: authUser.email,
@@ -158,7 +180,9 @@ export function checkSignInWithGoogle(authUser){
                 console.log("Updated")
             })
         }
-    })
+    }).catch((error) => {
+        console.error("Error ", error);
+    });
 }
 
 
@@ -170,8 +194,8 @@ export const checkFirebaseAuth = (authUser) => {
         displayName: authUser.displayName,
         photoURL: authUser.photoURL,
         uid: authUser.uid
-    }).then(() => {
-        console.log('Successfully');
+    }).catch((error) => {
+        console.error("Error ", error);
     });
 }
 
@@ -188,5 +212,9 @@ export const checkFirebaseAuth = (authUser) => {
 export const handleSeenNotification = (uid, notiId) => {
     db.collection('users').doc(uid).collection("notifications").doc(notiId).update({
         status: "read"
-    })
+    }).catch((error) => {
+        console.error("Error ", error);
+    });
 }
+
+

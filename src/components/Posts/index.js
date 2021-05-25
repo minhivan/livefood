@@ -32,6 +32,12 @@ const useStyles = makeStyles((theme) => ({
         borderStyle: "solid",
         borderRadius: "50%",
         margin: "50px 0 20px 0"
+    },
+    buttonLoadMore: {
+        display: "flex",
+        width: "100%",
+        justifyContent: "center",
+        margin: "10px 0 50px 0"
     }
 }));
 
@@ -83,7 +89,7 @@ export default function NewFeed(props){
                 unsubscribe();
             }
         }
-    }, [userFollow?.length, userLogged?.uid]);
+    }, [userFollow?.length, userLogged?.uid, limit]);
 
 
     function handleRemove(id) {
@@ -99,14 +105,14 @@ export default function NewFeed(props){
     //         loadMore()
     //     }
     // }
+
+
     // //
-    // const loadMore = () => {
-    //     if(lastVisible){
-    //         setLimit(limit => limit + 10);
-    //     }
-    //     console.log(lastVisible)
-    //     console.log(limit);
-    // }
+    const loadMore = () => {
+        if(lastVisible){
+            setLimit(limit => limit + 10);
+        }
+    }
 
 
     return(
@@ -118,15 +124,34 @@ export default function NewFeed(props){
             }
             {
                 posts?.length > 0 ? (
-                    posts.map(({id, post, postAuthor }) => (
-                        <Post
-                            key={id}
-                            id={id}
-                            post={post}
-                            userLogged={userLogged}
-                            handleRemove={() => handleRemove(id)}
-                        />
-                    ))
+                    <>
+                        {
+                            posts.map(({id, post, postAuthor }) => (
+                                <Post
+                                    key={id}
+                                    id={id}
+                                    post={post}
+                                    userLogged={userLogged}
+                                    handleRemove={() => handleRemove(id)}
+                                />
+                            ))
+                        }
+                        {
+                            lastVisible ? (
+                                <div className={classes.buttonLoadMore}>
+                                    <Button
+                                        onClick={loadMore}
+                                        style={{textTransform: "capitalize", fontSize: "16px"}}
+                                        color="primary"
+                                        variant="contained"
+                                    >
+                                        See more
+                                    </Button>
+                                </div>
+                            ) : null
+                        }
+                    </>
+
                 ) : (
                     <div className={classes.wrapper}>
                         <div className={classes.none}>

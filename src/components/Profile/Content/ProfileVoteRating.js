@@ -110,7 +110,7 @@ export default function ProfileVoteRating(props){
                 {
                     listVotes ? (
                         <List className={classes.root}>
-                            <h3 className={classes.title}>List of votes</h3>
+                            <h3 className={classes.title}>List of recommendations</h3>
                             <Divider />
                             {
                                 listVotes.map(({id, data}) => (

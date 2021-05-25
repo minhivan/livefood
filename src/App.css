@@ -1,16 +1,16 @@
 /*@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap');*/
 /*@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@450&display=swap');*/
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400&display=swap');
-/*@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200&family=Roboto+Condensed:wght@300&display=swap');*/
+/*@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400&display=swap');*/
+/*@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200&family=Roboto+Condensed:wght@400&display=swap');*/
 /*@import url('https://fonts.googleapis.com/css2?family=Barlow&display=swap');*/
-
+@import url('https://fonts.googleapis.com/css2?family=Lexend&display=swap');
 
 *{
     margin: 0;
     /*font-family: 'Rubik', sans-serif;*/
     /*font-family: 'Quicksand', sans-serif;*/
-    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,Helvetica,ヒラギノ角ゴ Pro W3,Hiragino Kaku Gothic Pro,メイリオ,Meiryo,ＭＳ Ｐゴシック,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
     /*font-family: 'Roboto', sans-serif;*/
+    font-family: 'Lexend', -apple-system, BlinkMacSystemFont,S egoe UI,Oxygen-Sans,Cantarell,Helvetica Neue,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol !important;
     box-sizing: border-box;
     letter-spacing: normal;
 
@@ -328,10 +328,11 @@ input:focus{
     display: flex;
     align-items: flex-start;
     gap: 35px;
+    max-width: 990px;
 }
 .profile__about{
     padding-bottom: 20px;
-    /* width: 100%; */
+    max-width: 620px;
     display: flex;
     flex-flow: column;
     justify-content: center;
@@ -376,7 +377,6 @@ input:focus{
     font-size: 32px;
     line-height: 38px;
     padding-bottom: 4px;
-    max-width: 500px;
     max-height: 160px;
     overflow: hidden;
 }
@@ -387,7 +387,6 @@ input:focus{
     text-overflow: ellipsis;
     height: 25px;
     overflow: hidden;
-    max-width: 450px;
     white-space: nowrap;
 }
 .share-desc {
@@ -397,16 +396,23 @@ input:focus{
     color: rgb(18, 18, 18);
     white-space: pre-line;
     padding: 10px 0;
-    justify-content: center;
-    display: flex;
+    /*justify-content: center;*/
+    /*display: flex;*/
     width: 100%;
+    text-align: justify;
 }
+
+.share-links{
+    display: flex;
+    align-items: center;
+}
+
 .share-links a {
     font-style: normal;
     font-weight: 600;
     font-size: 16px;
-    line-height: 18px;
-    height: 22px;
+    /*line-height: 18px;*/
+    /*height: 22px;*/
     width: 100%;
     display: inline-block;
     overflow: hidden;
@@ -448,12 +454,18 @@ input:focus{
     overflow-y: auto;
 }
 .about__map{
-    height: 300px;
+    height: 500px;
     width: 100%;
     background-color: white;
 }
-.about__map .leaflet-container{
+.about__map .leaflet-container,
+.profile__about-map .leaflet-container{
     height: 100%;
+}
+.profile__about-map{
+    height: 700px;
+    width: 100%;
+    background-color: white;
 }
 
 
@@ -1010,7 +1022,7 @@ input:focus{
     display: block;
 }
 .comment__sub-popup a {
-    width: 80%;
+    max-width: 200px;
     white-space: nowrap;
     display: block;
     overflow: hidden;
@@ -1030,9 +1042,17 @@ input:focus{
 }
 .comment__action{
     display: flex;
-    max-width: 50%;
-    justify-content: space-between;
+    gap: 15px;
+    align-items: flex-start;
+    line-height: 25px;
+    /*justify-content: space-between;*/
 }
+
+.comment__action-like{
+    font-size: 12px;
+}
+
+
 .commentDetails{
     padding: 20px;
     display: flex;

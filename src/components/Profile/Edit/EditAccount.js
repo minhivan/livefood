@@ -420,7 +420,7 @@ const EditAccount = (props) => {
                 </div>
 
                 <div className={classes.submit}>
-                    <Button variant="contained" color="primary" onClick={handleSubmit}>Update</Button>
+                    <Button variant="contained" color="primary" onClick={handleSubmit} style={{textTransform: "capitalize"}}>Update</Button>
                 </div>
 
             </form>

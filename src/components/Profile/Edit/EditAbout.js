@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import CardHeader from "@material-ui/core/CardHeader";
 import Avatar from "@material-ui/core/Avatar";
 import Skeleton from "@material-ui/lab/Skeleton";
@@ -6,15 +6,16 @@ import {Link} from "react-router-dom";
 import {makeStyles} from "@material-ui/core/styles";
 import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
-import {MenuItem, Select, TextField} from "@material-ui/core";
+import {MenuItem, Select, Switch, TextField} from "@material-ui/core";
 import {useDocument} from "react-firebase-hooks/firestore";
 import {db} from "../../../firebase";
 import {blue} from "@material-ui/core/colors";
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
-// import "leaflet/dist/leaflet.css"
+import {MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap} from 'react-leaflet'
+import "leaflet/dist/leaflet.css"
 
 import markerIconPng from "leaflet/dist/images/marker-icon.png"
 import {Icon} from 'leaflet'
+import {Autocomplete} from "@material-ui/lab";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -82,44 +83,80 @@ const useStyles = makeStyles((theme) => ({
         color: "#8e8e8e",
         fontSize: "12px",
     },
+    shopCard: {
+        display: "flex",
+        alignItems: "center",
+        gap: "10px"
+    },
+    shopAvt: {
+        height: 60,
+        width: 60,
+    },
+    shopName: {
+        color: "#65676B",
+        fontWeight: "bold"
+    },
+
 }));
 
 
+// function LocationMarker() {
+//     const [position, setPosition] = useState(null)
+//     const map = useMapEvents({
+//         click() {
+//             map.locate()
+//         },
+//         locationfound(e) {
+//             setPosition(e.latlng)
+//             map.flyTo(e.latlng, map.getZoom())
+//             console.log(position);
+//         },
+//     })
+//
+//     return position === null ? null : (
+//         <Marker
+//             position={position}
+//             icon={new Icon({iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41]})}
+//         />
+//     )
+// }
+
+function ChangeView({ center, zoom }) {
+    const map = useMap();
+    map.setView(center, zoom);
+    return null;
+}
 
 
 export default function EditAbout(props){
     const classes = useStyles();
     const {userLogged, setOpenSnack} = props;
+    const [userData] = useDocument(userLogged &&  db.collection("users").doc(userLogged.uid));
+
     const [bio, setBio] = useState('');
     const [opening, setOpening] = useState('')
     const [closed, setClosed] = useState('')
     const [userProvince, setUserProvince] = React.useState("");
-    // const [lat, setLat] = useState('');
-    // const [lng, setLng] = useState('');
+    const [lat, setLat] = useState('');
+    const [lng, setLng] = useState('');
     const [province, setProvince] = useState([]);
     const [address, setAddress] = useState('');
     const [listRestaurantCate, setListRestaurantCate] = useState([]);
     const [restaurantCate, setRestaurantCate] = useState('');
-    const [location, setLocation] = useState({});
+    const [openLocation, setOpenLocation] = useState(false);
+    const mapRef = useRef();
 
-
-    const [userData] = useDocument(userLogged &&  db.collection("users").doc(userLogged.uid));
-    // const [mapLocation, setMapLocation] = useState({});
-
-
-    const handleClickLocation = () => {
-        if (navigator.geolocation) {
-            navigator.geolocation.watchPosition(function(position) {
-                console.log(position.coords.latitude);
-                console.log(position.coords.longitude);
-                setLocation({
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                });
-            });
-        }
-    }
-
+    useEffect(() => {
+        setRestaurantCate(userData?.data()?.aboutRestaurant?.modelId ?? '')
+        setBio(userData?.data()?.aboutRestaurant?.bio ?? '');
+        setOpening(userData?.data()?.aboutRestaurant?.opening ?? '07:30')
+        setClosed(userData?.data()?.aboutRestaurant?.closed ?? '21:30')
+        setUserProvince(userData?.data()?.aboutRestaurant?.locationId ?? '')
+        setOpenLocation(!!userData?.data()?.aboutRestaurant?.geolocation);
+        setAddress(userData?.data()?.aboutRestaurant?.address ?? '');
+        setLng(userData?.data()?.aboutRestaurant?.geolocation.lng ?? '');
+        setLat(userData?.data()?.aboutRestaurant?.geolocation.lat ?? '');
+    }, [userData]);
 
     useEffect(() => {
         fetch('https://vapi.vnappmob.com/api/province/')
@@ -128,14 +165,15 @@ export default function EditAbout(props){
                 setProvince(res.results)
             }
         });
-        setAddress(userData?.data()?.aboutRestaurant?.address ?? '')
-        setRestaurantCate(userData?.data()?.aboutRestaurant?.modelId ?? '')
-        setBio(userData?.data()?.aboutRestaurant?.bio ?? '');
-        setOpening(userData?.data()?.aboutRestaurant?.opening ?? '07:30')
-        setClosed(userData?.data()?.aboutRestaurant?.closed ?? '21:30')
-        setUserProvince(userData?.data()?.aboutRestaurant?.locationId ?? '')
+    })
 
-    }, [userData]);
+    const handleClickLocation = (event) => {
+        setOpenLocation(event.target.checked);
+        if(!userData?.data()?.aboutRestaurant?.geolocation){
+            handleAutoLocation();
+        }
+    }
+
 
     useEffect(() => {
         return db.collection('restaurantCategory')
@@ -148,6 +186,7 @@ export default function EditAbout(props){
         })
     }, [])
 
+
     const handleSubmit = (event) => {
         event.preventDefault();
         db.collection("users").doc(userLogged.uid).update({
@@ -157,6 +196,10 @@ export default function EditAbout(props){
                 closed: closed,
                 locationId: userProvince,
                 location: province.find(o => o.province_id === userProvince).province_name,
+                geolocation: {
+                    lat: lat,
+                    lng: lng
+                },
                 address: address,
                 modelId: restaurantCate,
                 model: listRestaurantCate.find(o => o.id === restaurantCate).title
@@ -168,15 +211,36 @@ export default function EditAbout(props){
         });
     }
 
-    const handleChangeOpening = (event) => {
-        setOpening(event.target.value);
+    const handleChangeOpening = (data) => {
+        setOpening(data);
     }
 
-    const handleChangeClosed = (event) => {
-        setClosed(event.target.value);
+    const handleChangeClosed = (data) => {
+        setClosed(data);
     }
 
-    // console.log(userProvince)
+    // const handleClickMap = (e) => {
+    //     const { lat, lng } = e.latlng;
+    //     console.log(lat, lng);
+    // }
+
+    const handleAutoLocation = () => {
+        navigator.permissions.query({name:'geolocation'}).then(function(result) {
+            if (result.state === 'granted') {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        setLat(position.coords.latitude);
+                        setLng(position.coords.longitude);
+                    });
+                }
+            } else if (result.state === 'prompt') {
+                alert("Please turn on location from your browser !!! ");
+            }
+        });
+    }
+
+    // console.log(lat,lng)
+    // console.log(province.find(option => option.province_id === userProvince))
     // console.log(province.find(o => o.province_name === userProvince))
     return (
         <article className="edit_account__content">
@@ -225,6 +289,7 @@ export default function EditAbout(props){
                             </Select>
                         </div>
                     </div>
+
                     <div className={classes.holder}>
                         <aside className={classes.label}>
                             <label htmlFor="pepBio" style={{fontWeight: "bold", fontSize: "18px"}}>Bio</label>
@@ -252,7 +317,7 @@ export default function EditAbout(props){
                                 id="pepOpening"
                                 type="time"
                                 value={opening}
-                                onChange={event => handleChangeOpening(event)}
+                                onChange={event => handleChangeOpening(event.target.value)}
                                 InputLabelProps={{
                                     shrink: true,
                                 }}
@@ -276,7 +341,7 @@ export default function EditAbout(props){
                                 id="pepClosed"
                                 type="time"
                                 value={closed}
-                                onChange={event => handleChangeClosed(event)}
+                                onChange={event => handleChangeClosed(event.target.value)}
                                 InputLabelProps={{
                                     shrink: true,
                                 }}
@@ -296,6 +361,18 @@ export default function EditAbout(props){
                             <label htmlFor="pepLocation" style={{fontWeight: "bold", fontSize: "18px"}}>Location</label>
                         </aside>
                         <div className={classes.input}>
+                            {/*<Autocomplete*/}
+                            {/*    fullWidth*/}
+                            {/*    autoHighlight*/}
+                            {/*    options={province}*/}
+                            {/*    getOptionLabel={(option) => option.province_name}*/}
+                            {/*    value={province.find(option => option.province_id === userProvince)}*/}
+                            {/*    onChange={(event, newValue) => {*/}
+                            {/*        handleChangeProvince(newValue);*/}
+                            {/*    }}*/}
+                            {/*    renderInput={(params) => <TextField {...params} />}*/}
+                            {/*/>*/}
+
                             <Select
                                 style={{minWidth: "200px"}}
                                 native
@@ -331,28 +408,51 @@ export default function EditAbout(props){
                         <aside className={classes.label}>
                             <label style={{fontWeight: "bold", fontSize: "18px"}}>Current Location</label>
                         </aside>
-                        <div className={classes.input} style={{width: "100%"}}>
+                        <div className={classes.input}>
+                            <Switch
+                                checked={openLocation}
+                                inputProps={{ 'aria-label': 'secondary checkbox' }}
+                                onChange={handleClickLocation}
+                            />
+                            <span> - Or - </span>
+                            <Button variant="contained" color="primary" style={{marginLeft: "10px", textTransform: "capitalize"}} onClick={handleAutoLocation}>Update new location</Button>
+
+                        </div>
+                    </div>
+                    {
+                        openLocation ? (
                             <div className="about__map">
                                 <MapContainer
-                                    center={[10.770841599999999, 106.6696704]}
-                                    zoom={15}
-                                    scrollWheelZoom={false}
+                                    center={[lat, lng]}
+                                    zoom={16}
+                                    scrollWheelZoom={true}
+                                    dragging={true}
+                                    ref={mapRef}
                                 >
+                                    <ChangeView center={[lat, lng]} zoom={16} ref={mapRef}/>
                                     <TileLayer
                                         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                     />
+                                    {/*<LocationMarker />*/}
                                     <Marker
-                                        position={[10.770841599999999, 106.6696704]}
+                                        position={[lat, lng]}
                                         icon={new Icon({iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41]})}
-                                    />
+                                    >
+                                        <Popup>
+                                            <div className={classes.shopCard}>
+                                                <Avatar className={classes.shopAvt} alt={userLogged?.displayName} src={userLogged?.photoURL}/>
+                                                <span className={classes.shopName}>{userLogged?.displayName}</span>
+                                            </div>
+                                        </Popup>
+                                    </Marker>
                                 </MapContainer>
                             </div>
-                        </div>
-                    </div>
+                        ) : null
+                    }
 
                     <div className={classes.submit}>
-                        <Button variant="contained" color="primary" onClick={handleSubmit}>Update</Button>
+                        <Button variant="contained" color="primary" onClick={handleSubmit} style={{textTransform: "capitalize"}}>Update</Button>
                     </div>
                 </form>
             </div>

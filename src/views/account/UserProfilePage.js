@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import Page from "../../components/Page";
 import {db} from "../../firebase";
 import ProfileHeader from "../../components/Profile/ProfileHeader";
@@ -16,6 +16,7 @@ import {makeStyles} from "@material-ui/core/styles";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Backdrop from "@material-ui/core/Backdrop";
 import ProfileVoteRating from "../../components/Profile/Content/ProfileVoteRating";
+import ProfileAbout from "../../components/Profile/Content/ProfileAbout";
 
 
 function content(action, id, userLogged, userSnapshot){
@@ -30,6 +31,8 @@ function content(action, id, userLogged, userSnapshot){
             return <ProfileMenuList uid={id} userLogged={userLogged} userSnapshot={userSnapshot} type="dishes"/>
         case "vote":
             return <ProfileVoteRating uid={id} userLogged={userLogged} userSnapshot={userSnapshot} type="vote"/>
+        case "about":
+            return <ProfileAbout uid={id} userLogged={userLogged} userSnapshot={userSnapshot}/>
         default:
             return <></>
     }
@@ -76,7 +79,6 @@ const UserProfilePage = (props) => {
     const classes = useStyles();
     const [userData, loading] = useDocument(id && db.collection('users').doc(id));
     const userSnapshot = userData?.data();
-
     return(
 
         <Page
@@ -97,7 +99,7 @@ const UserProfilePage = (props) => {
                             <Divider />
                             <ProfileNavBar userSnapshot={userSnapshot}/>
                             <Divider />
-                            {content(props.pagePath, id, userLogged)}
+                            {content(props.pagePath, id, userLogged, userSnapshot)}
                         </div>
                     ) : (
                         <>

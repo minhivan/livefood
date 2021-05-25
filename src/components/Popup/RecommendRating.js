@@ -143,7 +143,7 @@ const labels = {
 };
 
 
-export default function OpenRating(props){
+export default function RecommendRating(props){
     const {open, userLogged, handleClose, shopId, voteRating} = props;
     const classes = useStyles();
     const [modalStyle] = useState(getModalStyle);
@@ -234,7 +234,7 @@ export default function OpenRating(props){
             <div style={modalStyle} className={classes.paper}>
 
                 <div className={classes.modalHeader}>
-                    <h2>Writing down your vote</h2>
+                    <h2>Your recommendation</h2>
                     <div className={classes.buttonClose}>
                         <IconButton aria-label="Cancel" color="inherit" onClick={handleClose} >
                             <CancelTwoToneIcon />

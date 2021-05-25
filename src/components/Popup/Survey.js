@@ -362,6 +362,7 @@ export default function Survey({userLogged}) {
     return (
         <Modal
             open={open}
+            onClose={handleClose}
             aria-labelledby="simple-modal-title"
             aria-describedby="simple-modal-description"
         >

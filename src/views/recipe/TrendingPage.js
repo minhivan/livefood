@@ -6,6 +6,7 @@ import {makeStyles} from "@material-ui/core/styles";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Backdrop from "@material-ui/core/Backdrop";
 import ListRecipe from "../../components/Recipe/ListRecipe";
+import {Image as CameraIcon} from "react-feather";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -17,7 +18,30 @@ const useStyles = makeStyles((theme) => ({
         display: "flex",
         alignItems: "center",
         width: "100%"
-    }
+    },
+    icon: {
+        color: "#050505"
+    },
+    wrapper: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+        maxHeight: "300px",
+        width: "100%"
+    },
+    none: {
+        width: "100px",
+        height: "100px",
+        borderColor: "#262626",
+        borderWidth: "2px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        borderStyle: "solid",
+        borderRadius: "50%",
+        margin: "50px 0 20px 0"
+    },
 }));
 
 
@@ -28,6 +52,7 @@ const TrendingPage = (props) => {
     useEffect( () => {
         // Set all post
         return db.collection('posts')
+            .where('type', '==', 'recipe')
             .orderBy('rating', 'desc')
             .limit(12)
             .get().then(async snapshot => {
@@ -70,9 +95,18 @@ const TrendingPage = (props) => {
                         </div>
                     </div>
                 ) : (
-                    <Backdrop className={classes.backdrop} open={true} >
-                        <CircularProgress color="inherit" />
-                    </Backdrop>
+                    // <Backdrop className={classes.backdrop} open={true} >
+                    //     <CircularProgress color="inherit" />
+                    // </Backdrop>
+                    <div className={classes.wrapper}>
+                        <div className={classes.none}>
+                            <CameraIcon
+                                className={classes.icon}
+                                size="40"
+                            />
+                        </div>
+                        <h2 style={{paddingBottom: "10px"}}>No Recipe Found</h2>
+                    </div>
                 )
             }
 

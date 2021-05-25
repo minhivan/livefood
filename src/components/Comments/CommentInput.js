@@ -42,7 +42,7 @@ const useStyles = makeStyles({
 export default function CommentInput({user, postId, type, path, refInput, postAuthor}){
 
     const classes = useStyles();
-    const [value, setValue] = React.useState('');
+    const [value, setValue] = React.useState(4);
     const [hover, setHover] = React.useState(-1);
     const [comment, setComment] = useState('');
     const postRef = db.collection('posts').doc(postId);
@@ -86,17 +86,21 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
     const postComment = (event) => {
         event.preventDefault();
         if(comment && !checkEmpty(comment)){
-            if(value){
+            if(value && postAuthor !== user?.uid){
                 if(typeof rating == 'undefined'){
                     db.collection("posts").doc(postId).update({
                         rating: value
-                    })
+                    }).catch((error) => {
+                        console.error("Error ", error);
+                    });
                 }
                 else{
                     let avg = parseFloat((parseFloat(rating) + parseFloat(value)) / 2);
                     db.collection("posts").doc(postId).update({
                         rating: avg
-                    })
+                    }).catch((error) => {
+                        console.error("Error ", error);
+                    });
                 }
 
                 db.collection("posts").doc(postId).collection("comments").add({
@@ -108,7 +112,10 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
                 }).then(() => {
                     db.collection('posts').doc(postId).update({
                         commentsCount: firebase.firestore.FieldValue.increment(1)
-                    })
+                    }).catch((error) => {
+                        console.error("Error ", error);
+                    });
+
                     if(postAuthor !== user?.uid) {
                         postAuthor && db.collection('users').doc(postAuthor).collection("notifications").add({
                             reference: "post",
@@ -150,6 +157,7 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
                 });
             }
             setComment('');
+            setValue(4);
         }
     }
 

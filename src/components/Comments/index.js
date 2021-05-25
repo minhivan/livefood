@@ -33,6 +33,7 @@ function Comment({postId, isSinglePage, isPopup, postUid, userLogged, commentsCo
 		setLastIdx(lastIdx => lastIdx + 5);
 	}
 
+
     return(
         <div className="listComments">
 

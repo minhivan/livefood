@@ -15,6 +15,7 @@ import {useDocument} from "react-firebase-hooks/firestore";
 import EditPost from "../Popup/EditPost";
 import Snackbar from "@material-ui/core/Snackbar";
 import {Alert} from "@material-ui/lab";
+import Report from "../Popup/Report";
 
 
 
@@ -36,17 +37,25 @@ function Post({id, post, handleRemove, handleReport, isSinglePage,...rest}) {
 	const [openSnack, setOpenSnack] = useState(false);
 	const [open, setOpen] = useState(false);
 	const [openEdit, setOpenEdit] = useState(false);
+	const [openReport, setOpenReport] = useState(false)
+
 	const [postAuthor] = useDocument(post.uid && db.collection('users').doc(post.uid))
 	const author = postAuthor?.data();
 
 	const searchInput = useRef(null)
-
 
 	const handleCloseEdit = () => {
 		setOpenEdit(false);
 	};
 	const handleOpenEdit = () => {
 		setOpenEdit(true)
+	}
+
+	const handleCloseReport = () => {
+		setOpenReport(false);
+	};
+	const handleOpenReport = () => {
+		setOpenReport(true)
 	}
 
 	function handleFocus(){
@@ -95,12 +104,18 @@ function Post({id, post, handleRemove, handleReport, isSinglePage,...rest}) {
 			</Card>
 			{
 				user && open ? (
-					<PostUtil open={open} handleClose={handleClose} handleOpenEdit={handleOpenEdit} uid={user.uid} opponentID={post.uid} postID={id} handleReport={handleReport} handleRemove={handleRemove}  setOpenSnack={setOpenSnack}/>
+					<PostUtil open={open} handleClose={handleClose} handleOpenEdit={handleOpenEdit} uid={user.uid} opponentID={post.uid} postID={id} handleReport={handleOpenReport} handleRemove={handleRemove}  setOpenSnack={setOpenSnack}/>
 				) : null
 			}
 			{
 				openEdit ? (
 					<EditPost open={openEdit} handleClose={handleCloseEdit} post={post} postId={id} setOpenSnack={setOpenSnack}/>
+				) : null
+			}
+
+			{
+				openReport ? (
+					<Report open={openReport} handleClose={handleCloseReport}/>
 				) : null
 			}
 

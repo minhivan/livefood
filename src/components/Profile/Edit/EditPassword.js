@@ -182,6 +182,7 @@ const EditPassword = (props) => {
                         color="primary"
                         disabled={disable}
                         onClick={handleChangePassword}
+                        style={{textTransform: "capitalize"}}
                     >
                         Change
                     </Button>

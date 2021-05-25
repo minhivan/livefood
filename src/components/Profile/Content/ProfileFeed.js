@@ -44,11 +44,11 @@ const ProfileFeed = ({uid, userLogged}) => {
         return db.collection('posts')
             .where('uid', '==', uid)
             .orderBy('timestamp', 'desc')
-            .limit(12)
+            .limit(15)
             .get().then(snapshot => {
                 let temp = []
                 snapshot.forEach(data => {
-                    var userProfile = {};
+                    let userProfile = {};
                     data.data().user.get().then( author => {
                         Object.assign(userProfile, author.data());
                     })

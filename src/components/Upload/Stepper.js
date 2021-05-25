@@ -165,7 +165,6 @@ const useStyles = makeStyles((theme: Theme) =>
             },
         },
     }),
-
 );
 
 function getSteps() {
@@ -198,7 +197,7 @@ export default function RecipeStepper(props) {
     const [cate] = useCollection(db.collection("category").orderBy('title', 'asc'))
 
     const [activeMedia, setActiveMedia] = React.useState(0);
-    const [maxSteps, setMaxSteps] = useState(image ? image.length : 0);
+    const [maxSteps, setMaxSteps] = useState(0);
 
 
     const handleNextMedia = () => {
@@ -541,9 +540,13 @@ export default function RecipeStepper(props) {
         })
 
     }
-
-
-
+    useEffect(() => {
+        if(image){
+            setMaxSteps(image.length);
+        }
+        else
+            setMaxSteps(0);
+    }, [image])
 
     useEffect(() => {
         if(category && title && direction && ingredient && image){

@@ -55,6 +55,7 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: "center",
         minWidth: "150px",
         color: "white",
+        width: "100%",
         backgroundColor: "#0095f6",
         "&:hover": {
             backgroundColor: "#0186db",
@@ -70,11 +71,12 @@ const useStyles = makeStyles((theme) => ({
         alignItems: "center",
         justifyContent: "center",
         minWidth: "150px",
+        width: "100%",
         color: "#454444",
         // "&:hover": {
         //     backgroundColor: "#c3d6fa",
         // },
-        marginRight: "15px",
+        margin: "auto",
         textTransform: "capitalize"
     },
 }));
@@ -251,35 +253,36 @@ export default function LocationPage(props){
                                                         }
 
                                                     </h2>
-
                                                     {
-                                                        id === userLogged.uid ? null : (
-                                                            <div className="follow-me">
-                                                                {
-                                                                    data?.follower?.includes(userLogged.uid) ? (
-                                                                        <Button
-                                                                            variant="outlined"
-                                                                            style={{textTransform: "capitalize"}}
-                                                                            className={classes.buttonUnfollow}
-                                                                            onClick={() => handleUserUnfollow(userLogged.uid, id)}
-                                                                        >
-                                                                            Unfollow
-                                                                        </Button>
-                                                                    ) : (
-                                                                        <Button
-                                                                            variant="contained"
-                                                                            color="primary"
-                                                                            style={{textTransform: "capitalize"}}
-                                                                            className={classes.button}
-                                                                            onClick={() => handleUserFollow(userLoggedData, id)}
-                                                                        >
-                                                                            Follow
-                                                                        </Button>
-                                                                    )
-                                                                }
+                                                        userLogged ? (
+                                                            id === userLogged.uid ? null : (
+                                                                <div className="follow-me">
+                                                                    {
+                                                                        data?.follower?.includes(userLogged.uid) ? (
+                                                                            <Button
+                                                                                variant="outlined"
+                                                                                style={{textTransform: "capitalize"}}
+                                                                                className={classes.buttonUnfollow}
+                                                                                onClick={() => handleUserUnfollow(userLogged.uid, id)}
+                                                                            >
+                                                                                Unfollow
+                                                                            </Button>
+                                                                        ) : (
+                                                                            <Button
+                                                                                variant="contained"
+                                                                                color="primary"
+                                                                                style={{textTransform: "capitalize"}}
+                                                                                className={classes.button}
+                                                                                onClick={() => handleUserFollow(userLoggedData, id)}
+                                                                            >
+                                                                                Follow
+                                                                            </Button>
+                                                                        )
+                                                                    }
 
-                                                            </div>
-                                                        )
+                                                                </div>
+                                                            )
+                                                        ) : null
                                                     }
                                                 </div>
                                             </div>

@@ -158,7 +158,7 @@ function Popup(props){
     const [loading, setLoading] = useState(false);
     const [disable, setDisable] = useState(true);
     const [activeStep, setActiveStep] = React.useState(0);
-    const [maxSteps, setMaxSteps] = useState(image?.length ?? 0);
+    const [maxSteps, setMaxSteps] = useState(0);
     const [anchorElPicker, setAnchorElPicker] = useState(null);
     const [felling, setFelling] = useState('');
     const openEmoji = Boolean(anchorElPicker);
@@ -249,6 +249,7 @@ function Popup(props){
                     })
                     setOpenSnack(true);
                     handleClose(true);
+                    setDisable(false);
                     handleReset();
                 })
                 .catch(function(error) {
@@ -262,12 +263,12 @@ function Popup(props){
     useEffect(() => {
         if(image){
             setDisable(false);
+            setMaxSteps(image.length);
         } else {
             setDisable(true)
+            setMaxSteps(0);
         }
     },[image])
-
-    console.log(felling)
 
     return (
         <Modal

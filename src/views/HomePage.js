@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React from "react";
 import Page from "../components/Page";
 import RightSideBar from "../components/SideBar/RightSideBar";
 import NewFeed from "../components/Posts";

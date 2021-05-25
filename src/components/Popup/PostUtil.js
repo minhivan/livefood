@@ -92,7 +92,7 @@ const PostUtil = (props) => {
                                     }}
                                     onClick={
                                         () => {
-                                            handleDeletePost(postID);
+                                            handleDeletePost(postID, uid);
                                             // handleRemove(postID);
                                             handleClose(true);
                                             setOpenSnack(true);
@@ -133,7 +133,8 @@ const PostUtil = (props) => {
                                     }}
                                     onClick={
                                         () => {
-                                            handleReportPost(uid, postID);
+                                            handleReport();
+                                            // handleReportPost(uid, postID);
                                             // handleRemove(postID);
                                             // handleClose(true);
                                         }
