@@ -1,6 +1,6 @@
 import React, {useRef, useState} from "react";
 
-import PostComment from "../Comments";
+import PostComment from "../Comments/Comments";
 import Card from '@material-ui/core/Card';
 import {makeStyles} from "@material-ui/core/styles";
 import {auth, db} from "../../firebase";
@@ -16,6 +16,7 @@ import EditPost from "../Popup/EditPost";
 import Snackbar from "@material-ui/core/Snackbar";
 import {Alert} from "@material-ui/lab";
 import Report from "../Popup/Report";
+import {useReactToPrint} from "react-to-print";
 
 
 
@@ -38,11 +39,13 @@ function Post({id, post, handleRemove, handleReport, isSinglePage,...rest}) {
 	const [open, setOpen] = useState(false);
 	const [openEdit, setOpenEdit] = useState(false);
 	const [openReport, setOpenReport] = useState(false)
-
 	const [postAuthor] = useDocument(post.uid && db.collection('users').doc(post.uid))
 	const author = postAuthor?.data();
-
+	const componentRef = useRef();
 	const searchInput = useRef(null)
+	const [replyComment, setReplyComment] = useState(null);
+
+
 
 	const handleCloseEdit = () => {
 		setOpenEdit(false);
@@ -78,67 +81,78 @@ function Post({id, post, handleRemove, handleReport, isSinglePage,...rest}) {
 		setOpenSnack(false);
 	};
 
+	const handlePrint = useReactToPrint({
+		content: () => componentRef.current,
+	});
+
+	const handleReplying = (data) => {
+		setReplyComment(data);
+		searchInput.current.focus();
+		searchInput.current.scrollIntoView({
+			behavior: "smooth",
+			block : "center"
+		})
+	}
+
+	const handleRemoveReply = () => {
+		setReplyComment(null);
+	}
 
 	return (
-		<div className={`post `} id={id}>
-			<Card className={classes.root} >
-				<PostHeader author={author} handleClickOpen={handleClickOpen} postDate={post.timestamp} type={post.type} postFelling={post?.felling} />
-				{/*Media*/}
-				<PostContent author={author} caption={post.caption} postMedia={post?.media}/>
-				{/* Post Action*/}
+		<>
+
+			<div className={`post`} id={id} ref={componentRef}>
+				<Card className={classes.root} >
+					<PostHeader author={author} handleClickOpen={handleClickOpen} postDate={post.timestamp} type={post.type} postFelling={post?.felling} />
+					{/*Media*/}
+					<PostContent author={author} caption={post.caption} postMedia={post?.media}/>
+					{/* Post Action*/}
+					<PostAction postId={id} userLogged={user} post={post} expanded={expanded} setExpanded={setExpanded} handleFocus={handleFocus}/>
+					{/* Recipe data */}
+					<PostRecipeData postId={id} postData={post.data} expanded={expanded} rating={post?.rating} handlePrint={handlePrint} />
+					{/* Comments */}
+					<PostComment postId={id} isSinglePage={isSinglePage} postUid={post.uid} userLogged={user} commentsCount={post?.commentsCount} handleReplying={handleReplying}/>
+					{/* Comments input */}
+					<CommentInput postAuthor={post.uid} user={user} postId={id} type={post.type} refInput={searchInput} replyComment={replyComment} handleRemoveReply={handleRemoveReply}/>
+
+				</Card>
 				{
-					user ? (
-						<PostAction postId={id} userLogged={user} post={post} expanded={expanded} setExpanded={setExpanded} handleFocus={handleFocus}/>
+					user && open ? (
+						<PostUtil open={open} handleClose={handleClose} handleOpenEdit={handleOpenEdit} uid={user.uid} opponentID={post.uid} postID={id} handleReport={handleOpenReport} handleRemove={handleRemove}  setOpenSnack={setOpenSnack}/>
 					) : null
 				}
-				{/* Recipe data */}
-				<PostRecipeData postId={id} postData={post.data} expanded={expanded} rating={post?.rating}/>
-				{/* Comments */}
-				<PostComment postId={id} isSinglePage={isSinglePage} postUid={post.uid} userLogged={user} commentsCount={post?.commentsCount}/>
-				{/* Comments input */}
 				{
-					user ? (
-						<CommentInput postAuthor={post.uid} user={user} postId={id} type={post.type} refInput={searchInput}/>
+					openEdit ? (
+						<EditPost open={openEdit} handleClose={handleCloseEdit} post={post} postId={id} setOpenSnack={setOpenSnack}/>
 					) : null
 				}
-			</Card>
-			{
-				user && open ? (
-					<PostUtil open={open} handleClose={handleClose} handleOpenEdit={handleOpenEdit} uid={user.uid} opponentID={post.uid} postID={id} handleReport={handleOpenReport} handleRemove={handleRemove}  setOpenSnack={setOpenSnack}/>
-				) : null
-			}
-			{
-				openEdit ? (
-					<EditPost open={openEdit} handleClose={handleCloseEdit} post={post} postId={id} setOpenSnack={setOpenSnack}/>
-				) : null
-			}
 
-			{
-				openReport ? (
-					<Report open={openReport} handleClose={handleCloseReport}/>
-				) : null
-			}
+				{
+					openReport ? (
+						<Report open={openReport} handleClose={handleCloseReport}/>
+					) : null
+				}
 
-			{
-				openSnack ? (
-					<Snackbar
-						open={openSnack}
-						autoHideDuration={6000}
-						onClose={handleCloseSnack}
-						anchorOrigin={{
-							vertical: 'bottom',
-							horizontal: 'left',
-						}}
-					>
-						<Alert variant="filled" onClose={handleCloseSnack} severity="success">
-							Upload successfully !
-						</Alert>
-					</Snackbar>
-				) : null
-			}
+				{
+					openSnack ? (
+						<Snackbar
+							open={openSnack}
+							autoHideDuration={6000}
+							onClose={handleCloseSnack}
+							anchorOrigin={{
+								vertical: 'bottom',
+								horizontal: 'left',
+							}}
+						>
+							<Alert variant="filled" onClose={handleCloseSnack} severity="success">
+								Upload successfully !
+							</Alert>
+						</Snackbar>
+					) : null
+				}
+			</div>
 
-
-		</div>
+		</>
 	)
 }
 

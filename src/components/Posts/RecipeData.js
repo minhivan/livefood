@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function PostRecipeData({postId, postData, expanded, rating}){
+export default function PostRecipeData({postId, postData, expanded, rating, handlePrint}){
     const classes = useStyles();
 
     return(
@@ -70,7 +70,8 @@ export default function PostRecipeData({postId, postData, expanded, rating}){
                                 <Typography
                                     paragraph
                                     className={classes.paragraphHead}
-                                    style={{display: "flex", gap: "5px"}}
+                                    style={{display: "flex", gap: "5px", cursor: "pointer"}}
+                                    onClick={handlePrint}
                                 >
                                     <LocalPrintshopRoundedIcon />Print Recipe
                                 </Typography>
@@ -89,5 +90,6 @@ PostRecipeData.propTypes = {
     postId: PropTypes.string,
     postData: PropTypes.object,
     expanded: PropTypes.bool,
-    rating: PropTypes.number
+    rating: PropTypes.number,
+    handlePrint: PropTypes.func,
 };

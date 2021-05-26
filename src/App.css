@@ -1053,22 +1053,27 @@ input:focus{
 }
 
 
-.commentDetails{
+.commentDetails,
+.sub-comment-details{
     padding: 20px;
     display: flex;
     align-items: flex-start;
 }
-.commentDetails:hover{
+.commentDetails:hover
+{
     background-color: rgba(0,0,0,0.03);
     cursor: pointer;
 }
-.commentDetails a{
+
+.commentDetails a,
+.sub-comment-details a{
     color: #262626;
     font-weight: 600;
     text-decoration: none;
     margin-right: 10px;
 }
-.commentDetails span{
+.commentDetails span,
+.sub-comment-details span{
     font-size: 0.875rem;
 }
 .comment__see-more{
@@ -1081,6 +1086,24 @@ input:focus{
     justify-content: center;
     padding: 0 0 10px;
 }
+.comment__view-more{
+    padding: 5px 10px;
+    cursor: pointer;
+}
+.comment__view-more-container{
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.sub-comment-details{
+    padding: 20px 0 20px 20px;
+}
+.sub-comment-details .comment__content{
+    padding-right: 0;
+}
+
 
 .action__expand{
     margin-left: auto;

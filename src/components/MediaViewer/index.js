@@ -18,7 +18,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import clsx from "clsx";
 import Typography from "@material-ui/core/Typography";
 
-import ListComment from "../Comments";
+import ListComment from "../Comments/Comments";
 import BookmarkRoundedIcon from "@material-ui/icons/BookmarkRounded";
 import {handleSavePost, handleUnSavedPost, handleLikePost, handleDislikePost} from "../../hooks/services";
 import CommentInput from "../Comments/CommentInput";

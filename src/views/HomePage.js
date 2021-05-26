@@ -1,7 +1,7 @@
 import React from "react";
 import Page from "../components/Page";
 import RightSideBar from "../components/SideBar/RightSideBar";
-import NewFeed from "../components/Posts";
+import NewFeed from "../components/Posts/NewFeed";
 import NavBar from "../components/SideBar/LeftSideBar";
 import {Navigate} from "react-router-dom";
 

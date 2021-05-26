@@ -12,6 +12,8 @@ import CommentUtil from "../Popup/CommentUtil";
 import {Tooltip} from "@material-ui/core";
 import FavoriteRoundedIcon from "@material-ui/icons/FavoriteRounded";
 import FavoriteBorderTwoToneIcon from "@material-ui/icons/FavoriteBorderTwoTone";
+import ReplyCommentDetails from "./ReplyCommentDetails";
+import Subcomments from "./ReplyComment";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -40,25 +42,34 @@ const useStyles = makeStyles((theme) => ({
     },
     reply: {
         color: "rgb(84, 110, 122)",
-        fontSize: "12px !important"
-    },
-    viewMoreReplies:{
-        color: "rgb(84, 110, 122)",
+        fontSize: "12px !important",
         fontWeight: 'bold',
-        lineHeight: "14px"
+        "&:hover": {
+            color: "rgb(46,61,68)",
+            transform: "0,2s all ease",
+        },
+    },
+    customDivider:{
+        border: "none",
+        height: "1px",
+        margin: 0,
+        width: "50px",
+        flexShrink: 0,
+        backgroundColor: "rgba(0, 0, 0, 0.12)",
     }
 }));
 
 
 
 function PostComment (props) {
-    const {comment, isPopup, postId, postUid, commentId, userLogged} =  props
+    const {comment, isPopup, postId, postUid, commentId, userLogged, handleReplying} =  props
     const classes = useStyles();
 
     const [postAuthor] = useDocument(comment.uid && db.collection('users').doc(comment.uid))
     const commentAuthor = postAuthor?.data();
 
     const [isReadMore, setIsReadMore] = useState(true);
+
     const toggleReadMore = () => {
         setIsReadMore(!isReadMore);
     };
@@ -129,16 +140,34 @@ function PostComment (props) {
                                     }
                                 </ToggleButton>
                             </Tooltip>
-                            120 likes
+                            <span className={classes.reply}>120 likes</span>
                         </div>
-                        <span className={classes.reply}>Reply</span>
+                        <span className={classes.reply}
+                              onClick={() => handleReplying(
+                                  {
+                                      authorName: commentAuthor?.displayName,
+                                      commentId: commentId,
+                                      postId: postId,
+                                      authorId: comment.uid,
+                                  })
+                              }
+                        >Reply</span>
                     </div>
-                    <div className="comment__see-more">
-                        <div className="comment__see-more-container">
-                            <div className={classes.customDiveder} />
-                            <span className={classes.viewMoreReplies}>View replies (7)</span>
-                        </div>
-                    </div>
+
+                    {
+                        comment.commentsReplyCount > 0 ? (
+                            <>
+                                <div className="comment__view-more">
+                                    <div className="comment__view-more-container">
+                                        <div className={classes.customDivider} />
+                                        <p className={classes.reply}>View replies ({comment.commentsReplyCount})</p>
+                                    </div>
+                                </div>
+                                <Subcomments commentId={commentId} userLogged={userLogged} postId={postId}/>
+                            </>
+                        ) : null
+
+                    }
                 </div>
             </div>
             {

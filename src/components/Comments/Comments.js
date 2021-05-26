@@ -5,7 +5,7 @@ import {Link} from "react-router-dom";
 import IconButton from "@material-ui/core/IconButton";
 import AddCircleTwoToneIcon from '@material-ui/icons/AddCircleTwoTone';
 
-function Comment({postId, isSinglePage, isPopup, postUid, userLogged, commentsCount}){
+function Comment({postId, isSinglePage, isPopup, postUid, userLogged, commentsCount, handleReplying}){
     const [comments, setComments] = useState([])
 	const [lastIdx, setLastIdx] = useState(5);
 
@@ -35,7 +35,7 @@ function Comment({postId, isSinglePage, isPopup, postUid, userLogged, commentsCo
 
 
     return(
-        <div className="listComments">
+        <div className="listComments no-print">
 
 			{
 				!isSinglePage && !isPopup ? (
@@ -57,6 +57,7 @@ function Comment({postId, isSinglePage, isPopup, postUid, userLogged, commentsCo
 									postId={postId}
 									postUid={postUid}
 									userLogged={userLogged}
+									handleReplying={handleReplying}
 								/>
 							))
 						}
@@ -73,6 +74,7 @@ function Comment({postId, isSinglePage, isPopup, postUid, userLogged, commentsCo
 									postId={postId}
 									postUid={postUid}
 									userLogged={userLogged}
+									handleReplying={handleReplying}
 								/>
 							))
 						}

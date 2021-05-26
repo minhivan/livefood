@@ -1,5 +1,6 @@
 import firebase from "firebase";
 import {db} from "../firebase";
+import React from "react";
 
 
 export function handleLikePost(postId, userData, postAuthor) {
@@ -151,6 +152,61 @@ export const checkMyFollowingList = (myFollowerList, oppID) => {
     return rs;
 }
 
+export const commentOnPost = (data) => {
+    db.collection("posts").doc(data.postId).collection("comments").add({
+        text: data.text,
+        user: db.doc('users/' + data.uid),
+        uid: data.uid,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    }).then(() => {
+        db.collection('posts').doc(data.postId).update({
+            commentsCount: firebase.firestore.FieldValue.increment(1)
+        }).catch((error) => {
+            console.error("Error ", error);
+        });
+    });
+}
+
+
+export const commentWithRating = (data) => {
+    db.collection("posts").doc(data.postId).collection("comments").add({
+        text: data.text,
+        user: db.doc('users/' + data.uid),
+        uid: data.uid,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        rating: data.rating,
+    }).then(() => {
+        db.collection('posts').doc(data.postId).update({
+            commentsCount: firebase.firestore.FieldValue.increment(1)
+        }).catch((error) => {
+            console.error("Error ", error);
+        });
+    })
+}
+
+
+export const replyToComment = (data) => {
+    db.collection("posts").doc(data.postId).collection("comments").doc(data.commentId).collection('reply').add({
+        text: data.text,
+        user: db.doc('users/' + data.uid),
+        userAvt: data.userAvt,
+        userDisplayName: data.userDisplayName,
+        uid: data.uid,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    }).then(() => {
+        db.collection('posts').doc(data.postId).collection("comments").doc(data.commentId).update({
+            commentsReplyCount: firebase.firestore.FieldValue.increment(1),
+        }).catch((error) => {
+            console.error("Error ", error);
+        });
+    }).catch((error) => {
+        console.error("Error ", error);
+    });
+}
+
+
+
+
 export const handleDeleteComment = (postId, commentId) => {
     db.collection("posts").doc(postId).collection("comments").doc(commentId).delete().then(() => {
         db.collection("posts").doc(postId).update({
@@ -199,15 +255,38 @@ export const checkFirebaseAuth = (authUser) => {
     });
 }
 
-// export const pushUserNotification = (userId, type, data) => {
-//     return db.collection('users').doc(id).collection("notifications").add({
-//         type : "follow",
-//         from : uid,
-//         path : "/profile/" + uid,
-//         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-//         status: "unread"
-//     })
-// }
+export const pushUserNotification = (data) => {
+    switch (data.type){
+        case "reply":
+            Object.assign(data, {message: "has replying your comment"});
+            break;
+        case "comment":
+            Object.assign(data, {message: "commented on your post"});
+            break;
+        case "like":
+            Object.assign(data, {message: "love your post"});
+            break;
+        case "follow":
+            Object.assign(data, {message: "started to follow you"});
+            break;
+        default:
+            return null
+    }
+
+    // db.collection('users').doc(replyComment.authorId).collection("notifications").add({
+    //     reference: data.reference,
+    //     type : data.type,
+    //     message: data.message,
+    //     from : data.from,
+    //     avatar: data.avatar,
+    //     opponentId: data.opponentId,
+    //     path : "/p/" + data.postId,
+    //     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    //     status: "unread"
+    // }).catch((error) => {
+    //     console.error("Error ", error);
+    // });
+}
 
 export const handleSeenNotification = (uid, notiId) => {
     db.collection('users').doc(uid).collection("notifications").doc(notiId).update({
