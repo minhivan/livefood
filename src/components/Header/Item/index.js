@@ -248,7 +248,7 @@ function MenuHeader(props) {
                                                     </React.Fragment>
                                                 }
                                                 secondary={
-                                                    dayjs(new Date(data?.timestamp.seconds * 1000).toLocaleString()).fromNow()
+                                                    dayjs(new Date(data?.timestamp?.seconds * 1000).toLocaleString()).fromNow()
                                                 }
                                             />
                                         </Link>

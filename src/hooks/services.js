@@ -1,6 +1,5 @@
 import firebase from "firebase";
 import {db} from "../firebase";
-import React from "react";
 
 
 export function handleLikePost(postId, userData, postAuthor) {
@@ -107,6 +106,14 @@ export const handleUserUnfollow = (uid, id) => {
 }
 
 
+export const handleRatingPost = (postId, value) => {
+    db.collection("posts").doc(postId).update({
+        rating: value
+    }).catch((error) => {
+        console.error("Error ", error);
+    });
+}
+
 export const handleDeletePost = (id, uid) => {
     // Remove
     db.collection("posts").doc(id).delete().then(() => {
@@ -205,6 +212,46 @@ export const replyToComment = (data) => {
 }
 
 
+export const handleLikeComment = (data) => {
+    // if reply or just a comment
+    if (data.type === "comment"){
+        db.collection('posts').doc(data.postId).collection("comments").doc(data.commentId).update({
+            likeBy: firebase.firestore.FieldValue.arrayUnion(data.user),
+            likeCount: firebase.firestore.FieldValue.increment(1)
+        }).catch((error) => {
+            console.error("Error ", error);
+        });
+    }
+    if (data.type === "reply"){
+        db.collection('posts').doc(data.postId).collection("comments").doc(data.commentId)
+            .collection("reply").doc(data.replyId).update({
+                likeBy: firebase.firestore.FieldValue.arrayUnion(data.user),
+                likeCount: firebase.firestore.FieldValue.increment(1)
+            }).catch((error) => {
+            console.error("Error ", error);
+        });
+    }
+}
+
+export const handleUnlikeComment = (data) => {
+    if (data.type === "comment"){
+        db.collection('posts').doc(data.postId).collection("comments").doc(data.commentId).update({
+            likeBy: firebase.firestore.FieldValue.arrayRemove(data.user),
+            likeCount: firebase.firestore.FieldValue.increment(-1)
+        }).catch((error) => {
+            console.error("Error ", error);
+        });
+    }
+    if (data.type === "reply"){
+        db.collection('posts').doc(data.postId).collection("comments").doc(data.commentId)
+            .collection("reply").doc(data.replyId).update({
+            likeBy: firebase.firestore.FieldValue.arrayRemove(data.user),
+            likeCount: firebase.firestore.FieldValue.increment(-1)
+        }).catch((error) => {
+            console.error("Error ", error);
+        });
+    }
+}
 
 
 export const handleDeleteComment = (postId, commentId) => {
@@ -273,19 +320,19 @@ export const pushUserNotification = (data) => {
             return null
     }
 
-    // db.collection('users').doc(replyComment.authorId).collection("notifications").add({
-    //     reference: data.reference,
-    //     type : data.type,
-    //     message: data.message,
-    //     from : data.from,
-    //     avatar: data.avatar,
-    //     opponentId: data.opponentId,
-    //     path : "/p/" + data.postId,
-    //     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    //     status: "unread"
-    // }).catch((error) => {
-    //     console.error("Error ", error);
-    // });
+    db.collection('users').doc(data.postAuthor).collection("notifications").add({
+        reference: data.reference,
+        type : data.type,
+        message: data.message,
+        from : data.from,
+        avatar: data.avatar,
+        opponentId: data.opponentId,
+        path : "/p/" + data.postId,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        status: "unread"
+    }).catch((error) => {
+        console.error("Error ", error);
+    });
 }
 
 export const handleSeenNotification = (uid, notiId) => {
@@ -295,5 +342,6 @@ export const handleSeenNotification = (uid, notiId) => {
         console.error("Error ", error);
     });
 }
+
 
 

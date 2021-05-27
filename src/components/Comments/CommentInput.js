@@ -9,7 +9,13 @@ import {useDocument} from "react-firebase-hooks/firestore";
 import SentimentSatisfiedRoundedIcon from "@material-ui/icons/SentimentSatisfiedRounded";
 import IconButton from "@material-ui/core/IconButton";
 import {Picker} from "emoji-mart";
-import {commentOnPost, commentWithRating, pushUserNotification, replyToComment} from "../../hooks/services";
+import {
+    commentOnPost,
+    commentWithRating,
+    handleRatingPost,
+    pushUserNotification,
+    replyToComment
+} from "../../hooks/services";
 
 const labels = {
     1: 'Useless',
@@ -57,6 +63,21 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
     const [postSnapshot] = useDocument(postRef);
     let rating = postSnapshot?.data()?.rating
 
+    const data = {
+        postId: postId,
+        postAuthor: postAuthor,
+        text: comment,
+        uid: user.uid,
+    }
+
+    const dataPush = {
+        postId: postId,
+        postAuthor: postAuthor,
+        from : user.displayName,
+        avatar: user.photoURL,
+        opponentId: user.uid,
+    }
+
     const checkEmpty = (string) => {
         let rs = true
         if(string.length > 0 && !/^\s+$/.test(string)){
@@ -93,62 +114,39 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
     const postComment = (event) => {
         event.preventDefault();
         if(comment && !checkEmpty(comment)){
-            let data = {
-                postId: postId,
-                postAuthor: postAuthor,
-                text: comment,
-                uid: user.uid,
-            }
-
-            let dataPush = {
-                postId: postId,
-                from : user.displayName,
-                avatar: user.photoURL,
-                opponentId: user.uid,
-            }
             // if reply comment
             if(replyComment){
-                Object.assign(data, {
+                const tempData = Object.assign(data, {
                     userAvt: user.photoURL,
                     userDisplayName: user.displayName,
                     commentId : replyComment.commentId
                 });
-                replyToComment(data);
+                replyToComment(tempData);
 
-                if(replyComment.authorId !== user?.uid ) {
-                    Object.assign(dataPush, {type: "reply", reference: "comment"});
-                    postAuthor && pushUserNotification(dataPush);
+                if(replyComment.authorId !== user?.uid) {
+                    const tempDataPush = Object.assign(dataPush, {type: "reply", reference: "comment"});
+                    tempDataPush.postAuthor = replyComment.authorId;
+                    pushUserNotification(tempDataPush);
                 }
                 handleRemoveReply();
             }
             else{
                 // If rating post
-                if(value && postAuthor !== user?.uid){
+                if(value && postAuthor !== user?.uid && type === "recipe"){
                     // Check post rating
-                    if(typeof rating == 'undefined'){
-                        db.collection("posts").doc(postId).update({
-                            rating: value
-                        }).catch((error) => {
-                            console.error("Error ", error);
-                        });
-                    }
+                    if(typeof rating == 'undefined') handleRatingPost(postId, value)
                     else{
                         let avg = parseFloat((parseFloat(rating) + parseFloat(value)) / 2);
-                        db.collection("posts").doc(postId).update({
-                            rating: avg
-                        }).catch((error) => {
-                            console.error("Error ", error);
-                        });
+                        handleRatingPost(postId, avg);
                     }
-                    Object.assign(data, {rating: value});
-                    commentWithRating(data);
+                    const tempData = Object.assign(data, {rating: value});
+                    commentWithRating(tempData);
                 }
-                // else
                 else commentOnPost(data);
                 // Notification
                 if(postAuthor !== user?.uid) {
-                    Object.assign(dataPush, {type: "comment", reference: "post"});
-                    postAuthor && pushUserNotification(dataPush);
+                    const tempDataPush = Object.assign(dataPush, {type: "comment", reference: "post"});
+                    postAuthor && pushUserNotification(tempDataPush);
                 }
             }
             setComment('');

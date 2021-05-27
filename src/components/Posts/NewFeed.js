@@ -47,7 +47,7 @@ export default function NewFeed(props){
     const [posts, setPosts] = useState([]);
     const userRef = userLogged && db.collection('users').doc(userLogged.uid);
     const [userSnapshot] = useDocument(userRef);
-    const [limit, setLimit] = useState(5);
+    const [limit, setLimit] = useState(15);
     const [lastVisible, setLastVisible] = useState('');
     let userFollow = userSnapshot?.data()?.following;
 

@@ -161,7 +161,13 @@ export default function LocationPage(props){
                     .onSnapshot( snapshot => {
                         setListRestaurant(snapshot.docs.map(doc => ({
                             id: doc.id,
-                            data: doc.data(),
+                            data: {
+                                aboutRestaurant: doc.data().aboutRestaurant,
+                                photoURL: doc.data().photoURL,
+                                follower: doc.data().follower,
+                                uid: doc.data().uid,
+                                displayName: doc.data().displayName
+                            },
                         })));
                     })
         }
@@ -179,6 +185,8 @@ export default function LocationPage(props){
                 })));
             })
     }, [])
+
+    console.log(listRestaurant);
     return (
         <Page
             title="LiveFood"

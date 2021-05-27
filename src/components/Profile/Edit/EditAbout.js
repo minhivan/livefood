@@ -165,7 +165,7 @@ export default function EditAbout(props){
                 setProvince(res.results)
             }
         });
-    })
+    },[userLogged])
 
     const handleClickLocation = (event) => {
         setOpenLocation(event.target.checked);

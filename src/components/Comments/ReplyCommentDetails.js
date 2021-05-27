@@ -10,6 +10,7 @@ import FavoriteRoundedIcon from "@material-ui/icons/FavoriteRounded";
 import FavoriteBorderTwoToneIcon from "@material-ui/icons/FavoriteBorderTwoTone";
 import CommentUtil from "../Popup/CommentUtil";
 import {makeStyles} from "@material-ui/core/styles";
+import {handleLikeComment, handleUnlikeComment} from "../../hooks/services";
 
 const useStyles = makeStyles((theme) => ({
     more: {
@@ -54,13 +55,38 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 export default function ReplyCommentDetails(props) {
-    const {userLogged, data, replyId} = props;
+    const {userLogged, data, replyId, commentId, postId} = props;
     const classes = useStyles();
     const [isReadMore, setIsReadMore] = useState(true);
+    const [like, setLike] = useState(false);
 
     const toggleReadMore = () => {
         setIsReadMore(!isReadMore);
     };
+
+    const handleLike = () => {
+        setLike(true);
+        const data = {
+            commentId: commentId,
+            postId: postId,
+            user: userLogged.uid,
+            type: "reply",
+            replyId: replyId
+        }
+        handleLikeComment(data);
+    }
+
+    const handleUnlike = () => {
+        setLike(false);
+        const data = {
+            commentId: commentId,
+            postId: postId,
+            user: userLogged.uid,
+            type: "reply",
+            replyId: replyId
+        }
+        handleUnlikeComment(data);
+    }
 
 
     return(
@@ -94,20 +120,28 @@ export default function ReplyCommentDetails(props) {
                             <Tooltip title="Like" arrow>
                                 <ToggleButton
                                     size="small"
-                                    value="check"
-                                    selected={true}
+                                    value="like"
+                                    selected={like}
                                     // className={classes.likeButton}
                                     classes={{
                                         root: classes.actionButton,
                                         selected: classes.selected,
                                     }}
+                                    onClick={() => {
+                                        if(!like) handleLike();
+                                        else handleUnlike();
+                                    }}
                                 >
                                     {
-                                        1 === 1 ? <FavoriteRoundedIcon style={{color: "red"}} fontSize="inherit"/> : <FavoriteBorderTwoToneIcon />
+                                        like ? <FavoriteRoundedIcon style={{color: "red"}} fontSize="inherit"/> : <FavoriteBorderTwoToneIcon fontSize="inherit"/>
                                     }
                                 </ToggleButton>
                             </Tooltip>
-                            <span className={classes.reply}>120 likes</span>
+                            {
+                                data?.likeCount > 0 ? (
+                                    <span className={classes.reply}>{data?.likeCount} {data?.likeCount === 1 ? 'Like' : 'Likes'}</span>
+                                ) : null
+                            }
                         </div>
                     </div>
                 </div>

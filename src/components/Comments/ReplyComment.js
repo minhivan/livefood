@@ -5,32 +5,36 @@ import PostComment from "./CommentDetails";
 
 export default function ReplyComment(props) {
 
-    const {userLogged, postId, commentId} = props
+    const {userLogged, postId, commentId, seeMore} = props
     const [subComments, setSubComments] = useState([]);
     useEffect(() => {
-        const unsubscribe = db.collection("posts").doc(postId)
-            .collection("comments").doc(commentId).collection("reply")
-            .orderBy('timestamp', "desc")
-            .onSnapshot((snapshot ) => {
-                setSubComments(
-                    snapshot.docs.map((doc => ({
-                        id: doc.id,
-                        comment: doc.data(),
-                    })))
-                );
-            })
+        if(seeMore > 0){
+            const unsubscribe = db.collection("posts").doc(postId)
+                .collection("comments").doc(commentId).collection("reply")
+                .orderBy('timestamp', "desc")
+                .limit(seeMore)
+                .onSnapshot((snapshot ) => {
+                    setSubComments(
+                        snapshot.docs.map((doc => ({
+                            id: doc.id,
+                            comment: doc.data(),
+                        })))
+                    );
+                })
 
-        return () => {
-            unsubscribe();
+            return () => {
+                unsubscribe();
+            }
         }
-    }, [commentId, postId])
+
+    }, [seeMore,commentId, postId])
 
     return(
         <>
             {
                 subComments ? (
                     subComments.map(({id, comment}) => (
-                        <ReplyCommentDetails key={id} replyId={id} userLogged={userLogged} data={comment}/>
+                        <ReplyCommentDetails key={id} replyId={id} userLogged={userLogged} data={comment} commentId={commentId} postId={postId}/>
                 ))
                 ) : null
             }

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Avatar from "@material-ui/core/Avatar";
 import dayjs from "dayjs";
 import {Link} from "react-router-dom";
@@ -14,6 +14,7 @@ import FavoriteRoundedIcon from "@material-ui/icons/FavoriteRounded";
 import FavoriteBorderTwoToneIcon from "@material-ui/icons/FavoriteBorderTwoTone";
 import ReplyCommentDetails from "./ReplyCommentDetails";
 import Subcomments from "./ReplyComment";
+import {handleLikeComment, handleUnlikeComment} from "../../hooks/services";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -69,6 +70,9 @@ function PostComment (props) {
     const commentAuthor = postAuthor?.data();
 
     const [isReadMore, setIsReadMore] = useState(true);
+    const [seeMore, setSeeMore] = useState(0);
+    const [like, setLike] = useState(false);
+
 
     const toggleReadMore = () => {
         setIsReadMore(!isReadMore);
@@ -83,6 +87,41 @@ function PostComment (props) {
     const handleClose = () => {
         setOpen(false);
     };
+
+    const handleSeeMore = () => {
+        if(comment.commentsReplyCount > seeMore){
+            setSeeMore(prevState => prevState + 3);
+        }
+    }
+
+    const handleLike = () => {
+        setLike(true);
+        const data = {
+            commentId: commentId,
+            postId: postId,
+            user: userLogged.uid,
+            type: "comment",
+        }
+        handleLikeComment(data);
+    }
+
+    const handleUnlike = () => {
+        setLike(false);
+        const data = {
+            commentId: commentId,
+            postId: postId,
+            user: userLogged.uid,
+            type: "comment",
+        }
+        handleUnlikeComment(data);
+    }
+
+    useEffect(() => {
+        if(typeof comment?.likeBy !== 'undefined' && comment?.likeBy?.includes(userLogged.uid)){
+            setLike(true);
+        }
+
+    }, [comment?.likeBy, userLogged.uid])
 
 
     return (
@@ -127,20 +166,28 @@ function PostComment (props) {
                             <Tooltip title="Like" arrow>
                                 <ToggleButton
                                     size="small"
-                                    value="check"
-                                    selected={true}
+                                    value="like"
+                                    selected={like}
                                     // className={classes.likeButton}
                                     classes={{
                                         root: classes.actionButton,
                                         selected: classes.selected,
                                     }}
+                                    onClick={() => {
+                                        if(!like) handleLike();
+                                        else handleUnlike();
+                                    }}
                                 >
                                     {
-                                        1 === 1 ? <FavoriteRoundedIcon style={{color: "red"}} fontSize="inherit"/> : <FavoriteBorderTwoToneIcon />
+                                        like ? <FavoriteRoundedIcon style={{color: "red"}} fontSize="inherit"/> : <FavoriteBorderTwoToneIcon fontSize="inherit"/>
                                     }
                                 </ToggleButton>
                             </Tooltip>
-                            <span className={classes.reply}>120 likes</span>
+                            {
+                                comment?.likeCount > 0 ? (
+                                    <span className={classes.reply}>{comment?.likeCount} {comment?.likeCount === 1 ? 'Like' : 'Likes'}</span>
+                                ) : null
+                            }
                         </div>
                         <span className={classes.reply}
                               onClick={() => handleReplying(
@@ -157,16 +204,19 @@ function PostComment (props) {
                     {
                         comment.commentsReplyCount > 0 ? (
                             <>
-                                <div className="comment__view-more">
-                                    <div className="comment__view-more-container">
-                                        <div className={classes.customDivider} />
-                                        <p className={classes.reply}>View replies ({comment.commentsReplyCount})</p>
-                                    </div>
-                                </div>
-                                <Subcomments commentId={commentId} userLogged={userLogged} postId={postId}/>
+                                {
+                                    seeMore >= comment.commentsReplyCount ? null : (
+                                        <div className="comment__view-more">
+                                            <div className="comment__view-more-container">
+                                                <div className={classes.customDivider} />
+                                                <p className={classes.reply} onClick={() => handleSeeMore()}>View replies ({comment.commentsReplyCount - seeMore})</p>
+                                            </div>
+                                        </div>
+                                    )
+                                }
+                                <Subcomments commentId={commentId} userLogged={userLogged} postId={postId} seeMore={seeMore}/>
                             </>
                         ) : null
-
                     }
                 </div>
             </div>
