@@ -117,11 +117,12 @@ function PostComment (props) {
     }
 
     useEffect(() => {
-        if(typeof comment?.likeBy !== 'undefined' && comment?.likeBy?.includes(userLogged.uid)){
-            setLike(true);
+        if(userLogged){
+            if(typeof comment?.likeBy !== 'undefined' && comment?.likeBy?.includes(userLogged.uid)){
+                setLike(true);
+            }
         }
-
-    }, [comment?.likeBy, userLogged.uid])
+    }, [comment?.likeBy, userLogged])
 
 
     return (
@@ -161,45 +162,49 @@ function PostComment (props) {
                         }
 
                     </div>
-                    <div className="comment__action">
-                        <div className="comment__action-like">
-                            <Tooltip title="Like" arrow>
-                                <ToggleButton
-                                    size="small"
-                                    value="like"
-                                    selected={like}
-                                    // className={classes.likeButton}
-                                    classes={{
-                                        root: classes.actionButton,
-                                        selected: classes.selected,
-                                    }}
-                                    onClick={() => {
-                                        if(!like) handleLike();
-                                        else handleUnlike();
-                                    }}
-                                >
+                    {
+                        userLogged ? (
+                            <div className="comment__action">
+                                <div className="comment__action-like">
+                                    <Tooltip title="Like" arrow>
+                                        <ToggleButton
+                                            size="small"
+                                            value="like"
+                                            selected={like}
+                                            // className={classes.likeButton}
+                                            classes={{
+                                                root: classes.actionButton,
+                                                selected: classes.selected,
+                                            }}
+                                            onClick={() => {
+                                                if(!like) handleLike();
+                                                else handleUnlike();
+                                            }}
+                                        >
+                                            {
+                                                like ? <FavoriteRoundedIcon style={{color: "red"}} fontSize="inherit"/> : <FavoriteBorderTwoToneIcon fontSize="inherit"/>
+                                            }
+                                        </ToggleButton>
+                                    </Tooltip>
                                     {
-                                        like ? <FavoriteRoundedIcon style={{color: "red"}} fontSize="inherit"/> : <FavoriteBorderTwoToneIcon fontSize="inherit"/>
+                                        comment?.likeCount > 0 ? (
+                                            <span className={classes.reply}>{comment?.likeCount} {comment?.likeCount === 1 ? 'Like' : 'Likes'}</span>
+                                        ) : null
                                     }
-                                </ToggleButton>
-                            </Tooltip>
-                            {
-                                comment?.likeCount > 0 ? (
-                                    <span className={classes.reply}>{comment?.likeCount} {comment?.likeCount === 1 ? 'Like' : 'Likes'}</span>
-                                ) : null
-                            }
-                        </div>
-                        <span className={classes.reply}
-                              onClick={() => handleReplying(
-                                  {
-                                      authorName: commentAuthor?.displayName,
-                                      commentId: commentId,
-                                      postId: postId,
-                                      authorId: comment.uid,
-                                  })
-                              }
-                        >Reply</span>
-                    </div>
+                                </div>
+                                <span className={classes.reply}
+                                      onClick={() => handleReplying(
+                                          {
+                                              authorName: commentAuthor?.displayName,
+                                              commentId: commentId,
+                                              postId: postId,
+                                              authorId: comment.uid,
+                                          })
+                                      }
+                                >Reply</span>
+                            </div>
+                        ) : null
+                    }
 
                     {
                         comment.commentsReplyCount > 0 ? (
@@ -214,7 +219,7 @@ function PostComment (props) {
                                         </div>
                                     )
                                 }
-                                <Subcomments commentId={commentId} userLogged={userLogged} postId={postId} seeMore={seeMore}/>
+                                <Subcomments commentId={commentId} userLogged={userLogged} postId={postId} seeMore={seeMore} isPopup={isPopup}/>
                             </>
                         ) : null
                     }

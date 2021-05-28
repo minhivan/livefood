@@ -85,11 +85,10 @@ const useStyles = makeStyles((theme) => ({
 export default function ExplorePeopleItem(props) {
     const classes = useStyles();
     const [users, setUsers] = useState([])
-    const {userLogged} = props;
+    const {userLogged, query} = props;
     const userRef = userLogged && db.collection('users').doc(userLogged.uid);
     const [userSnapshot] = useDocument(userRef);
     const [userLoggedData, setUserLoggedData] = useState({});
-    let query = new URLSearchParams(useLocation().search).get("q");
     let userFollowingList = userSnapshot?.data()?.following;
     let userFollowerList = userSnapshot?.data()?.follower;
 
@@ -107,35 +106,55 @@ export default function ExplorePeopleItem(props) {
 
     // List user
     useEffect(() => {
-        if(typeof userFollowingList !== 'undefined' && userFollowingList?.length > 0){
-            var followingList;
-            followingList = userSnapshot.data().following
-            userLogged.uid && followingList.push(userLogged.uid);
-            return db.collection("users")
-                .get().then(snapshot => {
-                    let data = [];
-                    snapshot.forEach(function(doc) {
-                        // doc.data() is never undefined for query doc snapshots
-                        if(!followingList.includes(doc.id)){
-                            data.push({id: doc.id, user: doc.data()})
-                        }
-                    });
-                    setUsers(data);
-                })
-        }
-        else{
+        if(query){
+            console.log(query);
             return db.collection("users")
                 .where('uid' ,'!=' , userLogged.uid )
+                .limit(20)
                 .get().then(snapshot => {
-                    setUsers(snapshot.docs.map(doc => ({
-                        id: doc.id,
-                        user: doc.data(),
-                    })));
-                })
+                    let data = [];
+                    snapshot.forEach(doc => {
+                        if(doc.data()?.displayName?.toLowerCase().includes(query)){
+                            data.push({id: doc.id, user: doc.data()})
+                        }
+                    })
+                    setUsers(data);
+                }).catch(error => console.log(error));
         }
+        else{
+            if(typeof userFollowingList !== 'undefined' && userFollowingList?.length > 0){
+                let followingList;
+                followingList = userSnapshot.data().following
+                userLogged.uid && followingList.push(userLogged.uid);
+                return db.collection("users")
+                    .orderBy('displayName', 'asc')
+                    .limit(20)
+                    .get().then(snapshot => {
+                        let data = [];
+                        snapshot.forEach(function(doc) {
+                            // doc.data() is never undefined for query doc snapshots
+                            if(!followingList.includes(doc.id)){
+                                data.push({id: doc.id, user: doc.data()})
+                            }
+                        });
+                        setUsers(data);
+                    })
+            }
+            else{
+                return db.collection("users")
+                    .where('uid' ,'!=' , userLogged.uid )
+                    .limit(20)
+                    .get().then(snapshot => {
+                        setUsers(snapshot.docs.map(doc => ({
+                            id: doc.id,
+                            user: doc.data(),
+                        })));
+                    })
+            }
 
 
-    }, [userFollowingList?.length, query])
+        }
+    }, [userLogged, userFollowingList?.length, query])
 
 
     // check if user followed

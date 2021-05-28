@@ -17,7 +17,7 @@ import ExploreVideo from "./views/explore/ExploreVideoPage";
 import RecipePage from "./views/recipe/RecipePage";
 import TopicPage from "./views/recipe/TopicPage";
 import TrendingPage from "./views/recipe/TrendingPage";
-import ResultRecipePace from "./views/recipe/ResultRecipePace";
+import ResultRecipePage from "./views/recipe/ResultRecipePage";
 import LocationPage from "./views/LocationPage";
 import LandingPage from "./views/LandingPage";
 
@@ -52,7 +52,7 @@ const routes = (isLoggedIn)  => [
             { path: '/', element: <RecipePage userLogged={isLoggedIn}/>},
             { path: 'topic/:name/', element: <TopicPage userLogged={isLoggedIn}/>},
             { path: 'trending/', element: <TrendingPage userLogged={isLoggedIn}/>},
-            { path: 'search/', element: <ResultRecipePace userLogged={isLoggedIn}/>},
+            { path: 'search/', element: <ResultRecipePage userLogged={isLoggedIn}/>},
         ]
     },
     {

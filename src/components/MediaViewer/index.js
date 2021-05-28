@@ -213,6 +213,7 @@ function MediaViewer(props){
     const [openUtil, setOpenUtil] = useState(false);
     const [activeStep, setActiveStep] = React.useState(0);
     const [openEdit, setOpenEdit] = useState(false);
+    const [replyComment, setReplyComment] = useState(null);
 
     const maxSteps = post?.media?.length;
 
@@ -295,6 +296,15 @@ function MediaViewer(props){
         // Save post id to user data, and push to post data
         setSaveSelected(false);
         handleUnSavedPost(postId, userLogged.uid);
+    }
+
+    const handleReplying = (data) => {
+        setReplyComment(data);
+
+    }
+
+    const handleRemoveReply = () => {
+        setReplyComment(null);
     }
 
     useEffect(() => {
@@ -519,12 +529,12 @@ function MediaViewer(props){
                             }
 
                             {/* Comment*/}
-                            <ListComment postId={postId} isPopup={`true`} commentsCount={postSnapshot?.data()?.commentsCount}/>
+                            <ListComment postId={postId} isPopup={`true`} postUid={post.uid} userLogged={userLogged} commentsCount={postSnapshot?.data()?.commentsCount} handleReplying={handleReplying}/>
 
                         </div>
                         {
                             userLogged ? (
-                                <CommentInput user={userLogged} postId={postId} type={post.type} path={'preview'}  postAuthor={post.uid}/>
+                                <CommentInput user={userLogged} postId={postId} type={post.type} path={'preview'}  postAuthor={post.uid} replyComment={replyComment} handleRemoveReply={handleRemoveReply}/>
                             ) : null
                         }
                         {

@@ -1,15 +1,15 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import CardHeader from "@material-ui/core/CardHeader";
 import Avatar from "@material-ui/core/Avatar";
 import getRecipientUser from "../../../hooks/getRecipientUser";
-import {auth, db} from "../../../firebase";
-import {useAuthState} from "react-firebase-hooks/auth";
+import {db} from "../../../firebase";
+// import {useAuthState} from "react-firebase-hooks/auth";
 import {useCollection} from "react-firebase-hooks/firestore";
 import { NavLink as RouterLink} from "react-router-dom";
 import {Button, ListItem} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
-import {useDispatch} from "react-redux";
-import { setChat} from "../../../features/chatSlice";
+// import {useDispatch} from "react-redux";
+// import { setChat} from "../../../features/chatSlice";
 // import {useParams} from "react-router";
 // import TimeAgo from "timeago-react";
 
@@ -53,47 +53,29 @@ const useStyles = makeStyles((theme) => ({
 
 
 function SidebarChat(props){
+    const {userLogged, id, participants, sender, status, setRecipientData, lastMessage} = props;
 
-    const dispatch = useDispatch();
     const classes = useStyles();
-    const [user] = useAuthState(auth);
     // Get user recipient data
-    const recipientUser = getRecipientUser(props.users, user);
-    const [recipientUserSnapshot] = useCollection(db.collection('users').where('email' ,'==', recipientUser));
-    const recipient = recipientUserSnapshot?.docs?.[0]?.data();
+    const recipientUser = getRecipientUser(participants, userLogged);
+    const [recipientUserSnapshot] = useCollection(recipientUser && db.collection('users').where('email' ,'==', recipientUser));
 
+    const recipient = {
+        uid: recipientUserSnapshot?.docs?.[0]?.data()?.uid,
+        displayName: recipientUserSnapshot?.docs?.[0]?.data()?.displayName,
+        photoURL: recipientUserSnapshot?.docs?.[0]?.data()?.photoURL,
+        email: recipientUserSnapshot?.docs?.[0]?.data()?.email
+    };
 
-    const [test] = useCollection(
-        props.id &&
-        db.collection("chats")
-            .doc(props.id)
-            .collection("messages")
-            .orderBy("timestamp", "asc")
-    );
-
-    let checkRead = false;
-    if(props.sender === user.email ){
-        checkRead = true;
-    }else if(props.status === true){
-        checkRead = true;
-    }
-
-    let isSender = false;
-    if(test?.docs?.[test?.docs?.length -1]?.data()?.uid === user.uid){
-        isSender = true;
-    }
 
     const handleEnter = (roomID) => {
         if(roomID){
-            dispatch(setChat({
-                roomID: roomID,
-                recipient: {
-                    uid: recipient.uid,
-                    displayName: recipient.displayName,
-                    photoURL: recipient.photoURL,
-                    email: recipient.email
-                }
-            }))
+            setRecipientData({
+                uid: recipient.uid,
+                displayName: recipient.displayName,
+                photoURL: recipient.photoURL,
+                email: recipient.email
+            })
         }
     }
 
@@ -103,11 +85,11 @@ function SidebarChat(props){
             disableGutters
         >
             <Button
-                onClick={() => handleEnter(props.id)}
+                onClick={() => handleEnter(id)}
                 activeClassName={classes.active}
                 className={classes.button}
                 component={RouterLink}
-                to={`/messages/t/${props.id}`}
+                to={`/messages/t/${id}`}
             >
                 <div className="user__inbox  bottomDivider" >
                     {/*<Avatar alt={recipient?.displayName} src={recipient?.photoURL}/>*/}
@@ -122,18 +104,18 @@ function SidebarChat(props){
                         }
                         subheader={
                             <p className={classes.lastSeen}>{
-                                isSender ? (
-                                     "You: " + test?.docs?.[test?.docs?.length -1]?.data().message
+                                sender === userLogged.email ? (
+                                    lastMessage ? ("You: " + lastMessage) : null
                                 ):(
-                                    test?.docs?.[test?.docs?.length -1]?.data().message
+                                    lastMessage ? (lastMessage) : null
                                 )
                             }</p>
                         }
                     />
                     {
-                        checkRead ? null : (
-                            <div id="new" className="style-scope ytd-notification-renderer "/>
-                        )
+                         !status && sender !== userLogged.email ? (
+                             <div id="new" className="style-scope ytd-notification-renderer "/>
+                         ) : null
                     }
 
                 </div>

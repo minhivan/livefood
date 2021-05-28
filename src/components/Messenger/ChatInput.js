@@ -13,15 +13,14 @@ import { Picker } from 'emoji-mart'
 
 
 
-const ChatInput = ({roomID, chatRef}) => {
-
+const ChatInput = ({roomID, chatRef, userLogged}) => {
     const [input, setInput] = useState('');
-    const [user] = useAuthState(auth);
     const conversationRef = roomID && db.collection("conversations").doc(roomID);
     const messageRef = roomID && db.collection("chats").doc(roomID).collection("messages")
     const [conversationData] = useDocument(conversationRef)
-
     const [anchorElPicker, setAnchorElPicker] = useState(null);
+
+
 
     const open = Boolean(anchorElPicker);
     const id = open ? 'simple-popover-picker' : undefined;
@@ -39,7 +38,7 @@ const ChatInput = ({roomID, chatRef}) => {
 
 
     const checkingRead = () => {
-        if(conversationData?.data()?.lastSend !== user.email && !conversationData?.data()?.isSeen){
+        if(conversationData?.data()?.lastSend !== userLogged.email && !conversationData?.data()?.isSeen){
             conversationRef.update({
                 lastUpdate: firebase.firestore.FieldValue.serverTimestamp(),
                 isSeen: true
@@ -59,10 +58,11 @@ const ChatInput = ({roomID, chatRef}) => {
 
     const sendMessage = (event) => {
         event.preventDefault();
+
         if(input !== '' && (!/^\s+$/.test(input))){
             messageRef.add({
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                uid: user.uid,
+                uid: userLogged.uid,
                 message: input
             }).catch((error) => {
                 console.log("message error : " + error)
@@ -70,8 +70,9 @@ const ChatInput = ({roomID, chatRef}) => {
 
             conversationRef.update({
                 lastUpdate: firebase.firestore.FieldValue.serverTimestamp(),
-                lastSend: user.email,
-                isSeen: false
+                lastSend: userLogged.email,
+                isSeen: false,
+                lastMessage: input,
             }).catch((error) => {
                 console.log("Update chat error: " + error)
             })
@@ -80,6 +81,7 @@ const ChatInput = ({roomID, chatRef}) => {
                 behavior: "smooth",
                 block: "start"
             });
+
             setInput('')
         }
     }

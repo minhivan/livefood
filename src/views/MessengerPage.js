@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import SidebarChat from "../components/Messenger/Sidebar/SidebarChat";
 import Chat from "../components/Messenger/Chat";
@@ -13,8 +13,7 @@ import CreateNewChat from "../components/Messenger/Sidebar/CreateNewChat";
 import { db} from "../firebase";
 import {useCollection} from "react-firebase-hooks/firestore";
 import {List} from "@material-ui/core";
-import {useDispatch} from "react-redux";
-import {removeChat} from "../features/chatSlice";
+
 
 
 
@@ -35,19 +34,30 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function PageMessenger(props) {
-    const dispatch = useDispatch();
-    let { id } = useParams();
+    const {userLogged} = props;
+    const [chatList, setChatList] = useState([]);
     const classes = useStyles();
     const [open, setOpen] = useState(false);
-    const userChatRef = props.userLogged && db.collection("conversations").where('users', 'array-contains', props.userLogged.email).orderBy('lastUpdate', 'desc');
     // const userChatRef = db.collection("conversations").where('users', 'array-contains', user.email)
+    const [recipientData, setRecipientData] = useState({});
 
-    const [chatsSnapshot] = useCollection(userChatRef);
+    useEffect(() => {
+        const unsubscribe = db.collection("conversations")
+            .where('users', 'array-contains', userLogged.email)
+            .orderBy('lastUpdate', 'desc')
+            .onSnapshot((snapshot) => {
+                setChatList(snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    data: doc.data(),
+                })));
+            });
+
+        return () => {
+            unsubscribe();
+        }
+    }, [userLogged])
 
 
-    if(typeof id === 'undefined'){
-        dispatch(removeChat());
-    }
 
     const handleOpen = () => {
         setOpen(true);
@@ -73,26 +83,31 @@ function PageMessenger(props) {
                     <div className="messenger__inbox">
                         <List className={classes.list}>
                         {
-                            chatsSnapshot?.docs.map((chat) => (
-                                <SidebarChat
-                                    key={chat.id}
-                                    id={chat.id}
-                                    users={chat.data().users}
-                                    sender={chat.data().lastSend}
-                                    status={chat.data().isSeen}
-                                />
-                            ))
+                            chatList ? (
+                                chatList.map(({id, data}) => (
+                                    <SidebarChat
+                                        key={id}
+                                        id={id}
+                                        participants={data.users}
+                                        sender={data.lastSend}
+                                        status={data.isSeen}
+                                        userLogged={userLogged}
+                                        setRecipientData={setRecipientData}
+                                        lastMessage={data.lastMessage}
+                                    />
+                                ))
+                            ) : null
                         }
                         </List>
                     </div>
                 </section>
 
-                <Chat id={id}/>
+                <Chat userLogged={userLogged} recipientData={recipientData} />
             </div>
 
 
             {/*  Create chat  */}
-            <CreateNewChat open={open} handleClose={handleClose} user={props.userLogged}/>
+            <CreateNewChat open={open} handleClose={handleClose} userLogged={props.userLogged}/>
         </Page>
     )
 }

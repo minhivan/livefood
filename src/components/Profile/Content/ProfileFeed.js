@@ -4,7 +4,7 @@ import { db} from "../../../firebase";
 import ExploreItem from "../../Explore/ExploreItem";
 import {makeStyles} from "@material-ui/core/styles";
 import {Camera as CameraIcon} from "react-feather";
-import {useDocument} from "react-firebase-hooks/firestore";
+// import {useDocument} from "react-firebase-hooks/firestore";
 
 const useStyles = makeStyles((theme) => ({
     icon: {

@@ -55,8 +55,7 @@ h1, h3{
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: #2b333b;
-    border: 2px solid ;
+    background: #372b3b;
 }
 
 /* Handle on hover */
@@ -956,6 +955,7 @@ input:focus{
     width: 100%;
     object-fit: contain;
     max-height: 730px;
+    min-height: 400px;
     border-top: 1px solid rgb(235, 238, 240);
     border-bottom: 1px solid rgb(235, 238, 240);
 }
@@ -1102,6 +1102,9 @@ input:focus{
 }
 .sub-comment-details .comment__content{
     padding-right: 0;
+}
+.sub-comment-popup-details{
+    padding: 10px 0 10px 0px;
 }
 
 
@@ -1379,10 +1382,9 @@ input:focus{
     width: 100%;
     font-size: 20px;
     line-height: 25px;
-    margin-bottom: 10px;
     overflow: hidden;
     letter-spacing: 1px;
-    height: 75px;
+    max-height: 105px;
     white-space: normal;
 }
 
@@ -1395,6 +1397,8 @@ input:focus{
     height: 100%;
     display: flex;
     flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .list-users-item .tile-content .details h2.title a{

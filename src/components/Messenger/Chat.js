@@ -7,10 +7,11 @@ import {MessageCircle as MessageIcon} from "react-feather";
 import {db} from "../../firebase";
 import Message from "./Message";
 import {useSelector} from "react-redux";
-import {selectChatID, selectChatRecipient} from "../../features/chatSlice";
-import {useCollection} from "react-firebase-hooks/firestore";
+import {selectChatRecipient} from "../../features/chatSlice";
+import {useCollection, useDocument} from "react-firebase-hooks/firestore";
 import ChatInput from "./ChatInput";
-
+import {useLocation} from "react-router-dom";
+import {useParams} from "react-router";
 
 const useStyles = makeStyles((theme) => ({
     header:{
@@ -66,49 +67,44 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-function Chat({id}){
-    const recipient = useSelector(selectChatRecipient);
+function Chat({userLogged, recipientData}){
+    const { id } = useParams();
+    // const recipient = useSelector(selectChatRecipient);
     const classes = useStyles();
-    const roomID =  useSelector(selectChatID);
     const chatRef = useRef(null);
+    const [recipientUser, setRecipientUser] = useState('');
 
-    // const [recipientUserSnapshot] = useCollection(recipient && db.collection('users').where('uid' ,'==', recipient.uid));
-    // const lastActive = recipientUserSnapshot?.docs?.[0]?.data()?.lastActive;
+    useEffect(() => {
+        if(recipientData)   setRecipientUser(recipientData);
+    }, [recipientData])
 
     const [chatMessages, setChatMessage] = useState([]);
 
-    const [test, loading] = useCollection(
-        id &&
-                db.collection("chats")
-                    .doc(id)
-                    .collection("messages")
-                    .orderBy("timestamp", "asc")
-    );
-
-
     useEffect(() => {
-        // realtime on page
-        chatRef?.current?.scrollIntoView({
-            behavior: "auto",
-            block: "nearest"
-        });
-
-        return id && db.collection("chats")
+        const unsubscribe = db.collection("chats")
             .doc(id)
             .collection("messages")
             .orderBy("timestamp", "asc")
+            .limit(30)
             .onSnapshot((doc) => {
-                chatRef?.current?.scrollIntoView({
-                    behavior: "auto",
-                    block: "start"
-                });
                 setChatMessage(doc.docs.map((doc) => ({
                     id: doc.id,
                     data: doc.data()
                 })))
             })
 
-    }, [id, loading])
+        return () => {
+            // realtime on page
+            unsubscribe();
+        }
+    }, [id])
+
+    useEffect(() => {
+        chatRef.current?.scrollIntoView({
+            behavior: "auto",
+            block: "nearest",
+        });
+    }, [chatMessages])
 
 
     if(!id){
@@ -132,12 +128,8 @@ function Chat({id}){
         <div className="messenger__chat">
             <div className="navigation__header padding-10-20 messenger__header">
                 <div className={classes.chatName}>
-                    <h2 className={classes.header}>{recipient?.displayName}</h2>
-                    <span className={classes.lastSeen}>{
-                        test?.docs?.[test?.docs?.length -1]?.data()?.timestamp ? (
-                            test?.docs?.[test?.docs?.length -1]?.data()?.timestamp?.toDate().toLocaleString()
-                        ) : "Loading"
-                    }</span>
+                    <h2 className={classes.header}>{recipientUser.displayName}</h2>
+                    <span className={classes.lastSeen}>{chatMessages?.[chatMessages?.length - 1]?.data?.timestamp?.toDate().toLocaleString()}</span>
                 </div>
 
                 <IconButton aria-label="comment" >
@@ -152,14 +144,17 @@ function Chat({id}){
                         message={data.message}
                         timestamp={data.timestamp}
                         uid={data.uid}
+                        userLogged={userLogged}
+                        recipient={recipientUser}
                     />
                 ))}
                 <div ref={chatRef} className={classes.bottom}  />
             </div>
 
             <ChatInput
-                roomID={roomID}
+                roomID={id}
                 chatRef={chatRef}
+                userLogged={userLogged}
             />
         </div>
     )

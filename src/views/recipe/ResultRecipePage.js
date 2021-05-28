@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export default function ResultRecipePace() {
+export default function ResultRecipePage() {
     const [test, setTest] = useState([]);
     let query = new URLSearchParams(useLocation().search).get("q");
     const classes = useStyles();
@@ -53,7 +53,7 @@ export default function ResultRecipePace() {
             return db.collection('posts')
                 .where('type', '==', 'recipe')
                 .orderBy('timestamp', "desc")
-                .limit(12)
+                .limit(20)
                 .get().then(snapshot => {
                     let data = [];
                     snapshot.forEach(doc => {

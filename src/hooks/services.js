@@ -335,8 +335,8 @@ export const pushUserNotification = (data) => {
     });
 }
 
-export const handleSeenNotification = (uid, notiId) => {
-    db.collection('users').doc(uid).collection("notifications").doc(notiId).update({
+export const handleSeenNotification = (uid, notificationId) => {
+    db.collection('users').doc(uid).collection("notifications").doc(notificationId).update({
         status: "read"
     }).catch((error) => {
         console.error("Error ", error);
@@ -344,4 +344,46 @@ export const handleSeenNotification = (uid, notiId) => {
 }
 
 
+export const handleCreateChat = (opponentEmail, userEmail) => {
+    if(opponentEmail && opponentEmail!== userEmail){
+        if(!isConversationExists(opponentEmail, userEmail)){
+            db.collection("conversations").add({
+                users: [userEmail, opponentEmail],
+                lastUpdate: firebase.firestore.FieldValue.serverTimestamp(),
+                isSeen: firebase.firestore.FieldValue.serverTimestamp(),
+                lastSend: userEmail
+            }).then(function(docRef) {
+                return docRef.id;
+            }).catch((error) => {
+                console.error("Error ", error);
+            });
+        }
+        else{
+            return getConversationRoom(opponentEmail, userEmail);
+        }
+    }
+}
 
+
+export const isConversationExists = (opponentEmail, userEmail) => {
+    return db.collection("conversations")
+        .where('users', 'array-contains', userEmail)
+        .get().then((doc) => {
+            return doc.docs.find((chat) =>
+                chat.data().users.find((user) =>
+                    user === opponentEmail)?.length > 0)
+    });
+}
+
+
+export const getConversationRoom = (opponentEmail, userEmail) => {
+    return db.collection("conversations")
+        .where('users', 'array-contains', userEmail)
+        .get().then((doc) => {
+            const rs = doc.docs.find((chat) =>
+                chat.data().users.find((user) =>
+                    user === opponentEmail))
+            return rs.id;
+    });
+
+}

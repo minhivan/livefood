@@ -95,7 +95,7 @@ function PageLogin() {
         validationSchema: validationSchema,
         onSubmit: (values) => {
             // console.log(values.email);
-            signUp(values.email, values.password, values.username);
+            signUp(values.email.toLowerCase(), values.password, values.username);
         },
     });
 

@@ -1,9 +1,9 @@
 import React from "react";
-import NavItem from "../SideBar/LeftSideBar/NavItem";
+// import NavItem from "../SideBar/LeftSideBar/NavItem";
 import {Button, List, ListItem} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import {NavLink as RouterLink} from "react-router-dom";
-import {List as ListIcon, Users as UsersIcon} from "react-feather";
+// import {List as ListIcon, Users as UsersIcon} from "react-feather";
 import {useDocument} from "react-firebase-hooks/firestore";
 import {db} from "../../firebase";
 

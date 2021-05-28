@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Avatar from "@material-ui/core/Avatar";
 import {Link} from "react-router-dom";
 import {Rating, ToggleButton} from "@material-ui/lab";
@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 export default function ReplyCommentDetails(props) {
-    const {userLogged, data, replyId, commentId, postId} = props;
+    const {userLogged, data, replyId, commentId, postId, isPopup} = props;
     const classes = useStyles();
     const [isReadMore, setIsReadMore] = useState(true);
     const [like, setLike] = useState(false);
@@ -88,13 +88,21 @@ export default function ReplyCommentDetails(props) {
         handleUnlikeComment(data);
     }
 
+    useEffect(() => {
+        if(userLogged){
+            if(typeof data?.likeBy !== 'undefined' && data?.likeBy?.includes(userLogged.uid)){
+                setLike(true);
+            }
+        }
+    }, [data?.likeBy, userLogged])
+
 
     return(
-        <div className="sub-comment-details">
+        <div className={`sub-comment-details  ${isPopup && "sub-comment-popup-details"}`}>
             <Avatar alt={data?.userDisplayName} src={data?.userAvt}/>
             <div className="comment__content">
                 <div className="comment__block">
-                    <div className={`comment__sub`}>
+                    <div className={`comment__sub ${isPopup && "comment__sub-popup"}`}>
                         <Link to={`/profile/${data?.uid}`}>{data?.userDisplayName}</Link>
                         <div style={{display: "flex"}}>
                             <span style={{color: "#546e7a", fontSize: "12px", }}>{dayjs(new Date(data?.timestamp?.seconds * 1000).toLocaleString()).fromNow()}</span>
@@ -115,35 +123,39 @@ export default function ReplyCommentDetails(props) {
                             ) : (<p>{data?.text}</p>)
                         }
                     </div>
-                    <div className="comment__action">
-                        <div className="comment__action-like">
-                            <Tooltip title="Like" arrow>
-                                <ToggleButton
-                                    size="small"
-                                    value="like"
-                                    selected={like}
-                                    // className={classes.likeButton}
-                                    classes={{
-                                        root: classes.actionButton,
-                                        selected: classes.selected,
-                                    }}
-                                    onClick={() => {
-                                        if(!like) handleLike();
-                                        else handleUnlike();
-                                    }}
-                                >
+                    {
+                        userLogged ? (
+                            <div className="comment__action">
+                                <div className="comment__action-like">
+                                    <Tooltip title="Like" arrow>
+                                        <ToggleButton
+                                            size="small"
+                                            value="like"
+                                            selected={like}
+                                            // className={classes.likeButton}
+                                            classes={{
+                                                root: classes.actionButton,
+                                                selected: classes.selected,
+                                            }}
+                                            onClick={() => {
+                                                if(!like) handleLike();
+                                                else handleUnlike();
+                                            }}
+                                        >
+                                            {
+                                                like ? <FavoriteRoundedIcon style={{color: "red"}} fontSize="inherit"/> : <FavoriteBorderTwoToneIcon fontSize="inherit"/>
+                                            }
+                                        </ToggleButton>
+                                    </Tooltip>
                                     {
-                                        like ? <FavoriteRoundedIcon style={{color: "red"}} fontSize="inherit"/> : <FavoriteBorderTwoToneIcon fontSize="inherit"/>
+                                        data?.likeCount > 0 ? (
+                                            <span className={classes.reply}>{data?.likeCount} {data?.likeCount === 1 ? 'Like' : 'Likes'}</span>
+                                        ) : null
                                     }
-                                </ToggleButton>
-                            </Tooltip>
-                            {
-                                data?.likeCount > 0 ? (
-                                    <span className={classes.reply}>{data?.likeCount} {data?.likeCount === 1 ? 'Like' : 'Likes'}</span>
-                                ) : null
-                            }
-                        </div>
-                    </div>
+                                </div>
+                            </div>
+                        ) : null
+                    }
                 </div>
             </div>
         </div>

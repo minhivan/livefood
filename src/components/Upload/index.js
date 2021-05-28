@@ -64,13 +64,23 @@ function Upload({userLogged}) {
     };
 
     const handleChange = (event) => {
-        const imageList = event.target.files
-        if(event.target.files){
-            setImage(Array.from(imageList));
+        const imageList = event.target.files;
+        var conditions = ["image", "video"];
+        const finalData = [];
+        // const isValid = (imageList) => imageList['type'].includes('image');
+        Array.from(imageList).forEach(file => {
+            if(conditions.some(el => file['type'].split('/')[0].includes(el))){
+                finalData.push(file)
+            }
+        });
+
+        if(finalData){
+            setImage(finalData);
             if(!openStep){
                 setOpen(true);
             }
         }
+
     }
 
     const handleCloseSnack = (event) => {
