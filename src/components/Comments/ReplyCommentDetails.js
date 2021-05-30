@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import Avatar from "@material-ui/core/Avatar";
 import {Link} from "react-router-dom";
-import {Rating, ToggleButton} from "@material-ui/lab";
+import { ToggleButton} from "@material-ui/lab";
 import dayjs from "dayjs";
 import IconButton from "@material-ui/core/IconButton";
 import MoreHorizRoundedIcon from "@material-ui/icons/MoreHorizRounded";
@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 export default function ReplyCommentDetails(props) {
-    const {userLogged, data, replyId, commentId, postId, isPopup} = props;
+    const {userLogged, commentId, postId, data, replyId, isPopup, handleReplying, commentInfo} = props;
     const classes = useStyles();
     const [isReadMore, setIsReadMore] = useState(true);
     const [like, setLike] = useState(false);
@@ -98,29 +98,45 @@ export default function ReplyCommentDetails(props) {
 
 
     return(
-        <div className={`sub-comment-details  ${isPopup && "sub-comment-popup-details"}`}>
-            <Avatar alt={data?.userDisplayName} src={data?.userAvt}/>
+        <div className={`sub-comment-details ${isPopup ? "sub-comment-popup-details" : ""}`}>
+            <Avatar alt={data?.replyFrom} src={data?.replyFromAvt}/>
             <div className="comment__content">
                 <div className="comment__block">
-                    <div className={`comment__sub ${isPopup && "comment__sub-popup"}`}>
-                        <Link to={`/profile/${data?.uid}`}>{data?.userDisplayName}</Link>
-                        <div style={{display: "flex"}}>
-                            <span style={{color: "#546e7a", fontSize: "12px", }}>{dayjs(new Date(data?.timestamp?.seconds * 1000).toLocaleString()).fromNow()}</span>
-                        </div>
+                    <div className={`comment__sub ${isPopup ? "comment__sub-popup" : ""}`}>
+                        <Link to={`/profile/${data?.replyToUid}`}>{data?.replyFrom}</Link>
                         <IconButton className={classes.more} aria-label="Util">
                             <MoreHorizRoundedIcon />
                         </IconButton>
                     </div>
                     <div className="comment__caption">
+
                         {
                             data?.text.length > 100 ? (
                                 <p>
+                                    {
+                                        data?.replyToUid === data?.replyFromUid ? null : (
+                                            <>
+                                                <Link to={`/profile/${data?.replyToUid}`} style={{marginRight: 5}}>{data?.replyTo}</Link>
+                                            </>
+                                        )
+                                    }
                                     {isReadMore ? data?.text.slice(0, 100) : data?.text}
                                     <span onClick={toggleReadMore} style={{fontWeight: "bold", cursor: "pointer", color: "#8e8e8e"}}>
                                         {isReadMore ? "...read more" : null}
                                     </span>
                                 </p>
-                            ) : (<p>{data?.text}</p>)
+                            ) : (
+                                <p>
+                                    {
+                                        data?.replyToUid === data?.replyFromUid ? null : (
+                                            <>
+                                                <Link to={`/profile/${data?.replyToUid}`} style={{marginRight: 5}}>{data?.replyTo}</Link>
+                                            </>
+                                        )
+                                    }
+                                    {data?.text}
+                                </p>
+                            )
                         }
                     </div>
                     {
@@ -152,7 +168,20 @@ export default function ReplyCommentDetails(props) {
                                             <span className={classes.reply}>{data?.likeCount} {data?.likeCount === 1 ? 'Like' : 'Likes'}</span>
                                         ) : null
                                     }
+
                                 </div>
+                                <span className={classes.reply}
+                                      onClick={() => handleReplying(
+                                          {
+                                              authorName: data?.replyFrom,
+                                              commentId: commentId,
+                                              postId: postId,
+                                              authorId: data?.replyFromUid,
+                                          })
+                                      }
+                                >Reply</span>
+                                <span style={{color: "#546e7a", fontSize: "12px", }}>{dayjs(new Date(data?.timestamp?.seconds * 1000).toLocaleString()).fromNow()}</span>
+
                             </div>
                         ) : null
                     }

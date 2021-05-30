@@ -105,7 +105,7 @@ export default function ProfileVoteRating(props){
     console.log(listVotes);
 
     return (
-        <div className="explore__root" style={{paddingTop: "20px" , marginBottom: "50px"}}>
+        <div className="explore__root" style={{paddingTop: "30px"}}>
             <div className={classes.container} style={{padding: "0"}} >
                 {
                     listVotes ? (

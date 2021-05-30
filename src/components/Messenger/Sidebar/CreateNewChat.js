@@ -152,7 +152,7 @@ const CreateNewChat = (props) => {
         if(!name){
             return db.collection("users")
                 .where('follower', 'array-contains', userLogged.uid)
-                .limit(limit)
+                .limit(30)
                 .get().then(snapshot => {
                     setUserToChat(snapshot.docs.map(doc => ({
                         id: doc.id,
@@ -165,7 +165,7 @@ const CreateNewChat = (props) => {
                     })));
                 })
         }
-    },[userLogged, name, limit])
+    },[userLogged, name])
 
 
 
@@ -222,13 +222,14 @@ const CreateNewChat = (props) => {
 
 
     const handleViewMore = () => {
+
         setLimit(prevState => prevState + 5);
     }
 
     const handleNext =  () => {
         return db.collection("users")
             .where('uid', '!=', userLogged.uid)
-            .limit(limit)
+            .limit(30)
             .get().then(snapshot => {
                 let data = [];
                 snapshot.forEach(doc => {
@@ -276,7 +277,7 @@ const CreateNewChat = (props) => {
                     <div className={classes.item}>
                         {
                             userToChat ? (
-                                userToChat?.map(({id, data}) => (
+                                userToChat?.slice(0, limit).map(({id, data}) => (
                                     <div
                                         className={classes.userToChat}
                                         key={id}
@@ -294,9 +295,14 @@ const CreateNewChat = (props) => {
                         }
                     </div>
 
-                    <Button variant="contained" color="primary" className={classes.button} onClick={handleViewMore}>
-                        See More
-                    </Button>
+                    {
+                        userToChat?.length < limit ? null : (
+                            <Button variant="contained" color="primary" className={classes.button} onClick={handleViewMore}>
+                                See More
+                            </Button>
+                        )
+                    }
+
                 </div>
             </div>
         </Modal>

@@ -107,7 +107,7 @@ export default function ProfileMenuList(props){
 
     //
     return(
-        <div className="explore__root" style={{paddingTop: "20px" , marginBottom: "50px"}}>
+        <div className="explore__root" style={{paddingTop: "30px"}}>
             <div className={classes.container} style={{padding: "0"}} >
 
                 <div className="item-restaurant-row">
@@ -140,6 +140,7 @@ export default function ProfileMenuList(props){
                                                         >
                                                             {new Intl.NumberFormat().format(data?.price)} đ
                                                         </Typography>
+                                                        <span style={{display: "block", fontSize: "12px", paddingTop: "5px"}}>{data?.desc}</span>
                                                     </React.Fragment>
                                                 }
                                             />

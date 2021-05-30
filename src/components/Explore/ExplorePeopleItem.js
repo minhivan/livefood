@@ -110,10 +110,11 @@ export default function ExplorePeopleItem(props) {
             console.log(query);
             return db.collection("users")
                 .where('uid' ,'!=' , userLogged.uid )
-                .limit(20)
+                .limit(30)
                 .get().then(snapshot => {
                     let data = [];
                     snapshot.forEach(doc => {
+                        console.log(doc.data()?.displayName?.toLowerCase());
                         if(doc.data()?.displayName?.toLowerCase().includes(query)){
                             data.push({id: doc.id, user: doc.data()})
                         }

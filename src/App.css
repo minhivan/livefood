@@ -56,6 +56,7 @@ h1, h3{
 /* Handle */
 ::-webkit-scrollbar-thumb {
     background: #372b3b;
+    border-radius: 8px;
 }
 
 /* Handle on hover */
@@ -116,7 +117,7 @@ input:focus{
 }
 
 .app__body .app__post{
-    flex-basis: 614px;
+    flex-basis: 650px;
     margin: 0 32px;
     z-index: 1;
 }
@@ -312,6 +313,10 @@ input:focus{
     min-height: 100%;
     flex-direction: column;
     display: flex;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 32px;
+    box-shadow: 0px 0px 5px 0px #ddc4c4bf;
 }
 .profile__header{
     flex-direction: column;
@@ -319,22 +324,29 @@ input:focus{
     justify-content: center;
     width: 100%;
     align-items: center;
+    position: relative;
 }
 
 .profile__bio{
-    padding-top: 20px;
     min-height: 180px;
     display: flex;
-    align-items: flex-start;
-    gap: 35px;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
     max-width: 990px;
 }
 .profile__about{
     padding-bottom: 20px;
-    max-width: 620px;
+    max-width: 650px;
     display: flex;
     flex-flow: column;
     justify-content: center;
+}
+
+.share-title-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .count-infos{
@@ -465,6 +477,7 @@ input:focus{
     height: 700px;
     width: 100%;
     background-color: white;
+
 }
 
 
@@ -1013,9 +1026,11 @@ input:focus{
     font-weight: normal;
 }
 .comment__sub{
-    padding-left: 10px;
+    padding-left: 5px;
     display: flex;
     position: relative;
+    align-items: center;
+    line-height: 22px;
 }
 .comment__sub-popup,
 .comment__sub-popup span{
@@ -1028,8 +1043,15 @@ input:focus{
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.comment__caption{
+    display: flex;
+    align-items: center;
+}
+
+
 .comment__caption p{
-    padding: 10px;
+    padding: 5px;
     font-size: 14px;
     text-align: justify;
     word-break: break-word;
@@ -1070,7 +1092,7 @@ input:focus{
     color: #262626;
     font-weight: 600;
     text-decoration: none;
-    margin-right: 10px;
+    margin-right: 5px;
 }
 .commentDetails span,
 .sub-comment-details span{
@@ -1358,10 +1380,12 @@ input:focus{
     min-height: 60px;
     background-color: #ffffff;
     width: 100%;
-    padding: 10px;
+    padding: 15px 10px;
     margin-left: 32px;
     border-radius: 16px;
     display: flex;
+    align-items: center;
+    gap: 15px;
     justify-content: flex-end;
     box-shadow: 0px 0px 5px 0px #ddc4c4bf;
 }
@@ -1377,6 +1401,17 @@ input:focus{
     grid-auto-flow: dense;
     box-sizing: border-box;
 }
+
+.list-users__location-container{
+    width: 100%;
+    margin: 16px 0 0 32px;
+    border-radius: 16px;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    min-height: 600px;
+    padding: 10px;
+}
+
 
 .list-users-item h2.title{
     width: 100%;

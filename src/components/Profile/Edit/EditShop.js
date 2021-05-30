@@ -102,10 +102,9 @@ const EditShop = ({userLogged, setOpenSnack}) => {
     }
 
     useEffect(() => {
-
         const unsubscribe = db.collection("users").doc(userLogged.uid)
             .collection("menu")
-            .orderBy('timestamp', "desc")
+            .orderBy('price')
             .onSnapshot((snapshot ) => {
                 // var userProfile = {};
                 SetMenu(
@@ -121,6 +120,7 @@ const EditShop = ({userLogged, setOpenSnack}) => {
         }
     }, [userLogged])
 
+    console.log(menu)
 
     return(
         <article className="edit_account__content">
@@ -162,6 +162,7 @@ const EditShop = ({userLogged, setOpenSnack}) => {
                                             <Avatar className={classes.displayPic} src={data?.mediaUrl} />
                                         </ListItemAvatar>
                                         <ListItemText
+                                            style={{margin: "0 10px 0 0"}}
                                             onClick={() => handleOpen(data)}
                                             primary={data?.dishName}
                                             secondary={
@@ -174,9 +175,11 @@ const EditShop = ({userLogged, setOpenSnack}) => {
                                                     >
                                                         {new Intl.NumberFormat().format(data?.price)} đ
                                                     </Typography>
+                                                    <span style={{display: "block", fontSize: "12px"}}>{data?.desc}</span>
                                                 </React.Fragment>
                                             }
                                         />
+
                                         <Button
                                             className={classes.btnDelete}
                                             variant="contained" color="secondary"

@@ -22,13 +22,13 @@ const useStyles = makeStyles((theme) => ({
     },
     paper: {
         position: 'absolute',
-        maxWidth: 950,
+        maxWidth: 600,
         backgroundColor: theme.palette.background.paper,
         boxShadow: theme.shadows[5],
         "&:focus": {
             outline: "none"
         },
-        maxHeight: "600px",
+        maxHeight: "850px",
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
@@ -76,6 +76,12 @@ function Previewer({data, open, handleClose}){
                     <p id="simple-modal-description" style={{fontWeight: "bold", paddingTop: "10px"}}>
                         {new Intl.NumberFormat().format(data?.price)} đ
                     </p>
+                    {
+                        data?.desc ? (
+                            <p style={{fontWeight: "bold", paddingTop: "10px", width: "100%"}}>{data.desc}</p>
+                        ) : null
+                    }
+
                 </div>
             </div>
         </Modal>

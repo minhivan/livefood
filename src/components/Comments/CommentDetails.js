@@ -66,8 +66,8 @@ function PostComment (props) {
     const {comment, isPopup, postId, postUid, commentId, userLogged, handleReplying} =  props
     const classes = useStyles();
 
-    const [postAuthor] = useDocument(comment.uid && db.collection('users').doc(comment.uid))
-    const commentAuthor = postAuthor?.data();
+    // const [postAuthor] = useDocument(comment.uid && db.collection('users').doc(comment.uid))
+    // const commentAuthor = postAuthor?.data();
 
     const [isReadMore, setIsReadMore] = useState(true);
     const [seeMore, setSeeMore] = useState(0);
@@ -93,6 +93,7 @@ function PostComment (props) {
             setSeeMore(prevState => prevState + 3);
         }
     }
+
 
     const handleLike = () => {
         setLike(true);
@@ -124,14 +125,20 @@ function PostComment (props) {
         }
     }, [comment?.likeBy, userLogged])
 
+    const commentInfo = {
+        authorName: comment.commentFromUser,
+        commentId: commentId,
+        postId: postId,
+        authorId: comment.commentFromUid,
+    }
 
     return (
         <div className="commentDetails">
-            <Avatar alt={commentAuthor?.displayName} src={commentAuthor?.photoURL}/>
+            <Avatar alt={comment?.commentFromUser} src={comment?.commentFromUserAvt}/>
             <div className="comment__content">
                 <div className="comment__block">
-                    <div className={`comment__sub ${isPopup && "comment__sub-popup"}`}>
-                        <Link to={`/profile/${commentAuthor?.uid}`}>{commentAuthor?.displayName}</Link>
+                    <div className={`comment__sub ${isPopup ? "comment__sub-popup" : ""}`}>
+                        <Link to={`/profile/${comment?.commentFromUid}`}>{comment?.commentFromUser}</Link>
                         {
                             comment.timestamp ? (
                                 <div style={{display: "flex"}}>
@@ -140,7 +147,6 @@ function PostComment (props) {
                                             <Rating style={{paddingRight: "5px", display: "inline-flex"}} name="read-only" value={comment.rating} readOnly />
                                         ) : null
                                     }
-                                    <span style={{color: "#546e7a", fontSize: "12px", }}>{dayjs(new Date(comment.timestamp.seconds * 1000).toLocaleString()).fromNow()}</span>
 
                                 </div>
                             ) : null
@@ -192,38 +198,34 @@ function PostComment (props) {
                                         ) : null
                                     }
                                 </div>
-                                <span className={classes.reply}
-                                      onClick={() => handleReplying(
-                                          {
-                                              authorName: commentAuthor?.displayName,
-                                              commentId: commentId,
-                                              postId: postId,
-                                              authorId: comment.uid,
-                                          })
-                                      }
+                                <span
+                                    className={classes.reply}
+                                    onClick={() => handleReplying(commentInfo)}
                                 >Reply</span>
+                                <span style={{color: "#546e7a", fontSize: "12px", }}>{dayjs(new Date(comment?.timestamp?.seconds * 1000).toLocaleString()).fromNow()}</span>
+
                             </div>
                         ) : null
                     }
 
-                    {
-                        comment.commentsReplyCount > 0 ? (
-                            <>
-                                {
-                                    seeMore >= comment.commentsReplyCount ? null : (
-                                        <div className="comment__view-more">
-                                            <div className="comment__view-more-container">
-                                                <div className={classes.customDivider} />
-                                                <p className={classes.reply} onClick={() => handleSeeMore()}>View replies ({comment.commentsReplyCount - seeMore})</p>
-                                            </div>
-                                        </div>
-                                    )
-                                }
-                                <Subcomments commentId={commentId} userLogged={userLogged} postId={postId} seeMore={seeMore} isPopup={isPopup}/>
-                            </>
-                        ) : null
-                    }
                 </div>
+                {
+                    comment.commentsReplyCount > 0 ? (
+                        <>
+                            {
+                                seeMore >= comment.commentsReplyCount ? null : (
+                                    <div className="comment__view-more">
+                                        <div className="comment__view-more-container">
+                                            <div className={classes.customDivider} />
+                                            <p className={classes.reply} onClick={() => handleSeeMore()}>View replies ({comment.commentsReplyCount - seeMore})</p>
+                                        </div>
+                                    </div>
+                                )
+                            }
+                            <Subcomments commentId={commentId} userLogged={userLogged} postId={postId} seeMore={seeMore} isPopup={isPopup} handleReplying={handleReplying} commentInfo={commentInfo}/>
+                        </>
+                    ) : null
+                }
             </div>
             {
                 userLogged ? (

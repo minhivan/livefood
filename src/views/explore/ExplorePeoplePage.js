@@ -7,7 +7,6 @@ import {useLocation} from "react-router-dom";
 const ExplorePeople = (props) => {
     let query = new URLSearchParams(useLocation().search).get("q");
 
-    console.log(query);
     useEffect(() => {
         window.scroll({top: 0, left: 0, behavior: 'smooth' });
     }, []);

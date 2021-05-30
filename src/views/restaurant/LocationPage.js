@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
-import NavBar from "../components/SideBar/LeftSideBar";
-import Page from "../components/Page";
-import {db} from "../firebase";
+import NavBar from "../../components/SideBar/LeftSideBar";
+import Page from "../../components/Page";
+import {db} from "../../firebase";
 import FormControl from "@material-ui/core/FormControl";
 import {InputLabel, MenuItem, Select} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
@@ -10,14 +10,13 @@ import {Link} from "react-router-dom";
 import {Rating} from "@material-ui/lab";
 import FavoriteRoundedIcon from "@material-ui/icons/FavoriteRounded";
 import AccessTimeRoundedIcon from "@material-ui/icons/AccessTimeRounded";
-import {handleUserFollow, handleUserUnfollow} from "../hooks/services";
+import {handleUserFollow, handleUserUnfollow} from "../../hooks/services";
 import Button from "@material-ui/core/Button";
 import LocationOnRoundedIcon from "@material-ui/icons/LocationOnRounded";
 
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
-        margin: theme.spacing(1),
         minWidth: 220,
     },
     selectEmpty: {
@@ -79,6 +78,10 @@ const useStyles = makeStyles((theme) => ({
         margin: "auto",
         textTransform: "capitalize"
     },
+    buttonLink: {
+        height: 56,
+        minWidth: 220,
+    }
 }));
 
 
@@ -186,7 +189,6 @@ export default function LocationPage(props){
             })
     }, [])
 
-    console.log(listRestaurant);
     return (
         <Page
             title="LiveFood"
@@ -195,7 +197,13 @@ export default function LocationPage(props){
             <NavBar userLogged={userLogged}/>
             <div className="list-users">
                 <div className="list-users__header">
+                    <Link to={`/location/map`}>
+                        <Button variant="outlined" className={classes.buttonLink} style={{textTransform: "capitalize", fontSize: "1rem"}}>
+                            Check on map
+                        </Button>
+                    </Link>
                     <FormControl variant="outlined" className={classes.formControl}>
+
                         <InputLabel id="restaurant_category_label">Category</InputLabel>
                         <Select
                             labelId="restaurant_category_label"

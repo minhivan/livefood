@@ -69,7 +69,7 @@ const ProfileSaved = ({uid, userLogged}) => {
     }, [userSavedList?.length]);
 
     return(
-        <div className="explore__root" style={{paddingTop: "20px" , marginBottom: "50px"}}>
+        <div className="explore__root" style={{paddingTop: "30px"}}>
 
                 {
                     savedPost.length > 0 ? (

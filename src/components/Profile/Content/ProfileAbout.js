@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
         overflow: "hidden",
         width: '100%',
         backgroundColor: theme.palette.background.paper,
-        padding: "20px",
+
     },
     shopCard: {
         display: "flex",
@@ -73,7 +73,7 @@ export default function ProfileAbout(props){
     console.log(lat, lng)
 
     return (
-        <div className="explore__root" style={{marginTop: "20px" , marginBottom: "50px"}}>
+        <div className="explore__root" style={{paddingTop: "30px"}}>
             <div className={classes.container}>
                 {
                     lat && lng ? (

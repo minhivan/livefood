@@ -19,6 +19,7 @@ import {Rating} from "@material-ui/lab";
 // import Typography from "@material-ui/core/Typography";
 import LinkTwoToneIcon from '@material-ui/icons/LinkTwoTone';
 
+import {Paperclip as CameraIcon} from "react-feather";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -128,7 +129,12 @@ const useStyles = makeStyles((theme) => ({
             color: "#343438",
             transition: "0.2s all ease"
         }
-    }
+    },
+    buttonClose: {
+        position: "absolute",
+        right: "20px",
+        top: "10px"
+    },
 }));
 
 
@@ -354,7 +360,7 @@ const ProfileHeader = ({userSnapshot, count, userLogged}) => {
                                 {
                                     userSnapshot?.voteRating ? (
                                         <div className={classes.voteRating}>
-                                            <Rating name="read-only" value={userSnapshot?.voteRating} precision={0.1} readOnly />
+                                            <Rating name="read-only" value={userSnapshot?.voteRating} precision={0.1} readOnly size="small"/>
                                             <Link to={`/profile/vote/${userSnapshot?.uid}`}>
                                                 <span  className={classes.viewMoreRating}> {userSnapshot?.voteCount} reviews from LiveFood</span>
                                             </Link>
@@ -376,13 +382,15 @@ const ProfileHeader = ({userSnapshot, count, userLogged}) => {
                                     userSnapshot?.aboutRestaurant?.address ? (
                                         <h4 className={classes.opening} style={{paddingBottom: "20px"}}>
                                             <MapRoundedIcon style={{marginRight: "5px"}}/>
-                                            Address :
-                                            <span style={{marginLeft: "5px"}}>{userSnapshot?.aboutRestaurant?.address}</span>
-                                            {
-                                                userSnapshot?.aboutRestaurant?.location ? (
-                                                    <span style={{marginLeft: "5px"}}> - {userSnapshot?.aboutRestaurant?.location}</span>
-                                                ) : null
-                                            }
+                                            <div className={classes.content}>
+                                                <span>Address :</span>
+                                                <span style={{marginLeft: "5px"}}>{userSnapshot?.aboutRestaurant?.address}</span>
+                                                {
+                                                    userSnapshot?.aboutRestaurant?.location ? (
+                                                        <span style={{marginLeft: "5px"}}> - {userSnapshot?.aboutRestaurant?.location}</span>
+                                                    ) : null
+                                                }
+                                            </div>
                                         </h4>
                                     ) : null
                                 }
@@ -397,7 +405,7 @@ const ProfileHeader = ({userSnapshot, count, userLogged}) => {
                                         </h4>
                                     ) : null
                                 }
-                                <Divider />
+
                             </>
                         ) : null
                     }
@@ -434,6 +442,12 @@ const ProfileHeader = ({userSnapshot, count, userLogged}) => {
                     <RecommendRating open={openRating} handleClose={handleCloseRating} userLogged={userLogged} shopId={userSnapshot?.uid} voteRating={userSnapshot?.voteRating}/>
                 ) : null
             }
+            <div className={classes.buttonClose}>
+                <CameraIcon
+                    className={classes.icon}
+                    size="40"
+                />
+            </div>
         </div>
     )
 }

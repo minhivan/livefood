@@ -79,6 +79,9 @@ const UserProfilePage = (props) => {
     const classes = useStyles();
     const [userData, loading] = useDocument(id && db.collection('users').doc(id));
     const userSnapshot = userData?.data();
+
+    console.log(userSnapshot)
+
     return(
 
         <Page

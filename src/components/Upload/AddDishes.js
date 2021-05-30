@@ -127,7 +127,7 @@ function AddDishes({open, handleClose, setOpenSnack, userLogged}){
     const [disable, setDisable] = useState(true);
     const [loading, setLoading] = useState(false);
     const [progress, setProgress] = useState(0);
-
+    const [desc, setDesc] = useState('');
 
     // const [values, setValues] = React.useState(0);
 
@@ -158,9 +158,10 @@ function AddDishes({open, handleClose, setOpenSnack, userLogged}){
                     .getDownloadURL()
                     .then(url => {
                         db.collection("users").doc(userLogged.uid).collection("menu").add({
-                            price: price,
+                            price: parseInt(price),
                             dishName: dishName,
                             mediaUrl: url,
+                            desc: desc,
                             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                         })
                             .then(function(docRef) {
@@ -177,6 +178,7 @@ function AddDishes({open, handleClose, setOpenSnack, userLogged}){
                         setPrice("");
                         setLoading(false);
                         setProgress(0);
+                        setDesc("");
                     })
             }
         )
@@ -195,8 +197,8 @@ function AddDishes({open, handleClose, setOpenSnack, userLogged}){
 
 
     useEffect(() => {
-        if(dishName.length > 0 && dishImg && price){            setDisable(false);
-
+        if(dishName.length > 0 && dishImg && price){
+            setDisable(false);
             if(!/^\s+$/.test(dishName) && price > 0){
                 setDisable(false);
             }
@@ -266,6 +268,21 @@ function AddDishes({open, handleClose, setOpenSnack, userLogged}){
                         {/*    variant="outlined"*/}
                         {/*/>*/}
 
+                    </div>
+                    <div className={classes.value}>
+                        <TextField
+                            required
+                            multiline
+                            rowsMax={4}
+                            rows={3}
+                            label="Short Description"
+                            fullWidth variant="outlined"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            value={desc}
+                            onChange={event => setDesc(event.target.value)}
+                        />
                     </div>
                     {
                         dishImg ? (

@@ -162,8 +162,10 @@ export const checkMyFollowingList = (myFollowerList, oppID) => {
 export const commentOnPost = (data) => {
     db.collection("posts").doc(data.postId).collection("comments").add({
         text: data.text,
-        user: db.doc('users/' + data.uid),
-        uid: data.uid,
+        userRef: db.doc('users/' + data.uid),
+        commentFromUser: data.from,
+        commentFromUserAvt: data.avatar,
+        commentFromUid: data.uid,
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
     }).then(() => {
         db.collection('posts').doc(data.postId).update({
@@ -178,8 +180,10 @@ export const commentOnPost = (data) => {
 export const commentWithRating = (data) => {
     db.collection("posts").doc(data.postId).collection("comments").add({
         text: data.text,
-        user: db.doc('users/' + data.uid),
-        uid: data.uid,
+        userRef: db.doc('users/' + data.uid),
+        commentFromUser: data.from,
+        commentFromUserAvt: data.avatar,
+        commentFromUid: data.uid,
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
         rating: data.rating,
     }).then(() => {
@@ -195,10 +199,12 @@ export const commentWithRating = (data) => {
 export const replyToComment = (data) => {
     db.collection("posts").doc(data.postId).collection("comments").doc(data.commentId).collection('reply').add({
         text: data.text,
-        user: db.doc('users/' + data.uid),
-        userAvt: data.userAvt,
-        userDisplayName: data.userDisplayName,
-        uid: data.uid,
+        replyFromRef: db.doc('users/' + data.uid),
+        replyFromAvt: data.userAvt,
+        replyFrom: data.userDisplayName,
+        replyFromUid: data.uid,
+        replyToUid: data.replyToUid,
+        replyTo: data.replyTo,
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
     }).then(() => {
         db.collection('posts').doc(data.postId).collection("comments").doc(data.commentId).update({
@@ -278,7 +284,8 @@ export function checkSignInWithGoogle(authUser){
                 phoneNumber: authUser.phoneNumber,
                 displayName: authUser.displayName,
                 photoURL: authUser.photoURL,
-                uid: authUser.uid
+                uid: authUser.uid,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             }).then(() => {
                 console.log("Updated")
             })
@@ -296,7 +303,8 @@ export const checkFirebaseAuth = (authUser) => {
         phoneNumber: authUser.phoneNumber,
         displayName: authUser.displayName,
         photoURL: authUser.photoURL,
-        uid: authUser.uid
+        uid: authUser.uid,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     }).catch((error) => {
         console.error("Error ", error);
     });

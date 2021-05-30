@@ -4,7 +4,7 @@ import {db} from "../../firebase";
 
 export default function ReplyComment(props) {
 
-    const {userLogged, postId, commentId, seeMore, isPopup} = props
+    const {userLogged, postId, commentId, seeMore, isPopup, handleReplying, commentInfo} = props
     const [subComments, setSubComments] = useState([]);
     useEffect(() => {
         if(seeMore > 0){
@@ -28,12 +28,13 @@ export default function ReplyComment(props) {
 
     }, [seeMore,commentId, postId])
 
+
     return(
         <>
             {
                 subComments ? (
                     subComments.map(({id, comment}) => (
-                        <ReplyCommentDetails key={id} replyId={id} userLogged={userLogged} data={comment} commentId={commentId} postId={postId} isPopup={isPopup}/>
+                        <ReplyCommentDetails key={id} replyId={id} userLogged={userLogged} data={comment} commentId={commentId} postId={postId} isPopup={isPopup} handleReplying={handleReplying}/>
                 ))
                 ) : null
             }

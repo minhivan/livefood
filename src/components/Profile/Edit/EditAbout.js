@@ -144,6 +144,7 @@ export default function EditAbout(props){
     const [listRestaurantCate, setListRestaurantCate] = useState([]);
     const [restaurantCate, setRestaurantCate] = useState('');
     const [openLocation, setOpenLocation] = useState(false);
+    const [disable, setDisable] = useState(true);
     const mapRef = useRef();
 
     useEffect(() => {
@@ -186,6 +187,11 @@ export default function EditAbout(props){
         })
     }, [])
 
+    useEffect(() => {
+        if(closed && opening && userProvince && restaurantCate){
+            setDisable(false)
+        }else setDisable(true)
+    }, [closed, opening, restaurantCate, userProvince])
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -209,6 +215,7 @@ export default function EditAbout(props){
             setOpenSnack(true);
             console.log("Setting new data !");
         });
+
     }
 
     const handleChangeOpening = (data) => {
@@ -420,16 +427,16 @@ export default function EditAbout(props){
                         </div>
                     </div>
                     {
-                        openLocation ? (
+                        lat && lng ? (
                             <div className="about__map">
                                 <MapContainer
                                     center={[lat, lng]}
                                     zoom={16}
                                     scrollWheelZoom={true}
                                     dragging={true}
-                                    ref={mapRef}
+                                    innerRef={mapRef}
                                 >
-                                    <ChangeView center={[lat, lng]} zoom={16} ref={mapRef}/>
+                                    <ChangeView center={[lat, lng]} zoom={16} />
                                     <TileLayer
                                         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -452,7 +459,13 @@ export default function EditAbout(props){
                     }
 
                     <div className={classes.submit}>
-                        <Button variant="contained" color="primary" onClick={handleSubmit} style={{textTransform: "capitalize"}}>Update</Button>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleSubmit} style={{textTransform: "capitalize"}}
+                            disabled={disable}
+                        >Update
+                        </Button>
                     </div>
                 </form>
             </div>

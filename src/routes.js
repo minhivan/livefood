@@ -18,8 +18,9 @@ import RecipePage from "./views/recipe/RecipePage";
 import TopicPage from "./views/recipe/TopicPage";
 import TrendingPage from "./views/recipe/TrendingPage";
 import ResultRecipePage from "./views/recipe/ResultRecipePage";
-import LocationPage from "./views/LocationPage";
+import LocationPage from "./views/restaurant/LocationPage";
 import LandingPage from "./views/LandingPage";
+import LocationOnMapPage from "./views/restaurant/LocationOnMapPage";
 
 
 const routes = (isLoggedIn)  => [
@@ -30,6 +31,7 @@ const routes = (isLoggedIn)  => [
         children: [
             { path: 'p/:id', element: <SinglePage userLogged={isLoggedIn} type="post" />},
             { path: 'location', element: <LocationPage userLogged={isLoggedIn} />},
+            { path: 'location/map', element: <LocationOnMapPage userLogged={isLoggedIn} />},
             { path: '/', element: <HomePage userLogged={isLoggedIn}/> },
             { path: '404', element: <NotFoundView /> },
             { path: '*', element: <Navigate to="/404" /> }

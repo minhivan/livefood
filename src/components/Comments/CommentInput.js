@@ -1,7 +1,8 @@
 import React, {useState} from "react";
-import {Box, Popover, TextField} from "@material-ui/core";
+import {Box, Chip, Popover, TextField} from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
 import {db} from "../../firebase";
+import DoneIcon from '@material-ui/icons/Done';
 
 import {Rating} from "@material-ui/lab";
 import {makeStyles} from "@material-ui/core/styles";
@@ -45,13 +46,9 @@ const useStyles = makeStyles({
     },
     reply: {
         display: 'flex',
-        paddingLeft: "10px",
+        paddingLeft: "5px",
         alignItems: "center",
     },
-    replyText: {
-        color: "rgb(84, 110, 122)",
-        fontWeight: "bold"
-    }
 });
 
 export default function CommentInput({user, postId, type, path, refInput, postAuthor, replyComment, handleRemoveReply}){
@@ -68,6 +65,8 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
         postAuthor: postAuthor,
         text: comment,
         uid: user.uid,
+        from : user.displayName,
+        avatar: user.photoURL,
     }
 
     const dataPush = {
@@ -119,7 +118,9 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
                 const tempData = Object.assign(data, {
                     userAvt: user.photoURL,
                     userDisplayName: user.displayName,
-                    commentId : replyComment.commentId
+                    commentId : replyComment.commentId,
+                    replyToUid: replyComment.authorId,
+                    replyTo: replyComment.authorName,
                 });
                 replyToComment(tempData);
 
@@ -186,7 +187,12 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
                             {
                                 replyComment ? (
                                     <div className={classes.reply}>
-                                        <span className={classes.replyText}>Replying to {replyComment.authorName}</span>
+                                        <Chip
+                                            color="primary"
+                                            size="small"
+                                            label={`Replying to ${replyComment.authorName}`}
+                                            onDelete={() =>  handleRemoveReply()}
+                                        />
                                     </div>
                                 ) : null
                             }
