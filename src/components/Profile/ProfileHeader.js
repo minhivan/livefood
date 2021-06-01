@@ -18,8 +18,15 @@ import RecommendRating from "../Popup/RecommendRating";
 import {Rating} from "@material-ui/lab";
 // import Typography from "@material-ui/core/Typography";
 import LinkTwoToneIcon from '@material-ui/icons/LinkTwoTone';
+import EmojiFoodBeverageTwoToneIcon from '@material-ui/icons/EmojiFoodBeverageTwoTone';
 
-import {Paperclip as CameraIcon} from "react-feather";
+
+
+import {
+    Coffee as CoffeeIcon,
+    Instagram as InstagramIcon,
+    Video as VideoIcon
+} from "react-feather";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -97,11 +104,11 @@ const useStyles = makeStyles((theme) => ({
     },
     about: {
         padding: "20px 0",
-        display: "flex",
+        display: "block",
         gap: "10px"
     },
     bioContent: {
-        padding: "20px 0"
+        padding: "20px 10px"
     },
     voteRating : {
         display: "flex",
@@ -134,6 +141,9 @@ const useStyles = makeStyles((theme) => ({
         position: "absolute",
         right: "20px",
         top: "10px"
+    },
+    icon: {
+        color: "#050505"
     },
 }));
 
@@ -330,9 +340,10 @@ const ProfileHeader = ({userSnapshot, count, userLogged}) => {
                     <Divider />
                 </div>
                 <div className={classes.bioContent}>
+
                     {
                         userSnapshot?.bio ? (
-                            <h2 className="share-desc mt10">
+                            <h2 className="share-desc mt10" style={{textAlign: "justify"}}>
                                 {/*{userSnapshot.bio}*/}
                                 {
                                     userSnapshot.bio?.length > 150 ? (
@@ -354,6 +365,7 @@ const ProfileHeader = ({userSnapshot, count, userLogged}) => {
                             </div>
                         ) : null
                     }
+
                     {
                         userSnapshot?.aboutRestaurant ? (
                             <>
@@ -369,42 +381,51 @@ const ProfileHeader = ({userSnapshot, count, userLogged}) => {
                                 }
                                 <div className={classes.about}>
                                     {
+                                        userSnapshot?.accountType === "foodshop" ? (
+                                            <h4 className={classes.opening} style={{paddingBottom: "20px"}}>
+                                                <EmojiFoodBeverageTwoToneIcon style={{marginRight: "5px"}}/>
+                                                Type:
+                                                <span style={{marginLeft: "5px"}}> {userSnapshot?.aboutRestaurant?.model}</span>
+                                            </h4>
+                                        ) : null
+                                    }
+                                    {
                                         userSnapshot?.aboutRestaurant?.opening ? (
-                                            <h4 className={classes.opening}>
+                                            <h4 className={classes.opening} style={{paddingBottom: "20px"}}>
                                                 <AccessTimeRoundedIcon style={{marginRight: "5px"}}/>
                                                 Opening :
                                                 <span style={{marginLeft: "5px"}}>{userSnapshot?.aboutRestaurant?.opening} - {userSnapshot?.aboutRestaurant?.closed}</span>
                                             </h4>
                                         ) : null
                                     }
-                                </div>
-                                {
-                                    userSnapshot?.aboutRestaurant?.address ? (
-                                        <h4 className={classes.opening} style={{paddingBottom: "20px"}}>
-                                            <MapRoundedIcon style={{marginRight: "5px"}}/>
-                                            <div className={classes.content}>
-                                                <span>Address :</span>
-                                                <span style={{marginLeft: "5px"}}>{userSnapshot?.aboutRestaurant?.address}</span>
-                                                {
-                                                    userSnapshot?.aboutRestaurant?.location ? (
-                                                        <span style={{marginLeft: "5px"}}> - {userSnapshot?.aboutRestaurant?.location}</span>
-                                                    ) : null
-                                                }
-                                            </div>
-                                        </h4>
-                                    ) : null
-                                }
-                                {
-                                    userSnapshot?.aboutRestaurant?.geolocation ? (
-                                        <h4 className={classes.opening} style={{paddingBottom: "20px"}}>
-                                            <Link to={`/profile/about/${userSnapshot?.uid}`} className={classes.linkToAbout}>
-                                                <LocationOnRoundedIcon />
-                                                <span style={{marginLeft: "5px"}}>Find on map</span>
-                                            </Link>
+                                    {
+                                        userSnapshot?.aboutRestaurant?.address ? (
+                                            <h4 className={classes.opening} style={{paddingBottom: "20px"}}>
+                                                <MapRoundedIcon style={{marginRight: "5px"}}/>
+                                                <div className={classes.content}>
+                                                    <span>Address :</span>
+                                                    <span style={{marginLeft: "5px"}}>{userSnapshot?.aboutRestaurant?.address}</span>
+                                                    {
+                                                        userSnapshot?.aboutRestaurant?.location ? (
+                                                            <span style={{marginLeft: "5px"}}> - {userSnapshot?.aboutRestaurant?.location}</span>
+                                                        ) : null
+                                                    }
+                                                </div>
+                                            </h4>
+                                        ) : null
+                                    }
+                                    {
+                                        userSnapshot?.aboutRestaurant?.geolocation ? (
+                                            <h4 className={classes.opening} style={{paddingBottom: "20px"}}>
+                                                <Link to={`/profile/about/${userSnapshot?.uid}`} className={classes.linkToAbout}>
+                                                    <LocationOnRoundedIcon />
+                                                    <span style={{marginLeft: "5px"}}>Find on map</span>
+                                                </Link>
 
-                                        </h4>
-                                    ) : null
-                                }
+                                            </h4>
+                                        ) : null
+                                    }
+                                </div>
 
                             </>
                         ) : null
@@ -442,12 +463,33 @@ const ProfileHeader = ({userSnapshot, count, userLogged}) => {
                     <RecommendRating open={openRating} handleClose={handleCloseRating} userLogged={userLogged} shopId={userSnapshot?.uid} voteRating={userSnapshot?.voteRating}/>
                 ) : null
             }
-            <div className={classes.buttonClose}>
-                <CameraIcon
-                    className={classes.icon}
-                    size="40"
-                />
-            </div>
+            {
+                userSnapshot?.accountType === "foodshop" ? (
+                    <div className={classes.buttonClose}>
+                        <CoffeeIcon
+                            className={classes.icon}
+                            size="40"
+                        />
+                    </div>
+                ) : (
+                    userSnapshot?.accountType === "reviewer" ? (
+                        <div className={classes.buttonClose}>
+                            <VideoIcon
+                                className={classes.icon}
+                                size="40"
+                            />
+                        </div>
+                    ) : (
+                        <div className={classes.buttonClose}>
+                            <InstagramIcon
+                                className={classes.icon}
+                                size="40"
+                            />
+                        </div>
+                    )
+                )
+            }
+
         </div>
     )
 }

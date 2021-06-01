@@ -44,7 +44,7 @@ function Post({id, post, handleRemove, handleReport, isSinglePage,...rest}) {
 	const componentRef = useRef();
 	const searchInput = useRef(null)
 	const [replyComment, setReplyComment] = useState(null);
-
+	const [savePost, setSavePost] = useState(false);
 
 
 	const handleCloseEdit = () => {
@@ -56,7 +56,9 @@ function Post({id, post, handleRemove, handleReport, isSinglePage,...rest}) {
 
 	const handleCloseReport = () => {
 		setOpenReport(false);
+		handleClose();
 	};
+
 	const handleOpenReport = () => {
 		setOpenReport(true)
 	}
@@ -98,16 +100,17 @@ function Post({id, post, handleRemove, handleReport, isSinglePage,...rest}) {
 		setReplyComment(null);
 	}
 
+
+
 	return (
 		<>
-
 			<div className={`post`} id={id} ref={componentRef}>
 				<Card className={classes.root} >
-					<PostHeader author={author} handleClickOpen={handleClickOpen} postDate={post.timestamp} type={post.type} postFelling={post?.felling} />
+					<PostHeader author={author} handleClickOpen={handleClickOpen} postDate={post.timestamp} type={post.type} postFelling={post?.felling} postTagUid={post?.tagUserUid} postTagUser={post?.tagUserDisplayName}/>
 					{/*Media*/}
 					<PostContent author={author} caption={post.caption} postMedia={post?.media}/>
 					{/* Post Action*/}
-					<PostAction postId={id} userLogged={user} post={post} expanded={expanded} setExpanded={setExpanded} handleFocus={handleFocus}/>
+					<PostAction postId={id} userLogged={user} post={post} expanded={expanded} setExpanded={setExpanded} handleFocus={handleFocus} setSavePost={setSavePost}/>
 					{/* Recipe data */}
 					<PostRecipeData postId={id} postData={post.data} expanded={expanded} rating={post?.rating} handlePrint={handlePrint} />
 					{/* Comments */}
@@ -118,7 +121,7 @@ function Post({id, post, handleRemove, handleReport, isSinglePage,...rest}) {
 				</Card>
 				{
 					user && open ? (
-						<PostUtil open={open} handleClose={handleClose} handleOpenEdit={handleOpenEdit} uid={user.uid} opponentID={post.uid} postID={id} handleReport={handleOpenReport} handleRemove={handleRemove}  setOpenSnack={setOpenSnack}/>
+						<PostUtil open={open} handleClose={handleClose} handleOpenEdit={handleOpenEdit} uid={user.uid} opponentID={post.uid} postID={id} handleReport={handleOpenReport} handleRemove={handleRemove} savePost={savePost} setOpenSnack={setOpenSnack}/>
 					) : null
 				}
 				{
@@ -129,7 +132,7 @@ function Post({id, post, handleRemove, handleReport, isSinglePage,...rest}) {
 
 				{
 					openReport ? (
-						<Report open={openReport} handleClose={handleCloseReport}/>
+						<Report open={openReport} handleClose={handleCloseReport} postId={id} userLogged={user} setOpenSnack={setOpenSnack}/>
 					) : null
 				}
 
@@ -145,7 +148,7 @@ function Post({id, post, handleRemove, handleReport, isSinglePage,...rest}) {
 							}}
 						>
 							<Alert variant="filled" onClose={handleCloseSnack} severity="success">
-								Upload successfully !
+								Successfully !
 							</Alert>
 						</Snackbar>
 					) : null

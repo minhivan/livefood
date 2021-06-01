@@ -13,6 +13,7 @@ import Popup from "./Popup";
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import RecipeStepper from "./Stepper";
+import ListUserForTag from "../Popup/ListUserForTag";
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -48,6 +49,8 @@ function Upload({userLogged}) {
     const [image, setImage] = useState('');
     const [openStep, setOpenStep] = useState(false);
     const [openSnack, setOpenSnack] = useState(false);
+    const [openTag, setOpenTag] = useState(false);
+    const [tagUserData, setTagUserData] = useState(null);
 
     const handleOpen = () => {
         setOpen(true);
@@ -56,6 +59,7 @@ function Upload({userLogged}) {
         setOpen(false);
     };
 
+
     const handleOpenStep = () => {
         setOpenStep(true);
     }
@@ -63,9 +67,23 @@ function Upload({userLogged}) {
         setOpenStep(false);
     };
 
+    const handleOpenTag = () => {
+        setOpenTag(true);
+    }
+    const handleCloseTag = () => {
+        setOpenTag(false);
+    }
+
+    const handleTagUser = (data) => {
+        setTagUserData(data);
+    }
+
+    const handleRemoveTagUser = () => {
+        setTagUserData(null);
+    }
     const handleChange = (event) => {
         const imageList = event.target.files;
-        var conditions = ["image", "video"];
+        let conditions = ["image", "video"];
         const finalData = [];
         // const isValid = (imageList) => imageList['type'].includes('image');
         Array.from(imageList).forEach(file => {
@@ -86,6 +104,7 @@ function Upload({userLogged}) {
     const handleCloseSnack = (event) => {
         setOpenSnack(false);
     };
+
 
     return(
         <div className="upload">
@@ -122,12 +141,17 @@ function Upload({userLogged}) {
             </div>
             {
                 open ? (
-                    <Popup open={open} image={image}  handleClose={handleClose} setImage={setImage} setOpenSnack={setOpenSnack} />
+                    <Popup open={open} image={image}  handleClose={handleClose} setImage={setImage} setOpenSnack={setOpenSnack} handleOpenTag={handleOpenTag} tagUser={tagUserData} handleRemoveTagUser={handleRemoveTagUser}/>
                 ) : null
             }
             {
                 openStep ? (
-                    <RecipeStepper open={openStep} image={image} setImage={setImage} handleClose={handleCloseStep} setOpenSnack={setOpenSnack}/>
+                    <RecipeStepper open={openStep} image={image} setImage={setImage} handleClose={handleCloseStep} setOpenSnack={setOpenSnack} />
+                ) : null
+            }
+            {
+                openTag ? (
+                    <ListUserForTag open={openTag} handleClose={handleCloseTag} userLogged={userLogged} handleTagUser={handleTagUser}/>
                 ) : null
             }
 

@@ -88,8 +88,8 @@ function HeaderSearch() {
 
     return (
         <Hidden smDown>
-            <div className="header__search" onSubmit={handleSubmit}>
-                <form action="" method="GET">
+            <div className="header__search">
+                <form action="" method="GET" onSubmit={handleSubmit}>
                     <div className={classes.search}>
                         <div className={classes.searchIcon}>
                             <SearchIcon />

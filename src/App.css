@@ -341,6 +341,7 @@ input:focus{
     display: flex;
     flex-flow: column;
     justify-content: center;
+    min-width: 400px;
 }
 
 .share-title-container{

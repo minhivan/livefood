@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export default function PostAction({postId, post, expanded, setExpanded, handleFocus, userLogged}){
+export default function PostAction({postId, post, expanded, setExpanded, handleFocus, userLogged, setSavePost}){
     const classes = useStyles();
     const [selected, setSelected] = useState(false);
     const [saveSelected, setSaveSelected] = useState(false);
@@ -114,14 +114,17 @@ export default function PostAction({postId, post, expanded, setExpanded, handleF
     }
 
     useEffect(() => {
-        if(typeof post?.likeBy !== 'undefined' && post?.likeBy?.includes(userLogged.uid)){
-            setSelected(true);
-        }
+        if(userLogged){
+            if(typeof post?.likeBy !== 'undefined' && post?.likeBy?.includes(userLogged.uid)){
+                setSelected(true);
+            }
 
-        if(typeof post?.saveBy !== 'undefined' && post?.saveBy?.includes(userLogged.uid)){
-            setSaveSelected(true);
+            if(typeof post?.saveBy !== 'undefined' && post?.saveBy?.includes(userLogged.uid)){
+                setSaveSelected(true);
+                setSavePost(true);
+            }
         }
-    }, [post?.likeBy, post?.saveBy, userLogged.uid])
+    }, [post?.likeBy, post?.saveBy, userLogged])
 
 
     return(

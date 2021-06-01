@@ -11,7 +11,7 @@ import {useCollection} from "react-firebase-hooks/firestore";
 import Avatar from "@material-ui/core/Avatar";
 import firebase from "firebase";
 import {useNavigate} from "react-router-dom";
-import {handleCreateChat} from "../../../hooks/services";
+// import {handleCreateChat} from "../../../hooks/services";
 
 
 
@@ -52,21 +52,6 @@ const useStyles = makeStyles((theme) => ({
         position: "fixed",
         right: "20px",
         top: "17px"
-    },
-    inputText: {
-        width: "100%",
-        padding: "10px 0",
-        minHeight: "100px",
-        maxHeight: "250px",
-        fontFamily: "'Quicksand', sans-serif"
-    },
-    buttonProgress: {
-        color: green[500],
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        marginTop: -12,
-        marginLeft: -12,
     },
     input: {
         display: "flex",
@@ -222,7 +207,6 @@ const CreateNewChat = (props) => {
 
 
     const handleViewMore = () => {
-
         setLimit(prevState => prevState + 5);
     }
 

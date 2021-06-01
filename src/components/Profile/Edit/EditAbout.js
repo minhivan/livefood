@@ -232,23 +232,22 @@ export default function EditAbout(props){
     // }
 
     const handleAutoLocation = () => {
-        navigator.permissions.query({name:'geolocation'}).then(function(result) {
-            if (result.state === 'granted') {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(function(position) {
-                        setLat(position.coords.latitude);
-                        setLng(position.coords.longitude);
-                    });
-                }
-            } else if (result.state === 'prompt') {
-                alert("Please turn on location from your browser !!! ");
-            }
-        });
+        // navigator.permissions.query({name:'geolocation'}).then(function(result) {
+        //     if (result.state === 'granted') {
+        //
+        //     } else if (result.state === 'prompt') {
+        //         alert("Please turn on location from your browser !!! ");
+        //     }
+        // });
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                setLat(position.coords.latitude);
+                setLng(position.coords.longitude);
+            });
+        }
     }
 
-    // console.log(lat,lng)
-    // console.log(province.find(option => option.province_id === userProvince))
-    // console.log(province.find(o => o.province_name === userProvince))
+
     return (
         <article className="edit_account__content">
             <div className={classes.profile}>

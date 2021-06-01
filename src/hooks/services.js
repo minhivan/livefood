@@ -129,14 +129,28 @@ export const handleDeletePost = (id, uid) => {
 }
 
 // Report (Spam, violence + dangerous, Nudity or sexual activity)
-export const handleReportPost = (uid, id) => {
-    db.collection('posts').doc(id).update({
-        reportBy: firebase.firestore.FieldValue.arrayUnion(uid),
-        reportCount: firebase.firestore.FieldValue.increment(1)
+// type = 1 (spam), 2 (Nudity), 3 (Hate), 4 (Violence), 5 (dontLike)
+export const handleReportPost = (userLogged, postId, type) => {
+    db.collection('posts').doc(postId).update({
+        reportCount: firebase.firestore.FieldValue.increment(1),
+        reportBy: firebase.firestore.FieldValue.arrayUnion(userLogged.uid),
+    }).then(() => {
+        db.collection('reports').add({
+            user: db.doc('users/' + userLogged.uid),
+            uid: userLogged.uid,
+            photoURL: userLogged.photoURL,
+            displayName: userLogged.displayName,
+            reportPostId: postId,
+            reportType: type,
+        }).catch((error) => {
+            console.error("Error ", error);
+        });
     }).catch((error) => {
         console.error("Error ", error);
     });
 }
+
+
 
 
 
@@ -394,4 +408,15 @@ export const getConversationRoom = (opponentEmail, userEmail) => {
             return rs.id;
     });
 
+}
+
+
+
+export const deleteConversation = (roomId) => {
+    db.collection("conversations").doc(roomId).delete().then(() => {
+        console.log("Success !!");
+        db.collection("chats").doc(roomId).delete().catch(reason => {
+            console.log(reason);
+        })
+    })
 }

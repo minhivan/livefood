@@ -4,7 +4,13 @@ import {Button, Modal} from "@material-ui/core";
 import {Link} from "react-router-dom";
 import {makeStyles} from "@material-ui/core/styles";
 import {green} from "@material-ui/core/colors";
-import {handleReportPost, handleDeletePost, handleUserUnfollow} from "../../hooks/services";
+import {
+    handleReportPost,
+    handleDeletePost,
+    handleUserUnfollow,
+    handleSavePost,
+    handleUserFollow
+} from "../../hooks/services";
 
 function getModalStyle() {
     const top = 50 ;
@@ -66,10 +72,11 @@ const useStyles = makeStyles((theme) => ({
 
 
 const PostUtil = (props) => {
-    const {open, handleClose, uid, opponentID, postID, handleRemove, handleReport, handleOpenEdit, isSave, setOpenSnack} = props;
+    const {open, handleClose, uid, opponentID, postID, handleReport, handleOpenEdit, setOpenSnack, savePost, isFollow, userLoggedData} = props;
 
     const [modalStyle] = useState(getModalStyle);
     const classes = useStyles();
+
 
 
     return (
@@ -114,7 +121,7 @@ const PostUtil = (props) => {
                                         () => {
                                             // handleUserUnfollow(uid, opponentID);
                                             handleOpenEdit();
-                                            handleClose(true);
+                                            // handleClose(true);
                                         }
                                     }
                                 >
@@ -134,9 +141,7 @@ const PostUtil = (props) => {
                                     onClick={
                                         () => {
                                             handleReport();
-                                            // handleReportPost(uid, postID);
-                                            // handleRemove(postID);
-                                            // handleClose(true);
+                                            handleClose(true);
                                         }
                                     }
                                 >
@@ -144,25 +149,52 @@ const PostUtil = (props) => {
                                 </Button>
                             </div>
                             <Divider />
-                            <div className={classes.btnAction}>
-                                <Button
-                                    classes={{
-                                        root: classes.btnRed,
-                                        label: classes.btnLabel,
-                                    }}
-                                    onClick={
-                                        () => {
-                                            handleUserUnfollow(uid, opponentID);
-                                            handleRemove(postID);
-                                            setOpenSnack(true);
-                                            handleClose(true);
-                                        }
-                                    }
-                                >
-                                    Unfollow
-                                </Button>
-                            </div>
-                            <Divider />
+                            {
+                                isFollow ? (
+                                    <>
+                                        <div className={classes.btnAction}>
+                                            <Button
+                                                classes={{
+                                                    root: classes.btnRed,
+                                                    label: classes.btnLabel,
+                                                }}
+                                                onClick={
+                                                    () => {
+                                                        handleUserUnfollow(uid, opponentID);
+                                                        setOpenSnack(true);
+                                                        handleClose(true);
+                                                    }
+                                                }
+                                            >
+                                                Unfollow
+                                            </Button>
+                                        </div>
+                                        <Divider />
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className={classes.btnAction}>
+                                            <Button
+                                                classes={{
+                                                    root: classes.btnNormal,
+                                                    label: classes.btnLabel,
+                                                }}
+                                                onClick={
+                                                    () => {
+                                                        handleUserFollow(userLoggedData, opponentID);
+                                                        setOpenSnack(true);
+                                                        handleClose(true);
+                                                    }
+                                                }
+                                            >
+                                                Follow
+                                            </Button>
+                                        </div>
+                                        <Divider />
+                                    </>
+                                )
+                            }
+
                         </>
                     )
                 }
@@ -183,7 +215,7 @@ const PostUtil = (props) => {
                 <Divider />
 
                 {
-                    !isSave ? (
+                    !savePost ? (
                         <>
                             <div className={classes.btnAction}>
                                 <Button
@@ -193,6 +225,8 @@ const PostUtil = (props) => {
                                     }}
                                     onClick={() => {
                                         setOpenSnack(true);
+                                        handleSavePost(postID, uid)
+                                        handleClose(true);
                                     }}
                                 >
                                     Save post

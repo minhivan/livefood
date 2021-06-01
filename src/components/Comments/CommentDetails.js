@@ -132,6 +132,8 @@ function PostComment (props) {
         authorId: comment.commentFromUid,
     }
 
+
+
     return (
         <div className="commentDetails">
             <Avatar alt={comment?.commentFromUser} src={comment?.commentFromUserAvt}/>
@@ -229,7 +231,7 @@ function PostComment (props) {
             </div>
             {
                 userLogged ? (
-                    <CommentUtil open={open} handleClose={handleClose} postId={postId} postUid={postUid} commentId={commentId} commentUid={comment.uid} userLogged={userLogged}/>
+                    <CommentUtil open={open} handleClose={handleClose} postId={postId} postUid={postUid} commentId={commentId} commentUid={comment.commentFromUid} userLogged={userLogged}/>
                 ) : null
             }
         </div>

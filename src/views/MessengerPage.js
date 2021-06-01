@@ -3,16 +3,15 @@ import React, {useEffect, useState} from "react";
 import SidebarChat from "../components/Messenger/Sidebar/SidebarChat";
 import Chat from "../components/Messenger/Chat";
 import Page from "../components/Page";
-import {useParams} from "react-router";
-
 
 import IconButton from "@material-ui/core/IconButton";
 import ControlPointOutlinedIcon from "@material-ui/icons/ControlPointOutlined";
 import {makeStyles} from "@material-ui/core/styles";
 import CreateNewChat from "../components/Messenger/Sidebar/CreateNewChat";
 import { db} from "../firebase";
-import {useCollection} from "react-firebase-hooks/firestore";
 import {List} from "@material-ui/core";
+import Snackbar from "@material-ui/core/Snackbar";
+import {Alert} from "@material-ui/lab";
 
 
 
@@ -40,6 +39,12 @@ function PageMessenger(props) {
     const [open, setOpen] = useState(false);
     // const userChatRef = db.collection("conversations").where('users', 'array-contains', user.email)
     const [recipientData, setRecipientData] = useState({});
+    const [openSnack, setOpenSnack] = useState(false);
+
+    const handleCloseSnack = (event) => {
+        setOpenSnack(false);
+    };
+
 
     useEffect(() => {
         const unsubscribe = db.collection("conversations")
@@ -102,12 +107,35 @@ function PageMessenger(props) {
                     </div>
                 </section>
 
-                <Chat userLogged={userLogged} recipientData={recipientData} />
+                <Chat userLogged={userLogged} recipientData={recipientData} setOpenSnack={setOpenSnack} />
             </div>
 
 
             {/*  Create chat  */}
-            <CreateNewChat open={open} handleClose={handleClose} userLogged={props.userLogged}/>
+            {
+                open ? (
+                    <CreateNewChat open={open} handleClose={handleClose} userLogged={props.userLogged}/>
+                ) : null
+            }
+
+            {
+                openSnack ? (
+                    <Snackbar
+                        open={openSnack}
+                        autoHideDuration={6000}
+                        onClose={handleCloseSnack}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left',
+                        }}
+                    >
+                        <Alert variant="filled" onClose={handleCloseSnack} severity="success">
+                            Successfully !
+                        </Alert>
+                    </Snackbar>
+                ) : null
+            }
+
         </Page>
     )
 }

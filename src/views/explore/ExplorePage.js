@@ -58,19 +58,18 @@ const Explore = (props) => {
     useEffect(() => {
         if(userLogged){
              return db.collection('posts')
-                .orderBy('timestamp', "desc")
-                .limit(9)
+                 .orderBy('timestamp', 'desc')
+                .limit(20)
                 .get().then(snapshot => {
                     let temp = []
                     snapshot.forEach(data => {
                         let userProfile = {};
-                        // if(data.data().uid !== userLogged.uid){
-                        //
-                        // }
-                        data.data().user.get().then( author => {
-                            Object.assign(userProfile, author.data());
-                        })
-                        temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
+                        if(data.data().uid !== userLogged.uid){
+                            data.data().user.get().then( author => {
+                                Object.assign(userProfile, author.data());
+                            })
+                            temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
+                        }
                     })
                     setExplore(temp);
                     setLastVisible(snapshot.docs[snapshot.docs.length-1]);
@@ -79,7 +78,7 @@ const Explore = (props) => {
         else{
             return db.collection('posts')
                 .orderBy('timestamp', "desc")
-                .limit(9)
+                .limit(20)
                 .get().then(snapshot => {
                     let temp = []
                     snapshot.forEach(data => {
@@ -106,11 +105,30 @@ const Explore = (props) => {
 
     const loadMore = () => {
         if(lastVisible){
-            db.collection('posts')
-                .orderBy('timestamp', "desc")
-                .startAfter(lastVisible)
-                .limit(9)
-                .get().then(snapshot => {
+            if(userLogged){
+                db.collection('posts')
+                    .startAfter(lastVisible)
+                    .limit(9)
+                    .get().then(snapshot => {
+                    let temp = []
+                    snapshot.forEach(data => {
+                        let userProfile = {};
+                        if(data.data().uid !== userLogged.uid){
+                            data.data().user.get().then( author => {
+                                Object.assign(userProfile, author.data());
+                            })
+                            temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
+                        }
+                    })
+                    setExplore([...explore, ...temp]);
+                    setLastVisible(snapshot.docs[snapshot.docs.length-1]);
+                })
+            }
+            else {
+                db.collection('posts')
+                    .startAfter(lastVisible)
+                    .limit(9)
+                    .get().then(snapshot => {
                     let temp = []
                     snapshot.forEach(data => {
                         let userProfile = {};
@@ -121,7 +139,8 @@ const Explore = (props) => {
                     })
                     setExplore([...explore, ...temp]);
                     setLastVisible(snapshot.docs[snapshot.docs.length-1]);
-            })
+                })
+            }
         }
     }
 

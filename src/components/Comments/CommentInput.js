@@ -60,23 +60,6 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
     const [postSnapshot] = useDocument(postRef);
     let rating = postSnapshot?.data()?.rating
 
-    const data = {
-        postId: postId,
-        postAuthor: postAuthor,
-        text: comment,
-        uid: user.uid,
-        from : user.displayName,
-        avatar: user.photoURL,
-    }
-
-    const dataPush = {
-        postId: postId,
-        postAuthor: postAuthor,
-        from : user.displayName,
-        avatar: user.photoURL,
-        opponentId: user.uid,
-    }
-
     const checkEmpty = (string) => {
         let rs = true
         if(string.length > 0 && !/^\s+$/.test(string)){
@@ -111,6 +94,24 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
 
 
     const postComment = (event) => {
+
+        const data = {
+            postId: postId,
+            postAuthor: postAuthor,
+            text: comment,
+            uid: user.uid,
+            from : user.displayName,
+            avatar: user.photoURL,
+        }
+
+        const dataPush = {
+            postId: postId,
+            postAuthor: postAuthor,
+            from : user.displayName,
+            avatar: user.photoURL,
+            opponentId: user.uid,
+        }
+
         event.preventDefault();
         if(comment && !checkEmpty(comment)){
             // if reply comment

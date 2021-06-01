@@ -70,6 +70,7 @@ const CommentUtil = (props) => {
     const [modalStyle] = useState(getModalStyle);
     const classes = useStyles();
 
+    console.log(commentUid);
     return (
         <Modal
             open={open}
@@ -80,7 +81,7 @@ const CommentUtil = (props) => {
             <div style={modalStyle} className={classes.paper}>
                 <Divider />
                 {
-                    postUid === userLogged?.uid ? (
+                    postUid === userLogged?.uid || commentUid === userLogged?.uid ? (
                         <>
                             <div className={classes.btnAction}>
                                 <Button
@@ -102,43 +103,22 @@ const CommentUtil = (props) => {
                         </>
                     ) : (
                         <>
-                            {
-                                commentUid === userLogged.uid ? (
-                                    <div className={classes.btnAction}>
-                                        <Button
-                                            classes={{
-                                                root: classes.btnRed,
-                                                label: classes.btnLabel,
-                                            }}
-                                            onClick={
-                                                () => {
-                                                    handleDeleteComment(postId, commentId);
-                                                    handleClose(true);
-                                                }
-                                            }
-                                        >
-                                            Delete
-                                        </Button>
-                                    </div>
-                                ) : (
-                                    <div className={classes.btnAction}>
-                                        <Button
-                                            classes={{
-                                                root: classes.btnRed,
-                                                label: classes.btnLabel,
-                                            }}
-                                            // onClick={
-                                            //     () => {
-                                            //         handleReportPost(props.uid, props.id);
-                                            //         props.handleClose(true);
-                                            //     }
-                                            // }
-                                        >
-                                            Report
-                                        </Button>
-                                    </div>
-                                )
-                            }
+                            <div className={classes.btnAction}>
+                                <Button
+                                    classes={{
+                                        root: classes.btnRed,
+                                        label: classes.btnLabel,
+                                    }}
+                                    // onClick={
+                                    //     () => {
+                                    //         handleReportPost(props.uid, props.id);
+                                    //         props.handleClose(true);
+                                    //     }
+                                    // }
+                                >
+                                    Report
+                                </Button>
+                            </div>
                             <Divider />
                         </>
                     )

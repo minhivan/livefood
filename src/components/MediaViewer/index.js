@@ -32,6 +32,8 @@ import Skeleton from "@material-ui/lab/Skeleton";
 import MoreHorizRoundedIcon from "@material-ui/icons/MoreHorizRounded";
 import PostUtil from "../Popup/PostUtil";
 import EditPost from "../Popup/EditPost";
+import Report from "../Popup/Report";
+import ListUserForTag from "../Popup/ListUserForTag";
 
 
 
@@ -200,7 +202,7 @@ const useStyles = makeStyles((theme) => ({
 
 function MediaViewer(props){
 
-    const {open, handleClose, postId, post, postAuthor, userLogged} = props;
+    const {open, handleClose, postId, post, postAuthor, userLogged, setOpenSnack} = props;
     const classes = useStyles();
     const [modalStyle] = useState(getModalStyle);
     const [selected, setSelected] = useState(false);
@@ -214,6 +216,8 @@ function MediaViewer(props){
     const [activeStep, setActiveStep] = React.useState(0);
     const [openEdit, setOpenEdit] = useState(false);
     const [replyComment, setReplyComment] = useState(null);
+    const [openReport, setOpenReport] = useState(false)
+    const [isFollow, setIsFollow] = useState(false);
 
     const maxSteps = post?.media?.length;
 
@@ -240,16 +244,14 @@ function MediaViewer(props){
         setOpenEdit(true)
     }
 
+    const handleCloseReport = () => {
+        setOpenReport(false);
+        handleClose();
+    };
 
-    useEffect(() => {
-        if(userLogged){
-            setUserLoggedData({
-                uid: userLogged.uid,
-                photoURL: userLogged.photoURL,
-                displayName: userLogged.displayName
-            })
-        }
-    }, [userLogged])
+    const handleOpenReport = () => {
+        setOpenReport(true)
+    }
 
     const handleOpenLikesList = () => {
         setOpenLikesList(true);
@@ -263,17 +265,10 @@ function MediaViewer(props){
         setIsReadMore(!isReadMore);
     };
 
-
-    dayjs.extend(relativeTime);
-    let postCreated  = null;
-
-    if(post?.timestamp){
-        postCreated = new Date(post?.timestamp.seconds * 1000).toLocaleString();
-    }
-
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
+
 
     // Handle like and dislike action
     const likePost = () => {
@@ -306,6 +301,36 @@ function MediaViewer(props){
     const handleRemoveReply = () => {
         setReplyComment(null);
     }
+
+    useEffect(() => {
+        if(userLogged){
+            setUserLoggedData({
+                uid: userLogged.uid,
+                photoURL: userLogged.photoURL,
+                displayName: userLogged.displayName
+            })
+        }
+    }, [userLogged])
+
+
+    useEffect(() => {
+        if(userLogged){
+            if(postAuthor?.follower?.includes(userLogged.uid)){
+                setIsFollow(true);
+            }
+            else{
+                setIsFollow(false)
+            }
+        }
+    }, [postAuthor?.follower, userLogged])
+
+    dayjs.extend(relativeTime);
+    let postCreated  = null;
+
+    if(post?.timestamp){
+        postCreated = new Date(post?.timestamp.seconds * 1000).toLocaleString();
+    }
+
 
     useEffect(() => {
         if(userLogged){
@@ -544,7 +569,7 @@ function MediaViewer(props){
                         }
                         {
                             userLogged && openUtil ? (
-                                <PostUtil open={openUtil} handleClose={handleCloseUtil} handleOpenEdit={handleOpenEdit} uid={userLogged.uid} opponentID={post.uid} postID={postId} isSave={saveSelected} />
+                                <PostUtil open={openUtil} handleClose={handleCloseUtil} handleOpenEdit={handleOpenEdit} uid={userLogged.uid} opponentID={post.uid} postID={postId} savePost={saveSelected} handleReport={handleOpenReport} setOpenSnack={setOpenSnack} isFollow={isFollow} userLoggedData={userLoggedData}/>
                             ) : null
                         }
                         {
@@ -552,6 +577,12 @@ function MediaViewer(props){
                                 <EditPost open={openEdit} handleClose={handleCloseEdit} post={post} postId={postId} />
                             ) : null
                         }
+                        {
+                            openReport ? (
+                                <Report open={openReport} handleClose={handleCloseReport} postId={postId} userLogged={userLogged} setOpenSnack={setOpenSnack}/>
+                            ) : null
+                        }
+
                     </div>
                 </div>
             </div>

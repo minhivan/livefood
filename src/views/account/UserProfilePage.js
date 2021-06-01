@@ -80,8 +80,6 @@ const UserProfilePage = (props) => {
     const [userData, loading] = useDocument(id && db.collection('users').doc(id));
     const userSnapshot = userData?.data();
 
-    console.log(userSnapshot)
-
     return(
 
         <Page

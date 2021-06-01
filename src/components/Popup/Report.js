@@ -5,6 +5,7 @@ import {Link} from "react-router-dom";
 import {makeStyles} from "@material-ui/core/styles";
 import {green} from "@material-ui/core/colors";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
+import {handleReportPost} from "../../hooks/services";
 
 function getModalStyle() {
     const top = 50 ;
@@ -77,10 +78,18 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Report(props) {
 
-    const {open, handleClose, postID} = props;
+    const {open, handleClose, postId, userLogged, setOpenSnack} = props;
 
     const [modalStyle] = useState(getModalStyle);
     const classes = useStyles();
+
+
+    const handleReport = (type) => {
+        setOpenSnack(true);
+        handleReportPost(userLogged, postId, type);
+        handleClose();
+    }
+
     return (
         <Modal
             open={open}
@@ -104,6 +113,7 @@ export default function Report(props) {
                             root: classes.btnNormal,
                             label: classes.btnLabel,
                         }}
+                        onClick={() => handleReport("spam")}
                     >
                         It's spam
                     </Button>
@@ -115,6 +125,7 @@ export default function Report(props) {
                             root: classes.btnNormal,
                             label: classes.btnLabel,
                         }}
+                        onClick={() => handleReport("nudity")}
                     >
                         Nudity or sexual activity
                     </Button>
@@ -126,6 +137,7 @@ export default function Report(props) {
                             root: classes.btnNormal,
                             label: classes.btnLabel,
                         }}
+                        onClick={() => handleReport("hate")}
                     >
                         Hate speech or symbols
                     </Button>
@@ -137,6 +149,19 @@ export default function Report(props) {
                             root: classes.btnNormal,
                             label: classes.btnLabel,
                         }}
+                        onClick={() => handleReport("violence")}
+                    >
+                        Violence or dangerous
+                    </Button>
+                </div>
+                <Divider />
+                <div className={classes.btnAction}>
+                    <Button
+                        classes={{
+                            root: classes.btnNormal,
+                            label: classes.btnLabel,
+                        }}
+                        onClick={() => handleReport("dontLike")}
                     >
                         I just don't like it
                     </Button>

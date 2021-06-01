@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
         borderRadius: "50%",
     },
     root: {
-        width: '350px',
+        width: '420px',
         backgroundColor: theme.palette.background.paper,
         maxHeight: "calc(100vh - 100px)",
         overflowY: "auto",

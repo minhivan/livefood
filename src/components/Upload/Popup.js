@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {
     Avatar,
     Badge,
-    Button,
+    Button, Chip,
     CircularProgress,
     IconButton, MenuItem,
     Modal, Popover, Select,
@@ -28,8 +28,9 @@ import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import SentimentSatisfiedRoundedIcon from "@material-ui/icons/SentimentSatisfiedRounded";
 import {Picker} from "emoji-mart";
 import FormControl from "@material-ui/core/FormControl";
-
-
+import AccountCircleTwoToneIcon from '@material-ui/icons/AccountCircleTwoTone';
+import LocationOnTwoToneIcon from '@material-ui/icons/LocationOnTwoTone';
+import ListUserForTag from "../Popup/ListUserForTag";
 
 function getModalStyle() {
     const top = 50 ;
@@ -58,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
     },
     paper: {
         position: 'absolute',
-        width: 600,
+        width: 700,
         backgroundColor: theme.palette.background.paper,
         boxShadow: theme.shadows[5],
         padding: theme.spacing(2, 3, 3),
@@ -141,14 +142,15 @@ const useStyles = makeStyles((theme) => ({
     },
     fellingSelect: {
         minWidth: "150px",
-        padding: "16px"
+        padding: "16px 10px",
+        lineHeight: "22px"
     }
 
 }));
 
 
 function Popup(props){
-    const {open, image, setImage, handleClose, setOpenSnack} = props;
+    const {open, image, setImage, handleClose, setOpenSnack, handleOpenTag, tagUser, handleRemoveTagUser} = props;
     const [user] = useAuthState(auth);
     const classes = useStyles();
     const [modalStyle] = useState(getModalStyle);
@@ -163,6 +165,7 @@ function Popup(props){
     const [felling, setFelling] = useState('');
     const openEmoji = Boolean(anchorElPicker);
     const id = openEmoji ? 'popup-emoji' : undefined;
+    const [postStatus, setPostStatus] = useState("public");
 
     const handleClickEmoji = (event) => {
         setAnchorElPicker(event.currentTarget);
@@ -182,6 +185,7 @@ function Popup(props){
     const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
+
 
     const removeImage = (step) => {
         if(image.length === 1){
@@ -240,7 +244,10 @@ function Popup(props){
                 media: values,
                 user: db.doc('users/' + user.uid),
                 uid: user.uid,
-                felling: felling ?? ""
+                felling: felling ?? "",
+                status: postStatus,
+                tagUserUid: tagUser.uid ?? "",
+                tagUserDisplayName: tagUser.displayName ?? ""
             })
                 .then(function(docRef) {
                     console.log("Document written with ID: ", docRef.id);
@@ -297,7 +304,19 @@ function Popup(props){
                                 <span className={classes.username}>{user?.displayName}</span>
                             }
                             subheader={
-                                <span>Public</span>
+                                <>
+                                    <Select
+                                        style={{minWidth: "100px"}}
+                                        displayEmpty
+                                        inputProps={{ 'aria-label': 'Status' }}
+                                        value={postStatus}
+                                        onChange={event => setPostStatus(event.target.value)}
+                                    >
+                                        <MenuItem value={`public`}><span>Public</span></MenuItem>
+                                        <MenuItem value={`private`}><span>Private</span></MenuItem>
+                                    </Select>
+                                </>
+
                             }
                             className={classes.cardHeader}
                         />
@@ -317,6 +336,18 @@ function Popup(props){
                             </Select>
 
                         </FormControl>
+                        {
+                            tagUser ? (
+                                <div className={classes.fellingSelect} style={{}}>
+                                    <Chip
+                                        color="primary"
+                                        size="small"
+                                        label={`is with ${tagUser.displayName}`}
+                                        onDelete={() => handleRemoveTagUser()}
+                                    />
+                                </div>
+                            ) : null
+                        }
                     </div>
 
 
@@ -412,6 +443,17 @@ function Popup(props){
                                     </Badge>
                                 </IconButton>
                             </label>
+                            <IconButton color="inherit" component="span">
+                                <Badge color="secondary">
+                                    <AccountCircleTwoToneIcon className={classes.popIcon} onClick={() => handleOpenTag()}/>
+                                </Badge>
+                            </IconButton>
+                            <IconButton color="inherit" component="span" >
+                                <Badge color="secondary">
+                                    <LocationOnTwoToneIcon className={classes.popIcon}/>
+                                </Badge>
+                            </IconButton>
+
                         </div>
                     </div>
                 </div>
@@ -428,9 +470,9 @@ function Popup(props){
                     </Button>
                     {loading && <CircularProgress size={24} value={progress} className={classes.buttonProgress} /> }
                 </div>
-
             </div>
+
         </Modal>
     )
 }
-export default Popup
+export default Popup;

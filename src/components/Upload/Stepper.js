@@ -507,6 +507,7 @@ export default function RecipeStepper(props) {
                 caption: title,
                 captionToLowerCase: title.toLowerCase(),
                 type: "recipe",
+                status: "public",
                 data: {
                     title: title,
                     note: desc,

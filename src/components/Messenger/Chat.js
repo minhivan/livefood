@@ -6,12 +6,9 @@ import InfoRoundedIcon from '@material-ui/icons/InfoRounded';
 import {MessageCircle as MessageIcon} from "react-feather";
 import {db} from "../../firebase";
 import Message from "./Message";
-import {useSelector} from "react-redux";
-import {selectChatRecipient} from "../../features/chatSlice";
-import {useCollection, useDocument} from "react-firebase-hooks/firestore";
 import ChatInput from "./ChatInput";
-import {useLocation} from "react-router-dom";
 import {useParams} from "react-router";
+import MessengerUtil from "../Popup/MessengerUtil";
 
 const useStyles = makeStyles((theme) => ({
     header:{
@@ -67,12 +64,21 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-function Chat({userLogged, recipientData}){
+function Chat({userLogged, recipientData, setOpenSnack}){
     const { id } = useParams();
     // const recipient = useSelector(selectChatRecipient);
     const classes = useStyles();
     const chatRef = useRef(null);
     const [recipientUser, setRecipientUser] = useState('');
+    const [openUtil, setOpenUtil] = useState(false);
+
+    const handleOpenUtil = () => {
+        setOpenUtil(true);
+    }
+
+    const handleCloseUtil = () => {
+        setOpenUtil(false);
+    }
 
     useEffect(() => {
         if(recipientData)   setRecipientUser(recipientData);
@@ -132,7 +138,7 @@ function Chat({userLogged, recipientData}){
                     <span className={classes.lastSeen}>{chatMessages?.[chatMessages?.length - 1]?.data?.timestamp?.toDate().toLocaleString()}</span>
                 </div>
 
-                <IconButton aria-label="comment" >
+                <IconButton aria-label="comment" onClick={handleOpenUtil}>
                     <InfoRoundedIcon />
                 </IconButton>
             </div>
@@ -156,9 +162,16 @@ function Chat({userLogged, recipientData}){
                 chatRef={chatRef}
                 userLogged={userLogged}
             />
+
+            {
+                openUtil ? (
+                    <MessengerUtil open={openUtil} handleClose={handleCloseUtil} roomId={id} setOpenSnack={setOpenSnack}/>
+                ) : null
+            }
+
         </div>
     )
 }
 
 
-export default Chat
+export default Chat;

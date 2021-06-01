@@ -107,18 +107,12 @@ export default function LocationOnMapPage(props){
             }
         });
 
-        navigator.permissions.query({name:'geolocation'}).then(function(result) {
-            if (result.state === 'granted') {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(function(position) {
-                        setLat(position.coords.latitude);
-                        setLng(position.coords.longitude);
-                    });
-                }
-            } else if (result.state === 'prompt') {
-                alert("Please turn on location from your browser !!! ");
-            }
-        });
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                setLat(position.coords.latitude);
+                setLng(position.coords.longitude);
+            });
+        }
 
     }, []);
 
@@ -288,10 +282,19 @@ export default function LocationOnMapPage(props){
                                                 icon={new Icon({iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41]})}
                                             >
                                                 <Popup>
-                                                    <div className={classes.shopCard}>
-                                                        <Avatar className={classes.avatar} alt={userLogged.displayName} src={userLogged.photoURL}/>
-                                                        <span className={classes.shopName}>You are here</span>
-                                                    </div>
+                                                    {
+                                                        userLogged ? (
+                                                            <div className={classes.shopCard}>
+                                                                <Avatar className={classes.avatar} alt={userLogged.displayName} src={userLogged.photoURL}/>
+                                                                <span className={classes.shopName}>You are here</span>
+                                                            </div>
+                                                        ) : (
+                                                            <div className={classes.shopCard}>
+                                                                <span className={classes.shopName}>You are here</span>
+                                                            </div>
+                                                        )
+                                                    }
+
                                                 </Popup>
                                             </Marker>
                                             {

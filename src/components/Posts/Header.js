@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function PostHeader({author, handleClickOpen, postDate, type, postFelling}){
+export default function PostHeader({author, handleClickOpen, postDate, type, postFelling, postTagUid, postTagUser}){
     const classes = useStyles();
 
     // day ago
@@ -62,6 +62,13 @@ export default function PostHeader({author, handleClickOpen, postDate, type, pos
                         {
                             postFelling?.length > 0 ? (
                                 <span style={{paddingLeft: "5px"}}>is feeling {fellingTitle(postFelling)}</span>
+                            ) : null
+                        }
+                        {
+                            postTagUid ? (
+                                <span> - with
+                                    <Link to={`/profile/${postTagUid}`} style={{paddingLeft: "5px", fontWeight: "bold"}}>{postTagUser}</Link>
+                                </span>
                             ) : null
                         }
                     </>

@@ -1,5 +1,5 @@
-import React, {useState} from "react";
-import {auth, provider} from "../../firebase";
+import React, {useEffect, useState} from "react";
+import {auth, db, provider} from "../../firebase";
 import {Button, TextField} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import {Link, Navigate} from "react-router-dom";
@@ -99,6 +99,8 @@ function PageLogin() {
     const [user] = useAuthState(auth);
     const [open, setOpen] = useState(false);
     const [message, setMessage] = useState('')
+    const [checkingUser, setCheckingUser] = useState()
+
 
     const handleClosePopup = (event) => {
         setOpen(false);
@@ -135,7 +137,25 @@ function PageLogin() {
             });
     }
 
-    if(user){
+    useEffect(() => {
+        if(user) {
+            db.collection("users").doc(user.uid).get().then((doc) => {
+                if(doc.data().disable){
+                    setOpen(true);
+                    setMessage("This user is blocked !! ")
+                    auth.signOut().catch((error) => {
+                        console.log("Error getting document:", error);
+                    });
+                }else{
+                    setCheckingUser(true);
+                }
+            }).catch((error) => {
+                console.log("Error getting document:", error);
+            });
+        }
+    }, [user])
+
+    if(checkingUser){
         return <Navigate to="/"/>
     }
 

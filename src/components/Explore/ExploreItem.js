@@ -6,6 +6,10 @@ import {
     Play as PlayIcon,
     Copy as CopyIcon
 } from "react-feather";
+import Snackbar from "@material-ui/core/Snackbar";
+import {Alert} from "@material-ui/lab";
+import {useDocument} from "react-firebase-hooks/firestore";
+import {db} from "../../firebase";
 // import {Modal} from "@material-ui/core";
 
 
@@ -51,16 +55,19 @@ export default function ExploreItem(props) {
     const classes = useStyles();
     // const [postPic, setPostPic] = useState([]);
     const [open, setOpen] = React.useState(false);
-
+    const [openSnack, setOpenSnack] = useState(false);
     const handleOpen = () => {
         setOpen(true);
     };
+
 
     const handleClose = () => {
         setOpen(false);
     };
 
-
+    const handleCloseSnack = (event) => {
+        setOpenSnack(false);
+    };
 
 
     return (
@@ -105,9 +112,29 @@ export default function ExploreItem(props) {
             }
             {
                 open ? (
-                    <MediaViewer userLogged={userLogged} open={open} postId={postId} post={post} postAuthor={postAuthor} handleClose={handleClose}  />
+                    <MediaViewer userLogged={userLogged} open={open} postId={postId} post={post} postAuthor={postAuthor} handleClose={handleClose}  setOpenSnack={setOpenSnack} />
                 ) : null
             }
+
+
+            {
+                openSnack ? (
+                    <Snackbar
+                        open={openSnack}
+                        autoHideDuration={6000}
+                        onClose={handleCloseSnack}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left',
+                        }}
+                    >
+                        <Alert variant="filled" onClose={handleCloseSnack} severity="success">
+                            Successfully !
+                        </Alert>
+                    </Snackbar>
+                ) : null
+            }
+
         </div>
     );
 }

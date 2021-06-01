@@ -32,18 +32,26 @@ function App() {
 			const docRef = db.collection("users").doc(userLogged.uid);
 			docRef.get().then((doc) => {
 				if(doc.exists){
-					if(!doc.data()?.aboutMe){
-						setSurvey(true);
+					if(doc.data()?.disable){
+						auth.signOut().catch((error) => {
+							console.log("Error :", error);
+						});
 					}
-					docRef.update({
-						lastActive: firebase.firestore.FieldValue.serverTimestamp()
-					}).then(() => {
-						console.log("Updated");
-					})
+					else{
+						if(!doc.data()?.aboutMe){
+							setSurvey(true);
+						}
+						docRef.update({
+							lastActive: firebase.firestore.FieldValue.serverTimestamp()
+						}).then(() => {
+							console.log("Updated");
+						})
+					}
 				}
 			})
 		}
 	}, [userLogged])
+
 
 	if(loading){
 		return(
