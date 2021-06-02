@@ -300,6 +300,7 @@ export function checkSignInWithGoogle(authUser){
                 photoURL: authUser.photoURL,
                 uid: authUser.uid,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                accountType: "blogger",
             }).then(() => {
                 console.log("Updated")
             })
@@ -319,6 +320,7 @@ export const checkFirebaseAuth = (authUser) => {
         photoURL: authUser.photoURL,
         uid: authUser.uid,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        accountType: "blogger"
     }).catch((error) => {
         console.error("Error ", error);
     });

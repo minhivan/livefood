@@ -165,7 +165,7 @@ function Chat({userLogged, recipientData, setOpenSnack}){
 
             {
                 openUtil ? (
-                    <MessengerUtil open={openUtil} handleClose={handleCloseUtil} roomId={id} setOpenSnack={setOpenSnack}/>
+                    <MessengerUtil open={openUtil} handleClose={handleCloseUtil} roomId={id} setOpenSnack={setOpenSnack} recipient={recipientUser}/>
                 ) : null
             }
 

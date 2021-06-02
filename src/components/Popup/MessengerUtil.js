@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 const MessengerUtil = (props) => {
-    const {open, handleClose, setOpenSnack, roomId} = props;
+    const {open, handleClose, setOpenSnack, roomId, recipient} = props;
 
     const [modalStyle] = useState(getModalStyle);
     const classes = useStyles();
@@ -79,6 +79,10 @@ const MessengerUtil = (props) => {
         navigate({pathname: "/messages"})
     }
 
+    const handleViewProfile = () => {
+        navigate({pathname: `/profile/${recipient?.uid}`})
+    }
+
     return (
         <Modal
             open={open}
@@ -87,6 +91,19 @@ const MessengerUtil = (props) => {
             aria-describedby="simple-modal-description"
         >
             <div style={modalStyle} className={classes.paper}>
+                <Divider />
+                <div className={classes.btnAction}>
+                    <Button
+                        classes={{
+                            root: classes.btnRed,
+                            label: classes.btnLabel,
+                        }}
+                        onClick={handleViewProfile}
+                    >
+                        View Profile
+                    </Button>
+                </div>
+                <Divider />
                 <div className={classes.btnAction}>
                     <Button
                         classes={{

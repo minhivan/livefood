@@ -104,23 +104,27 @@ const ProfileNavBar = ({userSnapshot}) => {
                     </>
                 ) : null
             }
-            <ListItem
-                className={classes.item}
-                disableGutters
-            >
-                <Button
-                    activeClassName={classes.active}
-                    className={classes.button}
-                    component={RouterLink}
-                    to={`/profile/channel/${userSnapshot?.uid}`}
-                >
-                    <VideoIcon
-                        className={classes.icon}
-                        size="20"
-                    />
-                    <span className={classes.title}>Video</span>
-                </Button>
-            </ListItem>
+            {
+                userSnapshot?.accountType === "reviewer" ? (
+                    <ListItem
+                        className={classes.item}
+                        disableGutters
+                    >
+                        <Button
+                            activeClassName={classes.active}
+                            className={classes.button}
+                            component={RouterLink}
+                            to={`/profile/channel/${userSnapshot?.uid}`}
+                        >
+                            <VideoIcon
+                                className={classes.icon}
+                                size="20"
+                            />
+                            <span className={classes.title}>Video</span>
+                        </Button>
+                    </ListItem>
+                ) : null
+            }
 
             {
                 userSnapshot?.uid === authUser?.uid ? (

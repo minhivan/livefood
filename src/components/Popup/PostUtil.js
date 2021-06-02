@@ -78,6 +78,7 @@ const PostUtil = (props) => {
     const classes = useStyles();
 
 
+    console.log(isFollow)
 
     return (
         <Modal

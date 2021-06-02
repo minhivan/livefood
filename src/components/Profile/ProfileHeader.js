@@ -108,7 +108,7 @@ const useStyles = makeStyles((theme) => ({
         gap: "10px"
     },
     bioContent: {
-        padding: "20px 10px"
+        padding: "5px"
     },
     voteRating : {
         display: "flex",
@@ -367,7 +367,7 @@ const ProfileHeader = ({userSnapshot, count, userLogged}) => {
                     }
 
                     {
-                        userSnapshot?.aboutRestaurant ? (
+                        userSnapshot?.accountType === "foodshop" && userSnapshot?.aboutRestaurant ? (
                             <>
                                 {
                                     userSnapshot?.voteRating ? (
@@ -383,8 +383,7 @@ const ProfileHeader = ({userSnapshot, count, userLogged}) => {
                                     {
                                         userSnapshot?.accountType === "foodshop" ? (
                                             <h4 className={classes.opening} style={{paddingBottom: "20px"}}>
-                                                <EmojiFoodBeverageTwoToneIcon style={{marginRight: "5px"}}/>
-                                                Type:
+                                                <EmojiFoodBeverageTwoToneIcon />
                                                 <span style={{marginLeft: "5px"}}> {userSnapshot?.aboutRestaurant?.model}</span>
                                             </h4>
                                         ) : null
@@ -416,12 +415,11 @@ const ProfileHeader = ({userSnapshot, count, userLogged}) => {
                                     }
                                     {
                                         userSnapshot?.aboutRestaurant?.geolocation ? (
-                                            <h4 className={classes.opening} style={{paddingBottom: "20px"}}>
+                                            <h4 className={classes.opening} style={{color: ""}}>
                                                 <Link to={`/profile/about/${userSnapshot?.uid}`} className={classes.linkToAbout}>
                                                     <LocationOnRoundedIcon />
                                                     <span style={{marginLeft: "5px"}}>Find on map</span>
                                                 </Link>
-
                                             </h4>
                                         ) : null
                                     }

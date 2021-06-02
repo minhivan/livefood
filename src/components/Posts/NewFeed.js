@@ -66,7 +66,7 @@ export default function NewFeed(props){
                         }
                     })
                     setPosts(data);
-                    setLastVisible(snapshot.docs[snapshot.docs.length-1]);
+                    setLastVisible(data.length);
                 })
             return () => {
                 unsubscribe();
@@ -82,7 +82,7 @@ export default function NewFeed(props){
                         id: doc.id,
                         post: doc.data(),
                     })));
-                    setLastVisible(snapshot.docs[snapshot.docs.length-1]);
+                    setLastVisible(snapshot.docs.length-1);
                 })
 
             return () => {
@@ -106,8 +106,6 @@ export default function NewFeed(props){
     //     }
     // }
 
-
-    // //
     const loadMore = () => {
         if(lastVisible){
             setLimit(limit => limit + 10);
@@ -137,7 +135,7 @@ export default function NewFeed(props){
                             ))
                         }
                         {
-                            lastVisible ? (
+                            posts?.length < limit ? (
                                 <div className={classes.buttonLoadMore}>
                                     <Button
                                         onClick={loadMore}
@@ -162,7 +160,6 @@ export default function NewFeed(props){
                         </div>
                         <h2 style={{paddingBottom: "10px"}}>Start Explore Yourself</h2>
                         <p style={{paddingBottom: "20px"}}>Or just creating your own post.</p>
-
                         <Link to="/explore">
                             <Button
                                 style={{textTransform: "capitalize", fontSize: "16px"}}

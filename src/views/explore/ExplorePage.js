@@ -8,6 +8,7 @@ import NavBar from "../../components/SideBar/LeftSideBar";
 import Button from "@material-ui/core/Button";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import {useDocument} from "react-firebase-hooks/firestore";
 
 const useStyles = makeStyles((theme) => ({
     icon: {
@@ -46,6 +47,19 @@ const Explore = (props) => {
     const {userLogged} = props;
     const [explore, setExplore] = useState([]);
     const [lastVisible, setLastVisible] = useState('');
+    // const [favorites, setFavorites] = useState(null);
+
+    // useEffect(() => {
+    //     if(userLogged){
+    //         db.collection("users")
+    //             .doc(userLogged.uid)
+    //             .get().then(snapshot => {
+    //                 if(snapshot.data()?.aboutMe?.favorites){
+    //                     setFavorites(snapshot.data()?.aboutMe?.favorites)
+    //                 }
+    //             })
+    //     }
+    // }, [userLogged])
 
 
     useEffect(() => {
@@ -55,30 +69,70 @@ const Explore = (props) => {
     }, []);
 
 
+    // useEffect(() => {
+    //     if(userLogged){
+    //          return db.collection('posts')
+    //              .orderBy('timestamp', 'desc')
+    //             .limit(20)
+    //             .get().then(snapshot => {
+    //                 let temp = []
+    //                 snapshot.forEach(data => {
+    //                     let userProfile = {};
+    //                     if(data.data().uid !== userLogged.uid){
+    //                         data.data().user.get().then( author => {
+    //                             Object.assign(userProfile, author.data());
+    //                         })
+    //                         temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
+    //                     }
+    //                 })
+    //                 setExplore(temp);
+    //                 setLastVisible(snapshot.docs[snapshot.docs.length-1]);
+    //             })
+    //     }
+    //     else{
+    //         return db.collection('posts')
+    //             .orderBy('timestamp', "desc")
+    //             .limit(20)
+    //             .get().then(snapshot => {
+    //                 let temp = []
+    //                 snapshot.forEach(data => {
+    //                     let userProfile = {};
+    //                     data.data().user.get().then( author => {
+    //                         Object.assign(userProfile, author.data());
+    //                     })
+    //                     temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
+    //                 })
+    //                 setExplore(temp);
+    //                 setLastVisible(snapshot.docs[snapshot.docs.length-1]);
+    //             })
+    //     }
+    //
+    // }, [userLogged]);
+
     useEffect(() => {
-        if(userLogged){
-             return db.collection('posts')
-                 .orderBy('timestamp', 'desc')
-                .limit(20)
-                .get().then(snapshot => {
-                    let temp = []
-                    snapshot.forEach(data => {
-                        let userProfile = {};
-                        if(data.data().uid !== userLogged.uid){
-                            data.data().user.get().then( author => {
-                                Object.assign(userProfile, author.data());
-                            })
-                            temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
-                        }
+        return db.collection('posts')
+            .orderBy('timestamp', 'desc')
+            .limit(6)
+            .get().then(snapshot => {
+                let temp = []
+                snapshot.forEach(data => {
+                    let userProfile = {};
+                    data.data().user.get().then( author => {
+                        Object.assign(userProfile, author.data());
                     })
-                    setExplore(temp);
-                    setLastVisible(snapshot.docs[snapshot.docs.length-1]);
+                    temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
                 })
-        }
-        else{
-            return db.collection('posts')
-                .orderBy('timestamp', "desc")
-                .limit(20)
+                setExplore(temp);
+                setLastVisible(snapshot.docs[snapshot.docs.length-1]);
+            })
+    }, []);
+
+    const loadMore = () => {
+        if(lastVisible){
+            db.collection('posts')
+                .orderBy('timestamp', 'desc')
+                .startAfter(lastVisible)
+                .limit(6)
                 .get().then(snapshot => {
                     let temp = []
                     snapshot.forEach(data => {
@@ -88,13 +142,11 @@ const Explore = (props) => {
                         })
                         temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
                     })
-                    setExplore(temp);
+                    setExplore([...explore, ...temp]);
                     setLastVisible(snapshot.docs[snapshot.docs.length-1]);
-                })
+            })
         }
-
-    }, [userLogged]);
-
+    }
 
     // window.onscroll = function () {
     //     if(window.scrollY + window.innerHeight >=
@@ -103,48 +155,46 @@ const Explore = (props) => {
     //     }
     // }
 
-    const loadMore = () => {
-        if(lastVisible){
-            if(userLogged){
-                db.collection('posts')
-                    .startAfter(lastVisible)
-                    .limit(9)
-                    .get().then(snapshot => {
-                    let temp = []
-                    snapshot.forEach(data => {
-                        let userProfile = {};
-                        if(data.data().uid !== userLogged.uid){
-                            data.data().user.get().then( author => {
-                                Object.assign(userProfile, author.data());
-                            })
-                            temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
-                        }
-                    })
-                    setExplore([...explore, ...temp]);
-                    setLastVisible(snapshot.docs[snapshot.docs.length-1]);
-                })
-            }
-            else {
-                db.collection('posts')
-                    .startAfter(lastVisible)
-                    .limit(9)
-                    .get().then(snapshot => {
-                    let temp = []
-                    snapshot.forEach(data => {
-                        let userProfile = {};
-                        data.data().user.get().then( author => {
-                            Object.assign(userProfile, author.data());
-                        })
-                        temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
-                    })
-                    setExplore([...explore, ...temp]);
-                    setLastVisible(snapshot.docs[snapshot.docs.length-1]);
-                })
-            }
-        }
-    }
-
-
+    // const loadMore = () => {
+    //     if(lastVisible){
+    //         if(userLogged){
+    //             db.collection('posts')
+    //                 .startAfter(lastVisible)
+    //                 .limit(9)
+    //                 .get().then(snapshot => {
+    //                 let temp = []
+    //                 snapshot.forEach(data => {
+    //                     let userProfile = {};
+    //                     if(data.data().uid !== userLogged.uid){
+    //                         data.data().user.get().then( author => {
+    //                             Object.assign(userProfile, author.data());
+    //                         })
+    //                         temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
+    //                     }
+    //                 })
+    //                 setExplore([...explore, ...temp]);
+    //                 setLastVisible(snapshot.docs[snapshot.docs.length-1]);
+    //             })
+    //         }
+    //         else {
+    //             db.collection('posts')
+    //                 .startAfter(lastVisible)
+    //                 .limit(9)
+    //                 .get().then(snapshot => {
+    //                 let temp = []
+    //                 snapshot.forEach(data => {
+    //                     let userProfile = {};
+    //                     data.data().user.get().then( author => {
+    //                         Object.assign(userProfile, author.data());
+    //                     })
+    //                     temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
+    //                 })
+    //                 setExplore([...explore, ...temp]);
+    //                 setLastVisible(snapshot.docs[snapshot.docs.length-1]);
+    //             })
+    //         }
+    //     }
+    // }
 
 
     const classes = useStyles();

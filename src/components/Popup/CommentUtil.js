@@ -70,7 +70,6 @@ const CommentUtil = (props) => {
     const [modalStyle] = useState(getModalStyle);
     const classes = useStyles();
 
-    console.log(commentUid);
     return (
         <Modal
             open={open}
@@ -115,6 +114,7 @@ const CommentUtil = (props) => {
                                     //         props.handleClose(true);
                                     //     }
                                     // }
+
                                 >
                                     Report
                                 </Button>

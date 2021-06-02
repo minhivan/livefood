@@ -503,9 +503,7 @@ function MediaViewer(props){
                                     ) : null
                                 }
 
-
                             </CardActions>
-
                             {/* Like count */}
                             {
                                 postSnapshot?.data()?.likeCount > 0 ? (

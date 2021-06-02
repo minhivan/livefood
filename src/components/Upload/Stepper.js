@@ -129,7 +129,7 @@ const useStyles = makeStyles((theme: Theme) =>
             right: "0"
         },
         selectInput: {
-            textTransform: "uppercase",
+            textTransform: "capitalize",
             fontWeight: "bold"
         },
         backButton: {
@@ -194,8 +194,7 @@ export default function RecipeStepper(props) {
     const [progress, setProgress] = useState('');
     const [postLoading, setPostLoading] = useState(false);
     const [disable, setDisable] = useState(true);
-    const [cate] = useCollection(db.collection("category").orderBy('title', 'asc'))
-
+    const [categoryData, setCategoryData] = useState([]);
     const [activeMedia, setActiveMedia] = React.useState(0);
     const [maxSteps, setMaxSteps] = useState(0);
 
@@ -207,6 +206,17 @@ export default function RecipeStepper(props) {
     const handleBackMedia = () => {
         setActiveMedia((prevActiveStep) => prevActiveStep - 1);
     };
+
+    useEffect(() => {
+        return db.collection("category")
+            .orderBy('title', 'asc')
+            .get().then(snapshot => {
+                setCategoryData(snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    data: doc.data(),
+                })))
+            })
+    }, [])
 
 
     const removeImage = (step) => {
@@ -345,8 +355,8 @@ export default function RecipeStepper(props) {
                             >
                                 <option aria-label="None" value="" disabled/>
                                 {
-                                    cate?.docs?.map((doc) => (
-                                        <option key={doc.id} value={doc.data().title} style={{textTransform: "uppercase"}}>{doc.data().title}</option>
+                                    categoryData.map(({id, data}) => (
+                                        <option key={id} value={data.title} style={{textTransform: "capitalize"}}>{data.title}</option>
                                     ))
                                 }
                             </Select>

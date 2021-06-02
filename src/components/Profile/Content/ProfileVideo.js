@@ -5,9 +5,7 @@ import {Video as VideoIcon} from "react-feather";
 import {makeStyles} from "@material-ui/core/styles";
 import ExploreItem from "../../Explore/ExploreItem";
 import Button from "@material-ui/core/Button";
-import Popup from "../../Upload/Popup";
 import AddVideo from "../../Upload/AddVideo";
-import {useDocument} from "react-firebase-hooks/firestore";
 // import {useCollection} from "react-firebase-hooks/firestore";
 
 
@@ -49,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-const ProfileVideo = ({uid, userLogged}) => {
+const ProfileVideo = ({uid, userLogged, userSnapshot}) => {
     const classes = useStyles();
     const [vid, setVid] = useState([]);
     const [open, setOpen] = useState(false);

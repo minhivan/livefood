@@ -107,9 +107,10 @@ export default function ExplorePeopleItem(props) {
     // List user
     useEffect(() => {
         if(query){
-            console.log(query);
             return db.collection("users")
                 .where('uid' ,'!=' , userLogged.uid )
+                .orderBy('uid', 'desc')
+                .orderBy('accountType', 'desc')
                 .limit(30)
                 .get().then(snapshot => {
                     let data = [];
@@ -129,6 +130,7 @@ export default function ExplorePeopleItem(props) {
                 userLogged.uid && followingList.push(userLogged.uid);
                 return db.collection("users")
                     .orderBy('displayName', 'asc')
+                    .orderBy('accountType', 'asc')
                     .limit(20)
                     .get().then(snapshot => {
                         let data = [];

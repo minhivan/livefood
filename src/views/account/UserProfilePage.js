@@ -17,18 +17,22 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Backdrop from "@material-ui/core/Backdrop";
 import ProfileVoteRating from "../../components/Profile/Content/ProfileVoteRating";
 import ProfileAbout from "../../components/Profile/Content/ProfileAbout";
+import {Navigate} from "react-router-dom";
 
 
 function content(action, id, userLogged, userSnapshot){
+
     switch (action){
         case "feed":
             return <ProfileFeed uid={id} userLogged={userLogged} type="post"/>
         case "channel":
-            return <ProfileVideo uid={id} userLogged={userLogged} type="video"/>
+            if(userSnapshot?.accountType === "reviewer") return <ProfileVideo uid={id} userLogged={userLogged} type="video" />
+            else return <Navigate to={`/profile/${id}/`}/>
         case "saved":
             return <ProfileSaved uid={id} userLogged={userLogged} type="saved"/>
         case "dishes":
-            return <ProfileMenuList uid={id} userLogged={userLogged} userSnapshot={userSnapshot} type="dishes"/>
+            if(userSnapshot?.accountType === "foodshop") return <ProfileMenuList uid={id} userLogged={userLogged} userSnapshot={userSnapshot} type="dishes"/>
+            else return <Navigate to={`/profile/${id}/`}/>
         case "vote":
             return <ProfileVoteRating uid={id} userLogged={userLogged} userSnapshot={userSnapshot} type="vote"/>
         case "about":

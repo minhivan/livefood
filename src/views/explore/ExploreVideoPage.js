@@ -5,7 +5,9 @@ import {Video as VideoIcon} from "react-feather";
 import {makeStyles} from "@material-ui/core/styles";
 import ExploreItem from "../../components/Explore/ExploreItem";
 import NavBar from "../../components/SideBar/LeftSideBar";
-import Button from "@material-ui/core/Button";
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+
 
 const useStyles = makeStyles((theme) => ({
     icon: {
@@ -40,6 +42,12 @@ const ExploreVideo = (props) => {
     const {userLogged} = props;
     const [exploreVid, setExploreVid] = useState([]);
     window.scroll({top: 0, left: 0, behavior: 'smooth' });
+
+    useEffect(() => {
+        AOS.init({
+            duration : 500
+        });
+    }, []);
 
     useEffect(() => {
         window.scroll({top: 0, left: 0, behavior: 'smooth' });
@@ -78,6 +86,7 @@ const ExploreVideo = (props) => {
                                 {
                                     exploreVid.map(({id, post, authorProfile}) => (
                                         <ExploreItem
+                                            aos={`zoom-in`}
                                             key={id}
                                             postId={id}
                                             post={post}

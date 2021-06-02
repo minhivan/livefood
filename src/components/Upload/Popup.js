@@ -5,7 +5,7 @@ import {
     Button, Chip,
     CircularProgress,
     IconButton, MenuItem,
-    Modal, Popover, Select,
+    Modal, Paper, Popover, Select,
     TextField,
 } from "@material-ui/core";
 import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
@@ -144,6 +144,36 @@ const useStyles = makeStyles((theme) => ({
         minWidth: "150px",
         padding: "16px 10px",
         lineHeight: "22px"
+    },
+    pickerContainer: {
+        display: "flex",
+        width: "100%",
+        flexWrap: "wrap",
+        overflowY: "auto",
+        justifyContent: "center",
+    },
+    listChip: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: "center",
+        flexWrap: 'wrap',
+        listStyle: 'none',
+        padding: theme.spacing(0.5),
+        margin: 0,
+    },
+    chip: {
+        margin: theme.spacing(0.5),
+        minWidth: "90px",
+        padding: "10px",
+        textTransform: "capitalize",
+        fontSize: "0.8rem",
+    },
+    tag: {
+        padding: "20px 0"
+    },
+    tagTitle: {
+        fontWeight: "bold",
+        fontSize: "16px"
     }
 
 }));
@@ -166,6 +196,32 @@ function Popup(props){
     const openEmoji = Boolean(anchorElPicker);
     const id = openEmoji ? 'popup-emoji' : undefined;
     const [postStatus, setPostStatus] = useState("public");
+    const [selectedChip, setSelectedChip] = useState([]);
+
+    const listChip = [
+        { key: 0, label: 'cuisine' },
+        { key: 1, label: 'occasion' },
+        { key: 2, label: 'preparation' },
+        { key: 3, label: 'lunch' },
+        { key: 4, label: 'course' },
+        { key: 5, label: 'dietary' },
+        { key: 6, label: 'breakfast' },
+        { key: 7, label: 'cheap food shop' },
+        { key: 8, label: 'coffee shop' },
+        { key: 9, label: 'street food' },
+    ];
+
+    const handleSelectChip = (data) => {
+        if( ! selectedChip.some(chips => chips.key === data.key)) {
+            setSelectedChip([...selectedChip, data]);
+        }
+    };
+
+
+    const handleDeleteChip = (chipToDelete) => () => {
+        setSelectedChip((chips) => chips.filter((chip) => chip.key !== chipToDelete.key));
+    };
+
 
     const handleClickEmoji = (event) => {
         setAnchorElPicker(event.currentTarget);
@@ -246,8 +302,9 @@ function Popup(props){
                 uid: user.uid,
                 felling: felling ?? "",
                 status: postStatus,
-                tagUserUid: tagUser.uid ?? "",
-                tagUserDisplayName: tagUser.displayName ?? ""
+                tagUserUid: tagUser ? tagUser.uid : "",
+                tagUserDisplayName: tagUser ? tagUser.displayName : "",
+                postTags: selectedChip ? selectedChip.map((data) => data.label) : "",
             })
                 .then(function(docRef) {
                     console.log("Document written with ID: ", docRef.id);
@@ -266,6 +323,7 @@ function Popup(props){
 
     }
 
+    console.log(selectedChip.map((data) => data.label));
 
     useEffect(() => {
         if(image){
@@ -338,7 +396,7 @@ function Popup(props){
                         </FormControl>
                         {
                             tagUser ? (
-                                <div className={classes.fellingSelect} style={{}}>
+                                <div className={classes.fellingSelect} >
                                     <Chip
                                         color="primary"
                                         size="small"
@@ -429,6 +487,38 @@ function Popup(props){
                             </div>
                         ) : null
                     }
+                    <div className={classes.tag}>
+                        <span className={classes.tagTitle}>Pin some tag to your post ?</span>
+                        <Paper elevation={0} component="ul" className={classes.listChip}>
+
+                            {selectedChip.map((data) => {
+                                return (
+                                    <li key={data.key}>
+                                        <Chip
+                                            label={data.label}
+                                            onDelete={handleDeleteChip(data)}
+                                            className={classes.chip}
+                                        />
+                                    </li>
+                                );
+                            })}
+                        </Paper>
+                        <div className={classes.pickerContainer}>
+                            {listChip.map((data) => {
+                                return (
+                                    <Chip
+                                        key={data.key}
+                                        label={data.label}
+                                        clickable
+                                        color="primary"
+                                        onClick={() => handleSelectChip(data)}
+                                        className={classes.chip}
+                                    />
+                                );
+                            })}
+                        </div>
+                    </div>
+
 
                 </div>
                 <div className="popup__picker">
@@ -457,6 +547,9 @@ function Popup(props){
                         </div>
                     </div>
                 </div>
+
+
+
                 <div className="upload__button">
                     <Button
                         classes={{

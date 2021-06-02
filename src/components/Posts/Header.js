@@ -66,7 +66,7 @@ export default function PostHeader({author, handleClickOpen, postDate, type, pos
                         }
                         {
                             postTagUid ? (
-                                <span> - with
+                                <span> with
                                     <Link to={`/profile/${postTagUid}`} style={{paddingLeft: "5px", fontWeight: "bold"}}>{postTagUser}</Link>
                                 </span>
                             ) : null

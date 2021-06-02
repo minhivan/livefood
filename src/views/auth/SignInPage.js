@@ -140,7 +140,7 @@ function PageLogin() {
     useEffect(() => {
         if(user) {
             db.collection("users").doc(user.uid).get().then((doc) => {
-                if(doc.data().disable){
+                if(doc.data()?.disable){
                     setOpen(true);
                     setMessage("This user is blocked !! ")
                     auth.signOut().catch((error) => {

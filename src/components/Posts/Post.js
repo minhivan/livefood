@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 import PostComment from "../Comments/Comments";
 import Card from '@material-ui/core/Card';
@@ -45,7 +45,8 @@ function Post({id, post, handleRemove, handleReport, isSinglePage,...rest}) {
 	const searchInput = useRef(null)
 	const [replyComment, setReplyComment] = useState(null);
 	const [savePost, setSavePost] = useState(false);
-
+	const [isFollow, setIsFollow] = useState(false);
+	const [userLoggedData, setUserLoggedData] = useState({});
 
 	const handleCloseEdit = () => {
 		setOpenEdit(false);
@@ -100,7 +101,26 @@ function Post({id, post, handleRemove, handleReport, isSinglePage,...rest}) {
 		setReplyComment(null);
 	}
 
+	useEffect(() => {
+		if(user){
+			if(author?.follower?.includes(user.uid)){
+				setIsFollow(true);
+			}
+			else{
+				setIsFollow(false)
+			}
+		}
+	}, [author?.follower, user])
 
+	useEffect(() => {
+		if(user){
+			setUserLoggedData({
+				uid: user.uid,
+				photoURL: user.photoURL,
+				displayName: user.displayName
+			})
+		}
+	}, [user])
 
 	return (
 		<>
@@ -121,7 +141,7 @@ function Post({id, post, handleRemove, handleReport, isSinglePage,...rest}) {
 				</Card>
 				{
 					user && open ? (
-						<PostUtil open={open} handleClose={handleClose} handleOpenEdit={handleOpenEdit} uid={user.uid} opponentID={post.uid} postID={id} handleReport={handleOpenReport} handleRemove={handleRemove} savePost={savePost} setOpenSnack={setOpenSnack}/>
+						<PostUtil open={open} handleClose={handleClose} handleOpenEdit={handleOpenEdit} uid={user.uid} opponentID={post.uid} postID={id} handleReport={handleOpenReport} isFollow={isFollow} savePost={savePost} setOpenSnack={setOpenSnack} userLoggedData={userLoggedData}/>
 					) : null
 				}
 				{

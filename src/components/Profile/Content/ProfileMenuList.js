@@ -73,12 +73,6 @@ export default function ProfileMenuList(props){
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
-        if(props.userSnapshot?.type !== "foodshop"){
-            return <Navigate to={`/profile/${props.uid}`}/>
-        }
-    }, [props.uid, props.userSnapshot])
-
-    useEffect(() => {
          return db.collection("users").doc(props.uid)
             .collection("menu")
             .orderBy('timestamp', "desc")
