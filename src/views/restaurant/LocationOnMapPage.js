@@ -18,6 +18,7 @@ import Avatar from "@material-ui/core/Avatar";
 // import LocationOnRoundedIcon from "@material-ui/icons/LocationOnRounded";
 import "leaflet/dist/leaflet.css"
 import markerIconPng from "leaflet/dist/images/marker-icon.png"
+import vnProvince from "../../province.json";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -100,12 +101,7 @@ export default function LocationOnMapPage(props){
 
 
     useEffect(() => {
-        fetch('https://vapi.vnappmob.com/api/province/')
-            .then(res => res.json()).then(res => {
-            if (res.results && res.results.length > 0) {
-                setProvince(res.results)
-            }
-        });
+        setProvince(vnProvince.province);
 
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
@@ -222,6 +218,24 @@ export default function LocationOnMapPage(props){
                         </Button>
                     </Link>
                     <FormControl variant="outlined" className={classes.formControl}>
+                        <InputLabel id="restaurant_location_label">Location</InputLabel>
+                        <Select
+                            native
+                            labelId="restaurant_location_label"
+                            id="restaurant_location"
+                            value={userProvince}
+                            onChange={event => setUserProvince(event.target.value)}
+                            label="Location"
+                        >
+                            <option aria-label="None" value="" />
+                            {
+                                province?.map((doc) => (
+                                    <option key={doc.idProvince} value={doc.idProvince}>{doc.name}</option>
+                                ))
+                            }
+                        </Select>
+                    </FormControl>
+                    <FormControl variant="outlined" className={classes.formControl}>
                         <InputLabel id="restaurant_category_label">Category</InputLabel>
                         <Select
                             labelId="restaurant_category_label"
@@ -236,24 +250,6 @@ export default function LocationOnMapPage(props){
                             {
                                 listRestaurantCate.map(({id, title}) => (
                                     <MenuItem key={id} value={id}>{title}</MenuItem>
-                                ))
-                            }
-                        </Select>
-                    </FormControl>
-                    <FormControl variant="outlined" className={classes.formControl}>
-                        <InputLabel id="restaurant_location_label">Location</InputLabel>
-                        <Select
-                            native
-                            labelId="restaurant_location_label"
-                            id="restaurant_location"
-                            value={userProvince}
-                            onChange={event => setUserProvince(event.target.value)}
-                            label="Location"
-                        >
-                            <option aria-label="None" value="" />
-                            {
-                                province?.map((doc) => (
-                                    <option key={doc.province_id} value={doc.province_id}>{doc.province_name}</option>
                                 ))
                             }
                         </Select>
@@ -308,7 +304,7 @@ export default function LocationOnMapPage(props){
                                                             <Popup>
                                                                 <div className={classes.shopCard}>
                                                                     <Avatar className={classes.avatar} alt={data?.displayName} src={data?.photoURL}/>
-                                                                    <Link to={`/profile/${data?.uid}`}><span className={classes.shopName}>{data?.displayName}</span></Link>
+                                                                    <Link to={`/profile/dishes/${data?.uid}`}><span className={classes.shopName}>{data?.displayName}</span></Link>
                                                                 </div>
                                                             </Popup>
                                                         </Marker>

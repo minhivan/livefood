@@ -35,7 +35,7 @@ export default function PostRecipeData({postId, postData, expanded, rating, hand
         <>
             {
                 !!postData ? (
-                    <Collapse in={expanded} timeout="auto" unmountOnExit >
+                    <Collapse in={expanded} timeout="auto" unmountOnExit style={{pageBreakInside: "avoid"}}>
                         <div className="recipe_layout">
                             <CardContent className="recipe_layout__content-left">
                                 {

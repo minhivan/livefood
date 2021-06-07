@@ -541,9 +541,9 @@ export default function RecipeStepper(props) {
                     });
                     setOpenSnack(true);
                     setImage(null);
-                    handleClose(true);
                     setProgress('0');
                     handleReset();
+                    handleClose(true);
                 })
                 .catch(function(error) {
                     console.error("Error adding document: ", error);

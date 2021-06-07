@@ -10,12 +10,13 @@ import {MenuItem, Select, Switch, TextField} from "@material-ui/core";
 import {useDocument} from "react-firebase-hooks/firestore";
 import {db} from "../../../firebase";
 import {blue} from "@material-ui/core/colors";
-import {MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap} from 'react-leaflet'
+import {MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap, useMapEvent} from 'react-leaflet'
 import "leaflet/dist/leaflet.css"
 
 import markerIconPng from "leaflet/dist/images/marker-icon.png"
 import {Icon} from 'leaflet'
 import {Autocomplete} from "@material-ui/lab";
+import vnProvince from "../../../province.json";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -121,6 +122,42 @@ const useStyles = makeStyles((theme) => ({
 //     )
 // }
 
+// function DraggableMarker() {
+//     const [draggable, setDraggable] = useState(false)
+//     const [position, setPosition] = useState(center)
+//     const markerRef = useRef(null)
+//     const eventHandlers = useMemo(
+//         () => ({
+//             dragend() {
+//                 const marker = markerRef.current
+//                 if (marker != null) {
+//                     setPosition(marker.getLatLng())
+//                 }
+//             },
+//         }),
+//         [],
+//     )
+//     const toggleDraggable = useCallback(() => {
+//         setDraggable((d) => !d)
+//     }, [])
+//
+//     return (
+//         <Marker
+//             draggable={draggable}
+//             eventHandlers={eventHandlers}
+//             position={position}
+//             ref={markerRef}>
+//             <Popup minWidth={90}>
+//         <span onClick={toggleDraggable}>
+//           {draggable
+//               ? 'Marker is draggable'
+//               : 'Click here to make marker draggable'}
+//         </span>
+//             </Popup>
+//         </Marker>
+//     )
+// }
+
 function ChangeView({ center, zoom }) {
     const map = useMap();
     map.setView(center, zoom);
@@ -146,6 +183,11 @@ export default function EditAbout(props){
     const [openLocation, setOpenLocation] = useState(false);
     const [disable, setDisable] = useState(true);
     const mapRef = useRef();
+    // const [selectedPosition, setSelectedPosition] = useState<[number, number]>([0,0]);
+
+
+
+
 
     useEffect(() => {
         setRestaurantCate(userData?.data()?.aboutRestaurant?.modelId ?? '')
@@ -160,12 +202,7 @@ export default function EditAbout(props){
     }, [userData]);
 
     useEffect(() => {
-        fetch('https://vapi.vnappmob.com/api/province/')
-            .then(res => res.json()).then(res => {
-            if (res.results && res.results.length > 0) {
-                setProvince(res.results)
-            }
-        });
+        setProvince(vnProvince.province);
     },[userLogged])
 
     const handleClickLocation = (event) => {
@@ -201,7 +238,7 @@ export default function EditAbout(props){
                 opening: opening,
                 closed: closed,
                 locationId: userProvince,
-                location: province.find(o => o.province_id === userProvince).province_name,
+                location: province.find(o => o.idProvince === userProvince).name,
                 geolocation: {
                     lat: lat,
                     lng: lng
@@ -226,19 +263,18 @@ export default function EditAbout(props){
         setClosed(data);
     }
 
-    // const handleClickMap = (e) => {
-    //     const { lat, lng } = e.latlng;
-    //     console.log(lat, lng);
-    // }
+    const MyComponent = () => {
+        const map = useMapEvent({
+            click(e) {
+                setLat(e.latlng.lat);
+                setLng(e.latlng.lng);
+            },
+        })
+        return null
+    }
 
     const handleAutoLocation = () => {
-        // navigator.permissions.query({name:'geolocation'}).then(function(result) {
-        //     if (result.state === 'granted') {
-        //
-        //     } else if (result.state === 'prompt') {
-        //         alert("Please turn on location from your browser !!! ");
-        //     }
-        // });
+
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
                 setLat(position.coords.latitude);
@@ -389,7 +425,7 @@ export default function EditAbout(props){
                                 <option aria-label="None" value="" disabled/>
                                 {
                                     province?.map((doc) => (
-                                        <option key={doc.province_id} value={doc.province_id}>{doc.province_name}</option>
+                                        <option key={doc.idProvince} value={doc.idProvince}>{doc.name}</option>
                                     ))
                                 }
                             </Select>
@@ -434,14 +470,20 @@ export default function EditAbout(props){
                                     scrollWheelZoom={true}
                                     dragging={true}
                                     innerRef={mapRef}
+                                    attributionControl={true}
+                                    interactive={true}
+                                    onClick={event => console.log(event)}
                                 >
                                     <ChangeView center={[lat, lng]} zoom={16} />
                                     <TileLayer
+
                                         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                     />
+                                    <MyComponent />
                                     {/*<LocationMarker />*/}
                                     <Marker
+                                        draggable={true}
                                         position={[lat, lng]}
                                         icon={new Icon({iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41]})}
                                     >

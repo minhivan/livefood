@@ -117,26 +117,30 @@ const ChatInput = ({roomID, chatRef, userLogged}) => {
                     <IconButton className="chat__iconPicker" aria-label="Add " onClick={handleClick}>
                         <SentimentSatisfiedRoundedIcon />
                     </IconButton>
-                    <Popover
-                        disableScrollLock
-                        id={id}
-                        open={open}
-                        anchorEl={anchorElPicker}
-                        onClose={handleClose}
-                        anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'left',
-                        }}
-                        transformOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'center',
-                        }}
-                    >
-                        <Picker
-                            onSelect={addEmoji}
-                            title="Livefood"
-                        />
-                    </Popover>
+                    {
+                        open ? (
+                            <Popover
+                                disableScrollLock
+                                id={id}
+                                open={open}
+                                anchorEl={anchorElPicker}
+                                onClose={handleClose}
+                                anchorOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'left',
+                                }}
+                                transformOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'center',
+                                }}
+                            >
+                                <Picker
+                                    onSelect={addEmoji}
+                                    title="Livefood"
+                                />
+                            </Popover>
+                        ) : null
+                    }
 
 
                 </div>

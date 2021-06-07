@@ -73,7 +73,7 @@ function RightSideBar(props) {
 
     // List user
     useEffect(() => {
-        var followingList = {};
+        let followingList = {};
         if(typeof authFollowingList !== 'undefined' && authFollowingList?.length >= 0){
             followingList = userSnapshot.data().following
             userLogged.uid && followingList.push(userLogged.uid);

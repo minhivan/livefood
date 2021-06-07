@@ -29,7 +29,6 @@ import SentimentSatisfiedRoundedIcon from "@material-ui/icons/SentimentSatisfied
 import {Picker} from "emoji-mart";
 import FormControl from "@material-ui/core/FormControl";
 import AccountCircleTwoToneIcon from '@material-ui/icons/AccountCircleTwoTone';
-import LocationOnTwoToneIcon from '@material-ui/icons/LocationOnTwoTone';
 import ListUserForTag from "../Popup/ListUserForTag";
 
 function getModalStyle() {
@@ -180,7 +179,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 function Popup(props){
-    const {open, image, setImage, handleClose, setOpenSnack, handleOpenTag, tagUser, handleRemoveTagUser} = props;
+    const {open, image, setImage, handleClose, setOpenSnack, setChange} = props;
     const [user] = useAuthState(auth);
     const classes = useStyles();
     const [modalStyle] = useState(getModalStyle);
@@ -197,6 +196,9 @@ function Popup(props){
     const id = openEmoji ? 'popup-emoji' : undefined;
     const [postStatus, setPostStatus] = useState("public");
     const [selectedChip, setSelectedChip] = useState([]);
+    const [openTag, setOpenTag] = useState(false);
+    const [tagUser, setTagUser] = useState(null);
+
 
     const listChip = [
         { key: 0, label: 'cuisine' },
@@ -242,6 +244,23 @@ function Popup(props){
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
 
+    const handleOpenTag = () => {
+        setOpenTag(true);
+    }
+
+    const handleCloseTag = () => {
+        setOpenTag(false);
+    }
+
+    const handleTagUser = (data) => {
+        setTagUser(data);
+    }
+
+    const handleRemoveTagUser = () => {
+        setTagUser(null);
+    }
+
+
 
     const removeImage = (step) => {
         if(image.length === 1){
@@ -276,7 +295,7 @@ function Popup(props){
                     .put(item)
                     .on('state_changed', (snapshot) => {
                             // progress function ....
-                            setProgress(Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100));
+                            // setProgress(Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100));
                             setLoading(true);
                         },
                         reject,
@@ -294,7 +313,8 @@ function Popup(props){
                         });
             })
         )).then((values) => {
-            db.collection("posts").add({
+            const dataSet = {
+                type: "post",
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 caption: caption ?? "",
                 media: values,
@@ -302,19 +322,27 @@ function Popup(props){
                 uid: user.uid,
                 felling: felling ?? "",
                 status: postStatus,
-                tagUserUid: tagUser ? tagUser.uid : "",
-                tagUserDisplayName: tagUser ? tagUser.displayName : "",
                 postTags: selectedChip ? selectedChip.map((data) => data.label) : "",
-            })
+            }
+            if(tagUser) {
+                Object.assign(dataSet, {
+                    tag: {
+                        uid: tagUser.uid,
+                        displayName: tagUser.displayName,
+                    }
+                });
+            }
+
+            db.collection("posts").add(dataSet)
                 .then(function(docRef) {
                     console.log("Document written with ID: ", docRef.id);
                     db.collection("users").doc(user.uid).update({
                         post: firebase.firestore.FieldValue.arrayUnion(docRef.id)
                     })
                     setOpenSnack(true);
-                    handleClose(true);
                     setDisable(false);
                     handleReset();
+                    handleClose(true);
                 })
                 .catch(function(error) {
                     console.error("Error adding document: ", error);
@@ -323,7 +351,6 @@ function Popup(props){
 
     }
 
-    console.log(selectedChip.map((data) => data.label));
 
     useEffect(() => {
         if(image){
@@ -336,236 +363,242 @@ function Popup(props){
     },[image])
 
     return (
-        <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="simple-modal-title"
-            aria-describedby="simple-modal-description"
-        >
-            <div style={modalStyle} className={classes.paper}>
+        <>
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="simple-modal-title"
+                aria-describedby="simple-modal-description"
+            >
+                <div style={modalStyle} className={classes.paper}>
 
-                <div className={classes.modalHeader}>
-                    <h2>What's on your mind ?</h2>
-                    <div className={classes.buttonClose}>
-                        <IconButton aria-label="Cancel" color="inherit" onClick={handleClose} >
-                            <CancelTwoToneIcon />
-                        </IconButton>
-                    </div>
-                </div>
-                <div className="popup__caption">
-                    <div className={classes.inputHead}>
-                        <CardHeader
-                            avatar={
-                                <Avatar aria-label="recipe" className={classes.avatar} src={user?.photoURL}/>
-                            }
-                            title={
-                                <span className={classes.username}>{user?.displayName}</span>
-                            }
-                            subheader={
-                                <>
-                                    <Select
-                                        style={{minWidth: "100px"}}
-                                        displayEmpty
-                                        inputProps={{ 'aria-label': 'Status' }}
-                                        value={postStatus}
-                                        onChange={event => setPostStatus(event.target.value)}
-                                    >
-                                        <MenuItem value={`public`}><span>Public</span></MenuItem>
-                                        <MenuItem value={`private`}><span>Private</span></MenuItem>
-                                    </Select>
-                                </>
-
-                            }
-                            className={classes.cardHeader}
-                        />
-                        <FormControl className={classes.fellingSelect}>
-                            <Select
-                                displayEmpty
-                                inputProps={{ 'aria-label': 'Felling' }}
-                                value={felling}
-                                onChange={event => setFelling(event.target.value)}
-                            >
-                                <MenuItem value="">
-                                    <em>Felling</em>
-                                </MenuItem>
-                                <MenuItem value={`happy`}> 🙂 <span style={{paddingLeft: "5px"}}>Happy</span></MenuItem>
-                                <MenuItem value={`sad`}> 😔 <span style={{paddingLeft: "5px"}}>Sad</span></MenuItem>
-                                <MenuItem value={`love`}>🥰 <span style={{paddingLeft: "5px"}}>Loved</span></MenuItem>
-                            </Select>
-
-                        </FormControl>
-                        {
-                            tagUser ? (
-                                <div className={classes.fellingSelect} >
-                                    <Chip
-                                        color="primary"
-                                        size="small"
-                                        label={`is with ${tagUser.displayName}`}
-                                        onDelete={() => handleRemoveTagUser()}
-                                    />
-                                </div>
-                            ) : null
-                        }
-                    </div>
-
-
-                    <div className="popup__text">
-                        <TextField
-                            className={classes.inputText}
-                            multiline
-                            placeholder="What's on your mind ... "
-                            value={caption}
-                            onChange={event => setCaption(event.target.value)}
-                            InputProps={{ disableUnderline: true, style : {fontSize: "1rem"}}}
-                        />
-                        <IconButton className="chat__iconPicker" aria-label="Add" onClick={handleClickEmoji}>
-                            <SentimentSatisfiedRoundedIcon />
-                        </IconButton>
-                        {
-                            openEmoji ? (
-                                <Popover
-                                    id={id}
-                                    open={openEmoji}
-                                    anchorEl={anchorElPicker}
-                                    onClose={handleCloseEmoji}
-                                    anchorOrigin={{
-                                        vertical: 'top',
-                                        horizontal: 'left',
-                                    }}
-                                    transformOrigin={{
-                                        vertical: 'bottom',
-                                        horizontal: 'center',
-                                    }}
-                                >
-                                    <Picker
-                                        onSelect={addEmoji}
-                                        title="Livefood"
-                                    />
-                                </Popover>
-
-                            ) : null
-                        }
-
-                    </div>
-                    {
-                        image ? (
-                            <div className="popup__review">
-                                {
-                                    image[activeStep]?.type === "video/mp4" ? (
-                                        <video controls className={classes.reviewImg} muted="muted">
-                                            <source src={window.URL.createObjectURL(image[activeStep])} type="video/mp4"/>
-                                        </video>
-                                    ) : (
-                                        <img className={classes.reviewImg} src={window.URL.createObjectURL(image[activeStep])} alt="" />
-                                    )
-                                }
-                                <div className={classes.buttonRemove}>
-                                    <IconButton aria-label="Cancel" color="inherit" onClick={() => removeImage(activeStep)} >
-                                        <CancelTwoToneIcon />
-                                    </IconButton>
-                                </div>
-                                {
-                                    image.length > 1 ? (
-                                        <MobileStepper
-                                            variant="dots"
-                                            steps={maxSteps}
-                                            position="static"
-                                            activeStep={activeStep}
-                                            nextButton={
-                                                <IconButton onClick={handleNext} aria-label="Next" disabled={activeStep === maxSteps - 1} >
-                                                    <KeyboardArrowRight />
-                                                </IconButton>
-                                            }
-                                            backButton={
-                                                <IconButton onClick={handleBack} disabled={activeStep === 0}  aria-label="Back">
-                                                    <KeyboardArrowLeft />
-                                                </IconButton>
-                                            }
-                                        />
-                                    ) : null
-                                }
-                            </div>
-                        ) : null
-                    }
-                    <div className={classes.tag}>
-                        <span className={classes.tagTitle}>Pin some tag to your post ?</span>
-                        <Paper elevation={0} component="ul" className={classes.listChip}>
-
-                            {selectedChip.map((data) => {
-                                return (
-                                    <li key={data.key}>
-                                        <Chip
-                                            label={data.label}
-                                            onDelete={handleDeleteChip(data)}
-                                            className={classes.chip}
-                                        />
-                                    </li>
-                                );
-                            })}
-                        </Paper>
-                        <div className={classes.pickerContainer}>
-                            {listChip.map((data) => {
-                                return (
-                                    <Chip
-                                        key={data.key}
-                                        label={data.label}
-                                        clickable
-                                        color="primary"
-                                        onClick={() => handleSelectChip(data)}
-                                        className={classes.chip}
-                                    />
-                                );
-                            })}
+                    <div className={classes.modalHeader}>
+                        <h2>What's on your mind ?</h2>
+                        <div className={classes.buttonClose}>
+                            <IconButton aria-label="Cancel" color="inherit" onClick={handleClose} >
+                                <CancelTwoToneIcon />
+                            </IconButton>
                         </div>
                     </div>
+                    <div className="popup__caption">
+                        <div className={classes.inputHead}>
+                            <CardHeader
+                                avatar={
+                                    <Avatar aria-label="recipe" className={classes.avatar} src={user?.photoURL}/>
+                                }
+                                title={
+                                    <span className={classes.username}>{user?.displayName}</span>
+                                }
+                                subheader={
+                                    <>
+                                        <Select
+                                            style={{minWidth: "100px"}}
+                                            displayEmpty
+                                            inputProps={{ 'aria-label': 'Status' }}
+                                            value={postStatus}
+                                            onChange={event => setPostStatus(event.target.value)}
+                                        >
+                                            <MenuItem value={`public`}><span>Public</span></MenuItem>
+                                            <MenuItem value={`private`}><span>Only Me</span></MenuItem>
+                                        </Select>
+                                    </>
+
+                                }
+                                className={classes.cardHeader}
+                            />
+                            <FormControl className={classes.fellingSelect}>
+                                <Select
+                                    displayEmpty
+                                    inputProps={{ 'aria-label': 'Felling' }}
+                                    value={felling}
+                                    onChange={event => setFelling(event.target.value)}
+                                >
+                                    <MenuItem value="">
+                                        <em>Felling</em>
+                                    </MenuItem>
+                                    <MenuItem value={`happy`}> 🙂 <span style={{paddingLeft: "5px"}}>Happy</span></MenuItem>
+                                    <MenuItem value={`sad`}> 😔 <span style={{paddingLeft: "5px"}}>Sad</span></MenuItem>
+                                    <MenuItem value={`love`}>🥰 <span style={{paddingLeft: "5px"}}>Loved</span></MenuItem>
+                                </Select>
+
+                            </FormControl>
+                            {
+                                tagUser ? (
+                                    <div className={classes.fellingSelect} >
+                                        <Chip
+                                            color="primary"
+                                            size="small"
+                                            label={`is with ${tagUser.displayName}`}
+                                            onDelete={() => handleRemoveTagUser()}
+                                        />
+                                    </div>
+                                ) : null
+                            }
+                        </div>
 
 
-                </div>
-                <div className="popup__picker">
-                    <h3 style={{textTransform: "inherit", fontSize: "1rem", letterSpacing: "0"}}>Add to this post </h3>
-                    <div className="popup__iconPicker">
+                        <div className="popup__text">
+                            <TextField
+                                className={classes.inputText}
+                                multiline
+                                placeholder="What's on your mind ... "
+                                value={caption}
+                                onChange={event => setCaption(event.target.value)}
+                                InputProps={{ disableUnderline: true, style : {fontSize: "1rem"}}}
+                            />
+                            <IconButton className="chat__iconPicker" aria-label="Add" onClick={handleClickEmoji}>
+                                <SentimentSatisfiedRoundedIcon />
+                            </IconButton>
+                            {
+                                openEmoji ? (
+                                    <Popover
+                                        id={id}
+                                        open={openEmoji}
+                                        anchorEl={anchorElPicker}
+                                        onClose={handleCloseEmoji}
+                                        anchorOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'left',
+                                        }}
+                                        transformOrigin={{
+                                            vertical: 'bottom',
+                                            horizontal: 'center',
+                                        }}
+                                    >
+                                        <Picker
+                                            onSelect={addEmoji}
+                                            title="Livefood"
+                                        />
+                                    </Popover>
 
-                        <div>
-                            <label htmlFor="icon-button-file" className="upload__pickerButton">
-                                <IconButton color="inherit" component="span" >
+                                ) : null
+                            }
+
+                        </div>
+                        {
+                            image ? (
+                                <div className="popup__review">
+                                    {
+                                        image[activeStep]?.type === "video/mp4" ? (
+                                            <video controls className={classes.reviewImg} muted="muted">
+                                                <source src={window.URL.createObjectURL(image[activeStep])} type="video/mp4"/>
+                                            </video>
+                                        ) : (
+                                            <img className={classes.reviewImg} src={window.URL.createObjectURL(image[activeStep])} alt="" />
+                                        )
+                                    }
+                                    <div className={classes.buttonRemove}>
+                                        <IconButton aria-label="Cancel" color="inherit" onClick={() => removeImage(activeStep)} >
+                                            <CancelTwoToneIcon />
+                                        </IconButton>
+                                    </div>
+                                    {
+                                        image.length > 1 ? (
+                                            <MobileStepper
+                                                variant="dots"
+                                                steps={maxSteps}
+                                                position="static"
+                                                activeStep={activeStep}
+                                                nextButton={
+                                                    <IconButton onClick={handleNext} aria-label="Next" disabled={activeStep === maxSteps - 1} >
+                                                        <KeyboardArrowRight />
+                                                    </IconButton>
+                                                }
+                                                backButton={
+                                                    <IconButton onClick={handleBack} disabled={activeStep === 0}  aria-label="Back">
+                                                        <KeyboardArrowLeft />
+                                                    </IconButton>
+                                                }
+                                            />
+                                        ) : null
+                                    }
+                                </div>
+                            ) : null
+                        }
+                        {
+                            image ? (
+                                <div className={classes.tag}>
+                                    <span className={classes.tagTitle}>Pin some tag to your post ?</span>
+                                    <Paper elevation={0} component="ul" className={classes.listChip}>
+
+                                        {selectedChip.map((data) => {
+                                            return (
+                                                <li key={data.key}>
+                                                    <Chip
+                                                        label={data.label}
+                                                        onDelete={handleDeleteChip(data)}
+                                                        className={classes.chip}
+                                                    />
+                                                </li>
+                                            );
+                                        })}
+                                    </Paper>
+                                    <div className={classes.pickerContainer}>
+                                        {listChip.map((data) => {
+                                            return (
+                                                <Chip
+                                                    key={data.key}
+                                                    label={data.label}
+                                                    clickable
+                                                    color="primary"
+                                                    onClick={() => handleSelectChip(data)}
+                                                    className={classes.chip}
+                                                />
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            ) : null
+                        }
+
+
+                    </div>
+                    <div className="popup__picker">
+                        <h3 style={{textTransform: "inherit", fontSize: "1rem", letterSpacing: "0"}}>Add to this post </h3>
+                        <div className="popup__iconPicker">
+
+                            <div>
+                                <label htmlFor="icon-button-file" className="upload__pickerButton">
+                                    <IconButton color="inherit" component="span" >
+                                        <Badge color="secondary">
+                                            <PhotoCameraTwoToneIcon className={classes.popIcon}/>
+                                        </Badge>
+                                    </IconButton>
+                                </label>
+                                <IconButton color="inherit" component="span" onClick={() => handleOpenTag()}>
                                     <Badge color="secondary">
-                                        <PhotoCameraTwoToneIcon className={classes.popIcon}/>
+                                        <AccountCircleTwoToneIcon className={classes.popIcon} />
                                     </Badge>
                                 </IconButton>
-                            </label>
-                            <IconButton color="inherit" component="span">
-                                <Badge color="secondary">
-                                    <AccountCircleTwoToneIcon className={classes.popIcon} onClick={() => handleOpenTag()}/>
-                                </Badge>
-                            </IconButton>
-                            <IconButton color="inherit" component="span" >
-                                <Badge color="secondary">
-                                    <LocationOnTwoToneIcon className={classes.popIcon}/>
-                                </Badge>
-                            </IconButton>
-
+                            </div>
                         </div>
+                    </div>
+
+
+
+                    <div className="upload__button">
+                        <Button
+                            classes={{
+                                disabled: classes.buttonDisable
+                            }}
+                            type="submit"
+                            onClick={newUpload}
+                            disabled={disable}
+                        >
+                            Create Now
+                        </Button>
+                        {loading && <CircularProgress size={24} value={progress} className={classes.buttonProgress} /> }
                     </div>
                 </div>
 
+            </Modal>
 
-
-                <div className="upload__button">
-                    <Button
-                        classes={{
-                            disabled: classes.buttonDisable
-                        }}
-                        type="submit"
-                        onClick={newUpload}
-                        disabled={disable}
-                    >
-                        Create Now
-                    </Button>
-                    {loading && <CircularProgress size={24} value={progress} className={classes.buttonProgress} /> }
-                </div>
-            </div>
-
-        </Modal>
+            {
+                openTag ? (
+                    <ListUserForTag open={openTag} handleClose={handleCloseTag} userLogged={user} handleTagUser={handleTagUser}/>
+                ) : null
+            }
+        </>
     )
 }
 export default Popup;

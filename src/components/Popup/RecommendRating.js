@@ -182,11 +182,11 @@ export default function RecommendRating(props){
     }
 
     const handleReset = () => {
-        handleClose(true);
         setProgress('0');
         setCaption("");
         setLoading(false);
         setDisable(false);
+        handleClose(true);
     }
 
 
@@ -216,7 +216,6 @@ export default function RecommendRating(props){
                         voteCount: firebase.firestore.FieldValue.increment(1)
                     })
                 }
-                handleClose(true);
                 handleReset();
             })
             .catch(function(error) {

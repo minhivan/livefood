@@ -8,7 +8,7 @@ import "leaflet/dist/leaflet.css"
 import markerIconPng from "leaflet/dist/images/marker-icon.png"
 import {Icon} from 'leaflet'
 import Avatar from "@material-ui/core/Avatar";
-
+import RoutingLeaflet from "../../../hooks/RoutingLeaflet";
 
 const useStyles = makeStyles((theme) => ({
     icon: {
@@ -59,27 +59,46 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
+
+
 export default function ProfileAbout(props){
     const classes = useStyles();
-    const {uid, userLogged, userSnapshot} = props;
-    const [lat, setLat] = useState('');
-    const [lng, setLng] = useState('');
+    const {userSnapshot} = props;
+    const [destination, setDestination] = useState({
+        lat: 0,
+        lng: 0
+    });
+    const [userLocation, setUserLocation] = useState({
+        lat: 0,
+        lng: 0
+    });
 
     useEffect(() => {
-        setLng(userSnapshot?.aboutRestaurant?.geolocation?.lng ?? '');
-        setLat(userSnapshot?.aboutRestaurant?.geolocation?.lat ?? '');
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+
+                setUserLocation({lat: position.coords.latitude,  lng: position.coords.longitude });
+            });
+        }
+
+    }, []);
+
+
+    useEffect(() => {
+        setDestination({...destination, lat: userSnapshot?.aboutRestaurant?.geolocation?.lat ?? 0,  lng: userSnapshot?.aboutRestaurant?.geolocation?.lng ?? 0 });
     }, [userSnapshot]);
 
-    console.log(lat, lng)
+    // console.log(lat, lng)
 
     return (
         <div className="explore__root" style={{paddingTop: "30px"}}>
             <div className={classes.container}>
                 {
-                    lat && lng ? (
+                    destination.lng !== 0 && destination.lat !== 0 ? (
                         <div className="profile__about-map">
                             <MapContainer
-                                center={[lat, lng]}
+                                center={[destination.lat, destination.lng]}
                                 zoom={16}
                                 scrollWheelZoom={true}
                                 dragging={true}
@@ -90,17 +109,28 @@ export default function ProfileAbout(props){
                                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                 />
 
-                                <Marker
-                                    position={[lat, lng]}
-                                    icon={new Icon({iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41]})}
-                                >
-                                    <Popup>
-                                        <div className={classes.shopCard}>
-                                            <Avatar className={classes.avatar} alt={userSnapshot?.displayName} src={userSnapshot?.photoURL}/>
-                                            <span className={classes.shopName}>{userSnapshot?.displayName}</span>
-                                        </div>
-                                    </Popup>
-                                </Marker>
+                                {
+                                    userLocation && userLocation?.lng !== 0 && userLocation?.lat !== 0 ? (
+                                        <RoutingLeaflet userLocation={userLocation} destination={destination}/>
+                                    ) : (
+                                        <Marker
+                                            position={destination}
+                                            icon={new Icon({iconUrl: markerIconPng, iconSize: [25, 41], iconAnchor: [12, 41]})}
+                                        >
+                                            <Popup>
+                                                <div className={classes.shopCard}>
+                                                    <Avatar className={classes.avatar} alt={userSnapshot?.displayName} src={userSnapshot?.photoURL}/>
+                                                    <span className={classes.shopName}>{userSnapshot?.displayName}</span>
+                                                </div>
+                                            </Popup>
+                                        </Marker>
+                                    )
+                                }
+
+
+
+
+
                             </MapContainer>
                         </div>
                     ) : (

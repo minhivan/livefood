@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {Button, CardContent, Collapse, IconButton, Modal, useTheme} from "@material-ui/core";
-import CancelTwoToneIcon from "@material-ui/icons/CancelTwoTone";
+import {Button, CardContent, Collapse, IconButton, Modal, Tooltip, useTheme} from "@material-ui/core";
+import CloseIcon from '@material-ui/icons/Close';
 import {makeStyles} from "@material-ui/core/styles";
 import CardHeader from "@material-ui/core/CardHeader";
 import Avatar from "@material-ui/core/Avatar";
@@ -25,7 +25,7 @@ import CommentInput from "../Comments/CommentInput";
 import ListUserLikePost from "../Popup/ListUserLikePost";
 import {db} from "../../firebase";
 import {useDocument} from "react-firebase-hooks/firestore";
-import MobileStepper from "@material-ui/core/MobileStepper";
+// import MobileStepper from "@material-ui/core/MobileStepper";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import Skeleton from "@material-ui/lab/Skeleton";
@@ -33,7 +33,9 @@ import MoreHorizRoundedIcon from "@material-ui/icons/MoreHorizRounded";
 import PostUtil from "../Popup/PostUtil";
 import EditPost from "../Popup/EditPost";
 import Report from "../Popup/Report";
-import ListUserForTag from "../Popup/ListUserForTag";
+import LocationOnIcon from "@material-ui/icons/LocationOn";
+import CheckCircleTwoToneIcon from "@material-ui/icons/CheckCircleTwoTone";
+import {blue} from "@material-ui/core/colors";
 
 
 
@@ -64,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
         "&:focus": {
             outline: "none"
         },
-        maxHeight: "600px",
+        maxHeight: "730px",
         height: "100%",
         display: "flex",
         justifyContent: "space-between",
@@ -77,12 +79,20 @@ const useStyles = makeStyles((theme) => ({
     // },
     buttonClose: {
         position: "absolute",
-        left: "0",
-        top: "0"
+        left: "15px",
+        top: "15px",
+
     },
+    leftPanel: {
+        height: "auto",
+        minWidth: "550px",
+        maxWidth: "600px",
+        position: "relative"
+    },
+
     imgHolder: {
-        width: "600px",
-        paddingBottom: "100%",
+        width: "100%",
+        height: "100%",
         position: "relative",
         overflow : "hidden",
         backgroundColor: "rgb(232, 231, 224)"
@@ -95,13 +105,9 @@ const useStyles = makeStyles((theme) => ({
         top: "0",
         width: "100%",
     },
-    leftPanel: {
-        height: "100%",
-        maxWidth: "600px",
-        position: "relative"
-    },
+
     rightPanel: {
-        width: "350px",
+        width: "400px",
         height: "100%",
         position: "relative"
     },
@@ -197,6 +203,12 @@ const useStyles = makeStyles((theme) => ({
         '&:hover': {
             backgroundColor: "#fff"
         },
+    },
+    displayName: {
+        display: "inline-flex",
+        alignItems: "center",
+        fontSize: "14px",
+        gap: "5px"
     }
 }));
 
@@ -386,8 +398,8 @@ function MediaViewer(props){
                         ) : <Skeleton animation="wave" variant="rect" className={classes.media} />
                     }
                     <div className={classes.buttonClose}>
-                        <IconButton aria-label="Cancel" color="inherit" onClick={handleClose} >
-                            <CancelTwoToneIcon />
+                        <IconButton aria-label="Cancel" style={{backgroundColor: "#fff", padding: "5px"}} color="inherit" onClick={handleClose} >
+                            <CloseIcon   />
                         </IconButton>
                     </div>
                 </div>
@@ -401,7 +413,41 @@ function MediaViewer(props){
                                     <Avatar alt={postAuthor?.displayName} src={postAuthor?.photoURL}/>
                                 }
                                 title={
-                                    <Link to={`/profile/${postAuthor?.uid}`} style={{fontWeight: "bold"}}>{postAuthor?.displayName}</Link>
+                                    <>
+                                        <h4 className={classes.displayName}>
+                                            <Link to={`/profile/${postAuthor?.uid}`}
+                                                  style={{fontWeight: "bold", maxWidth: "200px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis"}}
+                                            >
+                                                {postAuthor?.displayName}
+                                            </Link>
+                                            {
+                                                postAuthor?.accountVerified ? (
+                                                    <Tooltip title="Verified" arrow>
+                                                        <CheckCircleTwoToneIcon style={{ color: blue[700]}} fontSize={"small"}/>
+                                                    </Tooltip>
+                                                ) : null
+                                            }
+                                        </h4>
+
+                                        {
+                                            post?.tag ? (
+                                                <span> with
+                                                    <Link to={`/profile/${post?.tag?.uid}`} style={{paddingLeft: "5px", fontWeight: "bold"}}>{post?.tag?.displayName}</Link>
+                                                </span>
+                                            ) : null
+                                        }
+                                        {
+                                            post?.checkIn ? (
+                                                <span> is at
+                                                <Link to={`/profile/${post?.checkIn?.uid}`} style={{paddingLeft: "5px", fontWeight: "bold"}}>
+                                                    {post?.checkIn?.displayName}
+                                                    <LocationOnIcon fontSize="small"/>
+                                                 </Link>
+                                                </span>
+                                            ) : null
+                                        }
+                                    </>
+
                                 }
                                 subheader={dayjs(postCreated).fromNow()}
                                 action={
@@ -416,20 +462,21 @@ function MediaViewer(props){
                         <div className={classes.data}>
                             {/* Card body */}
                             <div className={classes.modalBody}>
-                                <div className="post__caption">
-                                    {
-                                        post.caption.length > 50 ? (
-                                            <span className={classes.captionText} >
+                                {
+                                    post.caption ? (
+                                        <div className="post__caption">
+                                            {
+                                                post.caption.length > 50 ? (
+                                                    <span className={classes.captionText} >
                                                 {
                                                     isReadMore ? post.caption.slice(0, 50) : post.caption}
-                                                <span onClick={toggleReadMore} style={{fontWeight: "bold", cursor: "pointer", color: "#8e8e8e"}}>
-                                                    {isReadMore ? "...read more" : null
-                                                    }
-                                            </span>
-                                            </span>
-                                        ) : post.caption
-                                    }
-                                </div>
+                                                        <span onClick={toggleReadMore} style={{fontWeight: "bold", cursor: "pointer", color: "#8e8e8e"}}>{isReadMore ? "...read more" : null}</span>
+                                                    </span>
+                                                ) : <span className={classes.captionText}>{post.caption}</span>
+                                            }
+                                        </div>
+                                    ) : null
+                                }
                             </div>
                             <Divider />
 

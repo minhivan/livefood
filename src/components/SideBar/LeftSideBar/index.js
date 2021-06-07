@@ -21,6 +21,7 @@ import NavItem from './NavItem';
 import {useDocument} from "react-firebase-hooks/firestore";
 import {db} from "../../../firebase";
 import {blue} from "@material-ui/core/colors";
+import CheckCircleTwoToneIcon from "@material-ui/icons/CheckCircleTwoTone";
 
 
 
@@ -65,7 +66,8 @@ const useStyles = makeStyles(() => ({
         overflow: "hidden"
     },
     displayName: {
-        display: "block",
+        display: "flex",
+        alignItems: "center",
         fontWeight: "bold",
         paddingBottom: 5,
         whiteSpace: "nowrap",
@@ -169,7 +171,14 @@ const NavBar = (props) => {
                         />
 
                         <Link to={`/profile/${props.userLogged?.uid}`} className={classes.name}>
-                            <span className={classes.displayName}>{props.userLogged?.displayName}</span>
+                            <span className={classes.displayName}>
+                                {props.userLogged?.displayName}
+                                {
+                                    userData?.data()?.accountVerified ? (
+                                        <CheckCircleTwoToneIcon style={{ color: blue[700], marginLeft: "5px"}}/>
+                                    ) : null
+                                }
+                            </span>
                             <span className={classes.displayName} style={{ color: "#546e7a"}}>{userData?.data()?.fullName}</span>
                         </Link>
 

@@ -9,7 +9,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import PropTypes from "prop-types";
 import MoreHorizRoundedIcon from "@material-ui/icons/MoreHorizRounded";
 import {makeStyles} from "@material-ui/core/styles";
-
+import LocationOnIcon from '@material-ui/icons/LocationOn';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function PostHeader({author, handleClickOpen, postDate, type, postFelling, postTagUid, postTagUser}){
+export default function PostHeader({author, handleClickOpen, postDate, type, postFelling, tag, checkIn}){
     const classes = useStyles();
 
     // day ago
@@ -47,7 +47,7 @@ export default function PostHeader({author, handleClickOpen, postDate, type, pos
 
     return (
         <CardHeader
-            className={`${type==="recipe" && classes.root}`}
+            className={`${type==="recipe" && classes.root} no-print`}
             avatar={
                 author?.uid ? (
                     <Avatar alt={author?.displayName} src={author?.photoURL}/>
@@ -65,9 +65,19 @@ export default function PostHeader({author, handleClickOpen, postDate, type, pos
                             ) : null
                         }
                         {
-                            postTagUid ? (
+                            tag ? (
                                 <span> with
-                                    <Link to={`/profile/${postTagUid}`} style={{paddingLeft: "5px", fontWeight: "bold"}}>{postTagUser}</Link>
+                                    <Link to={`/profile/${tag?.uid}`} style={{paddingLeft: "5px", fontWeight: "bold"}}>{tag?.displayName}</Link>
+                                </span>
+                            ) : null
+                        }
+                        {
+                            checkIn ? (
+                                <span> is at
+                                    <Link to={`/profile/${checkIn?.uid}`} style={{paddingLeft: "5px", fontWeight: "bold"}}>
+                                        {checkIn?.displayName}
+                                        <LocationOnIcon fontSize="small"/>
+                                    </Link>
                                 </span>
                             ) : null
                         }

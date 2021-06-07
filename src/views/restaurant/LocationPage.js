@@ -8,11 +8,10 @@ import {makeStyles} from "@material-ui/core/styles";
 import {MapPin as MapPinIcon} from "react-feather";
 import {Link} from "react-router-dom";
 import {Rating} from "@material-ui/lab";
-import FavoriteRoundedIcon from "@material-ui/icons/FavoriteRounded";
-import AccessTimeRoundedIcon from "@material-ui/icons/AccessTimeRounded";
+
 import {handleUserFollow, handleUserUnfollow} from "../../hooks/services";
 import Button from "@material-ui/core/Button";
-import LocationOnRoundedIcon from "@material-ui/icons/LocationOnRounded";
+import vnProvince from "../../province.json"
 
 
 const useStyles = makeStyles((theme) => ({
@@ -81,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
     buttonLink: {
         height: 56,
         minWidth: 220,
-    }
+    },
 }));
 
 
@@ -106,13 +105,13 @@ export default function LocationPage(props){
     }, [userLogged])
 
     useEffect(() => {
-        fetch('https://vapi.vnappmob.com/api/province/')
-            .then(res => res.json()).then(res => {
-            if (res.results && res.results.length > 0) {
-                setProvince(res.results)
-            }
-        });
-
+        // fetch('https://vapi.vnappmob.com/api/province/')
+        //     .then(res => res.json()).then(res => {
+        //     if (res.results && res.results.length > 0) {
+        //         setProvince(res.results)
+        //     }
+        // });
+        setProvince(vnProvince.province);
     }, []);
 
 
@@ -203,6 +202,24 @@ export default function LocationPage(props){
                         </Button>
                     </Link>
                     <FormControl variant="outlined" className={classes.formControl}>
+                        <InputLabel id="restaurant_location_label">Location</InputLabel>
+                        <Select
+                            native
+                            labelId="restaurant_location_label"
+                            id="restaurant_location"
+                            value={userProvince}
+                            onChange={event => setUserProvince(event.target.value)}
+                            label="Location"
+                        >
+                            <option aria-label="None" value="" />
+                            {
+                                province?.map((doc) => (
+                                    <option key={doc.idProvince} value={doc.idProvince}>{doc.name}</option>
+                                ))
+                            }
+                        </Select>
+                    </FormControl>
+                    <FormControl variant="outlined" className={classes.formControl}>
 
                         <InputLabel id="restaurant_category_label">Category</InputLabel>
                         <Select
@@ -222,24 +239,7 @@ export default function LocationPage(props){
                             }
                         </Select>
                     </FormControl>
-                    <FormControl variant="outlined" className={classes.formControl}>
-                        <InputLabel id="restaurant_location_label">Location</InputLabel>
-                        <Select
-                            native
-                            labelId="restaurant_location_label"
-                            id="restaurant_location"
-                            value={userProvince}
-                            onChange={event => setUserProvince(event.target.value)}
-                            label="Location"
-                        >
-                            <option aria-label="None" value="" />
-                            {
-                                province?.map((doc) => (
-                                    <option key={doc.province_id} value={doc.province_id}>{doc.province_name}</option>
-                                ))
-                            }
-                        </Select>
-                    </FormControl>
+
                 </div>
 
                 {
@@ -259,6 +259,7 @@ export default function LocationPage(props){
                                                 <div className="details">
                                                     <h2 className="title" title={data?.displayName}>
                                                         <Link to={`/profile/${id}`}>{data?.displayName}</Link>
+
                                                         {
                                                             data?.aboutRestaurant?.location ? (
                                                                     <span className="user-location">

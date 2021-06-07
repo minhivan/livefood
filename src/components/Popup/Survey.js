@@ -12,6 +12,7 @@ import FormControl from '@material-ui/core/FormControl';
 
 import {Autocomplete} from "@material-ui/lab";
 import {db} from "../../firebase";
+import vnProvince from "../../province.json";
 
 
 function getModalStyle() {
@@ -215,8 +216,8 @@ export default function Survey({userLogged}) {
         db.collection("users").doc(userLogged.uid).update({
             aboutMe: {
                 favorites: selectedChip.map((data) => data.label),
-                location: region.province_name,
-                locationId: region.province_id,
+                location: region.name,
+                locationId: region.idProvince,
                 gender: gender
             },
         }).then(function() {
@@ -228,12 +229,7 @@ export default function Survey({userLogged}) {
     }
 
     useEffect(() => {
-        fetch('https://vapi.vnappmob.com/api/province/')
-            .then(res => res.json()).then(res => {
-            if (res.results && res.results.length > 0) {
-                setProvince(res.results)
-            }
-        });
+        setProvince(vnProvince.province)
     }, [])
 
     useEffect(() => {
@@ -289,7 +285,7 @@ export default function Survey({userLogged}) {
                                 fullWidth
                                 autoHighlight
                                 options={province}
-                                getOptionLabel={(option) => option.province_name}
+                                getOptionLabel={(option) => option.name}
                                 value={region}
                                 onChange={(event, newValue) => {
                                     setRegion(newValue);

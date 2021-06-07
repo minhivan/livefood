@@ -195,7 +195,6 @@ input:focus{
     border: none;
     border-radius: 16px;
     box-shadow: 0px 0px 5px 0px #ddc4c4bf;
-    margin: 40px 0 0;
 }
 
 /*!* Page not found *!*/
@@ -265,12 +264,12 @@ input:focus{
 .explore__root .explore__container
 {
     display: grid;
-    grid-gap: 16px;
+    grid-gap: 24px;
     grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: 340px;
+    grid-auto-rows: 320px;
     grid-auto-flow: dense;
     max-width: 990px;
-    margin-bottom: 30px;
+    margin-bottom: 24px;
 }
 
 .explore__root .explore__masonry .explore__masonry-item,
@@ -336,7 +335,7 @@ input:focus{
     max-width: 990px;
 }
 .profile__about{
-    padding-bottom: 20px;
+
     max-width: 650px;
     display: flex;
     flex-flow: column;
@@ -995,7 +994,7 @@ input:focus{
     color: #262626;
     font-weight: 600;
     text-decoration: none;
-    margin-right: 10px;
+    /*margin-right: 10px;*/
 }
 .commentContainer{
     display: flex;
@@ -1078,7 +1077,7 @@ input:focus{
 
 .commentDetails,
 .sub-comment-details{
-    padding: 20px;
+    padding: 20px 0 20px 20px;
     display: flex;
     align-items: flex-start;
 }
@@ -1398,7 +1397,7 @@ input:focus{
     display: grid;
     grid-gap: 16px;
     grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: 400px;
+    grid-auto-rows: 450px;
     grid-auto-flow: dense;
     box-sizing: border-box;
 }
@@ -1420,7 +1419,6 @@ input:focus{
     line-height: 25px;
     overflow: hidden;
     letter-spacing: 1px;
-    max-height: 105px;
     white-space: normal;
 }
 
@@ -1448,6 +1446,8 @@ input:focus{
     font-size: 12px;
     color: #888;
     font-weight: 500;
+    max-height: 50px;
+    overflow: hidden;
 }
 .list-users-item .follow-me{
     width: 100%;
@@ -1520,6 +1520,27 @@ input:focus{
 }
 
 @media print {
+    .post{
+        margin: 30px 50px;
+        page-break-inside:avoid;
+        page-break-after:auto
+    }
+
+    /*.recipe_layout{*/
+    /*    page-break-inside:avoid;*/
+    /*    page-break-after:auto*/
+    /*}*/
+    /*.post__content{*/
+    /*    max-height: 100vh;*/
+    /*    height: 100vh;*/
+    /*}*/
+    /*.post__contentImage{*/
+    /*    max-height: 100vh;*/
+    /*    !*height: 100%;*!*/
+    /*    !*min-height: 100vh;*!*/
+    /*}*/
+
+
     .no-print {
         display: none;
     }

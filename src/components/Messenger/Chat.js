@@ -81,7 +81,10 @@ function Chat({userLogged, recipientData, setOpenSnack}){
     }
 
     useEffect(() => {
-        if(recipientData)   setRecipientUser(recipientData);
+        if(recipientData)  setRecipientUser(recipientData)
+        else{
+            console.log("sadadasdasdsa");
+        }
     }, [recipientData])
 
     const [chatMessages, setChatMessage] = useState([]);

@@ -12,6 +12,8 @@ import { useDocument} from "react-firebase-hooks/firestore";
 import {Link, useLocation} from "react-router-dom";
 import {handleUserFollow, handleUserUnfollow} from "../../hooks/services";
 import {blue} from "@material-ui/core/colors";
+import {Tooltip} from "@material-ui/core";
+import CheckCircleTwoToneIcon from "@material-ui/icons/CheckCircleTwoTone";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -90,7 +92,6 @@ export default function ExplorePeopleItem(props) {
     const [userSnapshot] = useDocument(userRef);
     const [userLoggedData, setUserLoggedData] = useState({});
     let userFollowingList = userSnapshot?.data()?.following;
-    let userFollowerList = userSnapshot?.data()?.follower;
 
 
     useEffect(() => {
@@ -115,7 +116,6 @@ export default function ExplorePeopleItem(props) {
                 .get().then(snapshot => {
                     let data = [];
                     snapshot.forEach(doc => {
-                        console.log(doc.data()?.displayName?.toLowerCase());
                         if(doc.data()?.displayName?.toLowerCase().includes(query)){
                             data.push({id: doc.id, user: doc.data()})
                         }
@@ -124,59 +124,39 @@ export default function ExplorePeopleItem(props) {
                 }).catch(error => console.log(error));
         }
         else{
-            if(typeof userFollowingList !== 'undefined' && userFollowingList?.length > 0){
-                let followingList;
-                followingList = userSnapshot.data().following
-                userLogged.uid && followingList.push(userLogged.uid);
-                return db.collection("users")
-                    .orderBy('displayName', 'asc')
-                    .orderBy('accountType', 'asc')
-                    .limit(20)
-                    .get().then(snapshot => {
-                        let data = [];
-                        snapshot.forEach(function(doc) {
-                            // doc.data() is never undefined for query doc snapshots
-                            if(!followingList.includes(doc.id)){
-                                data.push({id: doc.id, user: doc.data()})
-                            }
-                        });
-                        setUsers(data);
-                    })
-            }
-            else{
-                return db.collection("users")
-                    .where('uid' ,'!=' , userLogged.uid )
-                    .limit(20)
-                    .get().then(snapshot => {
-                        setUsers(snapshot.docs.map(doc => ({
-                            id: doc.id,
-                            user: doc.data(),
-                        })));
-                    })
-            }
+            return db.collection("users")
+                .orderBy('accountType', 'asc')
+                .orderBy('displayName', 'asc')
+
+                .limit(20)
+                .get().then(snapshot => {
+                    let data = [];
+                    snapshot.forEach(function(doc) {
+                        // doc.data() is never undefined for query doc snapshots
+                        if(!doc.data()?.follower?.includes(userLogged.uid) && doc.id !== userLogged.uid){
+                            data.push({id: doc.id, user: doc.data()})
+                        }
+                    });
+                    setUsers(data);
+                })
 
 
         }
-    }, [userLogged, userFollowingList?.length, query])
+    }, [userLogged, query])
+
+
+    console.log(users)
 
 
     // check if user followed
-    const checkFollowed = (userFollowingList, uid) => {
-        let rs = false;
-        if(typeof userFollowingList !== 'undefined' ){
-            rs = userFollowingList.includes(uid);
-        }
-        return rs;
-    }
+    // const checkFollowed = (userFollowingList, uid) => {
+    //     let rs = false;
+    //     if(typeof userFollowingList !== 'undefined' ){
+    //         rs = userFollowingList.includes(uid);
+    //     }
+    //     return rs;
+    // }
 
-
-    const checkOpponentFollowYou = (userFollowerList, uid) => {
-        let rs = false;
-        if(typeof userFollowerList !== 'undefined' ){
-            rs = userFollowerList.includes(uid);
-        }
-        return rs;
-    }
 
     return (
         <div className={classes.container} >
@@ -189,7 +169,16 @@ export default function ExplorePeopleItem(props) {
                             </ListItemAvatar>
                             <ListItemText
                                 primary={
-                                    <Link to={`/profile/${user?.uid}`} className={classes.name}>{user?.displayName}</Link>
+                                    <h4 style={{display: "flex", alignItems: "center"}}>
+                                        <Link to={`/profile/${user?.uid}`} className={classes.name}>{user?.displayName}</Link>
+                                        {
+                                            user?.accountVerified ? (
+                                                <Tooltip title="Verified" arrow>
+                                                    <CheckCircleTwoToneIcon style={{ color: blue[700], marginLeft: "5px"}} fontSize={"small"}/>
+                                                </Tooltip>
+                                            ) : null
+                                        }
+                                    </h4>
                                     }
                                 secondary={
                                     <Typography
@@ -199,13 +188,13 @@ export default function ExplorePeopleItem(props) {
                                         color="textPrimary"
                                     >
                                         Full name
-                                        -   {checkOpponentFollowYou(userFollowerList, id) ? "Follow you" : " Suggested for you"}
+                                        -   {user?.following?.includes(userLogged.uid) ? "Follow you" : " Suggested for you"}
                                     </Typography>
                                 }
                             />
 
                             {
-                                checkFollowed(userFollowingList, id) ? (
+                                userFollowingList?.includes(id) ? (
                                     <Button
                                         variant="outlined"
                                         style={{textTransform: "capitalize"}}

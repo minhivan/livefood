@@ -8,7 +8,6 @@ import NavBar from "../../components/SideBar/LeftSideBar";
 import Button from "@material-ui/core/Button";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import {useDocument} from "react-firebase-hooks/firestore";
 
 const useStyles = makeStyles((theme) => ({
     icon: {
@@ -111,8 +110,9 @@ const Explore = (props) => {
 
     useEffect(() => {
         return db.collection('posts')
+            .where('status', '==', 'public')
             .orderBy('timestamp', 'desc')
-            .limit(6)
+            .limit(12)
             .get().then(snapshot => {
                 let temp = []
                 snapshot.forEach(data => {
@@ -121,6 +121,7 @@ const Explore = (props) => {
                         Object.assign(userProfile, author.data());
                     })
                     temp.push({id: data.id, post: data.data(), authorProfile: userProfile })
+
                 })
                 setExplore(temp);
                 setLastVisible(snapshot.docs[snapshot.docs.length-1]);
@@ -132,7 +133,7 @@ const Explore = (props) => {
             db.collection('posts')
                 .orderBy('timestamp', 'desc')
                 .startAfter(lastVisible)
-                .limit(6)
+                .limit(12)
                 .get().then(snapshot => {
                     let temp = []
                     snapshot.forEach(data => {

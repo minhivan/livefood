@@ -72,6 +72,7 @@ const validationSchema = yup.object({
     username: yup
         .string('Enter your display name')
         .min(6, 'Display name should be of minimum 6 characters length')
+        .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ")
         .required('Display name is required'),
     password: yup
         .string('Enter your password')

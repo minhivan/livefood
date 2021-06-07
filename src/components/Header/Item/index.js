@@ -28,6 +28,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import {handleSeenNotification} from "../../../hooks/services";
 import {blue} from "@material-ui/core/colors";
+import Button from "@material-ui/core/Button";
 
 
 
@@ -123,7 +124,6 @@ function MenuHeader(props) {
     // day ago
     dayjs.extend(relativeTime);
 
-
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -152,9 +152,10 @@ function MenuHeader(props) {
     }, [userLogged])
 
     useEffect(() => {
+
         const unsubscribe = db.collection('users').doc(userLogged.uid).collection("notifications")
             .orderBy('timestamp', 'desc')
-            .limit(30)
+            .limit(21)
             .onSnapshot(snapshot => {
                 setNotifications(snapshot.docs.map((doc => ({
                     id: doc.id,
@@ -165,6 +166,27 @@ function MenuHeader(props) {
             unsubscribe();
         }
     }, [userLogged])
+
+
+    const checkAllSeenNoti = () => {
+        db.collection('users').doc(userLogged.uid).collection("notifications")
+            .orderBy('timestamp', 'desc')
+            .limit(21)
+            .get().then(snapshot => {
+                snapshot.forEach(function(doc) {
+                    // doc.data() is never undefined for query doc snapshots
+                    if(doc.data().status === "unread"){
+                        db.collection('users').doc(userLogged.uid)
+                            .collection("notifications").doc(doc.id)
+                            .update({
+                                status: "read"
+                            }).catch(reason => {
+                                console.log(reason)
+                            })
+                    }
+                });
+            })
+    }
 
 
     const countNoti = notifications.filter(function(item){
@@ -222,57 +244,80 @@ function MenuHeader(props) {
                         horizontal: 'center',
                     }}
                 >
-                    <List className={classes.root}>
-                        {
-                            notifications.length > 0  ? (
-                                notifications.map(({id, data}) => (
-                                    <ListItem alignItems="center" className={classes.notiItem} key={id}>
-                                        <ListItemAvatar>
-                                            <Link to={`/profile/${data?.uid}`} >
-                                                <Avatar alt={data?.displayName} src={data?.avatar} />
-                                            </Link>
-                                        </ListItemAvatar>
-                                        <Link
-                                            to={data?.path}
-                                            style={{flex: "1 1 auto", paddingRight: "10px"}}
-                                            onClick={() => {
-                                                handleSeenNotification(userLogged.uid, id);
-                                                handleCloseNotice();
-                                            }}
-                                        >
-                                            <ListItemText
-                                                primary={
-                                                    <React.Fragment>
-                                                        <span style={{fontWeight: "bold", marginRight: "5px"}}>{data?.from}</span>
-                                                        <span>{data?.message}</span>
-                                                    </React.Fragment>
+                    {
+                        notifications.length > 0  ? (
+                            <>
+                                <List className={classes.root}>
+                                    {
+                                        notifications.map(({id, data}) => (
+                                            <ListItem alignItems="center" className={classes.notiItem} key={id}>
+                                                <ListItemAvatar>
+                                                    <Link to={`/profile/${data?.uid}`} >
+                                                        <Avatar alt={data?.displayName} src={data?.avatar} />
+                                                    </Link>
+                                                </ListItemAvatar>
+                                                <Link
+                                                    to={data?.path}
+                                                    style={{flex: "1 1 auto", paddingRight: "10px"}}
+                                                    onClick={() => {
+                                                        handleSeenNotification(userLogged.uid, id);
+                                                        handleCloseNotice();
+                                                    }}
+                                                >
+                                                    <ListItemText
+                                                        primary={
+                                                            <React.Fragment>
+                                                                <span style={{fontWeight: "bold", marginRight: "5px"}}>{data?.from}</span>
+                                                                <span>{data?.message}</span>
+                                                            </React.Fragment>
+                                                        }
+                                                        secondary={
+                                                            dayjs(new Date(data?.timestamp?.seconds * 1000).toLocaleString()).fromNow()
+                                                        }
+                                                    />
+                                                </Link>
+                                                {
+                                                    data?.status === "unread" ? (
+                                                        <div id="new" className="style-scope ytd-notification-renderer "/>
+                                                    ) : null
                                                 }
-                                                secondary={
-                                                    dayjs(new Date(data?.timestamp?.seconds * 1000).toLocaleString()).fromNow()
-                                                }
-                                            />
-                                        </Link>
-                                        {
-                                            data?.status === "unread" ? (
-                                                <div id="new" className="style-scope ytd-notification-renderer "/>
-                                            ) : null
-                                        }
 
-                                    </ListItem>
-                                ))
-                            ) : (
-                                <div className={classes.wrapper}>
-                                    <div className={classes.none}>
-                                        <BellIcon
-                                            className={classes.notFoundIcon}
-                                            size="20"
-                                        />
-                                    </div>
-                                    <h2 style={{paddingBottom: "10px"}}>You're up to head</h2>
+                                            </ListItem>
+                                        ))
+                                    }
+                                    {
+                                        countNoti > 0 ? (
+                                            <ListItem alignItems="center" style={{justifyContent: "center"}}>
+                                                <Button
+                                                    style={{textTransform: "capitalize", fontSize: "16px", marginTop: "20px", width: "120px"}}
+                                                    color="secondary"
+                                                    variant="contained"
+                                                    onClick={checkAllSeenNoti}
+                                                >
+                                                    Seen all
+                                                </Button>
+                                            </ListItem>
+                                        ) : null
+                                    }
+
+
+                                </List>
+
+
+                            </>
+                        ) : (
+                            <div className={classes.wrapper}>
+                                <div className={classes.none}>
+                                    <BellIcon
+                                        className={classes.notFoundIcon}
+                                        size="20"
+                                    />
                                 </div>
-                            )
-                        }
-                    </List>
+                                <h2 style={{paddingBottom: "10px"}}>You're up to head</h2>
+                            </div>
+                        )
+                    }
+
                 </Popover>
 
                 <IconButton onClick={handleClick}>

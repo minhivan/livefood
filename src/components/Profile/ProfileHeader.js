@@ -19,7 +19,7 @@ import {Rating} from "@material-ui/lab";
 // import Typography from "@material-ui/core/Typography";
 import LinkTwoToneIcon from '@material-ui/icons/LinkTwoTone';
 import EmojiFoodBeverageTwoToneIcon from '@material-ui/icons/EmojiFoodBeverageTwoTone';
-
+import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
 
 
 import {
@@ -27,6 +27,7 @@ import {
     Instagram as InstagramIcon,
     Video as VideoIcon
 } from "react-feather";
+import {Tooltip} from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -82,7 +83,7 @@ const useStyles = makeStyles((theme) => ({
         // "&:hover": {
         //     backgroundColor: "#c3d6fa",
         // },
-        marginRight: "15px",
+
         textTransform: "capitalize"
     },
     displayName: {
@@ -95,20 +96,20 @@ const useStyles = makeStyles((theme) => ({
     opening: {
         display: "flex",
         alignItems: "center",
-        color: "#65676B",
+        color: "#000",
+        fontWeight: "500",
         cursor : "pointer",
         "&:hover": {
-            color: "#343438",
-            transition: "0.2s all ease"
+            fontWeight: "600",
         }
     },
     about: {
-        padding: "20px 0",
+        padding: "20px 0 0",
         display: "block",
         gap: "10px"
     },
     bioContent: {
-        padding: "5px"
+        padding: "20px"
     },
     voteRating : {
         display: "flex",
@@ -117,10 +118,10 @@ const useStyles = makeStyles((theme) => ({
     },
     viewMoreRating: {
         paddingLeft: "5px",
-        color: "#0288d1",
+        color: "#0290e0",
         "&:hover": {
-            color: "#054063",
-            transition: "0.2s all ease"
+            color: "#03639e",
+            transition: "0.2s all ease",
         },
     },
     countInfo: {
@@ -130,11 +131,10 @@ const useStyles = makeStyles((theme) => ({
     linkToAbout: {
         display: "flex",
         alignItems: "center",
-        color: "#65676B",
+        color: "#000",
         cursor : "pointer",
         "&:hover": {
-            color: "#343438",
-            transition: "0.2s all ease"
+            fontWeight: "600",
         }
     },
     buttonClose: {
@@ -273,7 +273,16 @@ const ProfileHeader = ({userSnapshot, count, userLogged}) => {
                 <div className={classes.bioDetails}>
                     <div className="share-title-container">
                         {/* User bio */}
-                        <h2 className="share-title">{userSnapshot?.displayName}</h2>
+                        <h2 className="share-title">
+                            {userSnapshot?.displayName}
+                            {
+                                userSnapshot?.accountVerified ? (
+                                    <Tooltip title="Verified" arrow>
+                                        <CheckCircleTwoToneIcon style={{ color: blue[700], marginLeft: "5px"}}/>
+                                    </Tooltip>
+                                ) : null
+                            }
+                        </h2>
                         <h1 className="share-sub-title">{userSnapshot?.fullName ?? ''}</h1>
                         {
                             userLogged ? (
@@ -312,12 +321,24 @@ const ProfileHeader = ({userSnapshot, count, userLogged}) => {
                                             )
                                         }
                                         <Button
+                                            component={Link}
+                                            to={`/messages`}
                                             variant="contained"
                                             className={classes.button}
                                         >
                                             Message
                                         </Button>
-
+                                        {
+                                            userSnapshot?.accountType === "foodshop" && userLogged ? (
+                                                <Button
+                                                    variant="contained"
+                                                    className={classes.button}
+                                                    onClick={handleOpenRating}
+                                                >
+                                                    Rating
+                                                </Button>
+                                            ) : null
+                                        }
                                     </div>
                                 )
                             ) : null
@@ -340,10 +361,9 @@ const ProfileHeader = ({userSnapshot, count, userLogged}) => {
                     <Divider />
                 </div>
                 <div className={classes.bioContent}>
-
                     {
                         userSnapshot?.bio ? (
-                            <h2 className="share-desc mt10" style={{textAlign: "justify"}}>
+                            <h2 className="share-desc mt10" style={{textAlign: "center"}}>
                                 {/*{userSnapshot.bio}*/}
                                 {
                                     userSnapshot.bio?.length > 150 ? (
@@ -382,21 +402,24 @@ const ProfileHeader = ({userSnapshot, count, userLogged}) => {
                                 <div className={classes.about}>
                                     {
                                         userSnapshot?.accountType === "foodshop" ? (
-                                            <h4 className={classes.opening} style={{paddingBottom: "20px"}}>
-                                                <EmojiFoodBeverageTwoToneIcon />
-                                                <span style={{marginLeft: "5px"}}> {userSnapshot?.aboutRestaurant?.model}</span>
-                                            </h4>
+                                            <div style={{display: "flex"}}>
+                                                <h4 className={classes.opening} style={{paddingBottom: "20px"}}>
+                                                    <EmojiFoodBeverageTwoToneIcon />
+                                                    <span style={{marginLeft: "5px", marginRight: "10px"}}> {userSnapshot?.aboutRestaurant?.model}</span>
+                                                </h4>
+                                                {
+                                                    userSnapshot?.aboutRestaurant?.opening ? (
+                                                        <h4 className={classes.opening} style={{paddingBottom: "20px"}}>
+                                                            <AccessTimeRoundedIcon style={{marginRight: "5px"}}/>
+                                                            Opening :
+                                                            <span style={{marginLeft: "5px"}}>{userSnapshot?.aboutRestaurant?.opening} - {userSnapshot?.aboutRestaurant?.closed}</span>
+                                                        </h4>
+                                                    ) : null
+                                                }
+                                            </div>
                                         ) : null
                                     }
-                                    {
-                                        userSnapshot?.aboutRestaurant?.opening ? (
-                                            <h4 className={classes.opening} style={{paddingBottom: "20px"}}>
-                                                <AccessTimeRoundedIcon style={{marginRight: "5px"}}/>
-                                                Opening :
-                                                <span style={{marginLeft: "5px"}}>{userSnapshot?.aboutRestaurant?.opening} - {userSnapshot?.aboutRestaurant?.closed}</span>
-                                            </h4>
-                                        ) : null
-                                    }
+
                                     {
                                         userSnapshot?.aboutRestaurant?.address ? (
                                             <h4 className={classes.opening} style={{paddingBottom: "20px"}}>
@@ -406,7 +429,7 @@ const ProfileHeader = ({userSnapshot, count, userLogged}) => {
                                                     <span style={{marginLeft: "5px"}}>{userSnapshot?.aboutRestaurant?.address}</span>
                                                     {
                                                         userSnapshot?.aboutRestaurant?.location ? (
-                                                            <span style={{marginLeft: "5px"}}> - {userSnapshot?.aboutRestaurant?.location}</span>
+                                                            <span > - {userSnapshot?.aboutRestaurant?.location}</span>
                                                         ) : null
                                                     }
                                                 </div>
@@ -429,21 +452,6 @@ const ProfileHeader = ({userSnapshot, count, userLogged}) => {
                         ) : null
                     }
                 </div>
-
-                {
-                    userLogged ? (
-                        userSnapshot?.accountType === "foodshop" && userLogged.uid !== userSnapshot?.uid ? (
-                            <Button
-                                style={{width: "150px", margin: "auto"}}
-                                variant="contained"
-                                className={classes.button}
-                                onClick={handleOpenRating}
-                            >
-                                Review
-                            </Button>
-                        ) : null
-                    ) : null
-                }
 
             </div>
             {

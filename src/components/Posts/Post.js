@@ -126,27 +126,79 @@ function Post({id, post, handleRemove, handleReport, isSinglePage,...rest}) {
 		<>
 			<div className={`post`} id={id} ref={componentRef}>
 				<Card className={classes.root} >
-					<PostHeader author={author} handleClickOpen={handleClickOpen} postDate={post.timestamp} type={post.type} postFelling={post?.felling} postTagUid={post?.tagUserUid} postTagUser={post?.tagUserDisplayName}/>
+					<PostHeader
+						author={author}
+						handleClickOpen={handleClickOpen}
+						postDate={post.timestamp}
+						type={post.type}
+						postFelling={post?.felling}
+						tag={post?.tag}
+						checkIn={post?.checkIn}
+						// postTagUid={post?.tagUserUid}
+						// postTagUser={post?.tagUserDisplayName}
+					/>
 					{/*Media*/}
 					<PostContent author={author} caption={post.caption} postMedia={post?.media}/>
 					{/* Post Action*/}
-					<PostAction postId={id} userLogged={user} post={post} expanded={expanded} setExpanded={setExpanded} handleFocus={handleFocus} setSavePost={setSavePost}/>
+					<PostAction
+						postId={id}
+						userLogged={user}
+						post={post}
+						expanded={expanded}
+						setExpanded={setExpanded}
+						handleFocus={handleFocus}
+						setSavePost={setSavePost}
+					/>
 					{/* Recipe data */}
-					<PostRecipeData postId={id} postData={post.data} expanded={expanded} rating={post?.rating} handlePrint={handlePrint} />
+					<PostRecipeData
+						postId={id}
+						postData={post.data}
+						expanded={expanded}
+						rating={post?.rating}
+						handlePrint={handlePrint}
+					/>
 					{/* Comments */}
-					<PostComment postId={id} isSinglePage={isSinglePage} postUid={post.uid} userLogged={user} commentsCount={post?.commentsCount} handleReplying={handleReplying}/>
+					<PostComment
+						postId={id}
+						isSinglePage={isSinglePage}
+						postUid={post.uid}
+						userLogged={user}
+						commentsCount={post?.commentsCount}
+						handleReplying={handleReplying}
+					/>
 					{/* Comments input */}
-					<CommentInput postAuthor={post.uid} user={user} postId={id} type={post.type} refInput={searchInput} replyComment={replyComment} handleRemoveReply={handleRemoveReply}/>
+					<CommentInput
+						postAuthor={post.uid}
+						user={user}
+						postId={id}
+						type={post.type}
+						refInput={searchInput}
+						replyComment={replyComment}
+						handleRemoveReply={handleRemoveReply}
+					/>
 
 				</Card>
 				{
 					user && open ? (
-						<PostUtil open={open} handleClose={handleClose} handleOpenEdit={handleOpenEdit} uid={user.uid} opponentID={post.uid} postID={id} handleReport={handleOpenReport} isFollow={isFollow} savePost={savePost} setOpenSnack={setOpenSnack} userLoggedData={userLoggedData}/>
+						<PostUtil
+							open={open}
+							handleClose={handleClose}
+							handleOpenEdit={handleOpenEdit}
+							uid={user.uid} opponentID={post.uid}
+							postID={id} handleReport={handleOpenReport}
+							isFollow={isFollow} savePost={savePost}
+							setOpenSnack={setOpenSnack}
+							userLoggedData={userLoggedData}/>
 					) : null
 				}
 				{
 					openEdit ? (
-						<EditPost open={openEdit} handleClose={handleCloseEdit} post={post} postId={id} setOpenSnack={setOpenSnack}/>
+						<EditPost
+							open={openEdit}
+							handleClose={handleCloseEdit}
+							post={post} postId={id}
+							setOpenSnack={setOpenSnack}
+						/>
 					) : null
 				}
 

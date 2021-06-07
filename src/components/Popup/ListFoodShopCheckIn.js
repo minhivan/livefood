@@ -104,13 +104,19 @@ const useStyles = makeStyles((theme) => ({
         },
         textTransform: "capitalize"
     },
+    displayName: {
+        whiteSpace: "nowrap",
+        maxWidth: "300px",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+    }
 
 }));
 
 
-export default function ListUserForTag(props) {
+export default function ListFoodShopCheckIn(props) {
 
-    const {open, handleClose, userLogged, handleTagUser} = props;
+    const {open, handleClose, userLogged, handleSetCheckInData} = props;
 
     const [modalStyle] = useState(getModalStyle);
     const [name, setName] = useState('')
@@ -125,12 +131,12 @@ export default function ListUserForTag(props) {
 
     const handleNext =  () => {
         return db.collection("users")
-            .where('accountType', '!=', "foodshop")
+            .where('accountType', '==', "foodshop")
             .limit(30)
             .get().then(snapshot => {
                 let data = [];
                 snapshot.forEach(doc => {
-                    if(doc.data()?.displayName?.toLowerCase().includes(name) && doc.id !== userLogged.uid){
+                    if(doc.data()?.displayName?.toLowerCase().includes(name)){
                         data.push({
                             id: doc.id,
                             data: {
@@ -149,21 +155,19 @@ export default function ListUserForTag(props) {
     useEffect(() => {
         if(!name){
             return db.collection("users")
-                .where('follower', 'array-contains', userLogged.uid)
+                .where('accountType', '==', "foodshop")
                 .limit(30)
                 .get().then(snapshot => {
                     let data = [];
                     snapshot.forEach(doc => {
-                        if(doc.data()?.accountType !== "foodshop"){
-                            data.push({
-                                id: doc.id,
-                                data: {
-                                    photoURL: doc.data().photoURL,
-                                    email: doc.data().email,
-                                    uid: doc.data().uid,
-                                    displayName: doc.data().displayName
-                                }})
-                        }
+                        data.push({
+                            id: doc.id,
+                            data: {
+                                photoURL: doc.data().photoURL,
+                                email: doc.data().email,
+                                uid: doc.data().uid,
+                                displayName: doc.data().displayName
+                            }})
                     })
                     setUserToTag(data);
                 })
@@ -182,7 +186,7 @@ export default function ListUserForTag(props) {
         >
             <div style={modalStyle} className={classes.paper}>
                 <div className={classes.modalHeader}>
-                    <h2>Tag People</h2>
+                    <h2>Checkin</h2>
                     <div className={classes.buttonClose}>
                         <IconButton aria-label="Cancel" color="inherit" onClick={handleClose} >
                             <CancelTwoToneIcon />
@@ -192,7 +196,7 @@ export default function ListUserForTag(props) {
                 <Divider />
 
                 <div className={classes.input}>
-                    <span style={{paddingRight: "20px"}}>To: </span>
+                    <span style={{paddingRight: "20px"}}>From: </span>
                     <TextField
                         style={{width: "100%"}}
                         id="standard-basic"
@@ -216,14 +220,14 @@ export default function ListUserForTag(props) {
                                     >
                                         <div className={classes.left}>
                                             <Avatar alt={data?.displayName} src={data?.photoURL} />
-                                            <h4 style={{padding: "0 10px"}}>{data?.displayName}</h4>
+                                            <h4 style={{padding: "0 10px"}} className={classes.displayName}>{data?.displayName}</h4>
                                         </div>
                                         <Button
                                             variant="contained"
                                             className={classes.buttonChat}
                                             style={{textTransform: "capitalize"}}
                                             onClick={() => {
-                                                handleTagUser({
+                                                handleSetCheckInData({
                                                     displayName: data?.displayName,
                                                     uid: data?.uid
                                                 })
@@ -231,7 +235,7 @@ export default function ListUserForTag(props) {
                                             }}
                                         >
 
-                                            Tag
+                                            Check In
                                         </Button>
                                     </div>
                                 ))

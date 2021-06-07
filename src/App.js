@@ -84,7 +84,7 @@ const AppLoading = () => {
 				 src="/static/images/brand.png"
 			/>
 			<Spinner
-				name="wave"
+				name="circle"
 				color="red"
 				fadeIn="none"
 			/>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import Page from "../../components/Page";
 import {db} from "../../firebase";
 import ProfileHeader from "../../components/Profile/ProfileHeader";
@@ -83,6 +83,7 @@ const UserProfilePage = (props) => {
     const classes = useStyles();
     const [userData, loading] = useDocument(id && db.collection('users').doc(id));
     const userSnapshot = userData?.data();
+
 
     return(
 

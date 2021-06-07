@@ -249,7 +249,11 @@ function PageLogin() {
                     </div>
                 </div>
             </div>
-            <AlertPopup open={open} handleClose={handleClosePopup} title="LiveFood" message={message}/>
+            {
+                open ? (
+                    <AlertPopup open={open} handleClose={handleClosePopup} title="LiveFood" message={message}/>
+                ) : null
+            }
         </Page>
 
     )

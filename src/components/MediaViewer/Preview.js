@@ -45,6 +45,7 @@ const useStyles = makeStyles((theme) => ({
         objectFit: "contain",
         height: "100%",
         width: "100%",
+        maxHeight: "490px",
     },
     details: {
         backgroundColor: "rgba(0,0,0,.8)",

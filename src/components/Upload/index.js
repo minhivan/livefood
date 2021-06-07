@@ -13,7 +13,7 @@ import Popup from "./Popup";
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import RecipeStepper from "./Stepper";
-import ListUserForTag from "../Popup/ListUserForTag";
+import AlertPopup from "../Popup/AlertPopup";
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -49,8 +49,8 @@ function Upload({userLogged}) {
     const [image, setImage] = useState('');
     const [openStep, setOpenStep] = useState(false);
     const [openSnack, setOpenSnack] = useState(false);
-    const [openTag, setOpenTag] = useState(false);
-    const [tagUserData, setTagUserData] = useState(null);
+    const [openAlert, setOpenAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
 
     const handleOpen = () => {
         setOpen(true);
@@ -67,43 +67,39 @@ function Upload({userLogged}) {
         setOpenStep(false);
     };
 
-    const handleOpenTag = () => {
-        setOpenTag(true);
-    }
-    const handleCloseTag = () => {
-        setOpenTag(false);
+    const handleCloseAlert = () => {
+        setOpenAlert(false);
     }
 
-    const handleTagUser = (data) => {
-        setTagUserData(data);
-    }
+    const handleCloseSnack = (event) => {
+        setOpenSnack(false);
+    };
 
-    const handleRemoveTagUser = () => {
-        setTagUserData(null);
-    }
+
+
     const handleChange = (event) => {
         const imageList = event.target.files;
         let conditions = ["image", "video"];
         const finalData = [];
         // const isValid = (imageList) => imageList['type'].includes('image');
         Array.from(imageList).forEach(file => {
-            if(conditions.some(el => file['type'].split('/')[0].includes(el))){
+            if(conditions.some(el => file['type'].split('/')[0].includes(el)) && (file.size / 1024 / 1024 < 10)){
                 finalData.push(file)
             }
+            else{
+                setAlertMessage("File does not support or too large. Please upload again");
+                setOpenAlert(true);
+            }
         });
-
-        if(finalData){
+        if(finalData.length > 0){
             setImage(finalData);
             if(!openStep){
                 setOpen(true);
             }
         }
-
     }
 
-    const handleCloseSnack = (event) => {
-        setOpenSnack(false);
-    };
+
 
 
     return(
@@ -141,7 +137,7 @@ function Upload({userLogged}) {
             </div>
             {
                 open ? (
-                    <Popup open={open} image={image}  handleClose={handleClose} setImage={setImage} setOpenSnack={setOpenSnack} handleOpenTag={handleOpenTag} tagUser={tagUserData} handleRemoveTagUser={handleRemoveTagUser}/>
+                    <Popup open={open} image={image}  handleClose={handleClose} setImage={setImage} setOpenSnack={setOpenSnack}/>
                 ) : null
             }
             {
@@ -149,11 +145,7 @@ function Upload({userLogged}) {
                     <RecipeStepper open={openStep} image={image} setImage={setImage} handleClose={handleCloseStep} setOpenSnack={setOpenSnack} />
                 ) : null
             }
-            {
-                openTag ? (
-                    <ListUserForTag open={openTag} handleClose={handleCloseTag} userLogged={userLogged} handleTagUser={handleTagUser}/>
-                ) : null
-            }
+
 
             {
                 openSnack ? (
@@ -170,6 +162,12 @@ function Upload({userLogged}) {
                             Upload successfully !
                         </Alert>
                     </Snackbar>
+                ) : null
+            }
+
+            {
+                openAlert ? (
+                    <AlertPopup open={openAlert} handleClose={handleCloseAlert} title="LiveFood" message={alertMessage}/>
                 ) : null
             }
         </div>

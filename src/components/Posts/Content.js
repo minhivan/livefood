@@ -3,9 +3,11 @@ import Skeleton from "@material-ui/lab/Skeleton";
 import {Link} from "react-router-dom";
 import PropTypes from "prop-types";
 import {makeStyles} from "@material-ui/core/styles";
-import { IconButton} from "@material-ui/core";
+import {IconButton, Tooltip} from "@material-ui/core";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
+import {blue} from "@material-ui/core/colors";
+import CheckCircleTwoToneIcon from "@material-ui/icons/CheckCircleTwoTone";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -45,6 +47,7 @@ const useStyles = makeStyles((theme) => ({
         borderBottom : "1px solid #000"
     },
     captionText: {
+        marginLeft: "5px",
         whiteSpace: "pre-line",
         lineHeight: "26px"
     },
@@ -87,11 +90,17 @@ const useStyles = makeStyles((theme) => ({
         '&:hover': {
             backgroundColor: "#fff"
         }
+    },
+    displayName: {
+        display: "inline-flex",
+        alignItems: "center",
+        fontSize: "14px",
+        gap: "5px"
     }
 }));
 
 
-export default function PostContent({mediaUrl, caption, mediaType, author, postMedia,  ...rest}) {
+export default function PostContent({caption, author, postMedia,  ...rest}) {
     const classes = useStyles();
     // let media;
     const [activeStep, setActiveStep] = React.useState(0);
@@ -150,7 +159,16 @@ export default function PostContent({mediaUrl, caption, mediaType, author, postM
             {
                 caption.length > 0 ? (
                     <div className="post__caption">
-                        <Link to={`profile/${author?.uid}`} className="post__user">{author?.displayName}</Link>
+                        <h2 className={classes.displayName}>
+                            <Link to={`/profile/${author?.uid}`} className="post__user">{author?.displayName} </Link>
+                            {
+                                author?.accountVerified ? (
+                                    <Tooltip title="Verified" arrow>
+                                        <CheckCircleTwoToneIcon style={{ color: blue[700]}} fontSize={"small"}/>
+                                    </Tooltip>
+                                ) : null
+                            }
+                        </h2>
                         {
                             caption.length > 100 ? (
                                 <span className={classes.captionText} >
@@ -159,7 +177,9 @@ export default function PostContent({mediaUrl, caption, mediaType, author, postM
                                         {isReadMore ? "...read more" : null}
                                     </span>
                                  </span>
-                            ) : caption
+                            ) : (
+                                <span className={classes.captionText} >{caption}</span>
+                            )
                         }
                     </div>
                 ) : null
@@ -177,9 +197,3 @@ export default function PostContent({mediaUrl, caption, mediaType, author, postM
         </>
     )
 }
-
-PostContent.propTypes = {
-    // mediaUrl: PropTypes.string.isRequired,
-    caption: PropTypes.string.isRequired,
-    mediaType: PropTypes.string,
-};
