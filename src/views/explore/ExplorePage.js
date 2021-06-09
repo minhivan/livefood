@@ -131,6 +131,7 @@ const Explore = (props) => {
     const loadMore = () => {
         if(lastVisible){
             db.collection('posts')
+                .where('status', '==', 'public')
                 .orderBy('timestamp', 'desc')
                 .startAfter(lastVisible)
                 .limit(12)

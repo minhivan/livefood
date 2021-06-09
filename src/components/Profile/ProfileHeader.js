@@ -99,9 +99,7 @@ const useStyles = makeStyles((theme) => ({
         color: "#000",
         fontWeight: "500",
         cursor : "pointer",
-        "&:hover": {
-            fontWeight: "600",
-        }
+
     },
     about: {
         padding: "20px 0 0",
@@ -133,9 +131,7 @@ const useStyles = makeStyles((theme) => ({
         alignItems: "center",
         color: "#000",
         cursor : "pointer",
-        "&:hover": {
-            fontWeight: "600",
-        }
+
     },
     buttonClose: {
         position: "absolute",

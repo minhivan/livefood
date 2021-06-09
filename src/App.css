@@ -194,7 +194,7 @@ input:focus{
     background: #fafcff;
     border: none;
     border-radius: 16px;
-    box-shadow: 0px 0px 5px 0px #ddc4c4bf;
+    box-shadow: 1px 0px 3px 0px #ddc4c4bf;
 }
 
 /*!* Page not found *!*/
@@ -281,7 +281,7 @@ input:focus{
     background-color: rgb(144, 118, 86);
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0px 0px 5px 0px #a09494bf;
+
 }
 
 .explore__root .explore__masonry .explore__masonry-item:nth-child(3n) {
@@ -299,7 +299,7 @@ input:focus{
 
 .explore__root .explore__masonry .explore__masonry-item:hover,
 .explore__root .explore__container .explore__gridSmall:hover{
-    box-shadow: 0px 0px 10px 0px #000000bf;
+    box-shadow: 0px 0px 3px 0px  #000000bf;
     transition: 0.2s all ease;
 }
 
@@ -315,7 +315,7 @@ input:focus{
     background-color: #fff;
     padding: 20px;
     border-radius: 32px;
-    box-shadow: 0px 0px 5px 0px #ddc4c4bf;
+    box-shadow: 1px 0px 3px 0px #ddc4c4bf;
 }
 .profile__header{
     flex-direction: column;
@@ -520,7 +520,7 @@ input:focus{
     margin-bottom: 35px;
     height: 372px;
     width: 490px;
-    box-shadow: 0px 0px 5px 0px #ddc4c4bf;
+    box-shadow: 1px 0px 3px 0px #ddc4c4bf;
 }
 .recipe-inner{
     border-bottom: 7px solid #0095A3;
@@ -642,7 +642,7 @@ input:focus{
     height: 100%;
     border-bottom: 4px solid #892074;
     background-color: #fff;
-    box-shadow: 0px 0px 5px 0px #ddc4c4bf;
+    box-shadow: 1px 0px 3px 0px #ddc4c4bf;
     border-radius: 16px;
     overflow: hidden;
 }
@@ -702,7 +702,7 @@ input:focus{
     background-color: #fff;
     border-radius: 16px;
     margin-bottom: 20px;
-    box-shadow: 0px 0px 5px 0px #ddc4c4bf;
+    box-shadow: 1px 0px 3px 0px #ddc4c4bf;
 }
 .upload .upload__container{
     padding: 20px;
@@ -868,7 +868,7 @@ input:focus{
     background-color : #fff;
     border-radius: 16px;
     margin-bottom: 20px;
-    box-shadow: 0px 0px 5px 0px #ddc4c4bf;
+    box-shadow: 1px 0px 3px 0px #ddc4c4bf;
     overflow: hidden;
 }
 .trending__container{
@@ -953,7 +953,7 @@ input:focus{
     background-color: #fff;
     margin: 0px auto 20px auto;
     border-radius: 16px;
-    box-shadow: 0px 0px 5px 0px #ddc4c4bf;
+    box-shadow: 1px 0px 3px 0px #ddc4c4bf;
     overflow: hidden;
 }
 .post__content{
@@ -1120,7 +1120,7 @@ input:focus{
 }
 
 .sub-comment-details{
-    padding: 20px 0 20px 20px;
+    padding: 20px 0 0 20px;
 }
 .sub-comment-details .comment__content{
     padding-right: 0;
@@ -1387,7 +1387,7 @@ input:focus{
     align-items: center;
     gap: 15px;
     justify-content: flex-end;
-    box-shadow: 0px 0px 5px 0px #ddc4c4bf;
+    box-shadow: 1px 0px 3px 0px #ddc4c4bf;
 }
 
 .list-users__container{

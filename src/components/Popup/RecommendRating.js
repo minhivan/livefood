@@ -162,12 +162,12 @@ export default function RecommendRating(props){
 
 
     useEffect(() => {
-        if(caption){
+        if(caption && value){
             setDisable(false);
         }else {
             setDisable(true)
         }
-    },[caption])
+    },[caption, value])
 
 
     const handleClickEmoji = (event) => {

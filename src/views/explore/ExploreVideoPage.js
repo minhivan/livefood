@@ -52,15 +52,14 @@ const ExploreVideo = (props) => {
     useEffect(() => {
         window.scroll({top: 0, left: 0, behavior: 'smooth' });
 
-        let postVideos = db.collection('posts');
-        postVideos
+        return db.collection('posts')
             .where('type', '==', 'video')
             .orderBy('timestamp', 'desc')
             .limit(20)
             .get().then(snapshot => {
                 let tempVid = []
                 snapshot.forEach(data => {
-                    var userProfile = {};
+                    let userProfile = {};
                     data.data().user.get().then( author => {
                         Object.assign(userProfile, author.data());
                     })

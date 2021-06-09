@@ -116,15 +116,23 @@ const ProfileFeed = ({uid, userLogged}) => {
                 let temp = []
                 snapshot.forEach(data => {
                     let userProfile = {};
-                    data.data().user.get().then( author => {
-                        Object.assign(userProfile, author.data());
-                    })
-                    temp.push({id: data.id, post: data.data(), postAuthor: userProfile })
+                    if(uid === userLogged?.uid){
+                        data.data().user.get().then( author => {
+                            Object.assign(userProfile, author.data());
+                        })
+                        temp.push({id: data.id, post: data.data(), postAuthor: userProfile })
+                    }
+                    else if(data.data()?.status !== "private"){
+                        data.data().user.get().then( author => {
+                            Object.assign(userProfile, author.data());
+                        })
+                        temp.push({id: data.id, post: data.data(), postAuthor: userProfile })
+                    }
                 })
                 setFeed(temp);
             })
 
-    }, [uid, toggle]);
+    }, [uid, toggle, userLogged?.uid]);
 
 
     return(
@@ -134,7 +142,7 @@ const ProfileFeed = ({uid, userLogged}) => {
                 feed && feed?.length > 0 ? (
                     <div className="explore__container" style={{padding: "0"}} >
                         {
-                            uid === userLogged.uid ? (
+                            userLogged && uid === userLogged?.uid ? (
                                 <>
                                     <div className={classes.addMore}>
                                         <div className={classes.wrapper}>

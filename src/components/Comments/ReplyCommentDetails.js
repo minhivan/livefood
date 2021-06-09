@@ -55,10 +55,21 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 export default function ReplyCommentDetails(props) {
-    const {userLogged, commentId, postId, data, replyId, isPopup, handleReplying, commentInfo} = props;
+    const {userLogged, commentId, postId, data, replyId, isPopup, handleReplying, commentInfo, setOpenSnack} = props;
     const classes = useStyles();
     const [isReadMore, setIsReadMore] = useState(true);
     const [like, setLike] = useState(false);
+
+    const [open, setOpen] = React.useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
 
     const toggleReadMore = () => {
         setIsReadMore(!isReadMore);
@@ -103,8 +114,8 @@ export default function ReplyCommentDetails(props) {
             <div className="comment__content">
                 <div className="comment__block">
                     <div className={`comment__sub ${isPopup ? "comment__sub-popup" : ""}`}>
-                        <Link to={`/profile/${data?.replyToUid}`}>{data?.replyFrom}</Link>
-                        <IconButton className={classes.more} aria-label="Util">
+                        <Link to={`/profile/${data?.replyFromUid}`}>{data?.replyFrom}</Link>
+                        <IconButton className={classes.more} aria-label="Util" onClick={handleClickOpen}>
                             <MoreHorizRoundedIcon />
                         </IconButton>
                     </div>
@@ -187,6 +198,11 @@ export default function ReplyCommentDetails(props) {
                     }
                 </div>
             </div>
+            {
+                userLogged && open ? (
+                    <CommentUtil open={open} handleClose={handleClose} postId={postId} commentId={commentId} commentUid={data.replyFromUid} userLogged={userLogged} setOpenSnack={setOpenSnack}/>
+                ) : null
+            }
         </div>
     )
 }

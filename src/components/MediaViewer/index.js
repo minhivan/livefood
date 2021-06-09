@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
         "&:focus": {
             outline: "none"
         },
-        maxHeight: "730px",
+        maxHeight: "700px",
         height: "100%",
         display: "flex",
         justifyContent: "space-between",
@@ -441,7 +441,7 @@ function MediaViewer(props){
                                                 <span> is at
                                                 <Link to={`/profile/${post?.checkIn?.uid}`} style={{paddingLeft: "5px", fontWeight: "bold"}}>
                                                     {post?.checkIn?.displayName}
-                                                    <LocationOnIcon fontSize="small"/>
+
                                                  </Link>
                                                 </span>
                                             ) : null

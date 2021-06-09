@@ -304,7 +304,7 @@ export default function LocationOnMapPage(props){
                                                             <Popup>
                                                                 <div className={classes.shopCard}>
                                                                     <Avatar className={classes.avatar} alt={data?.displayName} src={data?.photoURL}/>
-                                                                    <Link to={`/profile/dishes/${data?.uid}`}><span className={classes.shopName}>{data?.displayName}</span></Link>
+                                                                    <Link to={`/profile/about/${data?.uid}`}><span className={classes.shopName}>{data?.displayName}</span></Link>
                                                                 </div>
                                                             </Popup>
                                                         </Marker>

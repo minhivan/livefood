@@ -6,13 +6,11 @@ import {Rating, ToggleButton} from "@material-ui/lab";
 import IconButton from "@material-ui/core/IconButton";
 import MoreHorizRoundedIcon from '@material-ui/icons/MoreHorizRounded';
 import {makeStyles} from "@material-ui/core/styles";
-import {useDocument} from "react-firebase-hooks/firestore";
-import {db} from "../../firebase";
+
 import CommentUtil from "../Popup/CommentUtil";
 import {Tooltip} from "@material-ui/core";
 import FavoriteRoundedIcon from "@material-ui/icons/FavoriteRounded";
 import FavoriteBorderTwoToneIcon from "@material-ui/icons/FavoriteBorderTwoTone";
-import ReplyCommentDetails from "./ReplyCommentDetails";
 import Subcomments from "./ReplyComment";
 import {handleLikeComment, handleUnlikeComment} from "../../hooks/services";
 
@@ -63,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 function PostComment (props) {
-    const {comment, isPopup, postId, postUid, commentId, userLogged, handleReplying} =  props
+    const {comment, isPopup, postId, postUid, commentId, userLogged, handleReplying, setOpenSnack} =  props
     const classes = useStyles();
 
     // const [postAuthor] = useDocument(comment.uid && db.collection('users').doc(comment.uid))
@@ -224,16 +222,28 @@ function PostComment (props) {
                                     </div>
                                 )
                             }
-                            <Subcomments commentId={commentId} userLogged={userLogged} postId={postId} seeMore={seeMore} isPopup={isPopup} handleReplying={handleReplying} commentInfo={commentInfo}/>
+                            <Subcomments commentId={commentId} userLogged={userLogged} postId={postId} seeMore={seeMore} isPopup={isPopup} handleReplying={handleReplying} commentInfo={commentInfo} setOpenSnack={setOpenSnack} />
                         </>
                     ) : null
                 }
             </div>
             {
-                userLogged ? (
-                    <CommentUtil open={open} handleClose={handleClose} postId={postId} postUid={postUid} commentId={commentId} commentUid={comment.commentFromUid} userLogged={userLogged}/>
+                userLogged && open ? (
+                    <CommentUtil
+                        open={open}
+                        handleClose={handleClose}
+                        postId={postId}
+                        postUid={postUid}
+                        commentId={commentId}
+                        commentUid={comment.commentFromUid}
+                        userLogged={userLogged}
+                        setOpenSnack={setOpenSnack}
+                    />
                 ) : null
             }
+
+
+
         </div>
     )
 

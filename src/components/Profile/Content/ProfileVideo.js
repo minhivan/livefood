@@ -174,7 +174,7 @@ const ProfileVideo = ({uid, userLogged, userSnapshot}) => {
                             userLogged && uid === userLogged?.uid ? (
                                 <>
                                     <h2 style={{paddingBottom: "10px"}}>Start Record Video</h2>
-                                    <p>Videos must be between 1 and 60 minutes long.</p>
+                                    <p>Videos must be smaller than 10MB.</p>
                                     <Button
                                         style={{textTransform: "capitalize", fontSize: "16px", marginTop: "20px"}}
                                         color="primary"

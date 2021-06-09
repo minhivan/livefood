@@ -47,14 +47,14 @@ export default function NewFeed(props){
     const [posts, setPosts] = useState([]);
     const userRef = userLogged && db.collection('users').doc(userLogged.uid);
     const [userSnapshot] = useDocument(userRef);
-    const [limit, setLimit] = useState(20);
+    const [limit, setLimit] = useState(30);
     const [lastVisible, setLastVisible] = useState('');
     let userFollow = userSnapshot?.data()?.following;
 
     //Get post
     useEffect( () => {
         if(typeof userFollow !== 'undefined' && userFollow.length > 0){
-            userFollow.push(userLogged.uid);
+            userFollow.push(userLogged?.uid);
             const unsubscribe = db.collection('posts')
                 .orderBy('timestamp', "desc")
                 .limit(limit)
@@ -62,7 +62,12 @@ export default function NewFeed(props){
                     let data = [];
                     snapshot.forEach((doc) => {
                         if(userFollow.includes(doc.data().uid)){
-                            data.push({id: doc.id, post: doc.data()})
+                            if(doc.data().status === "private" && doc.data().uid === userLogged.uid){
+                                data.push({id: doc.id, post: doc.data()})
+                            }
+                            else if(doc.data().status !== "private"){
+                                data.push({id: doc.id, post: doc.data()})
+                            }
                         }
                     })
                     setPosts(data);
@@ -74,7 +79,7 @@ export default function NewFeed(props){
         }
         else{
             const unsubscribe = db.collection('posts')
-                .where('uid', '==', userLogged.uid)
+                .where('uid', '==', userLogged?.uid)
                 .orderBy('timestamp', "desc")
                 .limit(limit)
                 .onSnapshot( snapshot => {
@@ -89,7 +94,7 @@ export default function NewFeed(props){
                 unsubscribe();
             }
         }
-    }, [userFollow?.length, userLogged?.uid, limit]);
+    }, [userFollow?.length, userLogged, limit]);
 
 
     function handleRemove(id) {

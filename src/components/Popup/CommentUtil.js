@@ -66,9 +66,11 @@ const useStyles = makeStyles((theme) => ({
 
 
 const CommentUtil = (props) => {
-    const {open, handleClose, postId, postUid, commentId, commentUid , userLogged} = props;
+    const {open, handleClose, postId, postUid, commentId, commentUid , userLogged, setOpenSnack} = props;
     const [modalStyle] = useState(getModalStyle);
     const classes = useStyles();
+
+    console.log(commentUid, userLogged?.uid)
 
     return (
         <Modal
@@ -108,12 +110,12 @@ const CommentUtil = (props) => {
                                         root: classes.btnRed,
                                         label: classes.btnLabel,
                                     }}
-                                    // onClick={
-                                    //     () => {
-                                    //         handleReportPost(props.uid, props.id);
-                                    //         props.handleClose(true);
-                                    //     }
-                                    // }
+                                    onClick={
+                                        () => {
+                                            handleClose(true);
+                                            setOpenSnack(true);
+                                        }
+                                    }
 
                                 >
                                     Report

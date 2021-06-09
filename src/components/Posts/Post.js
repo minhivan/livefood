@@ -165,6 +165,7 @@ function Post({id, post, handleRemove, handleReport, isSinglePage,...rest}) {
 						userLogged={user}
 						commentsCount={post?.commentsCount}
 						handleReplying={handleReplying}
+						setOpenSnack={setOpenSnack}
 					/>
 					{/* Comments input */}
 					<CommentInput

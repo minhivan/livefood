@@ -1,8 +1,8 @@
 import React from "react";
 import { Outlet } from 'react-router-dom';
 import LayoutAppBar from "./Header";
-// import Widget from 'rasa-webchat';
-//
+import Widget from 'rasa-webchat';
+
 // function CustomWidget() {
 //     return (
 //         <Widget
