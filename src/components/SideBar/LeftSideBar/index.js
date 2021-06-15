@@ -54,14 +54,14 @@ const useStyles = makeStyles(() => ({
     util: {
         padding: "0",
         backgroundColor: "#fff",
-        borderRadius: "16px",
+        borderRadius: "8px",
         boxShadow: "0px 0px 5px 0px #ddc4c4bf",
         overflow: "hidden"
     },
     userFrame: {
         marginBottom: "20px",
         backgroundColor: "#fff",
-        borderRadius: "16px",
+        borderRadius: "8px",
         boxShadow: "0px 0px 5px 0px #ddc4c4bf",
         overflow: "hidden"
     },

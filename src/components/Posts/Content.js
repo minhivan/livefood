@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import Skeleton from "@material-ui/lab/Skeleton";
 import {Link} from "react-router-dom";
-import PropTypes from "prop-types";
 import {makeStyles} from "@material-ui/core/styles";
 import {IconButton, Tooltip} from "@material-ui/core";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
@@ -184,16 +183,7 @@ export default function PostContent({caption, author, postMedia,  ...rest}) {
                     </div>
                 ) : null
             }
-            {/*{*/}
-            {/*    caption ? (*/}
-            {/*        */}
-            {/*    ) : (*/}
-            {/*        <div className="post__caption">*/}
-            {/*            <Skeleton animation="wave" height={10} width="100%" style={{ marginBottom: 6 }} />*/}
-            {/*            <Skeleton animation="wave" height={10} width="100%" />*/}
-            {/*        </div>*/}
-            {/*    )*/}
-            {/*}*/}
+
         </>
     )
 }

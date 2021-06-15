@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme) => ({
         borderRadius: "50%",
     },
     root: {
-        width: '420px',
+        width: '390px',
         backgroundColor: theme.palette.background.paper,
         maxHeight: "calc(100vh - 100px)",
         overflowY: "auto",
@@ -80,7 +80,8 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "column",
-        width: "100%"
+        width: "390px",
+        padding: "8px"
     },
     none: {
         width: "50px",
@@ -92,7 +93,7 @@ const useStyles = makeStyles((theme) => ({
         alignItems: "center",
         borderStyle: "solid",
         borderRadius: "50%",
-        margin: "50px 0 20px 0"
+        margin: "30px 0 10px 0"
     },
     notiItem: {
         maxHeight: "100px",

@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
         boxShadow: theme.shadows[5],
         padding: '0',
         borderRadius: "8px",
-        maxHeight: "300px",
+        maxHeight: "370px",
         "&:focus": {
             outline: "none"
         },
@@ -152,6 +152,18 @@ export default function Report(props) {
                         onClick={() => handleReport("violence")}
                     >
                         Violence or dangerous
+                    </Button>
+                </div>
+                <Divider />
+                <div className={classes.btnAction}>
+                    <Button
+                        classes={{
+                            root: classes.btnNormal,
+                            label: classes.btnLabel,
+                        }}
+                        onClick={() => handleReport("copyright")}
+                    >
+                        Copyright infringement
                     </Button>
                 </div>
                 <Divider />

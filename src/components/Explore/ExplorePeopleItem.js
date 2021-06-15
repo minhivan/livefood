@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
         width: '100%',
         backgroundColor: theme.palette.background.paper,
         marginLeft: "10px",
-        borderRadius: "16px",
+        borderRadius: "8px",
         padding: 0,
         boxShadow: "0px 0px 5px 0px #ddc4c4bf",
         overflow: "hidden"

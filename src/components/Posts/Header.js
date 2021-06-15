@@ -14,7 +14,7 @@ import LocationOnIcon from '@material-ui/icons/LocationOn';
 const useStyles = makeStyles((theme) => ({
     root: {
         borderTop: "4px solid #0095A3",
-        borderRadius: "16px"
+        borderRadius: "8px"
     },
 }));
 
