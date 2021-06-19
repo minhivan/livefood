@@ -83,7 +83,7 @@ function Chat({userLogged, recipientData, setOpenSnack}){
     useEffect(() => {
         if(recipientData)  setRecipientUser(recipientData)
         else{
-            console.log("sadadasdasdsa");
+            console.log("None");
         }
     }, [recipientData])
 
@@ -94,7 +94,7 @@ function Chat({userLogged, recipientData, setOpenSnack}){
             .doc(id)
             .collection("messages")
             .orderBy("timestamp", "asc")
-            .limit(30)
+            .limit(300)
             .onSnapshot((doc) => {
                 setChatMessage(doc.docs.map((doc) => ({
                     id: doc.id,

@@ -53,6 +53,7 @@ function App() {
 	}, [userLogged])
 
 
+
 	if(loading){
 		return(
 			<AppLoading />

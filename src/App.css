@@ -4,6 +4,8 @@
 /*@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200&family=Roboto+Condensed:wght@400&display=swap');*/
 /*@import url('https://fonts.googleapis.com/css2?family=Barlow&display=swap');*/
 @import url('https://fonts.googleapis.com/css2?family=Lexend&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+
 
 *{
     margin: 0;
@@ -89,7 +91,7 @@ input:focus{
 .app{
     min-height: calc(100vh - 20px);
     position: relative;
-    background-color: #f0f2f5;
+    background-color: #f5f4f9;
 }
 .app__header{
     position: sticky;
@@ -193,8 +195,8 @@ input:focus{
     padding: 30px 50px;
     background: #fafcff;
     border: none;
-    border-radius: 16px;
-    box-shadow: 1px 0px 3px 0px #ddc4c4bf;
+    border-radius: 8px;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 2%), 0 0 0.5rem 0 rgb(0 0 0 / 1%), 0.25rem 0.5rem 1rem 0 rgb(0 48 111 / 8%);
 }
 
 /*!* Page not found *!*/
@@ -315,7 +317,7 @@ input:focus{
     background-color: #fff;
     padding: 20px;
     border-radius: 16px;
-    box-shadow: 1px 0px 3px 0px #ddc4c4bf;
+    box-shadow: 0.5rem 0.5rem 2rem 0 rgb(8 15 41 / 8%), 0 0 1px 0 rgb(8 15 41 / 8%);
 }
 .profile__header{
     flex-direction: column;
@@ -704,7 +706,7 @@ input:focus{
     background-color: #fff;
     border-radius: 8px;
     margin-bottom: 20px;
-    box-shadow: 1px 0px 3px 0px #ddc4c4bf;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 2%), 0 0 0.5rem 0 rgb(0 0 0 / 1%), 0.25rem 0.5rem 1rem 0 rgb(0 48 111 / 8%);
 }
 .upload .upload__container{
     padding: 20px;
@@ -870,7 +872,7 @@ input:focus{
     background-color : #fff;
     border-radius: 8px;
     margin-bottom: 20px;
-    box-shadow: 1px 0px 3px 0px #ddc4c4bf;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 2%), 0 0 0.5rem 0 rgb(0 0 0 / 1%), 0.25rem 0.5rem 1rem 0 rgb(0 48 111 / 8%);
     overflow: hidden;
 }
 .trending__container{
@@ -955,7 +957,7 @@ input:focus{
     background-color: #fff;
     margin: 0px auto 20px auto;
     border-radius: 8px;
-    box-shadow: 1px 0px 3px 0px #ddc4c4bf;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 2%), 0 0 0.5rem 0 rgb(0 0 0 / 1%), 0.25rem 0.5rem 1rem 0 rgb(0 48 111 / 8%);
     overflow: hidden;
 }
 .post__content{
@@ -1297,7 +1299,7 @@ input:focus{
     justify-content: space-around;
     align-items: center;
     flex: 1 0 0;
-    border-radius: 20px;
+    border-radius: 16px;
     border: 1px solid #ccc;
     padding: 8px 0 8px 5px;
 }

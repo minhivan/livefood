@@ -40,9 +40,10 @@ const useStyles = makeStyles((theme) => ({
         position: "relative",
         height: "auto",
         backgroundColor: "#fff",
-        borderRadius: "16px",
+        borderRadius: "8px",
         overflow: "hidden",
-        boxShadow: "0px 0px 5px 0px #a09494bf",
+        border: "1px solid rgb(1 1 1 / 15%)",
+
     },
     input: {
         display: "none"
