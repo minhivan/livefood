@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {Box, Chip, Popover, TextField} from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
 import {db} from "../../firebase";
-import DoneIcon from '@material-ui/icons/Done';
+// import DoneIcon from '@material-ui/icons/Done';
 
 import {Rating} from "@material-ui/lab";
 import {makeStyles} from "@material-ui/core/styles";
@@ -203,7 +203,7 @@ export default function CommentInput({user, postId, type, path, refInput, postAu
                                     onKeyPress={event => checkingKeypress(event)}
                                     rowsMax={4}
                                     multiline
-                                    ref={refInput}
+                                    inputRef={refInput}
                                     className="comment__input"
                                     placeholder="Leave a comment ... "
                                     value={comment}

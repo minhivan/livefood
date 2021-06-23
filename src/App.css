@@ -962,19 +962,15 @@ input:focus{
 }
 .post__content{
     display: block;
-    background-color: rgb(232, 231, 224);
+    background-color: rgb(255, 255, 255);
     position: relative;
-    max-height: 730px;
-    overflow: hidden;
 }
 .post__contentImage{
     height: 100%;
     width: 100%;
-    object-fit: contain;
-    max-height: 730px;
-    min-height: 400px;
-    border-top: 1px solid rgb(235, 238, 240);
-    border-bottom: 1px solid rgb(235, 238, 240);
+    object-fit: cover;
+    max-height: 830px;
+    min-height: 320px;
 }
 .post__header{
     display: flex;

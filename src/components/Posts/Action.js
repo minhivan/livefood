@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
         transform: 'rotate(180deg)',
     },
     action: {
-        borderTop: "1px solid rgba(var(--b6a,219,219,219),1)",
+        // borderTop: "1px solid rgba(var(--b6a,219,219,219),1)",
         justifyContent: "space-between"
     },
     actionButton: {

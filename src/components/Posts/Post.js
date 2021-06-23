@@ -42,7 +42,7 @@ function Post({id, post, handleRemove, handleReport, isSinglePage,...rest}) {
 	const [postAuthor] = useDocument(post.uid && db.collection('users').doc(post.uid))
 	const author = postAuthor?.data();
 	const componentRef = useRef();
-	const searchInput = useRef(null)
+	const searchInput = useRef([]);
 	const [replyComment, setReplyComment] = useState(null);
 	const [savePost, setSavePost] = useState(false);
 	const [isFollow, setIsFollow] = useState(false);
@@ -65,11 +65,12 @@ function Post({id, post, handleRemove, handleReport, isSinglePage,...rest}) {
 	}
 
 	function handleFocus(){
-		searchInput.current.focus();
-		searchInput.current.scrollIntoView({
+		searchInput.current[id].scrollIntoView({
 			behavior: "smooth",
 			block : "center"
 		})
+		searchInput.current[id].focus();
+		console.log(searchInput);
 	}
 
 	const handleClickOpen = () => {
@@ -90,8 +91,8 @@ function Post({id, post, handleRemove, handleReport, isSinglePage,...rest}) {
 
 	const handleReplying = (data) => {
 		setReplyComment(data);
-		searchInput.current.focus();
-		searchInput.current.scrollIntoView({
+		searchInput.current[id].focus();
+		searchInput.current[id].scrollIntoView({
 			behavior: "smooth",
 			block : "center"
 		})
@@ -169,11 +170,12 @@ function Post({id, post, handleRemove, handleReport, isSinglePage,...rest}) {
 					/>
 					{/* Comments input */}
 					<CommentInput
+						key={id}
 						postAuthor={post.uid}
 						user={user}
 						postId={id}
 						type={post.type}
-						refInput={searchInput}
+						refInput={el => searchInput.current[id] = el}
 						replyComment={replyComment}
 						handleRemoveReply={handleRemoveReply}
 					/>
