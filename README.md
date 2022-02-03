@@ -1,3 +1,14 @@
+# LIVEFOOD - Social media with Firebase and MUI 
+## Demo
+Open [https://livefood-ca84b.web.app](https://livefood-ca84b.web.app) to view it in the browser
+## Front page
+![image](https://user-images.githubusercontent.com/43932983/152387422-26d64b07-7a39-4bfc-ab46-6f3e510e402e.png)
+## Explore page
+![image](https://user-images.githubusercontent.com/43932983/152387558-cc07bbbf-ec8a-46aa-8789-a2f5758b55f8.png)
+## Messenger page
+![image](https://user-images.githubusercontent.com/43932983/152387742-49ec0916-e05f-4439-a0e6-d1493e5ba365.png)
+
+
 # Getting Started with Create React Template
 
 This project was bootstrapped with [Create React Template](https://github.com/facebook/create-react-app).
